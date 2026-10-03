@@ -16,6 +16,7 @@ export class TrackTicketComponent implements OnInit {
   public attachments: [];
   public submitted = false;
   public ticketisFound = false;
+  public ticketNotFound = false;
   public trackFaultForm: FormGroup;
   public referenceNumber = '';
   public status = '';
@@ -50,12 +51,15 @@ export class TrackTicketComponent implements OnInit {
 
   onSearch() {
     this.ticketisFound = false;
+
     if (this.trackFaultForm.valid) {
       const referenceNo = this.trackFaultForm.controls['referenceNumber'].value;
       this.faultService.getFaultReferenceNo(referenceNo).subscribe(fault => {
-        if (fault) {
+        if (fault.id > 0) {
           this.status = fault.status;
           this.ticketisFound = true;
+        } else {
+          this.ticketNotFound = true;
         }
       },
       (error) => {

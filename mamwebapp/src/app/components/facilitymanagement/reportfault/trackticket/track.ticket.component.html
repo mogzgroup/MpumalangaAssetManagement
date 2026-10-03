@@ -36,4 +36,10 @@
             Your fault status is <b>{{status}}</b> 
         </p>
     </div>
+
+    <div *ngIf="ticketNotFound">
+        <p class="not-found">
+            Fault not found
+        </p>
+    </div>
 </div>

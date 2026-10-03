@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAM.API", "MAM.API\MAM.API.csproj", "{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MAM.API", "MAM.API\MAM.API.csproj", "{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAM.BusinessLayer", "MAM.BusinessLayer\MAM.BusinessLayer.csproj", "{1A30D770-5D6E-45F3-A2CE-FBCA56D9F46F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MAM.BusinessLayer", "MAM.BusinessLayer\MAM.BusinessLayer.csproj", "{1A30D770-5D6E-45F3-A2CE-FBCA56D9F46F}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "MAM.Database", "MAM.Database\MAM.Database.sqlproj", "{26A19418-6B65-452D-8FE5-08C694CFB4A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MAM.DataAccess", "MAM.DataAccess\MAM.DataAccess.csproj", "{DC3ABDFC-D388-417B-8E29-3393E8B4CF09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAM.DataAccess", "MAM.DataAccess\MAM.DataAccess.csproj", "{DC3ABDFC-D388-417B-8E29-3393E8B4CF09}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "MAM.Database", "MAM.Database\MAM.Database.sqlproj", "{4407777F-8D0A-41C7-8E9C-6704E1E51B07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,16 +25,16 @@ Global
 		{1A30D770-5D6E-45F3-A2CE-FBCA56D9F46F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A30D770-5D6E-45F3-A2CE-FBCA56D9F46F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A30D770-5D6E-45F3-A2CE-FBCA56D9F46F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{26A19418-6B65-452D-8FE5-08C694CFB4A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{26A19418-6B65-452D-8FE5-08C694CFB4A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{26A19418-6B65-452D-8FE5-08C694CFB4A3}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{26A19418-6B65-452D-8FE5-08C694CFB4A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{26A19418-6B65-452D-8FE5-08C694CFB4A3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{26A19418-6B65-452D-8FE5-08C694CFB4A3}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{DC3ABDFC-D388-417B-8E29-3393E8B4CF09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DC3ABDFC-D388-417B-8E29-3393E8B4CF09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC3ABDFC-D388-417B-8E29-3393E8B4CF09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC3ABDFC-D388-417B-8E29-3393E8B4CF09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4407777F-8D0A-41C7-8E9C-6704E1E51B07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4407777F-8D0A-41C7-8E9C-6704E1E51B07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4407777F-8D0A-41C7-8E9C-6704E1E51B07}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{4407777F-8D0A-41C7-8E9C-6704E1E51B07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4407777F-8D0A-41C7-8E9C-6704E1E51B07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4407777F-8D0A-41C7-8E9C-6704E1E51B07}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

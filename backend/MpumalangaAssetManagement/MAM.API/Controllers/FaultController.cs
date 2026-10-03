@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
 
 namespace MAM.API.Controllers
 {
@@ -15,6 +14,7 @@ namespace MAM.API.Controllers
     [ApiController]
     public class FaultController : BaseController
     {
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
@@ -156,7 +156,8 @@ namespace MAM.API.Controllers
         }
         catch (Exception ex)
         {
-            throw;
+                log.Error(ex);
+                throw ex;
         }
 
         isUploaded = true;

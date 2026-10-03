@@ -16,6 +16,7 @@
     [Vat]                               VARCHAR (50) NULL,
     [LeaseNumber]                       INT          NULL,
     [OtherCharges]                      INT          NULL,
+    [ClientCode]                        VARCHAR (50) NULL,
     CONSTRAINT [PK_LeaseStatus] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 

@@ -1,6 +1,7 @@
 ﻿using MAM.BusinessLayer.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -17,23 +18,6 @@ namespace MAM.BusinessLayer.Helpers
         }
         public void SendResertPasswordEmail(DataAccess.Tables.User user, string decriptedPassword)
         {
-            string[] lines = { "First line", "Second line", "Third line" };
-            System.IO.File.WriteAllLines(@"C:\Users\Public\WriteLines.txt", lines);
-            string text = "A class is the most powerful data type in C#. Like a structure, " +
-                           "a class defines the data and behavior of the data type. ";
-            System.IO.File.WriteAllText(@"C:\Users\Public\WriteText.txt", text);
-            using (System.IO.StreamWriter file =
-       new System.IO.StreamWriter(@"C:\Users\Public\WriteLines2.txt"))
-            {
-                foreach (string line in lines)
-                {
-                    // If the line doesn't contain the word 'Second', write the line to the file.
-                    if (!line.Contains("Second"))
-                    {
-                        file.WriteLine(line);
-                    }
-                }
-            }
             SmtpClient client = new SmtpClient
             {
                 DeliveryMethod = SmtpDeliveryMethod.Network,
@@ -56,7 +40,7 @@ namespace MAM.BusinessLayer.Helpers
                 client.Send(mail);
             }
             catch (Exception ex)
-            {               
+            {
                 throw ex;
             }
         }

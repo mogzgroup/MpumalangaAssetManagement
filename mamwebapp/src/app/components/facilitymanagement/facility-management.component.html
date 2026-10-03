@@ -14,10 +14,10 @@
         <p-card>
             <div>
                 <div style="text-align: center;" class="number-count">
-                    {{projectsInProgress}}
+                    {{newCount}}
                 </div>
                 <div style="text-align: center;">
-                    Maintenance projects in progress
+                    New faults
                 </div>
             </div>
         </p-card>
@@ -25,20 +25,20 @@
     <div>
         <p-card>
             <div style="text-align: center;" class="number-count">
-                {{serviceRequestsLogged}}
+                {{inProgressCount}}
             </div>
             <div style="text-align: center;">
-                Service Requests Logged
+                In-Progress faults
             </div>
         </p-card>
     </div>
     <div>
         <p-card>
             <div style="text-align: center;" class="number-count">
-                {{completedRequests}}
+                {{completedCount}}
             </div>
             <div style="text-align: center;">
-                Completed Requests
+                Completed faults
             </div>
         </p-card>
     </div>
@@ -46,10 +46,10 @@
         <p-card>
             <div>
                 <div style="text-align: center;" class="number-count">
-                    {{awaitingSignOff}}
+                    {{total}}
                 </div>
                 <div style="text-align: center;">
-                   Awaiting Sign Off
+                   Total faults
                 </div>
             </div>
         </p-card>

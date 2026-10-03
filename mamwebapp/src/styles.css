@@ -435,6 +435,7 @@ p-fieldset {
 .p-inputtext{
 	font-size: 13px!important;
 	width: 100% !important;
+    text-overflow: ellipsis;
 }
 
 .p-input-icon-left > .p-inputtext {
@@ -515,6 +516,18 @@ label{
 
   .p-autocomplete {
     width: 100%;
+}
+
+.p-autocomplete-panel {
+    left: unset !important;
+}
+
+.p-autocomplete-item {
+    font-size: 13px;
+}
+
+.long-text{
+    text-overflow: ellipsis !important;
 }
 
   

@@ -3,22 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Xml;
 using log4net;
-using log4net.Config;
-using log4net.Repository.Hierarchy;
 using MAM.API.Services;
-using MAM.BusinessLayer.Model;
 using MAM.BusinessLayer.Models;
 using MAM.BusinessLayer.Models.Enums;
-using MAM.BusinessLayer.Repositories;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace MAM.API.Controllers
 {
@@ -247,7 +236,7 @@ namespace MAM.API.Controllers
         public IActionResult GetFiles(string fileReference)
         {
             var pathToSave = Directory.GetCurrentDirectory();
-            var fullPath = Path.Combine(pathToSave, "Uploads","Facilities");
+            var fullPath = Path.Combine(pathToSave, "Uploads", "Facilities");
             var files = Directory.GetFiles(fullPath).Where(f => f.Contains(fileReference)).ToList();
             return Ok(files);
         }
@@ -256,7 +245,7 @@ namespace MAM.API.Controllers
         [Route("uploadFiles/{fileName}")]
         public IActionResult UploadFiles(string fileName)
         {
-            
+
             bool isUploaded = false;
 
             try
@@ -264,9 +253,8 @@ namespace MAM.API.Controllers
                 for (int i = 0; i < Request.Form.Files.Count(); i++)
                 {
                     var file = Request.Form.Files[i];
-                    //fileName = fileName + '_' + i;
-                    var oFileName =  ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    string _fileName = fileName +"_" + i + Path.GetExtension(oFileName);
+                    var oFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                    string _fileName = fileName + "_" + i + Path.GetExtension(oFileName);
                     var folderName = Path.Combine("Uploads", "Facilities");
                     var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
 
@@ -279,52 +267,19 @@ namespace MAM.API.Controllers
                             file.CopyTo(stream);
                         }
                     }
-                    else {
+                    else
+                    {
                         return BadRequest();
                     }
-                }               
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
-          
+
             isUploaded = true;
             return Ok(isUploaded);
         }
     }
 }
-/*
-public static class Counter
-{
-    private int count = 0;
-    private int increment;
-
-    public int Counter()
-    {
-        increment = increment;
-    }
-
-    protected int getAndIncrement()
-    {
-        this.count += this.increment;
-        return this.count;
-    }
-
-}
-
-public static class DocumentNameCreator
-{
-    private String prefix;
-
-    public static DocumentNameCreator(int increment, String prefix)
-    {
-        prefix = getNewDocumentName();
-    }
-
-    String static getNewDocumentName()
-    {
-        return prefix + getAndIncrement();
-    }
-}*/

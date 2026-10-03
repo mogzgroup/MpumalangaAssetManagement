@@ -16,3 +16,13 @@ C:\Projects\Asset Register MP\backend\MpumalangaAssetManagement\MAM.DataAccess\o
 C:\Projects\Asset Register MP\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Release\netstandard2.0\MAM.DataAccess.dll
 C:\Projects\Asset Register MP\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Release\netstandard2.0\MAM.DataAccess.pdb
 C:\Projects\Asset Register MP\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Release\netstandard2.0\MAM.DataAccess.csprojAssemblyReference.cache
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\bin\Release\netstandard2.0\MAM.DataAccess.deps.json
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\bin\Release\netstandard2.0\MAM.DataAccess.dll
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\bin\Release\netstandard2.0\MAM.DataAccess.pdb
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Release\netstandard2.0\MAM.DataAccess.csproj.AssemblyReference.cache
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Release\netstandard2.0\MAM.DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Release\netstandard2.0\MAM.DataAccess.AssemblyInfoInputs.cache
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Release\netstandard2.0\MAM.DataAccess.AssemblyInfo.cs
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Release\netstandard2.0\MAM.DataAccess.csproj.CoreCompileInputs.cache
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Release\netstandard2.0\MAM.DataAccess.dll
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Release\netstandard2.0\MAM.DataAccess.pdb

@@ -6,7 +6,7 @@
     <Name>MAM.Database</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
-    <ProjectGuid>{26a19418-6b65-452d-8fe5-08c694cfb4a3}</ProjectGuid>
+    <ProjectGuid>{4407777f-8d0a-41c7-8e9c-6704e1e51b07}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
@@ -22,7 +22,7 @@
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
-    <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
+    <DefaultCollation>Latin1_General_CI_AS</DefaultCollation>
     <DefaultFilegroup>PRIMARY</DefaultFilegroup>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -60,33 +60,44 @@
     <Folder Include="Properties" />
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
+    <Folder Include="Security\" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="dbo\Tables\Roles.sql" />
-    <Build Include="dbo\Tables\Users.sql" />
-    <Build Include="dbo\Tables\NonResidentialFacilities.sql" />
-    <Build Include="dbo\Tables\NonResidentialAssetsOriginal.sql" />
-    <Build Include="dbo\Tables\Log4NetLog.sql" />
-    <Build Include="dbo\Tables\Locations.sql" />
-    <Build Include="dbo\Tables\LandIoriginal.sql" />
-    <Build Include="dbo\Tables\LandFacilities.sql" />
-    <Build Include="dbo\Tables\Import.sql" />
-    <Build Include="dbo\Tables\FacilityType.sql" />
-    <Build Include="dbo\Tables\FacilityStatus.sql" />
-    <Build Include="dbo\Tables\FacilityStatements.sql" />
-    <Build Include="dbo\Tables\DwellingOriginal.sql" />
-    <Build Include="dbo\Tables\DwellingFacilities.sql" />
-    <Build Include="dbo\Tables\DeedsOffice.sql" />
-    <Build Include="dbo\Tables\AuditLog.sql" />
-    <Build Include="dbo\Tables\Valuations.sql" />
-    <Build Include="dbo\Tables\SecondaryInformationNotes.sql" />
-    <Build Include="dbo\Tables\PropertyDescriptions.sql" />
-    <Build Include="dbo\Tables\LeaseStatuses.sql" />
-    <Build Include="dbo\Tables\LandUseManagementDetails.sql" />
-    <Build Include="dbo\Tables\Lands.sql" />
-    <Build Include="dbo\Tables\Improvements.sql" />
     <Build Include="dbo\Tables\GeographicalLocations.sql" />
+    <Build Include="dbo\Tables\Users.sql" />
+    <Build Include="dbo\Tables\AcquisitionPlans.sql" />
+    <Build Include="dbo\Tables\Suppliers.sql" />
+    <Build Include="dbo\Tables\MtefBudgetPeriods.sql" />
+    <Build Include="dbo\Tables\Projects.sql" />
+    <Build Include="dbo\Tables\ProjectSuppliers.sql" />
+    <Build Include="dbo\Tables\AuditLog.sql" />
+    <Build Include="dbo\Tables\PropertyDescriptions.sql" />
+    <Build Include="dbo\Tables\StrategicAssessments.sql" />
+    <Build Include="dbo\Tables\SecondaryInformationNotes.sql" />
+    <Build Include="dbo\Tables\Log4NetLog.sql" />
+    <Build Include="dbo\Tables\FaultNotes.sql" />
+    <Build Include="dbo\Tables\Roles.sql" />
+    <Build Include="dbo\Tables\FunctionalPerformance.sql" />
+    <Build Include="dbo\Tables\Utilisation.sql" />
     <Build Include="dbo\Tables\Finances.sql" />
+    <Build Include="dbo\Tables\Faults.sql" />
+    <Build Include="dbo\Tables\ConditionAssessments.sql" />
+    <Build Include="dbo\Tables\OperationPlans.sql" />
+    <Build Include="dbo\Tables\OptimalSupportingAccommodations.sql" />
+    <Build Include="dbo\Tables\Improvements.sql" />
+    <Build Include="dbo\Tables\Properties.sql" />
+    <Build Include="dbo\Tables\Lands.sql" />
+    <Build Include="dbo\Tables\SurrenderPlans.sql" />
+    <Build Include="dbo\Tables\LeaseStatuses.sql" />
+    <Build Include="dbo\Tables\UserImmovableAssetManagementPlans.sql" />
+    <Build Include="dbo\Tables\Programmes.sql" />
+    <Build Include="dbo\Tables\Valuations.sql" />
+    <Build Include="dbo\Tables\Camps.sql" />
+    <Build Include="dbo\Tables\LandUseManagementDetails.sql" />
+    <Build Include="dbo\Tables\HiredProperties.sql" />
     <Build Include="dbo\Tables\Facilities.sql" />
+    <Build Include="Security\NT AUTHORITY_SYSTEM.sql" />
+    <Build Include="Security\NT AUTHORITY_SYSTEM_1.sql" />
+    <Build Include="Security\RoleMemberships.sql" />
   </ItemGroup>
 </Project>

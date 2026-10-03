@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[MtefBudgetPeriods] (
+    [Id]                                 INT           IDENTITY (1, 1) NOT NULL,
+    [UserImmovableAssetManagementPlanId] INT           NOT NULL,
+    [Title]                              VARCHAR (500) NOT NULL,
+    [Group]                              VARCHAR (500) NULL,
+    [Year1Allocation]                    MONEY         NULL,
+    [Year1RequiredBudget]                MONEY         NULL,
+    [Year1Shortfall]                     FLOAT (53)    NULL,
+    [Year2Allocation]                    MONEY         NULL,
+    [Year2RequiredBudget]                MONEY         NULL,
+    [Year2Shortfall]                     FLOAT (53)    NULL,
+    [Year3Allocation]                    MONEY         NULL,
+    [Year3RequiredBudget]                MONEY         NULL,
+    [Year3Shortfall]                     FLOAT (53)    NULL,
+    [Year4Allocation]                    MONEY         NULL,
+    [Year4RequiredBudget]                MONEY         NULL,
+    [Year4Shortfall]                     FLOAT (53)    NULL,
+    [Year5Allocation]                    MONEY         NULL,
+    [Year5RequiredBudget]                MONEY         NULL,
+    [Year5Shortfall]                     FLOAT (53)    NULL,
+    [IsHeader]                           BIT           NULL,
+    [IsPercentage]                       BIT           NULL,
+    [Order]                              INT           NULL,
+    CONSTRAINT [PK_MtefBudgetPeriod] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+

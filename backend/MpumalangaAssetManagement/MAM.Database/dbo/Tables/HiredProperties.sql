@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[HiredProperties] (
+    [Id]                          INT           IDENTITY (1, 1) NOT NULL,
+    [Type]                        VARCHAR (50)  NOT NULL,
+    [District]                    VARCHAR (50)  NOT NULL,
+    [PropertyCode]                VARCHAR (50)  NOT NULL,
+    [BuildingCondition]           VARCHAR (50)  NOT NULL,
+    [StartingDate]                DATETIME      NULL,
+    [TerminationDate]             DATETIME      NULL,
+    [MonthlyRental]               FLOAT (53)    NULL,
+    [StartRentalAmount]           FLOAT (53)    NULL,
+    [Town]                        VARCHAR (50)  NULL,
+    [Status]                      VARCHAR (50)  NULL,
+    [UserDepartment]              VARCHAR (500) NULL,
+    [LandlandAgentName]           VARCHAR (50)  NULL,
+    [LandlandAgentContactDetails] VARCHAR (50)  NULL,
+    [NumberofStaff]               INT           NULL,
+    [EscalationRate]              FLOAT (53)    NULL,
+    [EscalationDate]              DATETIME      NULL,
+    [Area]                        FLOAT (53)    NULL,
+    [Address]                     VARCHAR (500) NULL,
+    [IsDeteted]                   BIT           NULL,
+    [CreatedUserId]               INT           NULL,
+    [CreatedDate]                 DATETIME      NULL,
+    [ModifiedUserId]              INT           NULL,
+    [ModifiedDate]                DATETIME      NULL,
+    CONSTRAINT [PK_HiredProperties] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+

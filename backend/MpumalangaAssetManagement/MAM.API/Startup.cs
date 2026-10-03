@@ -1,23 +1,16 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using MAM.API.Services;
 using MAM.BusinessLayer.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -32,20 +25,30 @@ namespace MAM.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddCors();
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddControllers();
+            services.AddCors();
 
-            // configure strongly typed settings objects
+            // Swagger
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "My API",
+                    Version = "v1",
+                });
+                c.CustomSchemaIds(type => type.FullName.Replace("+", "."));
+            });
+
+            // Strongly typed settings
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
-
-            // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+
+            // JWT auth
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -62,74 +65,75 @@ namespace MAM.API
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
-
                     ValidIssuer = "http://localhost:4200",
                     ValidAudience = "http://localhost:4200",
                 };
             });
 
+            // Register services
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFacilityService, FacilityService>();
             services.AddScoped<IUAMPService, UAMPService>();
-            services.AddScoped < IConditionAssessmentService, ConditionAssessmentService>();
+            services.AddScoped<IConditionAssessmentService, ConditionAssessmentService>();
             services.AddScoped<ILeaseManagementService, LeaseManagementService>();
-            services.AddScoped <IHiringRegisterService, HiringRegisterService>();
+            services.AddScoped<IHiringRegisterService, HiringRegisterService>();
             services.AddScoped<IFaultService, FaultService>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<ISupplierService, SupplierService>();
-            services.AddSwaggerGen();
+            services.AddScoped<ICampService, CampService>();
 
-            services.Configure<FormOptions>(f => {
-                f.ValueLengthLimit = int.MaxValue;
-                f.MultipartBodyLengthLimit = int.MaxValue;
-                f.MemoryBufferThreshold = int.MaxValue;
-            });
-            // Register the Swagger generator, defining 1 or more Swagger documents
-            services.AddSwaggerGen(c =>
+            // File upload limits
+            services.Configure<FormOptions>(options =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+                options.ValueLengthLimit = int.MaxValue;
+                options.MultipartBodyLengthLimit = int.MaxValue;
+                options.MemoryBufferThreshold = int.MaxValue;
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                //c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-            });
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
             app.UseRouting();
-            app.UseCors(
-                options => options.SetIsOriginAllowed(x => _ = true).AllowAnyMethod().AllowAnyHeader().AllowCredentials()
-            );
-            app.UseStaticFiles();
+
+            // CORS
+            app.UseCors(options => options
+                .SetIsOriginAllowed(x => _ = true)
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
+
+            // Auth
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // Enable Swagger
+            app.UseSwagger();
+
+            // Enable Swagger UI
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");               
+                c.RoutePrefix = "swagger";
+            });
+
+            // Serve static files (wwwroot and Uploads)
+            app.UseStaticFiles(); // wwwroot
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Uploads")),
-                RequestPath = new PathString("/Uploads")
+                RequestPath = "/Uploads"
             });
-           
 
+            // Map controllers
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-
-
-            //loggerFactory..AddLog4Net();
         }
     }
 }

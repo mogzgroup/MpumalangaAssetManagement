@@ -12,6 +12,7 @@
     [UsableArea]                  VARCHAR (50)  NULL,
     [FunctionalPerformanceRating] VARCHAR (100) NULL,
     [Comment]                     VARCHAR (500) NULL,
+    [ClientCode]                  VARCHAR (50)  NULL,
     CONSTRAINT [PK_Improvement] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_Improvement_Facility] FOREIGN KEY ([FacilityId]) REFERENCES [dbo].[Facilities] ([Id])
 );

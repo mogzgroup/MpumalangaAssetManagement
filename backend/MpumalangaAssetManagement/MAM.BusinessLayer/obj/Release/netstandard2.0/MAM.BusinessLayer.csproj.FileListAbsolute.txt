@@ -22,3 +22,16 @@ C:\Projects\Asset Register MP\backend\MpumalangaAssetManagement\MAM.BusinessLaye
 C:\Projects\Asset Register MP\backend\MpumalangaAssetManagement\MAM.BusinessLayer\obj\Release\netstandard2.0\MAM.BusinessLayer.csproj.CopyComplete
 C:\Projects\Asset Register MP\backend\MpumalangaAssetManagement\MAM.BusinessLayer\obj\Release\netstandard2.0\MAM.BusinessLayer.dll
 C:\Projects\Asset Register MP\backend\MpumalangaAssetManagement\MAM.BusinessLayer\obj\Release\netstandard2.0\MAM.BusinessLayer.pdb
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.BusinessLayer\bin\Release\netstandard2.0\MAM.BusinessLayer.deps.json
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.BusinessLayer\bin\Release\netstandard2.0\MAM.BusinessLayer.dll
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.BusinessLayer\bin\Release\netstandard2.0\MAM.BusinessLayer.pdb
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.BusinessLayer\bin\Release\netstandard2.0\MAM.DataAccess.dll
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.BusinessLayer\bin\Release\netstandard2.0\MAM.DataAccess.pdb
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.BusinessLayer\obj\Release\netstandard2.0\MAM.BusinessLayer.csproj.AssemblyReference.cache
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.BusinessLayer\obj\Release\netstandard2.0\MAM.BusinessLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.BusinessLayer\obj\Release\netstandard2.0\MAM.BusinessLayer.AssemblyInfoInputs.cache
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.BusinessLayer\obj\Release\netstandard2.0\MAM.BusinessLayer.AssemblyInfo.cs
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.BusinessLayer\obj\Release\netstandard2.0\MAM.BusinessLayer.csproj.CoreCompileInputs.cache
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.BusinessLayer\obj\Release\netstandard2.0\MAM.BusinessLayer.csproj.CopyComplete
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.BusinessLayer\obj\Release\netstandard2.0\MAM.BusinessLayer.dll
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.BusinessLayer\obj\Release\netstandard2.0\MAM.BusinessLayer.pdb

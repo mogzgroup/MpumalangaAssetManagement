@@ -43,3 +43,8 @@ p-fileupload{
   text-align: center;
   color: green;
 }
+
+.not-found{
+  text-align: center;
+  color: darkslategray;
+}

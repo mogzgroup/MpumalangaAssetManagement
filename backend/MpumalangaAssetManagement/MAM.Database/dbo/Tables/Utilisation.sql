@@ -1,9 +1,9 @@
-﻿CREATE TABLE [dbo].[Utilisation]
-(
-	[Id] INT IDENTITY(1, 1) NOT NULL PRIMARY KEY, 
-    [Post] NVARCHAR(MAX) NULL, 
-    [RequiredSpace] NVARCHAR(MAX) NULL, 
-    [AllocatedSpace] NVARCHAR(MAX) NULL, 
-    [PercentageUtilised] NVARCHAR(MAX) NULL, 
-    [UserId] INT NOT NULL
-)
+﻿CREATE TABLE [dbo].[Utilisation] (
+    [Id]                 INT           IDENTITY (1, 1) NOT NULL,
+    [UserId]             INT           NULL,
+    [Post]               VARCHAR (500) NULL,
+    [RequiredSpace]      VARCHAR (500) NULL,
+    [PercentageUtilised] VARCHAR (500) NULL,
+    CONSTRAINT [PK_Utilisations] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+

@@ -880,3 +880,4 @@ C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\Mpumalan
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.API\bin\Release\netcoreapp3.0\win-x64\EntityFramework.SqlServer.dll
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.API\bin\Release\netcoreapp3.0\win-x64\EntityFramework.dll
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.API\bin\Release\netcoreapp3.0\win-x64\System.CodeDom.dll
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.API\obj\Release\netcoreapp3.0\win-x64\MAM.API.GeneratedMSBuildEditorConfig.editorconfig

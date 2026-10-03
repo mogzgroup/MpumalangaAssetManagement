@@ -7,9 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Xml;
 
 namespace MAM.API.Controllers
 {
@@ -71,7 +68,6 @@ namespace MAM.API.Controllers
                 for (int i = 0; i < Request.Form.Files.Count(); i++)
                 {
                     var file = Request.Form.Files[i];
-                    //fileName = fileName + '_' + i;
                     var oFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
                     string _fileName = fileName + "_" + i + Path.GetExtension(oFileName);
                     var folderName = Path.Combine("Uploads", "HandoverDocuments");
@@ -94,8 +90,8 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-
-                throw;
+                log.Info(ex);
+                throw ex;
             }
 
             isUploaded = true;
@@ -130,7 +126,6 @@ namespace MAM.API.Controllers
                 for (int i = 0; i < Request.Form.Files.Count(); i++)
                 {
                     var file = Request.Form.Files[i];
-                    //fileName = fileName + '_' + i;
                     var oFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
                     string _fileName = fileName + "_" + i + Path.GetExtension(oFileName);
                     var folderName = Path.Combine("Uploads", "SnagList");
@@ -153,14 +148,12 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-
-                throw;
+                log.Error(ex);
+                throw ex;
             }
 
             isUploaded = true;
             return Ok(isUploaded);
-        }
-
-       
+        }       
     }
 }

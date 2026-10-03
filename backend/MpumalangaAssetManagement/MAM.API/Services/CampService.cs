@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MAM.BusinessLayer.Models;
+using MAM.BusinessLayer.Repositories;
 using Microsoft.Extensions.Options;
 
 namespace MAM.API.Services
@@ -18,10 +19,10 @@ namespace MAM.API.Services
 
         public List<Camp> GetCamps(string department) {
             return null;
-            //using (var _campRepository = new CampRepository(_appSettings))
-            //{
-            //    return _campRepository.GetCamps(department);
-            //}
+            using (var _campRepository = new CampRepository(_appSettings))
+            {
+                return _campRepository.GetCamps(department);
+            }
         }            
     }
 

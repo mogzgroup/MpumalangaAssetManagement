@@ -184,8 +184,6 @@ namespace MAM.BusinessLayer.Repositories
             if (disposing)
             {
                 handle.Dispose();
-                // Free any other managed objects here.
-                //
             }
 
             disposed = true;

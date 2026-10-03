@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { RadioControlRegistry } from 'primeng/radiobutton';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -32,7 +33,7 @@ export class AddFaultComponent implements OnInit {
 
   getReferenceNumber(length): string {
     let result = '';
-    const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const characters = '0123456789';
     const charactersLength = characters.length;
     for (let i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -83,35 +84,18 @@ export class AddFaultComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get fault' });
         this.isSuccessful = false;
       });
-    /*
-
-    this.projectService.getProperties().subscribe(propertyList => {
-      if (propertyList.length > 0) {
-
-        this.properties = [];
-        propertyList.forEach(element => {
-           const option = { name: element.name + ' - ' + element.clientCode, code: element.id, factor: element.id };
-           this.properties.push(option);
-        });
-      }
-    },
-    (error) => {
-      this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get fault' });
-      this.isSuccessful = false;
-    });
-*/
   }
 
   get f() { return this.reportFaultForm.controls; }
 
   buildForm() {
     this.reportFaultForm = this.formBuilder.group({
-      townName: [''],
-      buildingName: [''],
-      propertyDescription: [''],
-      descriptionoftheIssue: [''],
-      nameSurname: [''],
-      contactNumber: ['', Validators.minLength(10)]
+      townName: ['', Validators.required],
+      buildingName: ['', Validators.required],
+      propertyDescription: ['', Validators.required],
+      descriptionoftheIssue: ['', Validators.required],
+      nameSurname: ['', Validators.required],
+      contactNumber: ['', [Validators.minLength(10), Validators.required]]
     });
   }
 
@@ -145,13 +129,8 @@ export class AddFaultComponent implements OnInit {
         }
       },
         error => {
-          //this.messageService.add({ severity: 'error', summary: 'Error Occurred',
-          // detail: 'An error occurred while processing your request. please try again!' });
           this.isSuccessful = false;
         });
-
-      //this.fault.hasCompletionCertificate  = this.
-      //this.fault.hasContractInvoice = this.
     }
   }
 
@@ -216,5 +195,9 @@ export class AddFaultComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get fault' });
         this.isSuccessful = false;
       });
+  }
+
+  onDone(){
+    window.location.reload();
   }
 }

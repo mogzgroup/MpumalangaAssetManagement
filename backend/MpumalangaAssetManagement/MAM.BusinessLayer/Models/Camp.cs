@@ -19,23 +19,19 @@ namespace MAM.BusinessLayer.Models
         public string Department { get; set; }
         public User User { get; set; }
 
-    //    public List<Camp> ConvertToCamps(List<DataAccess.Tables.Camp> campTbs) {
-    //        List<Camp> camps = new List<Camp>();
+        public List<Camp> ConvertToCamps(List<DataAccess.Tables.Camp> campTbs)
+        {
+            List<Camp> camps = new List<Camp>();
 
-    //        return campTbs.Select(c => new Camp()
-    //        {
-    //            Id = c.Id,
-    //            Status
-    //            FileReference
-    //            OptimalSupportingAccommodationId
-    //            UserId 
-    //            CreatedDate { get; set; }
-    //    public int ModifiedBy { get; set; }
-    //    public DateTime ModifiedDate { get; set; }
-    //    public string Department { get; set; }
-    //    public User User { get; set; }
-    //});
-        //}
-
+            return (List<Camp>)campTbs.Select(c => new Camp()
+            {
+                Id = c.Id,
+                Status = c.Status,
+                FileReference = c.FileReference,
+                OptimalSupportingAccommodationId = c.OptimalSupportingAccommodationId,
+                UserId = c.UserId,
+                CreatedDate = c.CreatedDate,
+            });
+        }
     }
 }

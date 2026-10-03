@@ -33,4 +33,6 @@ C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\Mpumalan
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Debug\netstandard2.0\MAM.DataAccess.csproj.CoreCompileInputs.cache
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Debug\netstandard2.0\MAM.DataAccess.dll
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Debug\netstandard2.0\MAM.DataAccess.pdb
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Debug\netstandard2.0\MAM.DataAccess.GeneratedMSBuildEditorConfig.editorconfig
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Debug\netstandard2.0\MAM.DataAccess.csproj.AssemblyReference.cache
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Debug\netstandard2.0\MAM.DataAccess.sourcelink.json

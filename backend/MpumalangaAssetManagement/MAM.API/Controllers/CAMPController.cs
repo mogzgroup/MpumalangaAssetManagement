@@ -1,10 +1,8 @@
 ﻿using log4net;
+using MAM.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MAM.API.Controllers
 {
@@ -14,12 +12,12 @@ namespace MAM.API.Controllers
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(UserController));
 
-        ////private ICampService _campService;
+        private ICampService _campService;
 
-        ////public CAMPController(ICampService campService)
-        ////{
-        ////    _campService = campService;
-        ////}
+        public CAMPController(ICampService campService)
+        {
+            _campService = campService;
+        }
 
         [AllowAnonymous]
         [HttpGet]
@@ -28,8 +26,8 @@ namespace MAM.API.Controllers
         {
             try
             {
-                //var result = _campService.GetCamps(department);
-                return Ok(true);
+                var result = _campService.GetCamps(department);
+                return Ok(result);
             }
             catch (Exception ex)
             {

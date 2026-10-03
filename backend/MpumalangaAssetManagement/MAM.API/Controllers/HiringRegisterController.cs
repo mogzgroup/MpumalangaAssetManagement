@@ -4,8 +4,6 @@ using MAM.BusinessLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MAM.API.Controllers
 {
@@ -13,6 +11,7 @@ namespace MAM.API.Controllers
     [ApiController]
     public class HiringRegisterController : BaseController
     {
+        [HttpGet]
         public IActionResult Index()
         {
             return View();

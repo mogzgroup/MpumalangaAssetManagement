@@ -15,8 +15,8 @@ import { environment } from '../../../environments/environment';
     };
     constructor(private http: HttpClient) { }
     
-    getCamps(): Observable<Array<Camp>> {
-      return this.http.get<Array<Camp>>(`${environment.apiUrl}/api/camp/getCamps`);
+    getCamps(department: string): Observable<Array<Camp>> {
+      return this.http.get<Array<Camp>>(`${environment.apiUrl}/api/camp/getCamps/department`);
     }
 
     startCamp(camp: Camp): Observable<Camp> {

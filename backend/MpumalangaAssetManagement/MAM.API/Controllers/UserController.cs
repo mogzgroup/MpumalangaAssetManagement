@@ -1,21 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Xml;
 using log4net;
-using log4net.Config;
-using log4net.Repository.Hierarchy;
 using MAM.API.Services;
 using MAM.BusinessLayer.Model;
 using MAM.BusinessLayer.Models;
-using MAM.BusinessLayer.Repositories;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace MAM.API.Controllers
 {

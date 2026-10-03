@@ -25,9 +25,9 @@ export class ServiceRequestComponent implements OnInit {
   public showDialog: boolean;
   public cols = [
     { field: 'createdDate', header: 'Logged Date' },
-    { field: 'propertyDescription', header: 'Property Description' },
+    { field: 'facilityName', header: 'Facility Name' },
+    { field: 'propertyDescription', header: 'Exact Location of Issue' },
     { field: 'incidentDescription', header: 'Description' },
-    { field: 'contactName', header: 'Logged By' },
     { field: 'status', header: 'Status' }
   ];
 
@@ -55,10 +55,10 @@ export class ServiceRequestComponent implements OnInit {
           faults.forEach(element => {
             switch (element.status) {
               case 'Closed':
-                element.statusColor = 'red';
+                element.statusColor = 'green';
                 break;
               case 'New':
-                  element.statusColor = 'green';
+                  element.statusColor = 'red';
                   break;
               default:
                 element.statusColor = 'orange';

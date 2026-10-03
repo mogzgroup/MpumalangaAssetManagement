@@ -32,7 +32,7 @@ export class CampComponent implements OnInit {
       this.authenticationService.currentUser.pipe().subscribe(x => {
         this.currentUser = x;
       });
-      this.getCamps();
+      this.getCamps("Public works, roads & transport");
     }
 
     
@@ -49,8 +49,8 @@ export class CampComponent implements OnInit {
     );
   }
 
-  getCamps() {
-    this.campService.getCamps().subscribe(
+  getCamps(department: string) {
+    this.campService.getCamps(department).subscribe(
       (response) => {
         this.camps = response;
         this.loading = false;

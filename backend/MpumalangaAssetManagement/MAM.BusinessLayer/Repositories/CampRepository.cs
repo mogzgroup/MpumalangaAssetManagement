@@ -26,8 +26,8 @@ namespace MAM.BusinessLayer.Repositories
             List<Camp> camps = new List<Camp>();
             using (var dataAccess = new DataAccess.Repositories.CampRepository(appSettings.ConnectionString))
             {
-                //var uamps = camp.ConvertToCamps(dataAccess.GetCamps(department));
-                //camps.AddRange(uamps);
+                var uamps = camp.ConvertToCamps(dataAccess.GetCamps(department));
+                camps.AddRange(uamps);
                 return camps;
             }
         }
