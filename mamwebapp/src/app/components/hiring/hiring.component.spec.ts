@@ -23,3 +23,4 @@ describe('HiringComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

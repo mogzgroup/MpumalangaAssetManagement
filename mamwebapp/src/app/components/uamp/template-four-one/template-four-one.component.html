@@ -13,9 +13,7 @@
                 responsiveLayout="scroll" [rowsPerPageOptions]="[5,10,15]">
                 <ng-template pTemplate="caption">
                     <div class="p-d-flex right p-jc-between text-right">
-                        <p-button pTooltip="Add Strategic Assessment" type="button" icon="pi pi-plus"
-                            styleClass="p-button-text"
-                            (click)="displayDialog = true; dialogHeader = 'Add Strategic Assessment'"></p-button>
+                        <button mat-button pTooltip="Add Strategic Assessment" type="button" (click)="displayDialog = true; dialogHeader = 'Add Strategic Assessment'"><span class="pi pi-plus"></span>Add Strategic Assessment</button>
                     </div>
                 </ng-template>
                 <ng-template pTemplate="header">
@@ -56,7 +54,7 @@
                         <td style="text-align: center;width: 82px;" *ngIf="acquisitionPlans.length > 0">
                             <p-splitButton label="More" *ngIf="mode != 'View'" [model]="buttonItems"
                                 (onDropdownClick)="selectAcquisitionPlan(acquisitionPlan)"
-                                styleClass="p-button-secondary">
+                                mat-button>
                             </p-splitButton>
                         </td>
                     </tr>
@@ -159,12 +157,10 @@
     </p-body>
     <p-footer>
         <div class="p-grid p-nogutter p-justify-between">
-            <p-button [style]="{'float':'left'}" styleClass="p-button-secondary" label="Cancel" (onClick)="displayDialog = false"
-                icon="pi pi-times"></p-button>
-            <p-button *ngIf="!isEdit" [style]="{'float':'right'}" label="Add" (onClick)="addAcquisitionPlan()"
-                icon="pi pi-check" iconPos="right"></p-button>
-            <p-button *ngIf="isEdit" [style]="{'float':'right'}" label="Update"
-                (onClick)="updateStrategicNeedsAssessment()" icon="pi pi-check" iconPos="right"></p-button>
+            <button mat-button [style]="{'float':'left'}" mat-button (click)="displayDialog = false" >Cancel</button>
+            <button mat-button *ngIf="!isEdit" [style]="{'float':'right'}" (click)="addAcquisitionPlan()" >Add</button>
+            <button mat-button *ngIf="isEdit" [style]="{'float':'right'}" (click)="updateStrategicNeedsAssessment()"
+                >Update</button>
         </div>
     </p-footer>
 </p-dialog>
@@ -174,20 +170,21 @@
     [style]="{width: '25vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
     <p>Are you sure that you want to delete this acquisition plan?</p>
     <p-footer>
-        <button style="float: left;" (click)="showComfirmationDelete=false" pButton type="button" label="No"
+        <button style="float: left;" (click)="showComfirmationDelete=false" type="button" label="No"
             class="ui-button-info"></button>
-        <button style="float: right;" (click)="showComfirmationDelete=false;deleteOperationPlan()" pButton type="button"
+        <button style="float: right;" (click)="showComfirmationDelete=false;deleteOperationPlan()" type="button"
             label="Yes" class="ui-button-info"></button>
     </p-footer>
 </p-dialog>
 
 <div class="uamp-footer">
     <div class="p-grid p-nogutter p-justify-between">
-        <p-button styleClass="p-button-secondary" label="Back" (onClick)="back()" icon="pi pi-angle-left">
-        </p-button>
-        <p-button [style]="{'float':'right'}" label="Save" class="ml-1" (onClick)="save()" icon="pi pi-check"
-        iconPos="right"></p-button>
-        <p-button styleClass="btn-next" label="Next" (onClick)="nextPage()" icon="pi pi-angle-right"
-            iconPos="right"></p-button>
+        <button mat-button (click)="back()"><span class="pi pi-angle-left"></span>Back</button>
+        
+        <button mat-button [style]="{'float':'right'}" (click)="save()" class="ml-1" >Save</button>
+        <button mat-button styleClass="btn-next" (click)="nextPage()" >Next</button>
     </div>
 </div>
+
+
+

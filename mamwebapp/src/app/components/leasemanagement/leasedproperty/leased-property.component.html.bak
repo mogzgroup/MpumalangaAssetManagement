@@ -1,0 +1,150 @@
+<p-toast [style]="{marginTop: '90px'}" position="top-right"></p-toast>
+<div class="sub-header">
+    <div class="formgrid grid">
+        <div class="field grid col-2 smaller-font">
+            <span>File Reference: <b>{{selectedLeasedProperty.fileReference}}</b></span>
+        </div>
+        <div class="field grid col-1 smaller-font">
+            <span>Type: <b>{{selectedLeasedProperty.type}}</b></span>
+        </div>
+        <div class="field grid col-3 smaller-font">
+            <span>Property Code: <b>{{selectedLeasedProperty.propertyCode}}</b></span>
+        </div>
+        <div class="field grid col-2 smaller-font">
+            <span>Nature of Lease: <b>{{selectedLeasedProperty.natureofLease}}</b></span>
+        </div>
+        <div class="field grid col-2 smaller-font">
+            <span>Starting Date: <b>{{selectedLeasedProperty.startingDate | date}}</b></span>
+        </div>
+        <div class="field grid col-2 smaller-font">
+            <span>Termination Date: <b>{{selectedLeasedProperty.terminationDate | date}}</b></span>
+        </div>
+    </div>
+</div>
+<p-tabView>
+    <p-tabPanel header="Details" style="background-color: var(--surface-b);color: var(--text-color);">
+        <h5>Land Use & Management Details</h5>
+        <hr>
+        <div class="formgrid grid padding-15">
+            <div class="field grid col-3 smaller-font">
+                <span>
+                    Title Deed Number: <b>{{selectedLeasedProperty.landUseManagementDetail.titleDeedNumber}}</b>
+                </span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span> Registration Date: <b>{{selectedLeasedProperty.landUseManagementDetail.registrationDate | date}}</b>
+                </span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Registered Owner: <b>{{selectedLeasedProperty.landUseManagementDetail.registeredOwner}}</b>
+                </span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Vesting Date: <b>{{selectedLeasedProperty.landUseManagementDetail.vestingDate | date}}</b>
+                </span>
+            </div>
+       
+            <div class="field grid col-3 smaller-font">
+                <span> Conditions Of Title: <b>{{selectedLeasedProperty.landUseManagementDetail.conditionsOfTitle}}</b>
+                </span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span> Ownership Category: <b>{{selectedLeasedProperty.landUseManagementDetail.ownershipCategory}}</b>
+                </span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>State Owned Percentage: <b>{{selectedLeasedProperty.landUseManagementDetail.stateOwnedPercentage}}</b>
+                </span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Land Use %: <b>{{selectedLeasedProperty.landUseManagementDetail.landUse}}</b>
+                </span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Zoning: <b>{{selectedLeasedProperty.landUseManagementDetail.zoning}}</b>
+                </span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Income Lease Status: <b>{{selectedLeasedProperty.landUseManagementDetail.incomeLeaseStatus}}</b>
+                </span>
+            </div>
+        </div>
+
+ 
+        <h5>Lease Status</h5>
+        <hr>
+        <div class="formgrid grid padding-15">
+            <div class="field grid col-3 smaller-font">
+                <span>Nature of Lease: <b>{{selectedLeasedProperty.leaseStatus.natureOfLease}}</b></span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                    <span>ID Number/Company Registration Number: <b>{{selectedLeasedProperty.leaseStatus.IDNumberCompanyRegistrationNumber}}</b>
+                </span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>P.O.Box: <b>{{selectedLeasedProperty.leaseStatus.POBox}}</b></span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Town: <b>{{selectedLeasedProperty.leaseStatus.town}}</b></span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Postal Code: <b>{{selectedLeasedProperty.leaseStatus.postalCode}}</b></span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Contact Person: <b>{{selectedLeasedProperty.leaseStatus.contactPerson}}</b></span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Capacity of Contact Person: <b>{{selectedLeasedProperty.leaseStatus.capacityofContactPerson}}</b></span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Contact Number: <b>{{selectedLeasedProperty.leaseStatus.contactPerson}}</b></span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Escalation %: <b>{{selectedLeasedProperty.leaseStatus.escalation}} </b></span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Occupation Date: <b>{{selectedLeasedProperty.leaseStatus.occupationDate | date}}</b></span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Starting Date: <b>{{selectedLeasedProperty.leaseStatus.startingDate | date}}</b></span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Termination Date: <b>{{selectedLeasedProperty.leaseStatus.terminationDate | date}}</b></span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Rental Amount: <b>{{selectedLeasedProperty.leaseStatus.rentalAmount | currency:'R':true}}</b></span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Other charges: <b>{{selectedLeasedProperty.leaseStatus.otherCharges | currency:'R':true}}</b></span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Lease Number: <b>{{selectedLeasedProperty.leaseStatus.leaseNumber}}</b></span>
+            </div>
+            <div class="field grid col-3 smaller-font">
+                <span>Vat Number: <b>{{selectedLeasedProperty.leaseStatus.vat}}</b></span>
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Snag List">
+        <p-fileUpload [showUploadButton]="false" [showCancelButton]="false" (onRemove)="onLandRemoveFile($event)"
+            multiple="multiple" (onSelect)="onLandSelectFile($event.files)"></p-fileUpload>
+        <div>
+            <ul *ngFor="let file of landFiles; let i = index" style="list-style-type:none;">
+                <li>
+                    <p><a target="_blank" href="{{ file.url }}">{{ file.name }}</a></p>
+                </li>
+            </ul>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Handover documents">
+        <p-fileUpload [showUploadButton]="false" [showCancelButton]="false" (onRemove)="onLandRemoveFile($event)"
+            multiple="multiple" (onSelect)="onLandSelectFile($event.files)"></p-fileUpload>
+        <div>
+            <ul *ngFor="let file of landFiles; let i = index" style="list-style-type:none;">
+                <li>
+                    <p><a target="_blank" href="{{ file.url }}">{{ file.name }}</a></p>
+                </li>
+            </ul>
+        </div>
+    </p-tabPanel>  
+</p-tabView>

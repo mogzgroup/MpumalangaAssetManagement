@@ -23,3 +23,4 @@ describe('TemplateSixComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

@@ -4,3 +4,4 @@ export class TempleteFourPointTwo {
     id:Number = 0;
     acquisitionPlans: Array<AcquisitionPlan>;
 }
+

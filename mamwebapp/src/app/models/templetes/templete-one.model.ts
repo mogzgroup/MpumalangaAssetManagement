@@ -6,3 +6,4 @@ export class TempleteOne {
     optimalSupportingAccommodation: OptimalSupportingAccommodation;
     programmes?: Array<Programme>;
 }
+

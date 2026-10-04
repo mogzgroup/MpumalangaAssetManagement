@@ -20,7 +20,6 @@ export class FinancialsComponent implements OnInit {
     seatInformation: any;
 
     ngOnInit() { 
-        //this.seatInformation = this.ticketService.ticketInformation.seatInformation;
 
         this.classes = [
             {name: 'First Class', code: 'A', factor: 1},
@@ -50,7 +49,6 @@ export class FinancialsComponent implements OnInit {
 
     nextPage() {
         if (this.seatInformation.class && this.seatInformation.seat && this.seatInformation.wagon) {
-            //this.ticketService.ticketInformation.seatInformation = this.seatInformation;
             this.router.navigate(['steps/payment']);
         }
     }
@@ -60,3 +58,4 @@ export class FinancialsComponent implements OnInit {
     }
 
 }
+

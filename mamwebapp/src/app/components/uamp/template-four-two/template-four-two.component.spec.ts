@@ -23,3 +23,4 @@ describe('TemplateFourTwoComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

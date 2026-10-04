@@ -1,0 +1,66 @@
+<p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+<p-breadcrumb [model]="items"></p-breadcrumb>
+<br/> <br/>
+<div class="text-center" style="color: red;" *ngIf="error">
+    <h5 class="mt-20">
+        <li class="pi pi-exclamation-triangle" style="color: red;font-size: xx-large;"></li><span> An error has
+            occured...</span>
+    </h5>
+    <h6 class="color-aqua">{{errorMsg}}</h6>
+</div>
+
+<div class="grid">
+    <div>
+        <p-card>
+            <div>
+                <div style="text-align: center;" class="number-count">
+                    {{newCount}}
+                </div>
+                <div style="text-align: center;">
+                    New faults
+                </div>
+            </div>
+        </p-card>
+    </div>
+    <div>
+        <p-card>
+            <div style="text-align: center;" class="number-count">
+                {{inProgressCount}}
+            </div>
+            <div style="text-align: center;">
+                In-Progress faults
+            </div>
+        </p-card>
+    </div>
+    <div>
+        <p-card>
+            <div style="text-align: center;" class="number-count">
+                {{completedCount}}
+            </div>
+            <div style="text-align: center;">
+                Completed faults
+            </div>
+        </p-card>
+    </div>
+    <div>
+        <p-card>
+            <div>
+                <div style="text-align: center;" class="number-count">
+                    {{total}}
+                </div>
+                <div style="text-align: center;">
+                   Total faults
+                </div>
+            </div>
+        </p-card>
+    </div>
+</div>
+
+<p-tabView>
+    <p-tabPanel header="Service Requests">
+       <app-service-request></app-service-request>
+    </p-tabPanel>
+    <p-tabPanel header="Projects">
+        <app-project></app-project>
+    </p-tabPanel>
+</p-tabView>

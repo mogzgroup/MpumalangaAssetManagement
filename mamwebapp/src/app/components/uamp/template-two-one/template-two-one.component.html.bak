@@ -1,0 +1,185 @@
+<div class="stepsdemo-content mt-5">
+    <p-card>
+        <ng-template pTemplate="title">
+            
+        </ng-template>
+        <ng-template pTemplate="subtitle">
+                State-owned assets occured by/ Allocated to users and functional Performance
+            </ng-template>
+        <ng-template pTemplate="content">
+            <p-table styleClass="p-datatable-striped" responsiveLayout="stack" breakpoint="680px" [paginator]="true" [rows]="5"
+                [showCurrentPageReport]="true" responsiveLayout="scroll" [rowsPerPageOptions]="[5,10,15]"
+                [value]="properties" [responsive]="true" sortField="assetDescription" sortMode="single" (onSort)="onSort()">
+                <ng-template pTemplate="header">
+                    <tr>
+
+                        <th>File Reference No.</th>
+                        <th>Districts</th>
+                        <th>Town</th>
+                        <th>Local Municipality</th>
+                        <th>Old Street Address</th>
+                        <th>Current Street Address</th>
+                        <th>Property Description</th>
+                        <th>Asset Type</th>
+                        <th style="width: 100px;">No. of Parking Bays</th>
+                        <th style="width: 100px;">Usable/ Allocated Space <br> <small>(M²) 0000.00</small></th>
+                        <th style="width: 100px;">Extent of Land (HA) <br> <small>(M²) 0000.00</small></th>
+                        <th style="width: 200px;">Municipal/ Utility Services</th>
+                        <th>Property Rates & Taxes</th>
+                        <th style="width: 200px;">Operational Costs</th>
+                        <th style="width: 200px;">Required Performance Standard</th>
+                        <th style="width: 200px;">Accessibility</th>
+                        <th style="width: 200px;">Condition Rating</th>
+                        <th style="width: 200px;">Suitability Index</th>
+                        <th style="width: 200px;"> Operating Performance Index</th>
+                        <th style="width: 200px;">Functional Performance Index</th>
+                        <th>Comments</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-property let-rowIndex="rowIndex">
+                    <tr class="ui-widget-header" *ngIf="rowGroupMetadata[property.assetDescription].index === rowIndex">
+                        <td colspan="22">
+                            <span style="font-weight:bold">{{property.assetDescription}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="p-column-title">File Reference No</span>{{property.fileReferenceNo}}</td>
+                        <td><span class="p-column-title">District</span>{{property.districtRegion}}</td>
+                        <td><span class="p-column-title">Town</span>{{property.town}}</td>
+                        <td><span class="p-column-title">Local Authority</span>{{property.localAuthority}}</td>
+                        <td><span class="p-column-title">Current Street Address</span>{{property.currentStreetAddress}}</td>
+                        <td>{{property.districtMunicipality}}</td>
+                        <td>{{property.propertyDescription}}</td>
+                        <td>{{property.assetType}}</td>
+                        <td pEditableColumn style="width: 100px;">
+                            <p-inputNumber [(ngModel)]="property.noofParkingBays" [inputStyle]="{'width':'65px'}"
+                                [ngModelOptions]="{standalone: true}" class="ui-inputtext ui-widget"></p-inputNumber>
+
+                            <!--<div class="text-danger" *ngIf="rowData.get('parkingBaysNumber').errors"><br>
+                    <div *ngIf="rowData.get('parkingBaysNumber').errors?.required">This field is required.</div>
+                </div>-->
+                        </td>
+                        <td style="width: 100px;">
+                            <p-inputNumber [inputStyle]="{'width':'65px'}" [(ngModel)]="property.usableAllocatedSpace"
+                                [ngModelOptions]="{standalone: true}" mode="decimal" class="ui-inputtext ui-widget">
+                            </p-inputNumber>
+
+                            <!--<div *ngIf="submitted && p.usableAllocatedSpace.errors" class="text-error"><br>
+                    <div *ngIf="p.usableAllocatedSpace.errors.required">This field is required.</div>
+                </div>-->
+                        </td>
+                        <td>{{property.extentofLand}}</td>
+                        <td>
+                            <p-inputNumber [inputStyle]="{'width':'140px'}"
+                                [(ngModel)]="property.municipalUtilityServiceTotal" (onFocus)="show(property)"
+                                [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA"
+                                class="ui-inputtext ui-widget"></p-inputNumber>
+                            <!--<div *ngIf="submitted && p.municipalUtilityServices.errors" class="text-error"><br>
+                    <div *ngIf="p.municipalUtilityServices.errors.required">This field is required.</div>
+                </div>-->
+                        </td>
+                        <td>
+                            <p-inputNumber [inputStyle]="{'width':'140px'}" [(ngModel)]="property.propertyRatesTaxes"
+                                [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA"
+                                class="ui-inputtext ui-widget">
+                            </p-inputNumber>
+
+                            <!--<div *ngIf="submitted && p.propertyRatesTaxes.errors" class="text-error"><br>
+                    <div *ngIf="p.propertyRatesTaxes.errors.required">This field is required.</div>
+                </div>-->
+                        </td>
+                        <td>
+                            <p-inputNumber [inputStyle]="{'width':'180px'}" [(ngModel)]="property.operationalCosts"
+                                [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA"
+                                class="ui-inputtext ui-widget">
+                            </p-inputNumber>
+                            <!--<div *ngIf="submitted && p.operationalCost.errors" class="text-error"><br>
+                    <div *ngIf="p.operationalCost.errors.required">This field is required.</div>
+                </div>-->
+                        </td>
+                        <td>
+                            <p-dropdown class="ui-inputtext ui-widget" [style]="{'width':'180px'}"
+                                placeholder="Please select" [(ngModel)]="property.requiredPerformanceStandardObj"
+                                [ngModelOptions]="{standalone: true}"
+                                (onChange)="onRequiredPerformanceStandardChange(property, $event)"
+                                [options]="requiredPerformanceStandards" optionLabel="name"></p-dropdown>
+                            <!-- <div *ngIf="submitted && p.requiredPerfomanceStandard.errors" class="text-error"><br>
+                    <div *ngIf="p.requiredPerfomanceStandard.errors.required">This field is required.</div>
+                </div>-->
+                        </td>
+                        <td>
+                            <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
+                                placeholder="Please select" [(ngModel)]="property.accessibilityObj"
+                                [ngModelOptions]="{standalone: true}"
+                                (onChange)="onAccessibilityChange(property, $event)" [options]="accessibilities"
+                                optionLabel="name">
+                            </p-dropdown>
+                            <!--<div *ngIf="submitted && p.accessibility.errors" class="text-error"><br>
+                    <div *ngIf="p.accessibility.errors.required">This field is required.</div>
+                </div>-->
+                        </td>
+                        <td>
+                            <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
+                                [(ngModel)]="property.conditionRatingObj"
+                                (onChange)="conditionRatingCahnged(property, $event)" inputId="conditionRating"
+                                [options]="conditionRatings" placeholder="Please select"
+                                [ngModelOptions]="{standalone: true}" optionLabel="name"></p-dropdown>
+                            <!--<div *ngIf="submitted && p.conditionRatings.errors" class="text-error"><br>
+                    <div *ngIf="p.conditionRatings.errors.required">This field is required.</div>
+                </div>-->
+                        </td>
+                        <td>
+                            <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
+                                placeholder="Please select" [(ngModel)]="property.suitabilityIndexObj"
+                                [ngModelOptions]="{standalone: true}"
+                                (onChange)="onSuitabilityIndexChange(property, $event)" [options]="suitabilityIndexs"
+                                optionLabel="name"></p-dropdown>
+                            <!--<div *ngIf="submitted && p.suitabilityIndex.errors" class="text-error"><br>
+                    <div *ngIf="p.suitabilityIndex.errors.required">This field is required.</div>
+                </div>-->
+                        </td>
+                        <td>
+                            <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
+                                placeholder="Please select" [(ngModel)]="property.operatingPerformanceIndexObj"
+                                [ngModelOptions]="{standalone: true}"
+                                (onChange)="onOperatingPerformanceIndexChange(property, $event)"
+                                [options]="operatingPerformanceIndexs" optionLabel="name"></p-dropdown>
+                            <!--<div *ngIf="submitted && p.operationalPerformanceIndex.errors" class="text-error"><br>
+                    <div *ngIf="p.operationalPerformanceIndex.errors.required">This field is required.</div>
+                </div>-->
+                        </td>
+                        <td>
+                            <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
+                                placeholder="Please select" [(ngModel)]="property.functionalPerformanceIndexObj"
+                                [ngModelOptions]="{standalone: true}"
+                                (onChange)="onFunctionalPerformanceChange(property, $event)"
+                                [options]="functionalPerformanceIndexs" optionLabel="name"></p-dropdown>
+                            <!-- <div *ngIf="submitted && p.functionalPerformanceIndex.errors" class="text-error"><br>
+                    <div *ngIf="p.functionalPerformanceIndex.errors.required">This field is required.</div>
+                </div>-->
+                        </td>
+                        <td>
+                            <input [(ngModel)]="property.comment" style="width: 125px;"
+                                [ngModelOptions]="{standalone: true}" autocomplete="off" type="text" pInputText
+                                class="ui-inputtext ui-widget">
+                            <!-- <div *ngIf="submitted && p.comment.errors" class="text-error"><br>
+                    <div *ngIf="p.comment.errors.required">This field is required.</div>
+                </div>-->
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </ng-template>
+    </p-card>
+</div>
+
+<div class="uamp-footer">
+    <div class="p-grid p-nogutter p-justify-between">
+        <p-button styleClass="p-button-secondary" label="Back" (onClick)="back()" icon="pi pi-angle-left">
+        </p-button>
+        <p-button [style]="{'float':'right'}" label="Save" class="ml-1" (onClick)="save()" icon="pi pi-check"
+        iconPos="right"></p-button>
+        <p-button styleClass="btn-next" label="Next" (onClick)="nextPage()" icon="pi pi-angle-right"
+            iconPos="right"></p-button>
+    </div>
+</div>

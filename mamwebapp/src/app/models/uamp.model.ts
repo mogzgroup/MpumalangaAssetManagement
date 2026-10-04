@@ -34,3 +34,4 @@ export class UAMP {
     templeteSix?: TempleteSix;
     templeteSeven?: TempleteSeven;
 }
+

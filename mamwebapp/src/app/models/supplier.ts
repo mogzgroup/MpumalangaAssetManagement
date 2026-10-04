@@ -7,3 +7,4 @@ export class Supplier {
     createdDate: Date;
     modifiedDate?: Date;
 }
+

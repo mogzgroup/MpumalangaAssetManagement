@@ -19,3 +19,4 @@ export class AcquisitionPlan {
     cashFlowYear5?: number;
     reqiured?: string;
 }
+

@@ -47,3 +47,4 @@ export class Property{
     localMunicipalityObj?: any;
     districtObj?: any;
 }
+

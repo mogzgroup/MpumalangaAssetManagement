@@ -4,3 +4,4 @@ export class facilitySummaryChart {
     year: number;
     facilitySummaries: Array<FacilitySummary>
 }
+

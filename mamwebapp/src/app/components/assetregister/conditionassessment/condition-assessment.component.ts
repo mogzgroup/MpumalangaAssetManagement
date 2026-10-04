@@ -243,7 +243,6 @@ export class ConditionAssessmentComponent implements OnInit {
   setRate() {
     this.sCount = 0;
 
-
     if (((this.pCount == 2 || this.pCount == 3 || this.pCount == 4 || this.pCount == 5) && this.aCount == 1) || (this.pCount == 1) || (this.aCount == 2 && (this.pCount == 5 || this.pCount == 4))) {
       this.sCount = 3;
     }
@@ -305,3 +304,4 @@ export class ConditionAssessmentComponent implements OnInit {
     }
   }
 }
+

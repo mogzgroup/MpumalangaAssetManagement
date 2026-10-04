@@ -64,18 +64,7 @@
                         </div>
                     </div>
                     <div class="formgrid grid">
-                        <!-- <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
-                                <label for="vestedType">Vested Type</label>
-                                <p-dropdown class="ui-inputtext ui-widget" inputId="vestedType" [disabled]="isViewOnly" [style]="{'width':'570px'}"
-                                    [options]="vestedTypes" placeholder="Please Select" formControlName="vestedType"
-                                    optionLabel="name">
-                                </p-dropdown>                               
-                                <div *ngIf="submitted && f.vestedType.errors" class="text-error"><br>
-                                    <div *ngIf="l.vestedType.errors.required">This field is required.</div>
-                                </div>
-                            </span>
-                        </div>-->
+                        
                         <div class="field grid col-3">
                             <span class="p-input-icon-left p-1">
                                 <label for="type">Asset Type</label>
@@ -103,7 +92,7 @@
                         <div class="field grid col-3">
                             <span class="p-input-icon-left p-1">
                                 <label for="userDepartment">User Department</label>
-                                <p-multiSelect class="ui-inputtext ui-widget" (onClick)="onOptionClick($event)"
+                                <p-multiSelect class="ui-inputtext ui-widget" (click)="onOptionClick($event)"
                                     styleClass="multi-select" [disabled]="isViewOnly" [style]="{'width':'570px'}"
                                     placeholder="Please Select" inputId="userDepartment" [options]="userDepartments"
                                     formControlName="userDepartment" optionLabel="name"></p-multiSelect>
@@ -392,13 +381,7 @@
                             <span class="p-input-icon-left p-1">
                                 <a class="link" (click)="goToLink('../../../../assets/documents/empty.pdf')">SG diagram</a>
 
-                                <!--<label for="SGDiagramNumber">SG Diagram Number</label>
-                                <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="SGDiagramNumber" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
-                                <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
-                                    <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
-                                </div>-->
+                                
                             </span>
                         </div>                        
                     </div>
@@ -554,218 +537,22 @@
                             <span class="p-input-icon-left p-1">
                                 <a class="link" style="right: unset;" (click)="navigate('leaseRegister')">View leased properties</a>
                                 <a class="link" (click)="goToLink('../../../../assets/documents/empty.pdf')">Conditions of title</a>
-                                <!--
-                                     <label for="conditionsOfTitle">Conditions Of Title</label>
-                                     <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="conditionsOfTitle" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
-                                <div *ngIf="submitted && f.conditionsOfTitle.errors" class="text-error"><br>
-                                    <div *ngIf="l.conditionsOfTitle.errors.required">This field is required.</div>
-                                </div>-->
+                                
                             </span>
                         </div>
                     </div>
                 </p-fieldset>
-                <!--
-                <p-fieldset legend="Lease Status" [toggleable]="true" collapsed="true" styleClass="mt-2">
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="natureOfLease">Nature of Lease</label>
-                            <p-dropdown class="ui-inputtext ui-widget" [disabled]="isViewOnly" inputId="natureOfLease"
-                                [options]="natureOfLeases" formControlName="natureOfLease" [style]="{'width':'570px'}"
-                                (onChange)="setDeedsOffice($event)" optionLabel="name" placeholder="Please Select">
-                            </p-dropdown>
-                            <div *ngIf="submitted && f.natureOfLease.errors" class="text-error">
-                                <br>
-                                <div *ngIf="l.natureOfLease.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                        </div>
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="IDNumberCompanyRegistrationNumber">ID Number/Company Registration
-                                Number</label>
-                            <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" formControlName="IDNumberCompanyRegistrationNumber"
-                                autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
-                            <div *ngIf="submitted && f.IDNumberCompanyRegistrationNumber.errors" class="text-error">
-                                <br>
-                                <div *ngIf="l.IDNumberCompanyRegistrationNumber.errors.required">This field is
-                                    required.</div>
-                            </div>
-                        </span>
-                        </div>
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="POBox">P.O.Box</label>
-                            <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" formControlName="POBox" autocomplete="off"
-                                type="number" pInputText class="ui-inputtext ui-widget">
-                            <div *ngIf="submitted && f.POBox.errors" class="text-error"><br>
-                                <div *ngIf="l.POBox.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                        </div>
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="leaseStatusTown">Town</label>
-                            <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" formControlName="leaseStatusTown" autocomplete="off"
-                                type="text" pInputText class="ui-inputtext ui-widget">
-                            <div *ngIf="submitted && f.town.errors" class="text-error"><br>
-                                <div *ngIf="l.town.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                        </div>
-                    </div>
-
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="postalCode">Postal Code</label>
-                            <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" formControlName="postalCode" autocomplete="off"
-                                type="number" pInputText class="ui-inputtext ui-widget">
-                            <div *ngIf="submitted && f.postalCode.errors" class="text-error"><br>
-                                <div *ngIf="l.postalCode.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                        </div>
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="contactPerson">Contact Person</label>
-                            <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" formControlName="contactPerson" autocomplete="off"
-                                type="text" pInputText class="ui-inputtext ui-widget">
-                            <div *ngIf="submitted && f.contactPerson.errors" class="text-error">
-                                <br>
-                                <div *ngIf="l.contactPerson.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                        </div>
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="capacityofContactPerson">Capacity of Contact Person</label>
-                            <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" formControlName="capacityofContactPerson"
-                                autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
-                            <div *ngIf="submitted && f.capacityofContactPerson.errors" class="text-error"><br>
-                                <div *ngIf="l.capacityofContactPerson.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                        </div>
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="contactNumber">Contact Number</label>
-                            <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" formControlName="contactNumber" autocomplete="off"
-                                type="text" pInputText class="ui-inputtext ui-widget">
-                            <div *ngIf="submitted && f.contactNumber.errors" class="text-error">
-                                <br>
-                                <div *ngIf="l.contactNumber.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                        </div>
-                    </div>
-
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="escalation">Escalation %</label>
-                            <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" formControlName="escalation" autocomplete="off"
-                                type="number" pInputText class="ui-inputtext ui-widget">
-                            <div *ngIf="submitted && f.escalation.errors" class="text-error"><br>
-                                <div *ngIf="l.escalation.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                        </div>
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="occupationDate">Occupation Date</label>
-                            <p-calendar [ngClass]="{'disabled': isViewOnly}" class="ui-inputtext ui-widget" [disabled]="isViewOnly" formControlName="occupationDate" dateFormat="dd/mm/yy"
-                                showOtherMonths="true" showButtonBar="true"></p-calendar>
-                            <div *ngIf="submitted && f.occupationDate.errors" class="text-error">
-                                <br>
-                                <div *ngIf="l.occupationDate.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                        </div>
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="startingDate">Starting Date</label>
-                            <p-calendar [ngClass]="{'disabled': isViewOnly}" class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                formControlName="startingDate" dateFormat="dd/mm/yy" showOtherMonths="true"
-                                showButtonBar="true"></p-calendar>
-                            <div *ngIf="submitted && f.startingDate.errors" class="text-error"><br>
-                                <div *ngIf="l.startingDate.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                        </div>
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="terminationDate">Termination Date</label>
-                            <p-calendar [ngClass]="{'disabled': isViewOnly}" class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                formControlName="terminationDate" dateFormat="dd/mm/yy" showOtherMonths="true"
-                                showButtonBar="true"></p-calendar>
-                            <div *ngIf="submitted && f.terminationDate.errors" class="text-error">
-                                <br>
-                                <div *ngIf="l.terminationDate.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                        </div>
-                    </div>
-
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="rentalAmount">Rental Amount</label>
-                            <p-inputNumber class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                formControlName="rentalAmount" mode="currency" currency="ZAR" locale="en-ZA">
-                            </p-inputNumber>
-                            <div *ngIf="submitted && f.rentalAmount.errors" class="text-error"><br>
-                                <div *ngIf="l.rentalAmount.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                        </div>
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="otherCharges">Other charges</label>
-                            <p-inputNumber class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                formControlName="otherCharges" mode="currency" currency="ZAR" locale="en-ZA">
-                            </p-inputNumber>
-                            <div *ngIf="submitted && f.otherCharges.errors" class="text-error"><br>
-                                <div *ngIf="l.otherCharges.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                        </div>
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="leaseNumber">Lease Number</label>
-                            <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" formControlName="leaseNumber" autocomplete="off"
-                                type="number" pInputText class="ui-inputtext ui-widget">
-                            <div *ngIf="submitted && f.leaseNumber.errors" class="text-error"><br>
-                                <div *ngIf="l.leaseNumber.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                        </div>
-                        <div class="field grid col-3">
-                        <span class="p-input-icon-left p-1">
-                            <label for="vat">Vat Number</label>
-                            <p-dropdown class="ui-inputtext ui-widget" [disabled]="isViewOnly" inputId="vat" [style]="{'width':'570px'}"
-                                [options]="vats" formControlName="vat" (onChange)="setVat($event)"
-                                placeholder="Please Select" optionLabel="name"></p-dropdown>
-                            <div *ngIf="submitted && f.vat.errors" class="text-error"><br>
-                                <div *ngIf="l.vat.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                        </div>
-                    </div>
-
-                </p-fieldset>-->
+                
             </div>
             <p-footer>
-                <button style="float: left; margin-top: 15px;" type="button" pButton icon="pi pi-times"
+                <button style="float: left; margin-top: 15px;" type="button" icon="pi pi-times"
                     (click)="showDialog=false" label="Cancel" class="ui-button-secondary"></button>
-                <button style="float: right; margin-top: 15px" type="button" (click)="activeIndex = 1" pButton
+                <button style="float: right; margin-top: 15px" type="button" (click)="activeIndex = 1"
                     icon="pi pi-angle-right" label="Next"></button>
-                <button style="float: right; margin-top: 15px; margin-right: 5px;" type="button" printSectionId="printLand" [useExistingCss]="true" ngxPrint pButton
+                <button style="float: right; margin-top: 15px; margin-right: 5px;" type="button" printSectionId="printLand" [useExistingCss]="true" ngxPrint
                     icon="pi pi-print" label="Print"></button>                    
                 <button *ngIf="mode != 'View' && (currentUser.roleId == 3 || currentUser.roleId == 2)"
-                    style="float: right; margin-top: 15px;margin-right: 10px" type="submit" pButton icon="pi pi-check"
+                    style="float: right; margin-top: 15px;margin-right: 10px" type="submit" icon="pi pi-check"
                     label="Save"></button>
             </p-footer>
         </form>
@@ -869,7 +656,6 @@
                             </span>
                         </div>
 
-
                         <div class="field grid col-3">
                             <span class="p-input-icon-left p-1 w-full">
                                 <label for="class">Condition Rating</label>
@@ -944,7 +730,7 @@
                         </div>
 
                         <div class="field grid p-1 pl-2 col-3" style="float: right;">
-                            <button *ngIf="mode != 'View'" (click)="AddImprovement()" pButton pRipple type="button"
+                            <button *ngIf="mode != 'View'" (click)="AddImprovement()" pRipple type="button"
                                 icon="pi pi-plus" iconPos="left" class="p-button-rounded btn-add" label="Add"></button>
                         </div>
                     </div>
@@ -980,7 +766,7 @@
                                     <td style="text-align: center;">
                                         <p-splitButton label="More" *ngIf="mode != 'View'" [model]="buttonItems"
                                             (onDropdownClick)="selectImprovement(rowData)"
-                                            styleClass="p-button-secondary">
+                                            mat-button>
                                         </p-splitButton>
                                     </td>
                                 </tr>
@@ -996,14 +782,14 @@
 
                 </div>
                 <div>
-                    <button style="float: left; margin-top: 15px;" type="button" pButton icon="pi pi-angle-left"
+                    <button style="float: left; margin-top: 15px;" type="button" icon="pi pi-angle-left"
                         (click)="activeIndex = 0" label="Back" class="ui-button-secondary"></button>
-                    <button style="float: right; margin-top: 15px" type="button" pButton icon="pi pi-angle-right"
+                    <button style="float: right; margin-top: 15px" type="button" icon="pi pi-angle-right"
                         label="Next" (click)="activeIndex = 2"></button>
-                    <button style="float: right; margin-top: 15px; margin-right: 5px;" type="button" printSectionId="printImprovement" [useExistingCss]="true" ngxPrint pButton
+                    <button style="float: right; margin-top: 15px; margin-right: 5px;" type="button" printSectionId="printImprovement" [useExistingCss]="true" ngxPrint
                         icon="pi pi-print" label="Print"></button>  
                     <button *ngIf="mode != 'View' && (currentUser.roleId == 3 || currentUser.roleId == 2)"
-                        style="float: right; margin-top: 15px;margin-right: 10px" type="submit" pButton
+                        style="float: right; margin-top: 15px;margin-right: 10px" type="submit"
                         icon="pi pi-check" label="Save"></button>
                 </div>
             </p-footer>
@@ -1242,18 +1028,18 @@
                 </p-fieldset>
             </div>
             <p-footer>
-                <button style="float: left; margin-top: 15px;" type="button" pButton icon="pi pi-angle-left"
+                <button style="float: left; margin-top: 15px;" type="button" icon="pi pi-angle-left"
                     (click)="activeIndex = 1" label="Back" class="ui-button-secondary"></button>
                 <button *ngIf="mode != 'View' && (currentUser.roleId == 3 || currentUser.roleId == 2)"
-                    style="float: right; margin-top: 15px" type="button" (click)="onSubmit()" pButton
+                    style="float: right; margin-top: 15px" type="button" (click)="onSubmit()"
                     icon="pi pi-angle-right" label="Submit" (click)="activeIndex = 2"></button>
                 <button *ngIf="mode != 'View' && currentUser.roleId == 4" style="float: right; margin-top: 15px"
-                    type="button" (click)="onSubmit()" pButton icon="pi pi-angle-right" label="Sign Off"
+                    type="button" (click)="onSubmit()" icon="pi pi-angle-right" label="Sign Off"
                     (click)="activeIndex = 2"></button>
-                <button style="float: right; margin-top: 15px; margin-right: 5px;" type="button" printSectionId="printFinance" [useExistingCss]="true" ngxPrint pButton
+                <button style="float: right; margin-top: 15px; margin-right: 5px;" type="button" printSectionId="printFinance" [useExistingCss]="true" ngxPrint
                     icon="pi pi-print" label="Print"></button>  
                 <button *ngIf="mode != 'View' && currentUser.roleId == 5" style="float: right; margin-top: 15px"
-                    type="button" (click)="onSubmit()" pButton icon="pi pi-angle-right" label="Approve"
+                    type="button" (click)="onSubmit()" icon="pi pi-angle-right" label="Approve"
                     (click)="activeIndex = 2"></button>
             </p-footer>
         </form>
@@ -1263,3 +1049,5 @@
 
     </p-tabPanel>
 </p-tabView>
+
+

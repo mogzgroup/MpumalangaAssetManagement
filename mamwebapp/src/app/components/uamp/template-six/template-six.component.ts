@@ -249,3 +249,4 @@ export class TemplateSixComponent implements OnInit {
     this.router.navigate(['uamp']);
   }
 }
+

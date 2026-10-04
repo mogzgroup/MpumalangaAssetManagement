@@ -8,9 +8,7 @@
             [rows]="5" [showCurrentPageReport]="true" responsiveLayout="scroll" [rowsPerPageOptions]="[5,10,15]">
             <ng-template pTemplate="caption">
                 <div class="p-d-flex right p-jc-between text-right">
-                    <p-button pTooltip="Add Surrender Plan" type="button" icon="pi pi-plus"
-                        styleClass="p-button-text"
-                        (click)="displayDialog = true; dialogHeader = 'Add Surrender Plan'"></p-button>
+                    <button mat-button pTooltip="Add Surrender Plan" type="button" (click)="displayDialog = true; dialogHeader = 'Add Surrender Plan'"><span class="pi pi-plus"></span>Add Surrender Plan</button>
                 </div>
             </ng-template>
                 <ng-template pTemplate="header">
@@ -108,12 +106,9 @@
     </p-body>
     <p-footer>
         <div class="p-grid p-nogutter p-justify-between">
-            <p-button [style]="{'float':'left'}" styleClass="p-button-secondary" label="Cancel" (onClick)="displayDialog = false"
-                icon="pi pi-times"></p-button>
-            <p-button *ngIf="!isEdit" [style]="{'float':'right'}" label="Add" (onClick)="addSurrenderPlan()"
-                icon="pi pi-check" iconPos="right"></p-button>
-            <p-button *ngIf="isEdit" [style]="{'float':'right'}" label="Update" (onClick)="updateOperationPlan()"
-                icon="pi pi-check" iconPos="right"></p-button>
+            <button mat-button [style]="{'float':'left'}" mat-button (click)="displayDialog = false" >Cancel</button>
+            <button mat-button *ngIf="!isEdit" [style]="{'float':'right'}" (click)="addSurrenderPlan()" >Add</button>
+            <button mat-button *ngIf="isEdit" [style]="{'float':'right'}" (click)="updateOperationPlan()" >Update</button>
         </div>
     </p-footer>
 </p-dialog>
@@ -122,11 +117,12 @@
 
 <div class="uamp-footer">
     <div class="p-grid p-nogutter p-justify-between">
-        <p-button styleClass="p-button-secondary" label="Back" (onClick)="back()" icon="pi pi-angle-left">
-        </p-button>
-        <p-button [style]="{'float':'right'}" label="Save" class="ml-1" (onClick)="save()" icon="pi pi-check"
-        iconPos="right"></p-button>
-        <p-button styleClass="btn-next" label="Next" (onClick)="nextPage()" icon="pi pi-angle-right"
-            iconPos="right"></p-button>
+        <button mat-button (click)="back()"><span class="pi pi-angle-left"></span>Back</button>
+        
+        <button mat-button [style]="{'float':'right'}" (click)="save()" class="ml-1" >Save</button>
+        <button mat-button styleClass="btn-next" (click)="nextPage()" >Next</button>
     </div>
 </div>
+
+
+

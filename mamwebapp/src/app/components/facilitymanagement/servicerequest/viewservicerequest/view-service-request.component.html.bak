@@ -1,0 +1,220 @@
+<p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+
+<div class="text-center" style="color: red;" *ngIf="error">
+    <h5 class="mt-20">
+        <li class="pi pi-exclamation-triangle" style="color: red;font-size: xx-large;"></li><span> An error has
+            occured...</span>
+    </h5>
+    <h6 class="color-aqua">{{errorMsg}}</h6>
+</div>
+<div>
+
+    <div class="p-fluid p-grid p-formgrid">
+        <div class="formgrid grid">
+            <div class="field grid col-4">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Facility Name</label>
+                    <div class="ui-inputtext ui-widget no-border">
+                        {{selectedServiceRequest.facilityName}}
+                    </div>
+                </span>
+            </div>
+            <div class="field grid col-4">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Date Logged</label>
+                    <div class="ui-inputtext ui-widget no-border">
+                        {{selectedServiceRequest.createdDate | date:'d MMMM yyyy'}}
+                    </div>
+                </span>
+            </div>
+            <div class="field grid col-4">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Supplier <p-checkbox [binary]="true" [(ngModel)]="supplierCheckbox"
+                            inputId="checkbox1" (onChange)="onSupplierCheckboxChange($event)"></p-checkbox></label>
+                    <p-dropdown class="ui-inputtext ui-widget" [ngClass]="{'disabled': !showSupplier}"
+                        [disabled]="!showSupplier" [style]="{'width':'470px'}" inputId="supplier" [options]="suppliers"
+                        placeholder="Please Select" [(ngModel)]="supplier" (onChange)="onSupplierChange($event);"
+                        optionLabel="name">
+                    </p-dropdown>
+                    <div *ngIf="submitted && f.supplier.errors" class="text-error"><br>
+                        <div *ngIf="s.supplier.errors.required">This field is required.</div>
+                    </div>
+                </span>
+            </div>
+        </div>
+        <div class="formgrid grid">
+            <div class="field grid col-4">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Exact Location of Issue</label>
+                    <div class="ui-inputtext ui-widget no-border">
+                        {{selectedServiceRequest.propertyDescription}}
+                    </div>
+                </span>
+            </div>
+            <div class="field grid col-4">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Name & Surname</label>
+                    <div class="ui-inputtext ui-widget no-border">
+                        {{selectedServiceRequest.contactName}}
+                    </div>
+                </span>
+            </div>
+
+            <div class="field grid col-4">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Project <p-checkbox [binary]="true" [(ngModel)]="projectCheckbox"
+                            inputId="checkbox1" (onChange)="onProjectCheckboxChange($event)"></p-checkbox></label>
+                    <p-dropdown class="ui-inputtext ui-widget" [ngClass]="{'disabled': !showProject}"
+                        [disabled]="!showProject" [style]="{'width':'470px'}" inputId="project" [options]="projects"
+                        placeholder="Please Select" [(ngModel)]="project" (onChange)="onProjectChange($event);"
+                        optionLabel="name">
+                    </p-dropdown>
+                    <div *ngIf="submitted && f.supplier.errors" class="text-error"><br>
+                        <div *ngIf="s.supplier.errors.required">This field is required.</div>
+                    </div>
+                </span>
+            </div>
+
+        </div>
+        <div class="formgrid grid">
+            <div class="field grid col-4">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Description of the issue</label>
+                    <div class="ui-inputtext ui-widget no-border">
+                        {{selectedServiceRequest.incidentDescription}}
+                    </div>
+                </span>
+            </div>
+            <div class="field grid col-4">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Contact Number</label>
+                    <div class="ui-inputtext ui-widget no-border">
+                        {{selectedServiceRequest.contactNumber}}
+                    </div>
+                </span>
+            </div>
+        </div>
+        <div class="formgrid grid">
+            <div class="field grid col-4">
+                <div class="field grid col-12">
+                    <div class="field grid col-8">
+                        <span class="p-input-icon-left p-1">
+                            <label for="float-input">Note</label>
+                            <input [(ngModel)]="note" type="text" autocomplete="off" type="text" pInputText
+                                class="ui-inputtext ui-widget">
+                            <div *ngIf="submitted && f.contactNumber.errors" class="text-error"><br>
+                                <div *ngIf="f.contactNumber.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="field grid col-4">
+                        <button type="button" style="height: fit-content;bottom: -19px; width: fit-content;"
+                            (click)="onAddNote()" pButton label="Add"></button>
+                    </div>
+                </div>
+                <div class="field grid col-12">
+                    <ul style="list-style: none;padding-left: 1px;">
+                        <li *ngFor="let note of selectedServiceRequest.faultNotes; let i = index">
+                            <label>
+                                <p> {{note.createdDate | date :'d MMMM yyyy h:mm a'}}</p>
+                                <span class="details"> {{note.comment}}</span>
+                            </label>
+                        </li>
+                        <br />
+                    </ul>
+                </div>
+            </div>
+            <div class="field grid col-2">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Attachments</label>
+                    <div class="ui-inputtext ui-widget no-border">
+                        <ul style="list-style: none; margin-top: auto;padding-left: 1px;">
+                            <li *ngFor="let file of attachments; let i = index">
+                                <p><a target="_blank" href="{{ file.url }}">{{ file.name }}</a></p>
+                            </li>
+                            <br />
+                        </ul>
+                    </div>
+                </span>
+            </div>
+
+            <div class="field grid col-6" style="border: darkgray solid 1px; height: fit-content;">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Completion certificate</label>
+                    <div class="ui-inputtext ui-widget no-border">
+                        <ul style="list-style: none; width: 100%; padding-left: 10px;margin-top: auto;">
+                            <li style="height: 25px;margin-top: 5px;">
+                                <div class="formgrid grid">
+                                    <div class="field grid col-10">
+                                        <span>Completion certificate </span>
+                                    </div>
+                                    <div class="field grid col-2">
+                                        <p-checkbox [binary]="true" inputId="checkbox1"
+                                            [(ngModel)]="selectedServiceRequest.hasCompletionCertificate"
+                                            (onChange)="onCompletionCertificateChange($event)"
+                                            (value)="ticketHasCompletionCertificate"></p-checkbox>
+                                    </div>
+                                </div>
+                            </li>
+                            <li *ngIf="selectedServiceRequest.hasCompletionCertificate">
+                                <p-fileUpload [showUploadButton]="false" styleClass="file-upload"
+                                    [showCancelButton]="false" (onRemove)="onRemoveCompletionCertificate($event)"
+                                    accept="image/*,application/pdf,application/msword,
+  application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                    (onSelect)="onChooseCompletionCertificate($event.files)">
+                                    <ng-template pTemplate="content">
+                                        <p *ngIf="showCompletionCertificateUrl"><a target="_blank"
+                                                href="{{completionCertificateUrl()}}">View completion
+                                                certificate</a></p>
+                                    </ng-template>
+
+                                </p-fileUpload>
+                            </li> <br />
+                            <li style="height: 25px;">
+                                <div class="formgrid grid">
+                                    <div class="field grid col-10">
+                                        <span>Contract invoice</span>
+                                    </div>
+                                    <div class="field grid col-2">
+                                        <p-checkbox [binary]="true" inputId="checkbox1"
+                                            [(ngModel)]="selectedServiceRequest.hasContractInvoice"
+                                            (onChange)="onContractInvoiceChange($event)"
+                                            [value]="ticketHasContractInvoice"></p-checkbox>
+                                    </div>
+                                </div>
+                            </li>
+                            <li *ngIf="selectedServiceRequest.hasContractInvoice">
+                                <p-fileUpload [showUploadButton]="false" styleClass="file-upload"
+                                    [showCancelButton]="false" (onRemove)="onRemoveContractInvoice($event)" accept="image/*,application/pdf,application/msword,
+  application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                    (onSelect)="onChooseContractInvoice($event.files)">
+                                    <ng-template pTemplate="content">
+                                        <p *ngIf="showContractInvoiceUrl"><a target="_blank"
+                                                href="{{contractInvoiceUrl()}}">View contract invoice</a></p>
+                                    </ng-template>
+                                </p-fileUpload>
+
+                            </li>
+                        </ul>
+                    </div>
+                </span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<p-footer>
+    <div>
+        <button *ngIf="isUpdated" class="p-button-secondary" style="right: 180px;width: fit-content;bottom: 35px;position: absolute;
+                    height: fit-content;" type="button" (click)="onCancel();" pButton label="Close"></button>
+
+        <button *ngIf="!showCloseTicket() && selectedServiceRequest.status != 'Close'" style="right: 35px;width: fit-content;float: right;
+                    height: fit-content;" type="button" (click)="onSubmit(); activeIndex = 2" pButton
+            label="Submit"></button>
+
+        <button *ngIf="showCloseTicket() && selectedServiceRequest.status != 'Close'"
+            style="right: 35px; float: right; width: fit-content; height: fit-content;" type="button"
+            (click)="onCloseicket()" pButton label="Close This Ticket"></button>
+    </div>
+</p-footer>

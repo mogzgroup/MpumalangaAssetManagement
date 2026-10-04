@@ -1,0 +1,146 @@
+<p-breadcrumb [model]="items" [home]="home"></p-breadcrumb>
+<br>
+<div class="p-fluid p-grid p-formgrid">
+    <form>
+        <div class="formgrid grid">
+            <div class="field grid col-10">
+                <div style="width:100%;height:400px">
+                    <google-map height="430px" width="100%" [zoom]="zoom" [center]="center" [options]="options">
+                        <map-marker (mapClick)="openInfo(marker)" *ngFor="let marker of markers"
+                            [position]="marker.position" [label]="marker.label" [title]="marker.title"
+                            [options]="marker.options">
+                        </map-marker>
+                        <map-info-window>{{ dialogHeader }}</map-info-window>
+                    </google-map>
+                </div>
+
+            </div>
+            <div class="field grid col-2">
+                <div class="db-card" style="color: #fff;">
+                    <h4>
+                        Non Residential Buildings
+                    </h4>
+                    <p *ngIf="!loadingWedges">
+                        {{nonResidentialBuildings.total}}
+                    </p>
+                </div>
+                <div class="db-card" style="margin-top: 150px;color: #fff;">
+                    <h3>
+                        Dwellings
+                    </h3>
+                    <p *ngIf="!loadingWedges">
+                        {{dwellings.total}}
+                    </p>
+                </div>
+                <div class="db-card" style="margin-top: 300px;color: #fff;">
+                    <h3>
+                        Land
+                    </h3>
+                    <p *ngIf="!loadingWedges">
+                        {{land.total}}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<br>
+<br>
+<div class="ui-g-12 ui-lg-12">
+    <div class="ui-g-12 ui-lg-12" *ngIf="facilityType != undefined">
+        <p-table [value]="facilityType.facilityZonings">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Zoning</th>
+                    <th>Signed Off</th>
+                    <th>Total</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-product>
+                <tr>
+                    <td class="capitalize">{{product.name}}</td>
+                    <td>{{product.signedOff}}</td>
+                    <td>{{product.total}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!--<div class="ui-g-12 ui-lg-6 stats">
+    <p-panel header="Statistics" class="ng-tns-c2-10">
+        <div class="ng-tns-c2-10 ui-panel ui-widget ui-widget-content ui-corner-all" id="ui-panel-1">
+            <div class="ng-tns-c2-10 titlebar ui-widget-header ui-helper-clearfix ui-corner-all ng-star-inserted">
+                <span class="ui-panel-title ng-tns-c2-10 ng-star-inserted" id="ui-panel-1_header">Total Facilities </span>
+              
+            </div>
+            <div class="ui-panel-content-wrapper ng-trigger ng-trigger-panelContent" role="region"
+                id="ui-panel-1-content" aria-hidden="false" aria-labelledby="ui-panel-1-label" style="opacity: 1;">
+                <div class="content ui-widget-content">
+                    <div class="knob-1 knob">
+                        <p-chart type="doughnut" [data]="data" [responsive]="true"></p-chart>
+                    </div>
+                 
+                </div>
+            </div>
+        </div>
+    </p-panel>
+</div>
+
+<div class="ui-g-12 ui-lg-6 stats">
+    <p-panel header="Statistics" class="ng-tns-c2-10">
+        <div class="ng-tns-c2-10 ui-panel ui-widget ui-widget-content ui-corner-all" id="ui-panel-1">
+            <div class="ng-tns-c2-10 titlebar ui-widget-header ui-helper-clearfix ui-corner-all ng-star-inserted">
+               <span class="ui-panel-title ng-tns-c2-10 ng-star-inserted" id="ui-panel-1_header">2019 Immovable Tangible Capital Assets</span>
+              
+            </div>
+            <div class="dashboard-notification-container">
+                <p-chart type="bar" [data]="lineChartdata" [responsive]="true"></p-chart>
+            </div>
+        </div>
+    </p-panel>
+</div>
+
+<div class="ui-g-12 ui-lg-12">
+    <p-table [value]="facilityType.facilityZonings">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Property Type</th>
+                <th>Signed Off</th>
+                <th>Total</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+            <tr>
+                <td class="capitalize">{{product.name}}</td>
+                <td>{{product.signedOff}}</td>
+                <td>{{product.total}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>-->
+
+<div *ngIf="showDialog" class="dialogBackgroud"></div>
+<p-dialog [(visible)]="showDialog" *ngIf="showDialog" [style]="{width: '90vw'}" [baseZIndex]="10000">
+    <p-header> {{ dialogHeader }} </p-header>
+    <app-addassetregister [selectedAsset]="selectedAsset" *ngIf="showDialog"></app-addassetregister>
+</p-dialog>
+
+
+<html>
+
+<head>
+</head>
+
+<!--<body>
+    <script>
+        function getMessageText() {
+            return $('message').text;
+        }
+
+        document.body.innerHTML = '<div id="message">The message</div>';
+        console.log(getMessageText());
+    </script>
+
+</body>
+
+</html>-->

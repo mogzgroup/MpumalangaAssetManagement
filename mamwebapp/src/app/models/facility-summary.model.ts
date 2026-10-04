@@ -9,3 +9,4 @@ export class FacilitySummary {
     closingBalance: string;
     facilityType: string;
 }
+

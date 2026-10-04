@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { Camp } from 'src/app/models/camp.model';
 import { environment } from '../../../environments/environment';
 
-
 @Injectable({
     providedIn: 'root'
   })
@@ -31,3 +30,4 @@ import { environment } from '../../../environments/environment';
         return this.http.get<Camp>(`${environment.apiUrl}/api/camp/getCampDetails/${id}`);
       }
 }
+

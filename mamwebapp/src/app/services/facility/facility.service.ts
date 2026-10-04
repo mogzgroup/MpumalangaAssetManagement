@@ -9,7 +9,6 @@ import { MapCoordinate } from 'src/app/models/map-oordinate.model';
 import { Facility } from 'src/app/models/facility.model';
 import { Observable } from 'rxjs';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -78,6 +77,5 @@ export class FacilityService {
     return this.http.get<any[]>(`${environment.apiUrl}/api/facility/getFiles/`+fileReference);
   }
 
-
-
 }
+

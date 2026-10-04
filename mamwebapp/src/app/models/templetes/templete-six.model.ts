@@ -4,3 +4,4 @@ export class TempleteSix {
     id:Number = 0;
     surrenderPlans: Array<SurrenderPlan>;
 }
+

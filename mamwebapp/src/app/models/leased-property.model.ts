@@ -14,3 +14,4 @@ export class LeasedProperty {
     landUseManagementDetail: LandUseManagementDetail;
     leaseStatus: LeaseStatus;
 }
+

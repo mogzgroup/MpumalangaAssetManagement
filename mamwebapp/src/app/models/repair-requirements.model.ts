@@ -10,3 +10,4 @@ export class RepairRequirement {
     expenditureEstimateYear2: string;
     expenditureEstimateYear3: string;
 }
+

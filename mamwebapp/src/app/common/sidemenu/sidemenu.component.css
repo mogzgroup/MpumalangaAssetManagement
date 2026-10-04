@@ -162,8 +162,8 @@
     box-sizing: border-box;
 }
 .ripplelink {
-    /* display: block; */
-    /* color: #fff; */
+    
+    
     text-decoration: none;
     position: relative;
     overflow: hidden;
@@ -182,3 +182,4 @@
     padding-left: 15px;
     color: #FFF;
 }
+

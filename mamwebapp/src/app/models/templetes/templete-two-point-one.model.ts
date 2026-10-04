@@ -4,3 +4,4 @@ export class TempleteTwoPointOne {
     id:Number = 0;
     properties: Array<Property>;
 }
+

@@ -187,7 +187,6 @@ export class AssetregisterComponent implements OnInit  {
 
   conditionAssessment(){
   this.showConditionAssessment = true
-    //this.router.navigate(['conditionAssessment']);
     this.selectedAsset = this.facility
   }
 
@@ -197,3 +196,4 @@ export class AssetregisterComponent implements OnInit  {
   }
 
 }
+

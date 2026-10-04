@@ -394,3 +394,4 @@ export class AddEditProjectComponent implements OnInit {
     this.messageService.add({ severity, summary, detail });
   }
 }
+

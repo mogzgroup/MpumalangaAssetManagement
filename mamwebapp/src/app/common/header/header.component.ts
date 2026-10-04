@@ -8,7 +8,6 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/models/user.model';
 
-
 @Component({
   standalone: false,
   selector: 'app-header',
@@ -113,5 +112,5 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     this.snackBar.open(detail, title, { duration: 5000 });
   }
 
-
 }
+

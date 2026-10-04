@@ -293,3 +293,4 @@ export class TemplateTwoTwoComponent implements OnInit {
     property.conditionRating = e.value.factor;
   }
 }
+

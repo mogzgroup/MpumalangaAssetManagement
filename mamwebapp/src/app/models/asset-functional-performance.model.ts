@@ -12,3 +12,4 @@ export class AssetFunctionalPerformance {
     operatingPerformanceIndex: string;
     functionalPerformanceRating: string;
 }
+

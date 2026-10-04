@@ -1,0 +1,147 @@
+<div class="stepsdemo-content mt-5">
+    <p-card>
+        <ng-template pTemplate="title">
+           
+        </ng-template>
+        <ng-template pTemplate="subtitle">
+            Summary of accommodation requirements per budget programme
+        </ng-template>
+        <ng-template pTemplate="content">
+            <div class="formgrid grid">
+                <div class="field col-6">
+                    <span class="p-float-label p-input-icon-left w-full">
+                        <textarea [ngModelOptions]="{standalone: true}" (blur)="updateUamp()"
+                            [(ngModel)]="uamp.templeteOne.optimalSupportingAccommodation.mission" autocomplete="off"
+                            type="text" pInputText class="ui-inputtext ui-widget"></textarea>
+                        <label for="float-input">Mission</label>
+                        <small *ngIf="submitted && o.mission.errors && o.mission.errors.required" class="p-error">This
+                            field is required.</small>
+                    </span>
+                </div>
+                <div class="field col-6">
+                    <span class="p-float-label p-input-icon-left w-full">
+                        <textarea [ngModelOptions]="{standalone: true}" (blur)="updateUamp()"
+                            [(ngModel)]="uamp.templeteOne.optimalSupportingAccommodation.supportingAccommodation"
+                            autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget"></textarea>
+                        <label for="float-input">Optimal supporting accommodation</label>
+                        <small
+                            *ngIf="submitted && o.optimalSupportingAccommodation.errors && o.optimalSupportingAccommodation.errors.required"
+                            class="p-error">This field is required.</small>
+                        <span style="font-size: xx-small;">(What are the optimal assets required to support this
+                            mission)</span>
+                    </span>
+                </div>
+                <!--<div class="field col-12 md-12"> 
+                    <button *ngIf="!isEdit" pButton title="Add Programme" label="Add Programme" type="button"
+                         icon="pi pi-plus" style="float: right;width: auto;"></button>
+                    <button *ngIf="isEdit" pButton title="Update Programme" label="Update Programme" type="button"
+                        (click)="onUpdate()" icon="pi pi-pencil" style="float: right;width: auto;"></button>
+                </div>-->
+            </div>
+
+            <div class="mt-5">
+                <p-table [value]="programmes" styleClass="p-datatable-striped" [responsive]="true" [paginator]="true"
+                    [rows]="5" [showCurrentPageReport]="true" responsiveLayout="scroll"
+                    [rowsPerPageOptions]="[5,10,15]">
+                    <ng-template pTemplate="caption">
+                        <div class="p-d-flex right p-jc-between text-right">
+                            <p-button pTooltip="Add Programme" type="button" icon="pi pi-plus"
+                                styleClass="p-button-text"
+                                (click)="displayDialog = true; dialogHeader = 'Add Programme'"></p-button>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Corporate Objectives</th>
+                            <th>Outcomes/ Planned Outputs</th>
+                            <th>Optimal Supporting Accommodation Solution</th>
+                            <th>Rationale for Chosen Solution</th>
+                            <th style="width: 200px;"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-programme>
+                        <tr>
+                            <td>{{programme.corporateObjective}}</td>
+                            <td>{{programme.outcomes}}</td>
+                            <td>{{programme.optimalSupportingAccommodationSolution}}</td>
+                            <td>{{programme.rationaleChosenSolution}}</td>
+                            <td style="text-align: center;" *ngIf="programmes.length > 0">
+                                <p-splitButton label="More" *ngIf="mode != 'View'" [model]="buttonItems"
+                                    (onDropdownClick)="selectProgramme(programme)" styleClass="p-button-secondary">
+                                </p-splitButton>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </ng-template>
+    </p-card>
+</div>
+
+<div *ngIf="displayDialog" class="dialogBackgroud"></div>
+<p-dialog header="{{dialogHeader}}" [(visible)]="displayDialog">
+    <p-body>
+        <form [formGroup]="programmeForm">
+            <div class="formgrid grid">
+                <div class="field col-6">
+                    <label for="corporateObjective">Corporate Objectives</label>
+                    <textarea formControlName="corporateObjective" autocomplete="off" type="text" pInputTextarea
+                        class="ui-inputtext ui-widget"></textarea>                    
+                    <div *ngIf="submitted && p.corporateObjective.errors" class="text-error"><br>
+                        <div *ngIf="p.corporateObjective.errors.required">This field is required.</div>
+                    </div>
+                </div>
+                <div class="field col-6">
+                    <label for="outcomes">Outcomes/ Planned Outputs</label>
+                    <textarea formControlName="outcomes" type="text" pInputText
+                        class="ui-inputtext ui-widget"></textarea>               
+                    <div *ngIf="submitted && p.outcomes.errors" class="text-error"><br>
+                        <div *ngIf="p.outcomes.errors.required">This field is required.</div>
+                    </div>
+                </div>
+                <div class="field col-6">
+                    <label for="optimalSupportingAccommodationSolution">Optimal Supporting Accommodation
+                        Solution</label>
+                    <textarea formControlName="optimalSupportingAccommodationSolution" autocomplete="off" type="text"
+                        pInputText class="ui-inputtext ui-widget"></textarea>
+                    <div *ngIf="submitted && p.optimalSupportingAccommodationSolution.errors" class="text-error"><br>
+                        <div *ngIf="p.optimalSupportingAccommodationSolution.errors.required">This field is required.
+                        </div>
+                    </div>
+                    <span style="font-size: xx-small;">(Give a brief summary of the accommodation requirements, current
+                        usage and solutions for Head Office& Regions / Districts)</span>
+                </div>
+                <div class="field col-6 md-6">
+                    <label for="rationaleChosenSolution">Rationale for Chosen Solution</label>
+                    <textarea formControlName="rationaleChosenSolution" autocomplete="off" type="text" pInputText
+                        class="ui-inputtext ui-widget"></textarea>
+                    <div *ngIf="submitted && p.rationaleChosenSolution.errors" class="text-error"><br>
+                        <div *ngIf="p.rationaleChosenSolution.errors.required">This field is required.</div>
+                    </div>
+                    <span style="font-size: xx-small;">Provide a brief motivation for your solutions</span>
+                </div>
+            </div>
+        </form>
+    </p-body>
+    <p-footer>
+        <div class="p-grid p-nogutter p-justify-between">
+            <p-button [style]="{'float':'left'}" styleClass="p-button-secondary" label="Cancel" (onClick)="displayDialog = false"
+                icon="pi pi-times"></p-button>
+            <p-button *ngIf="!isEdit" [style]="{'float':'right'}" label="Add" (onClick)="addProgram()"
+                icon="pi pi-angle-right" iconPos="right"></p-button>
+            <p-button *ngIf="isEdit" [style]="{'float':'right'}" label="Update" (onClick)="onUpdate()"
+                icon="pi pi-check" iconPos="right"></p-button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<div class="uamp-footer">
+    <div class="p-grid p-nogutter p-justify-between">
+        <p-button styleClass="p-button-secondary" label="Cancel" (onClick)="cancel()" icon="pi pi-angle-left">
+        </p-button>
+        <p-button [style]="{'float':'right'}" label="Save" class="ml-1" (onClick)="save()" icon="pi pi-check"
+        iconPos="right"></p-button>
+        <p-button styleClass="btn-next" label="Next" (onClick)="nextPage()" icon="pi pi-angle-right"
+            iconPos="right"></p-button>
+    </div>
+</div>

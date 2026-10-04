@@ -1,0 +1,139 @@
+<nav class="page-breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/dashboard">Dashboard</a><mat-icon aria-hidden="true">chevron_right</mat-icon><span>Users</span>
+</nav>
+<div class="text-center" style="color: red;" *ngIf="error">
+    <h5 class="mt-20">
+        <li class="pi pi-exclamation-triangle" style="color: red;font-size: xx-large;"></li><span> An error has
+            occured...</span>
+    </h5>
+    <h6 class="color-aqua">{{errorMsg}}</h6>
+</div>
+
+<div class="row">
+    <button mat-flat-button color="primary" (click)="showDialog=true;header='Add User'; addNewUser()" type="button">
+        <mat-icon>person_add</mat-icon> Add User
+    </button>
+</div>
+<div class="row">
+    <mat-form-field appearance="outline" class="user-filter">
+        <mat-label>Filter users</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput (input)="applyFilter($event.target.value)" placeholder="Name, email, role, or department">
+    </mat-form-field>
+    <div class="user-table-wrap" *ngIf="!loading">
+        <table mat-table [dataSource]="dataSource" matSort class="user-table">
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+                <td mat-cell *matCellDef="let user">{{user.name}}</td>
+            </ng-container>
+            <ng-container matColumnDef="surname">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Surname</th>
+                <td mat-cell *matCellDef="let user">{{user.surname}}</td>
+            </ng-container>
+            <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+                <td mat-cell *matCellDef="let user">{{user.email}}</td>
+            </ng-container>
+            <ng-container matColumnDef="createdDate">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Created Date</th>
+                <td mat-cell *matCellDef="let user">{{user.createdDate | date:'yyyy MMMM d'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="role">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Role</th>
+                <td mat-cell *matCellDef="let user">{{user.role?.name}}</td>
+            </ng-container>
+            <ng-container matColumnDef="department">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Department</th>
+                <td mat-cell *matCellDef="let user">{{user.department}}</td>
+            </ng-container>
+            <ng-container matColumnDef="reset">
+                <th mat-header-cell *matHeaderCellDef>Reset Password</th>
+                <td mat-cell *matCellDef="let user">
+                    <button mat-button color="primary" (click)="confirmResetPassword(user)">Reset</button>
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let user; let i = index">
+                    <button mat-icon-button matTooltip="Edit user" (click)="selectUser(user, i); update()">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="Delete user" (click)="selectUser(user, i); confirmDelete()">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            <tr class="mat-row" *matNoDataRow><td class="mat-cell" colspan="8">No users match this filter.</td></tr>
+        </table>
+        <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+    </div>
+</div>
+
+<div *ngIf="showResetPasswordComfirmation" class="dialogBackgroud"></div>
+<mat-card *ngIf="showResetPasswordComfirmation" class="material-dialog mat-elevation-z12" role="dialog" aria-modal="true" aria-labelledby="reset-user-title">
+    <h2 mat-card-title id="reset-user-title">Reset Password</h2>
+    <p>Are you sure that you want to reset this user's password?</p>
+    <mat-card-actions align="end">
+        <button mat-button (click)="showResetPasswordComfirmation=false">Cancel</button>
+        <button mat-flat-button color="primary" (click)="showResetPasswordComfirmation=false;resetPassword()">Reset</button>
+    </mat-card-actions>
+</mat-card>
+
+<div *ngIf="showComfirmaDelete" class="dialogBackgroud"></div>
+<mat-card *ngIf="showComfirmaDelete" class="material-dialog mat-elevation-z12" role="dialog" aria-modal="true" aria-labelledby="delete-user-title">
+    <h2 mat-card-title id="delete-user-title">Delete User</h2>
+    <p>Are you sure that you want to delete this user?</p>
+    <mat-card-actions align="end">
+        <button mat-button (click)="showComfirmaDelete=false">Cancel</button>
+        <button mat-flat-button color="warn" (click)="showComfirmaDelete=false;deleteUser()">Delete</button>
+    </mat-card-actions>
+</mat-card>
+
+<div *ngIf="showDialog" class="dialogBackgroud"></div>
+<mat-card *ngIf="showDialog" class="material-dialog material-user-dialog mat-elevation-z12" role="dialog" aria-modal="true" aria-labelledby="user-dialog-title">
+    <h2 mat-card-title id="user-dialog-title">{{header}}</h2>
+    <form [formGroup]="addUserForm" (ngSubmit)="onSubmit()">
+        <div class="material-user-form">
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Name</mat-label>
+                <input matInput formControlName="name" autocomplete="given-name" required>
+                <mat-error *ngIf="submitted && f.name.errors?.required">This field is required.</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Surname</mat-label>
+                <input matInput formControlName="surname" autocomplete="family-name" required>
+                <mat-error *ngIf="submitted && f.surname.errors?.required">This field is required.</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Email Address</mat-label>
+                <input matInput formControlName="email" type="email" autocomplete="email" required>
+                <mat-error *ngIf="submitted && f.email.errors?.required">This field is required.</mat-error>
+                <mat-error *ngIf="submitted && f.email.errors?.email">Please enter a valid email address.</mat-error>
+            </mat-form-field>
+            <p *ngIf="emailExsist" class="text-error" role="alert">This email address is already in use.</p>
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Role</mat-label>
+                <mat-select formControlName="role" (selectionChange)="setRole($event.value)" required>
+                    <mat-option *ngFor="let role of roles" [value]="role">{{role.name}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="submitted && f.role.errors?.required">This field is required.</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="w-full" *ngIf="selectedRole == 7">
+                <mat-label>Department</mat-label>
+                <mat-select formControlName="department">
+                    <mat-option *ngFor="let department of departments" [value]="department">{{department.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <p *ngIf="newUserError" class="text-error" role="alert">{{newUserError}}</p>
+        </div>
+        <mat-card-actions align="end">
+            <button mat-button type="button" (click)="showDialog=false">Cancel</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="isAdding">
+                <mat-spinner *ngIf="isAdding" diameter="18" aria-label="Saving user"></mat-spinner>
+                <span *ngIf="!isAdding">{{header == 'Add User' ? 'Submit' : 'Update'}}</span>
+            </button>
+        </mat-card-actions>
+    </form>
+</mat-card>

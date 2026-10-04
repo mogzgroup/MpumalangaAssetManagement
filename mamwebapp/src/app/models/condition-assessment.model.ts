@@ -19,3 +19,4 @@ export class Rate {
     value: number;
     name: string;
 }
+

@@ -42,8 +42,6 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { PanelModule } from 'primeng/panel';
 import { ConfirmationService } from 'primeng/api';
 
-//import { NgxQRCodeModule } from '@techiediaries/ngx-qrcode';
-
 //primeng
 import { InputMaskModule } from 'primeng/inputmask';
 import { MenuModule } from 'primeng/menu';
@@ -96,7 +94,6 @@ import { LeaseManagementComponent } from './components/leasemanagement/lease-man
 import { LeasedPropertyComponent } from './components/leasemanagement/leasedproperty/leased-property.component';
 import { HiringComponent } from './components/hiring/hiring.component';
 import { LeaseRegisterComponent } from './components/lesesregister/leaseregister.component';
-//import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { ProjectComponent } from './components/facilitymanagement/project/project.component';
 import { ServiceRequestComponent } from './components/facilitymanagement/servicerequest/service-request.component';
 import { FacilityManagementComponent } from './components/facilitymanagement/facility-management.component';
@@ -276,3 +273,4 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }
+

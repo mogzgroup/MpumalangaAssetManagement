@@ -53,3 +53,4 @@ export class FaultService {
         return this.http.get<any[]>(`${environment.apiUrl}/api/fault/getFiles/` + fileReference);
       }
 }
+

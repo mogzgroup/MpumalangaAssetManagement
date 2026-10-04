@@ -1,0 +1,388 @@
+<div class="stepsdemo-content mt-5">
+    <p-card>
+        <ng-template pTemplate="subtitle">
+            Annexure B: Leased assets occupied by/ allocated to schedule of current leased accommodation
+        </ng-template>
+        <ng-template pTemplate="content">
+            <div class="ui-g ui-fluid">
+                <p-table styleClass="p-datatable-striped" responsiveLayout="stack" [value]="properties"
+                    [responsive]="true" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
+                    responsiveLayout="scroll" [rowsPerPageOptions]="[5,10,15]">
+                    <ng-template pTemplate="caption">
+                        <div class="p-d-flex right p-jc-between text-right">
+                            <p-button pTooltip="Add Property" type="button" icon="pi pi-plus" styleClass="p-button-text"
+                                (click)="displayDialog = true; dialogHeader = 'Add Property'"></p-button>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 120px;">Serial No.</th>
+                            <th style="width: 120px;">User Dept Code</th>
+                            <th style="width: 120px;">File Reference No.</th>
+                            <th style="width: 200px;">District</th>
+                            <th>Town</th>
+                            <th style="width: 200px;">Local Municipality</th>
+                            <th>Asset Description</th>
+                            <th>Old Street Address</th>
+                            <th>Current Street Address</th>
+                            <th>Property Description</th>
+                            <th style="width: 130px;">Asset Type</th>
+                            <th style="width: 100px;">No. OF Parking Bays Allocated</th>
+                            <th style="width: 100px;">Lettable Space<br> <small>(M²) 0000.00</small></th>
+                            <th style="width: 120px;">Extent of Land (HA) <br> <small>(M²) 0000.00</small></th>
+                            <th>Rental PM</th>
+                            <th>Rental PA</th>
+                            <th>Operational Cost</th>
+                            <th>Lease Start Date</th>
+                            <th>Lease End Date</th>
+                            <th>Rental Rate/M2</th>
+                            <th style="width: 200px;">Required Performance Standard</th>
+                            <th style="width: 200px;">Accessibility</th>
+                            <th style="width: 200px;">Condition Rating</th>
+                            <th style="width: 200px;">Suitability Index</th>
+                            <th style="width: 200px;"> Operating Performance Index</th>
+                            <th style="width: 200px;">Functional Performance Index</th>
+                            <th>Lease Term</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-property let-rowIndex="rowIndex">
+                        <tr>
+                            <td>{{property.serialNo}}</td>
+                            <td>{{property.userDepartmentCode}}</td>
+                            <td>{{property.fileReferenceNo}}</td>
+                            <td>
+                                <p-dropdown (onChange)="setLocalMunicipalities($event, property)" class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
+                                    placeholder="Please select" [ngModelOptions]="{standalone: true}"
+                                    [options]="regions" [(ngModel)]="property.districtObj" optionLabel="name">
+                                </p-dropdown>
+                            </td>
+                            <td>{{property.town}}</td>
+                            <td>
+                                <p-dropdown (onChange)="localMunicipalitiesChanged($event, property)" class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
+                                    placeholder="Please select" [ngModelOptions]="{standalone: true}"
+                                    [options]="localMunicipalities" [(ngModel)]="property.localMunicipalityObj"
+                                    optionLabel="name">
+                                </p-dropdown>
+                            </td>
+                            <td>{{property.assetDescription}}</td>
+                            <td>{{property.currentStreetAddress}}</td>
+                            <td>{{property.currentStreetAddress}}</td>
+                            <td>{{property.propertyDescription}}</td>
+                            <td>{{property.assetType}}</td>
+                            <td>
+                                <p-inputNumber [inputStyle]="{'width':'70px'}" [(ngModel)]="property.noofParkingBays"
+                                    class="ui-inputtext ui-widget" [ngModelOptions]="{standalone: true}">
+                                </p-inputNumber>
+                            </td>
+                            <td>
+                                <p-inputNumber [inputStyle]="{'width':'68px'}" [(ngModel)]="property.lettableSpace"
+                                    class="ui-inputtext ui-widget" [ngModelOptions]="{standalone: true}" mode="decimal">
+                                </p-inputNumber>
+                            </td>
+                            <td>{{property.extentofLand}}</td>
+                            <td>
+                                <p-inputNumber [inputStyle]="{'width':'120px'}" [(ngModel)]="property.rentalPM"
+                                    class="ui-inputtext ui-widget" [ngModelOptions]="{standalone: true}" mode="currency"
+                                    currency="ZAR" locale="en-ZA"></p-inputNumber>
+
+                            </td>
+                            <td>
+                                <p-inputNumber [inputStyle]="{'width':'120px'}" [(ngModel)]="property.rentalPA"
+                                    [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA"
+                                    class="ui-inputtext ui-widget"></p-inputNumber>
+
+                            </td>
+                            <td>
+                                <p-inputNumber [inputStyle]="{'width':'120px'}" [(ngModel)]="property.operationalCosts"
+                                    [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA"
+                                    class="ui-inputtext ui-widget"></p-inputNumber>
+
+                            </td>
+                            <td>
+                                <p-calendar [(ngModel)]="property.leaseStartDate" class="ui-inputtext ui-widget"
+                                    [ngModelOptions]="{standalone: true}" dateFormat="dd/mm/yy" showOtherMonths="true"
+                                    showButtonBar="true"></p-calendar>
+
+                            </td>
+                            <td>
+                                <p-calendar [(ngModel)]="property.leaseEndDate" class="ui-inputtext ui-widget"
+                                    [ngModelOptions]="{standalone: true}" dateFormat="dd/mm/yy" showOtherMonths="true"
+                                    showButtonBar="true"></p-calendar>
+                            </td>
+                            <td>
+                                <p-inputNumber [inputStyle]="{'width':'120px'}" [(ngModel)]="property.rentalRate"
+                                    [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA"
+                                    class="ui-inputtext ui-widget"></p-inputNumber>
+                            </td>
+                            <td>
+                                <p-dropdown class="ui-inputtext ui-widget" [style]="{'width':'180px'}"
+                                    placeholder="Please select" [(ngModel)]="property.requiredPerformanceStandardObj"
+                                    [ngModelOptions]="{standalone: true}"
+                                    (onChange)="onRequiredPerformanceStandardChange(property, $event)"
+                                    [options]="requiredPerformanceStandards" optionLabel="name"></p-dropdown>
+                                <!-- <div *ngIf="submitted && p.requiredPerfomanceStandard.errors" class="text-error"><br>
+                                        <div *ngIf="p.requiredPerfomanceStandard.errors.required">This field is required.</div>
+                                    </div>-->
+                            </td>
+                            <td>
+                                <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
+                                    placeholder="Please select" [ngModelOptions]="{standalone: true}"
+                                    [options]="accessibilities" [(ngModel)]="property.accessibilityObj"
+                                    optionLabel="name">
+                                </p-dropdown>
+                                <!--<div *ngIf="submitted && p.accessibility.errors" class="text-error"><br>
+                                        <div *ngIf="p.accessibility.errors.required">This field is required.</div>
+                                    </div>-->
+                            </td>
+                            <td>
+                                <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
+                                    [(ngModel)]="property.conditionRatingObj"
+                                    (onChange)="conditionRatingCahnged(property, $event)" inputId="conditionRating"
+                                    [options]="conditionRatings" placeholder="Please select"
+                                    [ngModelOptions]="{standalone: true}" optionLabel="name"></p-dropdown>
+                                <!--<div *ngIf="submitted && p.conditionRatings.errors" class="text-error"><br>
+                                        <div *ngIf="p.conditionRatings.errors.required">This field is required.</div>
+                                    </div>-->
+                            </td>
+                            <td>
+                                <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
+                                    placeholder="Please select" [(ngModel)]="property.suitabilityIndexObj"
+                                    [ngModelOptions]="{standalone: true}"
+                                    (onChange)="onSuitabilityIndexChange(property, $event)"
+                                    [options]="suitabilityIndexs" optionLabel="name"></p-dropdown>
+                                <!--<div *ngIf="submitted && p.suitabilityIndex.errors" class="text-error"><br>
+                                        <div *ngIf="p.suitabilityIndex.errors.required">This field is required.</div>
+                                    </div>-->
+                            </td>
+                            <td>
+                                <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
+                                    placeholder="Please select" [(ngModel)]="property.operatingPerformanceIndexObj"
+                                    [ngModelOptions]="{standalone: true}"
+                                    (onChange)="onOperatingPerformanceIndexChange(property, $event)"
+                                    [options]="operatingPerformanceIndexs" optionLabel="name"></p-dropdown>
+                                <!--<div *ngIf="submitted && p.operationalPerformanceIndex.errors" class="text-error"><br>
+                                        <div *ngIf="p.operationalPerformanceIndex.errors.required">This field is required.</div>
+                                    </div>-->
+                            </td>
+                            <td>
+                                <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
+                                    placeholder="Please select" [(ngModel)]="property.functionalPerformanceIndexObj"
+                                    [ngModelOptions]="{standalone: true}"
+                                    (onChange)="onFunctionalPerformanceChange(property, $event)"
+                                    [options]="functionalPerformanceIndexs" optionLabel="name"></p-dropdown>
+                                <!-- <div *ngIf="submitted && p.functionalPerformanceIndex.errors" class="text-error"><br>
+                                        <div *ngIf="p.functionalPerformanceIndex.errors.required">This field is required.</div>
+                                    </div>-->
+                            </td>
+                            <td>
+                                <input [(ngModel)]="property.leaseTerm" style="width: 130px;"
+                                    [ngModelOptions]="{standalone: true}" autocomplete="off" type="text" pInputText
+                                    class="ui-inputtext ui-widget">
+
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </ng-template>
+
+    </p-card>
+</div>
+
+<div *ngIf="displayDialog" class="dialogBackgroud"></div>
+<p-dialog header="{{dialogHeader}}" [(visible)]="displayDialog" [style]="{width: '80vw'}">
+    <p-body>
+        <div class="p-fluid p-grid p-formgrid">
+            <form [formGroup]="propertyForm">
+                <div class="formgrid grid">
+                    <div class="field grid col-3">
+                        <label for="region">District/ Region</label>
+                        <p-dropdown (onChange)="setLocalMunicipalities($event)" [style]="{'width':'318px'}"
+                            class="ui-inputtext ui-widget" placeholder="Please select" inputId="district"
+                            [options]="regions" formControlName="district" optionLabel="name">
+                        </p-dropdown>
+                    </div>
+                    <div class="field grid col-3">
+                        <label for="localMunicipality">Local Municipality</label>
+                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget"
+                            placeholder="Please select" inputId="localMunicipality" [options]="localMunicipalities"
+                            formControlName="localMunicipality" optionLabel="name"></p-dropdown>
+                    </div>
+                    <div class="field grid col-3">
+                        <label for="assetType">Asset Type</label>
+                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" inputId="type"
+                            [disabled]="isViewOnly" [options]="types" placeholder="Please select"
+                            formControlName="assetType" optionLabel="name"></p-dropdown>
+                    </div>
+                    <div class="field grid col-3">
+                        <label for="town">Required Performance Standard</label>
+                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" inputId="type"
+                            [disabled]="isViewOnly" [options]="requiredPerformanceStandards" placeholder="Please select"
+                            formControlName="requiredPerformanceStandard" optionLabel="name">
+                        </p-dropdown>
+                    </div>
+                </div>
+
+                <div class="formgrid grid">
+                    <div class="field grid col-3 pr-4">
+                        <label for="propertyDescription">Property Description</label>
+                        <input formControlName="propertyDescription" autocomplete="off" type="text" pInputText
+                            class="ui-inputtext ui-widget">
+                    </div>
+                    <div class="field grid col-3 pr-4">
+                        <label for="assetDescription">Asset Description</label>
+                        <input formControlName="assetDescription" autocomplete="off" type="text" pInputText
+                            class="ui-inputtext ui-widget">
+                    </div>
+                    <div class="field grid col-3 pr-4">
+                        <label for="oldStreetAddress">Old Street Address</label>
+                        <input formControlName="oldStreetAddress" autocomplete="off" type="text" pInputText
+                            class="ui-inputtext ui-widget">
+                    </div>
+                    <div class="field grid col-3 pr-4">
+                        <label for="currentStreetAddress">Current Street Address</label>
+                        <input formControlName="currentStreetAddress" autocomplete="off" type="text" pInputText
+                            class="ui-inputtext ui-widget">
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field grid col-3 pr-4">
+                        <label for="town">Town</label>
+                        <input formControlName="town" autocomplete="off" type="text" pInputText
+                            class="ui-inputtext ui-widget">
+                    </div>
+                    <div class="field grid col-3">
+                        <label for="extentofLand">Extent of Land</label>
+                        <p-inputNumber [inputStyle]="{'width':'19.8rem'}" class="ui-inputtext ui-widget"
+                            [disabled]="isViewOnly" formControlName="extentofLand" mode="currency" currency="ZAR"
+                            locale="en-ZA">
+                        </p-inputNumber>
+                    </div>
+                    <div class="field grid col-3">
+                        <label for="noofParkingBaysAllocated">Number of Packing Bays Allocated</label>
+                        <p-inputNumber [inputStyle]="{'width':'19.8rem'}" class="ui-inputtext ui-widget"
+                            [disabled]="isViewOnly" formControlName="noofParkingBaysAllocated" mode="currency"
+                            currency="ZAR" locale="en-ZA">
+                        </p-inputNumber>
+                    </div>
+                    <div class="field grid col-3 pr-4">
+                        <label for="suitabilityIndex">Suitability Index</label>
+                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" inputId="type"
+                            [disabled]="isViewOnly" [options]="suitabilityIndexs" placeholder="Please select"
+                            formControlName="suitabilityIndex" optionLabel="name"></p-dropdown>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field grid col-3 pr-4">
+                        <label for="leaseStartDate">Lease Start Date</label>
+                        <p-calendar class="ui-inputtext ui-widget w-full" [disabled]="isViewOnly"
+                            formControlName="leaseStartDate" dateFormat="dd/mm/yy" showOtherMonths="true"
+                            showButtonBar="true">
+                        </p-calendar>
+                    </div>
+                    <div class="field grid col-3 pr-4">
+                        <label for="leaseEndDate">Lease End Date</label>
+                        <p-calendar class="ui-inputtext ui-widget w-full" [disabled]="isViewOnly"
+                            formControlName="leaseEndDate" dateFormat="dd/mm/yy" showOtherMonths="true"
+                            showButtonBar="true"></p-calendar>
+                    </div>
+                    <div class="field grid col-3 ">
+                        <label for="accessibility">Accessibility</label>
+                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" inputId="type"
+                            [disabled]="isViewOnly" [options]="accessibilities" placeholder="Please select"
+                            formControlName="accessibility" optionLabel="name"></p-dropdown>
+                    </div>
+                    <div class="field grid col-3">
+                        <label for="conditionRating">Condition Rating</label>
+                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" inputId="type"
+                            [disabled]="isViewOnly" [options]="conditionRatings" placeholder="Please select"
+                            formControlName="conditionRating" optionLabel="name"></p-dropdown>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field grid col-3">
+                        <label for="town">Lettable Space</label>
+                        <p-inputNumber [inputStyle]="{'width':'19.8rem'}" class="ui-inputtext ui-widget"
+                            [disabled]="isViewOnly" formControlName="lettableSpace" mode="currency" currency="ZAR"
+                            locale="en-ZA">
+                        </p-inputNumber>
+                        <small>(M²) 0000.00</small>
+                    </div>
+                    <div class="field grid col-3">
+                        <label for="rentalRate">Rental Rate/M2</label>
+                        <p-inputNumber [inputStyle]="{'width':'19.8rem'}" class="ui-inputtext ui-widget"
+                            [disabled]="isViewOnly" formControlName="rentalRate" mode="currency" currency="ZAR"
+                            locale="en-ZA">
+                        </p-inputNumber>
+                        <small>(HA) 0000.0000</small>
+                    </div>
+                    <div class="field grid col-3 pr-4">
+                        <label for="functionalPerformanceIndex">Functional Performance Index </label>
+                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" inputId="type"
+                            [disabled]="isViewOnly" [options]="functionalPerformanceIndexs" placeholder="Please select"
+                            formControlName="functionalPerformanceIndex" optionLabel="name">
+                        </p-dropdown>
+                        <small>According to formula</small>
+                    </div>
+                    <div class="field grid col-3 pr-4">
+                        <label for="operatingPerformanceIndex">Operating Performance Index</label>
+                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" inputId="type"
+                            [disabled]="isViewOnly" [options]="operatingPerformanceIndexs" placeholder="Please select"
+                            formControlName="operatingPerformanceIndex" optionLabel="name">
+                        </p-dropdown>
+                    </div>
+
+                </div>
+                <div class="formgrid grid">
+                    <div class="field grid col-3 pr-4">
+                        <label for="leaseTerm">Lease Term</label>
+                        <input formControlName="leaseTerm" autocomplete="off" type="text" pInputText
+                            class="ui-inputtext ui-widget">
+                    </div>
+                    <div class="field grid col-3">
+                        <label for="rentalPM">Rental PM</label>
+                        <p-inputNumber [inputStyle]="{'width':'19.8rem'}" class="ui-inputtext ui-widget"
+                            [disabled]="isViewOnly" formControlName="rentalPM" mode="currency" currency="ZAR"
+                            locale="en-ZA">
+                        </p-inputNumber>
+                    </div>
+                    <div class="field grid col-3">
+                        <label for="rentalPA">Rental PA</label>
+                        <p-inputNumber [inputStyle]="{'width':'19.8rem'}" class="ui-inputtext ui-widget"
+                            [disabled]="isViewOnly" formControlName="rentalPA" mode="currency" currency="ZAR"
+                            locale="en-ZA">
+                        </p-inputNumber>
+                    </div>
+                    <div class="field grid col-3">
+                        <label for="operationalCosts">Operational Costs</label>
+                        <p-inputNumber [inputStyle]="{'width':'100%'}" class="ui-inputtext ui-widget"
+                            [disabled]="isViewOnly" formControlName="operationalCosts" mode="currency" currency="ZAR"
+                            locale="en-ZA">
+                        </p-inputNumber>
+                    </div>
+                </div>               
+            </form>
+        </div>
+    </p-body>
+    <p-footer>
+        <div class="p-grid p-nogutter p-justify-between">
+            <p-button [style]="{'float':'left'}" styleClass="p-button-secondary" label="Cancel" (onClick)="displayDialog = false"
+                icon="pi pi-times"></p-button>
+            <p-button *ngIf="!isEdit" [style]="{'float':'right'}" label="Add" (onClick)="addProperty()"
+                icon="pi pi-check" iconPos="right"></p-button>
+            <p-button *ngIf="isEdit" [style]="{'float':'right'}" label="Update" (onClick)="onUpdate()"
+                icon="pi pi-check" iconPos="right"></p-button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<div class="uamp-footer">
+    <div class="p-grid p-nogutter p-justify-between">
+        <p-button styleClass="p-button-secondary" label="Back" (onClick)="back()" icon="pi pi-angle-left">
+        </p-button>
+        <p-button [style]="{'float':'right'}" label="Save" class="ml-1" (onClick)="save()" icon="pi pi-check"
+        iconPos="right"></p-button>
+        <p-button styleClass="btn-next" label="Next" (onClick)="nextPage()" icon="pi pi-angle-right"
+            iconPos="right"></p-button>
+    </div>
+</div>

@@ -7,3 +7,4 @@ export class FaultNote {
     createdById: number;
     modifiedById?: number;
 }
+

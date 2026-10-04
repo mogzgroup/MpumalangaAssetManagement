@@ -1,0 +1,199 @@
+<div class="mt-5">
+    <p-card>
+        <ng-template pTemplate="subtitle">
+            Operation Plan: Maintenance requirements (i.e Repairs)
+        </ng-template>
+        <ng-template pTemplate="content">
+            <p-table styleClass="p-datatable-striped" [value]="operationPlans" [responsive]="true" [paginator]="true"
+                [rows]="5" [showCurrentPageReport]="true" responsiveLayout="scroll" [rowsPerPageOptions]="[5,10,15]">
+                <ng-template pTemplate="caption">
+                    <div class="p-d-flex right p-jc-between text-right">
+                        <p-button pTooltip="Add Operation Plan" type="button" icon="pi pi-plus"
+                            styleClass="p-button-text"
+                            (click)="displayDialog = true; dialogHeader = 'Add Operation Plan'"></p-button>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>District</th>
+                        <th>Town</th>
+                        <th>Local Municipality</th>
+                        <th>Asset Description</th>
+                        <th>Repair Description</th>
+                        <th style="width: 200px;">YEAR <br> <small>in which initial request was submitted</small></th>
+                        <th style="width: 200px;">Priority/ Service Ranking</th>
+                        <th>Cash Flow <br><small>(MTEF YR 1)</small></th>
+                        <th>Cash Flow <br><small>(MTEF YR 2)</small></th>
+                        <th>Cash Flow <br><small>(MTEF YR 3)</small></th>
+                        <th>Cash Flow <br><small>(MTEF YR 4)</small></th>
+                        <th>Cash Flow <br><small>(MTEF YR 5)</small></th>
+                        <th>Total Amount Required</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-operationPlan let-rowIndex="rowIndex">
+                    <tr>
+                        <td>{{operationPlan.districtRegion}}</td>
+                        <td>{{operationPlan.town}}</td>
+                        <td>{{operationPlan.localAuthority}}</td>
+                        <td>{{operationPlan.assetDescription}}</td>
+                        <td><input [(ngModel)]="operationPlan.repairDescription" [ngModelOptions]="{standalone: true}"
+                                autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget"></td>
+                        <td>
+                            <p-dropdown class="ui-inputtext ui-widget" placeholder="Please select"
+                                [(ngModel)]="operationPlan.initialNeedYearObj" [ngModelOptions]="{standalone: true}"
+                                (onChange)="onInitialNeedYearChange(operationPlan, $event)" [options]="initialNeedYears"
+                                optionLabel="name"></p-dropdown>
+                        </td>
+                        <td>
+                            <p-dropdown class="ui-inputtext ui-widget"
+                                [(ngModel)]="operationPlan.prioityServiceReankingObj"
+                                [ngModelOptions]="{standalone: true}"
+                                (onChange)="onPrioityServiceReankingChange(operationPlan, $event)"
+                                placeholder="Please select" inputId="prioityServiceReanking" [options]="prioities"
+                                optionLabel="name"></p-dropdown>
+                        </td>
+                        <td>
+                            <p-inputNumber class="ui-inputtext ui-widget" [(ngModel)]="operationPlan.cashFlowYear1"
+                                [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA">
+                            </p-inputNumber>
+                        </td>
+                        <td>
+                            <p-inputNumber class="ui-inputtext ui-widget" [(ngModel)]="operationPlan.cashFlowYear2"
+                                [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA">
+                            </p-inputNumber>
+                        </td>
+                        <td>
+                            <p-inputNumber class="ui-inputtext ui-widget" [(ngModel)]="operationPlan.cashFlowYear3"
+                                [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA">
+                            </p-inputNumber>
+                        </td>
+                        <td>
+                            <p-inputNumber class="ui-inputtext ui-widget" [(ngModel)]="operationPlan.cashFlowYear4"
+                                [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA">
+                            </p-inputNumber>
+                        </td>
+                        <td>
+                            <p-inputNumber class="ui-inputtext ui-widget" [(ngModel)]="operationPlan.cashFlowYear5"
+                                [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA">
+                            </p-inputNumber>
+                        </td>
+                        <td>{{calculateDbTotalAmountRequired(operationPlan) | currency:'ZAR':'R'}}</td>
+
+                    </tr>
+                </ng-template>
+            </p-table>
+        </ng-template>
+    </p-card>
+</div>
+
+<div *ngIf="displayDialog" class="dialogBackgroud"></div>
+<p-dialog header="{{dialogHeader}}" [(visible)]="displayDialog" [style]="{width: '80vw'}">
+    <p-body>
+        <form [formGroup]="newOperationPlanForm">
+            <div class="formgrid grid">
+                <div class="field grid col-3">
+                    <label for="districtRegion">District/ Region</label>
+                    <p-dropdown (onChange)="setLocalMunicipalities($event)" [style]="{'width':'318px'}"
+                        class="ui-inputtext ui-widget" placeholder="Please select" inputId="districtRegion"
+                        [options]="regions" formControlName="districtRegion" optionLabel="name"></p-dropdown>
+                </div>
+                <div class="field grid col-3">
+                    <label for="localMunicipality">Local Municipality</label>
+                    <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" placeholder="Please select"
+                        inputId="localMunicipality" [options]="localMunicipalities" formControlName="localMunicipality"
+                        optionLabel="name"></p-dropdown>
+                </div>
+                <div class="field grid col-3">
+                    <label for="priorityServiceRanking">Priority/ Service Ranking</label>
+                    <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" placeholder="Please select"
+                        inputId="priorityServiceRanking" [options]="prioities" formControlName="priorityServiceRanking"
+                        optionLabel="name"></p-dropdown>
+                </div>
+                <div class="field grid col-3 pr-4">
+                    <label for="initialNeedYear">Year <small> in which initial request was submitted</small></label>
+                    <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" placeholder="Please select"
+                        [ngModelOptions]="{standalone: true}" formControlName="initialNeedYear"
+                        [options]="initialNeedYears" optionLabel="name"></p-dropdown>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field grid col-3">
+                    <label for="assetDescription">Asset Description</label>
+                    <input formControlName="assetDescription" autocomplete="off" type="text" pInputText
+                        class="ui-inputtext ui-widget">
+                </div>
+                <div class="field grid col-3 pr-3">
+                    <label for="town">Town</label>
+                    <input formControlName="town" autocomplete="off" type="text" pInputText
+                        class="ui-inputtext ui-widget">
+                </div>
+                <div class="field grid col-3">
+                    <label for="repairDescription">Repair Description</label>
+                    <input formControlName="repairDescription" autocomplete="off" type="text" pInputText
+                        class="ui-inputtext ui-widget">
+                </div>
+                <div class="field grid col-3">
+                    <label for="cashFlowYear1">Cash Flow <small>(MTEF Year 1)</small></label>
+                    <p-inputNumber (keydown)="calculateTotalAmountRequired()" formControlName="cashFlowYear1"
+                        mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field grid col-3">
+                    <label for="cashFlowYear2">Cash Flow <small>(MTEF Year 2)</small></label>
+                    <p-inputNumber (keydown)="calculateTotalAmountRequired()" formControlName="cashFlowYear2"
+                        mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
+                </div>
+                <div class="field grid col-3">
+                    <label for="cashFlowYear3">Cash Flow <small>(MTEF Year 3)</small></label>
+                    <p-inputNumber (keydown)="calculateTotalAmountRequired()" formControlName="cashFlowYear3"
+                        mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
+                </div>
+                <div class="field grid col-3">
+                    <label for="cashFlowYear4">Cash Flow <small>(MTEF Year 4)</small></label>
+                    <p-inputNumber (keydown)="calculateTotalAmountRequired()" formControlName="cashFlowYear4"
+                        mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
+                </div>
+                <div class="field grid col-3">
+                    <label for="cashFlowYear5">Cash Flow <small>(MTEF Year 5)</small></label>
+                    <p-inputNumber (keydown)="calculateTotalAmountRequired()" formControlName="cashFlowYear5"
+                        mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
+                </div>
+
+            </div>
+            <div class="formgrid grid">
+                <div class="field grid col-3">
+                    <label for="totalAmountRequired">Total Amount Required</label>
+                    <p-inputNumber disabled="true" formControlName="totalAmountRequired" mode="currency"
+                        class="ui-inputtext ui-widget" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                </div>
+                <div class="field grid col-3">
+
+                </div>
+                <div class="field grid col-3"></div>
+
+            </div>
+        </form>
+    </p-body>
+    <p-footer>
+        <div class="p-grid p-nogutter p-justify-between">
+            <p-button [style]="{'float':'left'}" styleClass="p-button-secondary" label="Cancel" (onClick)="displayDialog = false"
+                icon="pi pi-times"></p-button>
+            <p-button *ngIf="!isEdit" [style]="{'float':'right'}" label="Add" (onClick)="addOperationPlan()"
+                icon="pi pi-check" iconPos="right"></p-button>
+            <p-button *ngIf="isEdit" [style]="{'float':'right'}" label="Update" (onClick)="updateOperationPlan()"
+                icon="pi pi-check" iconPos="right"></p-button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<div class="uamp-footer">
+    <div class="p-grid p-nogutter p-justify-between">
+        <p-button styleClass="p-button-secondary" label="Back" (onClick)="back()" icon="pi pi-angle-left">
+        </p-button>
+        <p-button [style]="{'float':'right'}" label="Save" class="ml-1" (onClick)="save()" icon="pi pi-check"
+        iconPos="right"></p-button>
+        <p-button styleClass="btn-next" label="Next" (onClick)="nextPage()" icon="pi pi-angle-right"
+            iconPos="right"></p-button>
+    </div>
+</div>

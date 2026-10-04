@@ -3,3 +3,4 @@ export class FacilityZoning {
     signedOff: number;
     total: number
 }
+

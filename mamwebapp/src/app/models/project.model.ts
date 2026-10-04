@@ -29,3 +29,4 @@ export class Project {
     status: string;
     isDeleted: boolean;
 }
+

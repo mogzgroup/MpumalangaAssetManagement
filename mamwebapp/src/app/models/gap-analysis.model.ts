@@ -5,3 +5,4 @@ export class GapAnalysis {
     quantifiedNeedStatement: string;
     priority: string;
 }
+

@@ -31,3 +31,4 @@ export class LeasedPropertyComponent implements OnInit {
 
     }
 }
+

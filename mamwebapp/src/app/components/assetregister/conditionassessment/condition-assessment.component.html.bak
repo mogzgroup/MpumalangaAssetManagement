@@ -1,0 +1,549 @@
+<p-toast [style]="{marginTop: '90px'}" position="top-right"></p-toast>
+
+<p-tabView [(activeIndex)]="activeIndex">
+    <p-tabPanel header="Non Technical Condition Assessment" style="background-color: var(--surface-b);
+    color: var(--text-color);">
+        <p-panel header="New Condition Assessment" [toggleable]="true">
+
+            <ng-template pTemplate="icons">
+                <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu>
+            </ng-template>
+            <div class="ui-g-12 ui-md-12" *ngIf="mode != 'View'">
+                <p-fileUpload [showUploadButton]="false" chooseLabel="Choose File" [showCancelButton]="false"
+                    (onRemove)="onLandRemoveFile($event)" multiple="multiple"
+                    (onSelect)="onLandSelectFile($event.files)"></p-fileUpload>
+                <div>
+                    <ul *ngFor="let file of landFiles; let i = index" style="list-style-type:none;">
+                        <li>
+                            <p><a target="_blank" href="{{ file.url }}">{{ file.name }}</a></p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field grid col-6">
+                    <div>
+                        <h5>Required performance standard</h5>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>P1</b><br/> <h5 style='margin-top: 5px;'>Performance Standard</h5> <p style='margin-top: -10px;'>Functions have ceased and accommodation is dormant; pending relinquishment, etc.</p> <h5 style='margin-top: 5px;'>Condition Standard</h5> <p style='margin-top: -15px;'>Condition can be allowed to deteriorate or marginally maintained at minimal cost.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            class="tooltip ui-tooltip-text"
+                            [ngClass]="{'pi-star': pCount >= 1,'pi-star-o': pCount != 1}" (click)="pCount=1; setRate()"
+                            class="pi mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>P2</b><br/> <h5 style='margin-top: 5px;'>Performance Standard</h5> <p style='margin-top: -10px;'>Functions are providing essential support only, with no critical operational role (e.g. storage) or accommodation has limited life.</p> <h5 style='margin-top: 5px;'>Condition Standard</h5> <p style='margin-top: -15px;'>Condition needs to meet minimum operational requirements.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            [ngClass]="{'pi-star': pCount >= 2,'pi-star-o': pCount != 2}" (click)="pCount=2; setRate()"
+                            class="pi mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>P3</b><br/> <h5 style='margin-top: 5px;'>Performance Standard</h5> <p style='margin-top: -10px;'>Functionally-focussed accommodation at utility level (e.g. school)</p> <h5 style='margin-top: 5px;'>Condition Standard</h5> <p style='margin-top: -15px;'>Accommodation to be in reasonable condition, fully meeting operational requirements.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100" data-title="My site"
+                            [ngClass]="{'pi-star': pCount >= 3,'pi-star-o': pCount != 3}" (click)="pCount=3; setRate()"
+                            class="pi pi-star-o mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>P4</b><br/> <h5 style='margin-top: 5px;'>Performance Standard</h5> <p style='margin-top: -10px;'>Business operations requiring good public presentation and high-quality working environments.</p> <h5 style='margin-top: 5px;'>Condition Standard</h5> <p style='margin-top: -15px;'>Accommodation to be in good condition operationally and aesthetically. benchmarked against industry standards for that particular class of accommodation.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            [ngClass]="{'pi-star': pCount >= 4,'pi-star-o': pCount != 4}" (click)="pCount=4; setRate()"
+                            class="pi pi-star-o mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>P5</b><br/> <h5 style='margin-top: 5px;'>Performance Standard</h5> <p style='margin-top: -10px;'>Highly sensitive function with critical results (e.g. hospital operating theatre) or high profile public building (e.g. Parliament building).</p> <h5 style='margin-top: 5px;'>Condition Standard</h5> <p style='margin-top: -15px;'>Accommodation to be in best possible condition. Only minimal deterioration will be tolerated.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            [ngClass]="{'pi-star': pCount >= 5,'pi-star-o': pCount != 5}" (click)="pCount=5; setRate()"
+                            class="pi pi-star-o mr-2 rate"></i>
+                    </div>
+                    <div>
+                        <h5>Accessibility Rating</h5>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>A1</b><br/><p style='margin-top: 5px;'>The accommodation's location does not meet service delivery objectives; is not at all accessible to the general public and should not be used for the currrent service delivery objectives.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            class="tooltip ui-tooltip-text"
+                            [ngClass]="{'pi-star': aCount >= 1,'pi-star-o': aCount != 1}" (click)="aCount=1; setRate()"
+                            class="pi mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>A2</b><br/><p style='margin-top: 5px;'>The accommodation's location limits supports service delivery objectives; is not generally accessible to the general public with limited public areas and parking; does not fir in the current neighbourhood and environmental elements; and is not accessible for the physically challenged.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            [ngClass]="{'pi-star': aCount >= 2,'pi-star-o': aCount != 2}" (click)="aCount=2; setRate()"
+                            class="pi mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>A3</b><br/> <p style='margin-top: 5px;'>The accommodation's location partially supports service delivery objectivesl is accessible to the general public with limited public areas and parking; does not fully fit in the current neighbourhood and environmental elements; and has limited Accessibility for the physically challenged.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100" data-title="My site"
+                            [ngClass]="{'pi-star': aCount >= 3,'pi-star-o': aCount != 3}" (click)="aCount=3; setRate()"
+                            class="pi pi-star-o mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>A4</b><br/><p style='margin-top: 5px;'>The accommodation's location fully supports service delivery objectives; is fully accessible to the general public with well-designed public areas and parking; fits in the current neighbourhood and environmental elements; and is accessible for the physically challenged.</p>></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            [ngClass]="{'pi-star': aCount >= 4,'pi-star-o': aCount != 4}" (click)="aCount=4; setRate()"
+                            class="pi pi-star-o mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>A5</b><br/> <p style='margin-top: 5px;'>The accommodation's location supports delivery objectives; is fairly accessible to the general public with moderately designed public areas and packing; fits in the current neighbourhood and environmental elements; and is accessible for the physically challenged to the main areas.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            [ngClass]="{'pi-star': aCount >= 5,'pi-star-o': aCount != 5}" (click)="aCount=5; setRate()"
+                            class="pi pi-star-o mr-2 rate"></i>
+                    </div>
+                    <div>
+                        <h5>Condition rating</h5>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>C1</b><br/> <h5 style='margin-top: 5px;'>Very Poor</h5> <p style='margin-top: 5px;'>Accommodation has failed; is not operational and is unfit for occupancy.<br/> Risk index: Accommodation is unusable, immediate high risk to security, health and safety or property. Significant cost impact</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            class="tooltip ui-tooltip-text"
+                            [ngClass]="{'pi-star': cCount >= 1,'pi-star-o': cCount != 1}" (click)="cCount=1; setRate()"
+                            class="pi mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>C2</b><br/> <h5 style='margin-top: 5px;'>Poor</h5> <p style='margin-top: 5px;'>Accommodation has deteriorated badly, with serious structural problems. General appearance is poor with eroded protective coatings; elements are broken, services are not performing; significant number of major defects exists.<br/> Risk index: Major disruption to service capability, high probability of risk to health and safety or property. High cost implication/financial loss.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            [ngClass]="{'pi-star': cCount >= 2,'pi-star-o': cCount != 2}" (click)="cCount=2; setRate()"
+                            class="pi mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>C3</b><br/> <h5 style='margin-top: 5px;'>Fair</h5> <p style='margin-top: 5px;'>Accommodation is in averrage condition, deteriorated surface require attention; services are functional, but require attention; services are functiona;, buy require attention, backlog maintenance work exists.<br/> Risk index: Constant inconvenience to operations. Some risk to health and safety or property. Medium cost implications.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100" data-title="My site"
+                            [ngClass]="{'pi-star': cCount >= 3,'pi-star-o': cCount != 3}" (click)="cCount=3; setRate()"
+                            class="pi pi-star-o mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>C4</b><br/> <h5 style='margin-top: 5px;'>Good</h5> <p style='margin-top: 0px;'>Accommodation exhibits superfical wear and tear, with minor defects and minor signs of deterioration to surface finishes.<br/> Risk index: Intermittednt, minor inconvenience to operations. Probability of risk to health and safety or property is slight. Low cost implication.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            [ngClass]="{'pi-star': cCount >= 4,'pi-star-o': cCount != 4}" (click)="cCount=4; setRate()"
+                            class="pi mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>C5</b><br/> <h5 style='margin-top: 5px;'>Excellent</h5> <p style='margin-top: 0px;'>Accommodation has no apparent defects. Appearance is as new. <br/>Risk index: No effect on service capability. No risk.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100" data-title="My site"
+                            [ngClass]="{'pi-star': cCount >= 5,'pi-star-o': cCount != 5}" (click)="cCount=5; setRate()"
+                            class="pi pi-star-o mr-2 rate"></i>
+                    </div>
+                </div>
+                <p-divider layout="vertical"></p-divider>
+                <div class="field grid col-6">
+                    <div>
+                        <h5>Suitability Index</h5>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>C</b><br/><p style='margin-top: 0px;'>Accommodation dost not meet the required suitability criteria.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            class="tooltip ui-tooltip-text"
+                            [ngClass]="{'pi-star': sCount >= 1,'pi-star-o': sCount != 1, 'red': sCount >= 1}"
+                            class="pi mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>B</b><br/><p style='margin-top: 0px;'>Accommodation meets the minimum suitability criteria for its function.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            [ngClass]="{'pi-star': sCount >= 2,'pi-star-o': sCount != 2, 'yellow': sCount >= 2}"
+                            class="pi mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>A</b><br/><p style='margin-top: 0px;'>Accommodation is fully suitable for its required function.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100" data-title="My site"
+                            [ngClass]="{'pi-star': sCount >= 3,'pi-star-o': sCount != 3, 'green': sCount >= 3}"
+                            class="pi pi-star-o mr-2 rate"></i>
+                    </div>
+
+                    <div>
+                        <h5>Operating Performance index</h5>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>3</b><br/><p style='margin-top: 0px;'>Functional performance does not meet the standard expected for functional and operational requirements.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            class="tooltip ui-tooltip-text"
+                            [ngClass]="{'pi-star': oCount >= 1,'pi-star-o': oCount != 1, 'red': oCount >= 1}"
+                            class="pi mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>2</b><br/><p style='margin-top: 0px;'>Functional performance meets the standards expected for functional and operational requirements.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            [ngClass]="{'pi-star': oCount >= 2,'pi-star-o': oCount != 2, 'yellow': oCount >= 2}"
+                            class="pi mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>1</b><br/><p style='margin-top: 0px;'>Accommodation standards exceeds the level ecpected for functional and operational requirements.</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100" data-title="My site"
+                            [ngClass]="{'pi-star': oCount >= 3,'pi-star-o': oCount != 3, 'green': oCount >= 3}"
+                            class="pi pi-star-o mr-2 rate"></i>
+                    </div>
+
+                    <div>
+                        <h5>Functional performance standard</h5>
+                        <div>
+                            <i [escape]="false"
+                                pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>C3</b><br/><p style='margin-top: 0px;'>The asset does not meet the minimum operating criteria and does not meet the minimum suitability criteria.</p></div>"
+                                placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                                class="tooltip ui-tooltip-text"
+                                [ngClass]="{'pi-star': fCount >= 1,'pi-star-o': fCount != 1, 'red': fCount >= 1}"
+                                class="pi mr-2 rate"></i>
+                            <i [escape]="false"
+                                pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>C2</b><br/><p style='margin-top: 0px;'>The asset not meets the minimum operating criteria but does not meet the minimum suitability criteria.</p></div>"
+                                placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                                [ngClass]="{'pi-star': fCount >= 2,'pi-star-o': fCount != 2, 'red': fCount >= 2}"
+                                class="pi mr-2 rate"></i>
+                            <i [escape]="false"
+                                pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>C1</b><br/><p style='margin-top: 0px;'>The asset does not meet the minimum operating criteria but meets the minimum suitability criteria for its required function.</p></div>"
+                                placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                                data-title="My site"
+                                [ngClass]="{'pi-star': fCount >= 3,'pi-star-o': fCount != 3, 'red': fCount >= 3}"
+                                class="pi pi-star-o mr-2 rate"></i>
+                            <i [escape]="false"
+                                pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>B3</b><br/><p style='margin-top: 0px;'>The assets does not meet the minimum operating criteria but meets the minimum suitability criteria for its required function</p></div>"
+                                placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                                class="tooltip ui-tooltip-text"
+                                [ngClass]="{'pi-star': fCount >= 4,'pi-star-o': fCount != 4, 'yellow': fCount >= 4}"
+                                class="pi mr-2 rate"></i>
+                            <i [escape]="false"
+                                pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>B2</b><br/><p style='margin-top: 0px;'>The asset does not meet the minimum operating criteria but meets the minimum suitability criteria for its required function</p></div>"
+                                placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                                [ngClass]="{'pi-star': fCount >= 5,'pi-star-o': fCount != 5, 'yellow': fCount >= 5}"
+                                class="pi mr-2 rate"></i>
+                            <i [escape]="false"
+                                pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>B1</b><br/><p style='margin-top: 0px;'>The asset meets the minimum and suitability criteria for its required function.</p></div>"
+                                placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                                data-title="My site"
+                                [ngClass]="{'pi-star': fCount >= 6,'pi-star-o': fCount != 6, 'yellow': fCount >= 6}"
+                                class="pi pi-star-o mr-2 rate"></i>
+                            <i [escape]="false"
+                                pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>A1</b><br/><p style='margin-top: 0px;'>The asset does not meet the minimum operation requirements but is fully suitable for its required function.</p></div>"
+                                placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                                class="tooltip ui-tooltip-text"
+                                [ngClass]="{'pi-star': fCount >= 7,'pi-star-o': fCount != 7, 'green': fCount >= 7}"
+                                class="pi mr-2 rate"></i>
+                            <i [escape]="false"
+                                pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>A2</b><br/><p style='margin-top: 0px;'>The asset meets the minimum operating criteria and is fully suitable for its required function.</p></div>"
+                                placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                                [ngClass]="{'pi-star': fCount >= 8,'pi-star-o': fCount != 8, 'green': fCount >= 8}"
+                                class="pi mr-2 rate"></i>
+                            <i [escape]="false"
+                                pTooltip="<div style='margin-top: 5px;'><b style='margin-top: 0px;'>A1</b><br/><p style='margin-top: 0px;'>The asset is operating optimally and is fully suitable for its required function.</p></div>"
+                                placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                                data-title="My site"
+                                [ngClass]="{'pi-star': fCount >= 9,'pi-star-o': fCount != 9, 'green': fCount >= 9}"
+                                class="pi pi-star-o mr-2 rate"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-bottom: 36px;">
+                <button style="float: right;" (click)="showdelete=false;saveConditionAssessment()" pButton type="button"
+                    label="Save" class="ui-button-info"></button>
+            </div>
+        </p-panel>
+
+        <br /><br />
+
+        <p-panel header="Condition Assessment History" [toggleable]="true" collapsed="true">
+            <ng-template pTemplate="icons">
+                <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu>
+            </ng-template>
+            <p-timeline [value]="conditionAssessments" align="alternate" styleClass="customized-timeline"
+                *ngIf="dataIsLoaded">
+                <ng-template pTemplate="marker" let-conditionAssessment>
+                    <span class="custom-marker p-shadow-2" [style.backgroundColor]="conditionAssessment.color">
+                        <i class="pi pi-user"></i>
+                    </span>
+                </ng-template>
+                <ng-template pTemplate="content" let-conditionAssessment>
+                    <p-card styleClass="card" [header]="conditionAssessment.displayName"
+                        [subheader]="conditionAssessment.date">
+                        <div *ngFor="let rate of conditionAssessment.rates">
+                            <h6 style="margin: 12px 0px 0px 0px;">{{rate.name}}</h6>
+                            <i [ngClass]="{'pi-star': rate.value >= 1,'pi-star-o': rate.value != 1}"
+                                class="pi rate mr-2"></i>
+                            <i [ngClass]="{'pi-star': rate.value >= 2,'pi-star-o': rate.value != 2}"
+                                class="pi rate mr-2"></i>
+                            <i [ngClass]="{'pi-star': rate.value >= 3,'pi-star-o': rate.value != 3}"
+                                class="pi rate mr-2"></i>
+                            <i *ngIf="rate.key !== 4 && rate.key !== 5"
+                                [ngClass]="{'pi-star': rate.value >= 4,'pi-star-o': rate.value != 4}"
+                                class="pi rate mr-2"></i>
+                            <i *ngIf="rate.key !== 4 && rate.key !== 5"
+                                [ngClass]="{'pi-star': rate.value >= 5,'pi-star-o': rate.value != 5}"
+                                class="pi rate mr-2"></i>
+                            <i *ngIf="rate.key === 6"
+                                [ngClass]="{'pi-star': rate.value >= 6,'pi-star-o': rate.value != 6}"
+                                class="pi rate mr-2"></i>
+                            <i *ngIf="rate.key === 6"
+                                [ngClass]="{'pi-star': rate.value >= 7,'pi-star-o': rate.value != 7}"
+                                class="pi rate mr-2"></i>
+                            <i *ngIf="rate.key === 6"
+                                [ngClass]="{'pi-star': rate.value >= 8,'pi-star-o': rate.value != 8}"
+                                class="pi rate mr-2"></i>
+                            <i *ngIf="rate.key === 6"
+                                [ngClass]="{'pi-star': rate.value >= 9,'pi-star-o': rate.value != 9}"
+                                class="pi rate mr-2"></i>
+                        </div>
+                    </p-card>
+                </ng-template>
+            </p-timeline>
+        </p-panel>
+    </p-tabPanel>
+    <p-tabPanel header="Technical Condition Assessment">
+        <p-panel header="New Technical Condition Assessment" [toggleable]="true">
+            <p-fieldset *ngFor="let element of elements" legend="{{element.title}}" [toggleable]="true"
+                styleClass="marginBottom">
+                <div class="marginLeft-10">
+                    <p-fileUpload [showUploadButton]="false" [showCancelButton]="false"
+                    (onRemove)="onLandRemoveFile($event)" multiple="multiple"
+                    (onSelect)="onLandSelectFile($event.files)"></p-fileUpload>
+                <div>
+                    <ul *ngFor="let file of landFiles; let i = index" style="list-style-type:none;">
+                        <li>
+                            <p><a target="_blank" href="{{ file.url }}">{{ file.name }}</a></p>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+                
+                <div class="formgrid grid" *ngFor="let subTitle of element.subTitles" style="height: 30px;">
+                    <div class="field grid col-7" style="margin-top: -19px;">
+                        <h5>{{subTitle.name}}</h5>
+                    </div>
+                    <div class="field grid col-5" style="padding-left: 20px;">
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><h5 style='margin-top: 5px;'>C1</h5> <p style='margin-top: -10px;'>Very poor</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            class="tooltip ui-tooltip-text"
+                            [ngClass]="{'pi-star': subTitle.identifier >= 1,'pi-star-o': subTitle.identifier != 1}"
+                            (click)="subTitle.identifier=1; setRate()" class="pi mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'> <h5 style='margin-top: 5px;'>C2</h5> <p style='margin-top: -10px;'>Poor</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            [ngClass]="{'pi-star': subTitle.identifier >= 2,'pi-star-o': subTitle.identifier != 2}"
+                            (click)="subTitle.identifier=2; setRate()" class="pi mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><h5 style='margin-top: 5px;'>C3</h5> <p style='margin-top: -10px;'>Fair</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100" data-title="My site"
+                            [ngClass]="{'pi-star': subTitle.identifier >= 3,'pi-star-o': subTitle.identifier != 3}"
+                            (click)="subTitle.identifier=3; setRate()" class="pi pi-star-o mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><h5 style='margin-top: 5px;'>C4</h5> <p style='margin-top: -10px;'>Good</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            [ngClass]="{'pi-star': subTitle.identifier >= 4,'pi-star-o': subTitle.identifier != 4}"
+                            (click)="subTitle.identifier=4; setRate()" class="pi pi-star-o mr-2 rate"></i>
+                        <i [escape]="false"
+                            pTooltip="<div style='margin-top: 5px;'><h5 style='margin-top: 5px;'>C5</h5> <p style='margin-top: -10px;'>Excellent</p></div>"
+                            placeholder="bottom" tooltipPosition="bottom" tooltipZIndex="100100"
+                            [ngClass]="{'pi-star': subTitle.identifier >= 5,'pi-star-o': subTitle.identifier != 5}"
+                            (click)="subTitle.identifier=5; setRate()" class="pi pi-star-o mr-2 rate"></i>
+                    </div>
+                </div>
+            </p-fieldset>
+
+            <p-fieldset legend="Facility Management" [toggleable]="true">
+                <div class="marginLeft-10">
+                    <p-fileUpload [showUploadButton]="false" [showCancelButton]="false"
+                    (onRemove)="onLandRemoveFile($event)" multiple="multiple"
+                    (onSelect)="onLandSelectFile($event.files)"></p-fileUpload>
+                <div>
+                    <ul *ngFor="let file of landFiles; let i = index" style="list-style-type:none;">
+                        <li>
+                            <p><a target="_blank" href="{{ file.url }}">{{ file.name }}</a></p>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-7" style="margin-top: -19px;">
+                        <h5>Land condition eg- Grass overgrown</h5>
+                    </div>
+                    <div class="field grid col-5" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="paymentOptions" [(ngModel)]="lcValue" multiple="multiple"
+                            optionLabel="name" optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-7" style="margin-top: -19px;">
+                        <h5>Cleanliness of building</h5>
+                    </div>
+                    <div class="field grid col-5" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="paymentOptions" [(ngModel)]="cbValue" multiple="multiple"
+                            optionLabel="name" optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-7" style="margin-top: -19px;">
+                        <h5>Horticultural services</h5>
+                    </div>
+                    <div class="field grid col-5" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="paymentOptions" [(ngModel)]="hsValue" multiple="multiple"
+                            optionLabel="name" optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+            </p-fieldset>
+            <br /><br />
+            <p-fieldset legend="Compliance with disability requirements" [toggleable]="true">
+                <div class="marginLeft-10">
+                    <p-fileUpload [showUploadButton]="false" [showCancelButton]="false"
+                    (onRemove)="onLandRemoveFile($event)" multiple="multiple"
+                    (onSelect)="onLandSelectFile($event.files)"></p-fileUpload>
+                <div>
+                    <ul *ngFor="let file of landFiles; let i = index" style="list-style-type:none;">
+                        <li>
+                            <p><a target="_blank" href="{{ file.url }}">{{ file.name }}</a></p>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-6" style="margin-top: -19px;">
+                        <h5>Lifts compliant to use by disabled</h5>
+                    </div>
+                    <div class="field grid col-6" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="stateOptions" [(ngModel)]="lcValue" optionLabel="label"
+                            optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-6" style="margin-top: -19px;">
+                        <h5>Access RAMP for disabled</h5>
+                    </div>
+                    <div class="field grid col-6" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="stateOptions" [(ngModel)]="arValue" optionLabel="label"
+                            optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-6" style="margin-top: -19px;">
+                        <h5>Parking for disabled</h5>
+                    </div>
+                    <div class="field grid col-6" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="stateOptions" [(ngModel)]="pVvalue" optionLabel="label"
+                            optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-6" style="margin-top: -19px;">
+                        <h5>Signage for disabled</h5>
+                    </div>
+                    <div class="field grid col-6" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="stateOptions" [(ngModel)]="sValue" optionLabel="label"
+                            optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-6" style="margin-top: -19px;">
+                        <h5>Toilet(s) for people with disabilities</h5>
+                    </div>
+                    <div class="field grid col-6" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="stateOptions" [(ngModel)]="tValue" optionLabel="label"
+                            optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-6" style="margin-top: -19px;">
+                        <h5>Escape wheelchair</h5>
+                    </div>
+                    <div class="field grid col-6" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="stateOptions" [(ngModel)]="ewValue" optionLabel="label"
+                            optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+            </p-fieldset><br /><br />
+            <p-fieldset legend="Safety and Security Elements" [toggleable]="true">
+                <div class="marginLeft-10">
+                    <p-fileUpload [showUploadButton]="false" [showCancelButton]="false"
+                    (onRemove)="onLandRemoveFile($event)" multiple="multiple"
+                    (onSelect)="onLandSelectFile($event.files)"></p-fileUpload>
+                <div>
+                    <ul *ngFor="let file of landFiles; let i = index" style="list-style-type:none;">
+                        <li>
+                            <p><a target="_blank" href="{{ file.url }}">{{ file.name }}</a></p>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-6" style="margin-top: -19px;">
+                        <h5>Certificate of Compliance COC</h5>
+                    </div>
+                    <div class="field grid col-6" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="stateOptions" [(ngModel)]="cocValue" optionLabel="label"
+                            optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-6" style="margin-top: -19px;">
+                        <h5>Security lights</h5>
+                    </div>
+                    <div class="field grid col-6" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="stateOptions" [(ngModel)]="slValue" optionLabel="label"
+                            optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-6" style="margin-top: -19px;">
+                        <h5>Security fence or wall</h5>
+                    </div>
+                    <div class="field grid col-6" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="stateOptions" [(ngModel)]="sgwValue" optionLabel="label"
+                            optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-6" style="margin-top: -19px;">
+                        <h5>Fire detectors</h5>
+                    </div>
+                    <div class="field grid col-6" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="stateOptions" [(ngModel)]="fdValue" optionLabel="label"
+                            optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-6" style="margin-top: -19px;">
+                        <h5>Fire extinguishers</h5>
+                    </div>
+                    <div class="field grid col-6" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="stateOptions" [(ngModel)]="feValue" optionLabel="label"
+                            optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-6" style="margin-top: -19px;">
+                        <h5>Escape route</h5>
+                    </div>
+                    <div class="field grid col-6" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="stateOptions" [(ngModel)]="erValue" optionLabel="label"
+                            optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-6" style="margin-top: -19px;">
+                        <h5>Escape route indicators/signage</h5>
+                    </div>
+                    <div class="field grid col-6" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="stateOptions" [(ngModel)]="erisValue" optionLabel="label"
+                            optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+                <div class="formgrid grid" style="height: 45px;">
+                    <div class="field grid col-6" style="margin-top: -19px;">
+                        <h5>Burglar proofs(Door and windows)</h5>
+                    </div>
+                    <div class="field grid col-6" style="padding-left: 20px;width: max-content;">
+                        <p-selectButton [options]="stateOptions" [(ngModel)]="bpValue" optionLabel="label"
+                            optionValue="value"></p-selectButton>
+                    </div>
+                </div>
+            </p-fieldset>
+
+        </p-panel><br /><br />
+
+        <br /><br />
+
+        <!--<p-panel header="Technical Condition Assessment History" [toggleable]="true" collapsed="true">
+            <ng-template pTemplate="icons">
+                <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu>
+            </ng-template>
+            <p-timeline [value]="conditionAssessments" align="alternate" styleClass="customized-timeline" *ngIf="dataIsLoaded">
+                <ng-template pTemplate="marker" let-conditionAssessment>
+                    <span class="custom-marker p-shadow-2" [style.backgroundColor]="conditionAssessment.color">
+                        <i class="pi pi-user"></i>
+                    </span>
+                </ng-template>
+                <ng-template pTemplate="content" let-conditionAssessment>
+                    <p-card styleClass="card" [header]="conditionAssessment.displayName" [subheader]="conditionAssessment.date">
+                        <div *ngFor="let rate of conditionAssessment.rates">
+                            <h6 style="margin: 12px 0px 0px 0px;">{{rate.name}}</h6>
+                            <i [ngClass]="{'pi-star': rate.value >= 1,'pi-star-o': rate.value != 1}" class="pi rate mr-2"></i>
+                            <i [ngClass]="{'pi-star': rate.value >= 2,'pi-star-o': rate.value != 2}" class="pi rate mr-2"></i>
+                            <i [ngClass]="{'pi-star': rate.value >= 3,'pi-star-o': rate.value != 3}" class="pi rate mr-2"></i>
+                            <i *ngIf="rate.key !== 4 && rate.key !== 5" [ngClass]="{'pi-star': rate.value >= 4,'pi-star-o': rate.value != 4}" class="pi rate mr-2"></i>
+                            <i *ngIf="rate.key !== 4 && rate.key !== 5" [ngClass]="{'pi-star': rate.value >= 5,'pi-star-o': rate.value != 5}" class="pi rate mr-2"></i>
+                            <i *ngIf="rate.key === 6" [ngClass]="{'pi-star': rate.value >= 6,'pi-star-o': rate.value != 6}" class="pi rate mr-2"></i>
+                            <i *ngIf="rate.key === 6" [ngClass]="{'pi-star': rate.value >= 7,'pi-star-o': rate.value != 7}" class="pi rate mr-2"></i>
+                            <i *ngIf="rate.key === 6" [ngClass]="{'pi-star': rate.value >= 8,'pi-star-o': rate.value != 8}" class="pi rate mr-2"></i>
+                            <i *ngIf="rate.key === 6" [ngClass]="{'pi-star': rate.value >= 9,'pi-star-o': rate.value != 9}" class="pi rate mr-2"></i>
+                        </div>           
+                    </p-card>
+                </ng-template>
+            </p-timeline>
+        </p-panel>-->
+    </p-tabPanel>
+</p-tabView>

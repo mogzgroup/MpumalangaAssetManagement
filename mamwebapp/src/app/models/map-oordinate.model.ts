@@ -3,3 +3,4 @@ export class MapCoordinate {
     latitude: number;
     description: string
 }
+

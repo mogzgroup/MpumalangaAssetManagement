@@ -6,3 +6,4 @@ export class Programme {
     optimalSupportingAccommodationSolution: String;
     rationaleChosenSolution: String;
 }
+

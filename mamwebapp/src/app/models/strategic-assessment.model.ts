@@ -15,3 +15,4 @@ export class StrategicAssessment{
     aoNorm: Number;
     aoRequirement: Number;
 }
+

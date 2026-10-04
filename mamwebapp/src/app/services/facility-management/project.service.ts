@@ -39,3 +39,4 @@ export class ProjectService {
         return this.http.get<Array<Facility>>(`${environment.apiUrl}/api/facility/getbuildings/${town}`);
     }
 }
+

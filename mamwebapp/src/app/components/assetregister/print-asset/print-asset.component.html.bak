@@ -1,0 +1,389 @@
+<button printSectionId="componentID" [useExistingCss]="true" ngxPrint style="float: right;">Print</button><br><br>
+<div id="componentID" style="font-size: 12px"> 
+    
+    <h3>General</h3> 
+    <hr>
+    <div>         
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                File Reference: {{selectedFacility.fileReference}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Property Code: {{selectedFacility.clientCode}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                deeds Office: {{selectedFacility.deedsOffice}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Asset Class: {{selectedFacility.class}}
+            </div>  
+        </div>
+
+        <div class="ui-g-12 ui-md-12" style="font-size: 12px">       
+            <div class="ui-g-2 ui-md-2">
+                Asset Type: {{selectedFacility.type}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Survey: {{selectedFacility.survey}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                
+            </div>
+            <div class="ui-g-3 ui-md-3">
+              
+            </div>  
+        </div>
+    </div>
+   
+    <br><br><br><br>
+    <h3>Geographical Location</h3> 
+    <hr> 
+    <div>
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Province: {{selectedFacility.land.geographicalLocation.province}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Town: {{selectedFacility.land.geographicalLocation.town}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Suburb: {{selectedFacility.land.geographicalLocation.suburb}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Street Name: {{selectedFacility.land.geographicalLocation.streetName}}
+            </div>  
+        </div>
+
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Street Number: {{selectedFacility.land.geographicalLocation.streetNumber}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                District Municipality: {{selectedFacility.land.geographicalLocation.districtMunicipality}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                region: {{selectedFacility.land.geographicalLocation.region}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Local Authority: {{selectedFacility.land.geographicalLocation.localAuthority}}
+            </div>  
+        </div>
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Latitude: {{selectedFacility.land.geographicalLocation.latitude}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Longitude: {{selectedFacility.land.geographicalLocation.longitude}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Magisterial District: {{selectedFacility.land.geographicalLocation.magisterialDistrict}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+               
+            </div>  
+        </div>
+    </div>
+    <br><br><br><br>
+    <h3>Property Description</h3>  
+    <hr>
+    <div>
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Registration Division: {{selectedFacility.land.propertyDescription.registrationDivision}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Township Name: {{selectedFacility.land.propertyDescription.townshipName}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Land Parcel: {{selectedFacility.land.propertyDescription.landParcel}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Land Portion: {{selectedFacility.land.propertyDescription.landPortion}}
+            </div>  
+        </div>
+
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Old Description: {{selectedFacility.land.propertyDescription.oldDescription}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Land Remainder: {{selectedFacility.land.propertyDescription.landRemainder}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                SG Diagram Number: {{selectedFacility.land.propertyDescription.sGDiagramNumber}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Extent: {{selectedFacility.land.propertyDescription.extent}}
+            </div>  
+        </div>
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                LPI Code: {{selectedFacility.land.propertyDescription.LPICode}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Acquired: {{selectedFacility.land.propertyDescription.acquired}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+               
+            </div>
+            <div class="ui-g-3 ui-md-3">
+               
+            </div>  
+        </div>
+    </div>
+    
+
+    <br><br><h3>Geographical Location</h3>  
+    <hr>
+    <div>
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Province: {{selectedFacility.land.geographicalLocation.province}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Town: {{selectedFacility.land.geographicalLocation.town}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Suburb: {{selectedFacility.land.geographicalLocation.suburb}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Street Name: {{selectedFacility.land.geographicalLocation.streetName}}
+            </div>  
+        </div>
+
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Street Number: {{selectedFacility.land.geographicalLocation.streetNumber}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                District Municipality: {{selectedFacility.land.geographicalLocation.districtMunicipality}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                region: {{selectedFacility.land.geographicalLocation.region}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Local Authority: {{selectedFacility.land.geographicalLocation.localAuthority}}
+            </div>  
+        </div>
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Latitude: {{selectedFacility.land.geographicalLocation.latitude}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Longitude: {{selectedFacility.land.geographicalLocation.longitude}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Magisterial District: {{selectedFacility.land.geographicalLocation.magisterialDistrict}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+               
+            </div>  
+        </div>
+    </div>
+
+    <br><br><h3>Land Use Management Detail</h3>  
+    <hr>
+    <div>
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Nature Of Lease: {{selectedFacility.land.leaseStatus.natureOfLease}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                ID Number Company Registration Number: {{selectedFacility.land.leaseStatus.iDNumberCompanyRegistrationNumber}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                PO Box: {{selectedFacility.land.leaseStatus.pOBox}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Contact Number: {{selectedFacility.land.leaseStatus.contactNumber}}
+            </div>  
+        </div>
+
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Capacity Of Contact Person: {{selectedFacility.land.leaseStatus.capacityofContactPerson}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Contact Person: {{selectedFacility.land.leaseStatus.contactPerson}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Postal Code: {{selectedFacility.land.leaseStatus.postalCode}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Lease Status Town: {{selectedFacility.land.leaseStatus.leaseStatusTown}}
+            </div>  
+        </div>
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Rental Amount: {{selectedFacility.land.leaseStatus.rentalAmount}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Termination Date: {{selectedFacility.land.leaseStatus.terminationDate}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Starting Date: {{selectedFacility.land.leaseStatus.startingDate}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Occupation Date: {{selectedFacility.land.leaseStatus.occupationDate}}
+            </div>  
+        </div>
+
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Escalation: {{selectedFacility.land.leaseStatus.escalation}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Vat: {{selectedFacility.land.leaseStatus.vat}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Lease Number: {{selectedFacility.land.leaseStatus.leaseNumber}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Other Charges: {{selectedFacility.land.leaseStatus.otherCharges}}
+            </div>  
+        </div>
+    </div>
+
+    <br><br><h3>Finance</h3> 
+    <hr>
+    <div>         
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Land Use Class: {{selectedFacility.finance.landUseClass}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Nature Of Asset: {{selectedFacility.finance.natureofAsset}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+               
+            </div>
+            <div class="ui-g-3 ui-md-3">
+               
+            </div>  
+        </div>
+    </div>
+    
+    <br><br><h3>Valuation</h3> 
+    <hr>
+    <div>         
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Municipal Valuation Date: {{selectedFacility.finance.valuation.municipalValuationDate}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Non Municipal Valuation Date: {{selectedFacility.finance.valuation.nonMunicipalValuationDate}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Municipal Valuation: {{selectedFacility.finance.valuation.municipalValuation}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Non Municipal Valuation: {{selectedFacility.finance.valuation.nonMunicipalValuation}}
+            </div>  
+        </div>
+
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Propety Rates Account: {{selectedFacility.finance.valuation.propetyRatesAccount}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Value: {{selectedFacility.finance.valuation.value}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Account No For Service: {{selectedFacility.finance.valuation.accountNoForService}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Person Institution Resposible: {{selectedFacility.finance.valuation.personInstitutionResposible}}
+            </div>  
+        </div>
+    </div>
+
+    <h3>Secondary Information Note</h3> 
+    <hr>
+    <div>         
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Addition Cash: {{selectedFacility.finance.secondaryInformationNote.additionCash}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+                Addition Non Cash: {{selectedFacility.finance.secondaryInformationNote.additionNonCash}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Addition: {{selectedFacility.finance.secondaryInformationNote.addition}}
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                Disposal: {{selectedFacility.finance.secondaryInformationNote.disposal}}
+            </div>  
+        </div>
+
+        <div class="ui-g-12 ui-md-12">       
+            <div class="ui-g-2 ui-md-2">
+                Closing Balance: {{selectedFacility.finance.secondaryInformationNote.closingBalance}}
+            </div>       
+            <div class="ui-g-4 ui-md-4">
+               
+            </div>
+            <div class="ui-g-3 ui-md-3">
+               
+            </div>
+            <div class="ui-g-3 ui-md-3">
+                
+            </div>  
+        </div>
+    </div>
+
+    <h3>Improvement</h3> 
+    <div class="border">         
+        <p-table [value]="selectedFacility.improvements">
+            <ng-template pTemplate="header">
+           <th>Building Name</th>
+           <th>Type</th>
+           <th>Size</th>
+           <th>Potential Use</th>
+           <th>Site Coverag</th>
+           <th>Level of Utilization</th>
+           <th>Extent Of Building</th>
+           <th>Condition Rating</th>
+           <th>Usable Area</th>
+           <th>Functional Performance Rating</th>
+           <th>Comment</th>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+           <tr>
+               <td>
+                    {{item.buildingName}}
+               </td>         
+               <td>
+                    {{item.type}}
+                </td>              
+                <td>
+                    {{item.size}}
+                </td>   
+                <td>
+                    {{item.potentialUse}}
+                </td>   
+                <td>
+                    {{item.siteCoverag}}
+                </td>   
+                <td>
+                    {{item.levelofUtilization}}
+                </td>   
+                <td>
+                    {{item.extentOfBuilding}}
+                </td>  
+                <td>
+                    {{item.conditionRating}}
+                </td>  
+                <td>
+                    {{item.usableArea}}
+                </td>  
+                <td>
+                    {{item.functionalPerformanceRating}}
+                </td>  
+                <td>
+                    {{item.comment}}
+                </td>  
+           </tr>
+        </ng-template>
+    </p-table>
+    </div>
+</div>

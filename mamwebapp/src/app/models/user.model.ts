@@ -18,3 +18,4 @@ export class User {
     token?: string;
     department: string;
 }
+

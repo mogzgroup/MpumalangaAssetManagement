@@ -34,3 +34,4 @@ export class OperationPlan {
     comment?: String;
     leased?: boolean;
 }
+

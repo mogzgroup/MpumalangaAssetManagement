@@ -1,0 +1,61 @@
+    <!--<form [formGroup]="addUserForm" (ngSubmit)="onSubmit()">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ui-md-12">
+                <label>Name</label>
+                <div class="ui-inputgroup">
+                    <span class="ui-inputgroup-addon"><i class="pi pi-key" style="line-height: 1.25;"></i></span>
+                    <input formControlName="name" autocomplete="off" type="text" pInputText placeholder="Name"
+                        class="ui-inputtext ui-widget" [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
+                        >
+                    <div *ngIf="submitted && f.name.errors"
+                        class="text-error"><br>
+                        <div *ngIf="f.name.errors.required">This field is required.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-12">
+                <label>Surname</label>
+                <div class="ui-inputgroup">
+                    <span class="ui-inputgroup-addon"><i class="pi pi-key" style="line-height: 1.25;"></i></span>
+                    <input formControlName="surname" autocomplete="off" type="text" pInputText placeholder="Surname"
+                        class="ui-inputtext ui-widget" [ngClass]="{ 'is-invalid': submitted && f.surname.errors }"
+                        required>
+                    <div *ngIf="submitted && f.surname.errors"
+                        class="text-error"><br>
+                        <div *ngIf="f.surname.errors.required">This field is required.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-12">
+                <label>Email Address</label>
+                <div class="ui-inputgroup">
+                    <span class="ui-inputgroup-addon"><i class="pi pi-key" style="line-height: 1.25;"></i></span>
+                    <input formControlName="email" type="text" autocomplete="off" pInputText placeholder="Email"
+                        class="ui-inputtext ui-widget"
+                        [ngClass]="{ 'is-invalid': submitted && f.email.errors }" required>
+                    <div *ngIf="submitted && f.email.errors"
+                        class="text-error"><br>
+                        <div *ngIf="f.email.errors.required">This field is required.</div>                        
+                    </div>                    
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-12">
+                <label>Role</label>
+                <div class="ui-inputgroup">
+                    <p-dropdown inputId="role" [options]="roles" formControlName="role"
+                                    (onChange)="setDeedsOffice($event)" optionLabel="name"
+                                    placeholder="Select a Role"></p-dropdown>
+                    <div *ngIf="submitted && f.role.errors"
+                        class="text-error"><br>
+                        <div *ngIf="f.role.errors.required">This field is required.</div>                        
+                    </div>                    
+                </div>
+            </div>
+            <div *ngIf="error" class="alert alert-danger mt-3 mb-0 text-error text-center">{{error}}</div>
+        </div>
+        <p-footer>
+            <button style="float: left;" type="button" pButton icon="pi pi-times" (click)="showDialog=false"
+                label="Cancel" class="ui-button-secondary"></button>
+            <button style="float: right;" type="submit" pButton icon="pi pi-check" label="Submit"></button>
+        </p-footer>
+    </form>-->

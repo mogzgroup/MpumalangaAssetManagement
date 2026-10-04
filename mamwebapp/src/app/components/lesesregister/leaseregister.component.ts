@@ -19,3 +19,4 @@ export class LeaseRegisterComponent implements OnInit {
   }
 
 }
+

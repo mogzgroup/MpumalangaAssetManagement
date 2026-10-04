@@ -1,0 +1,74 @@
+<div class="topbar clearfix">
+    <div class="topbar-left">
+        <img class="topbar-logo" src="../../../assets/images/logo.png">
+    </div>
+    <div class="topbar-right">
+
+        <button mat-icon-button (click)="showSideMenu = !showSideMenu" id="menu-button"
+            [attr.aria-label]="showSideMenu ? 'Collapse navigation' : 'Expand navigation'">
+            <mat-icon>{{ showSideMenu ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+        </button>
+        <button mat-icon-button id="topbar-menu-button" aria-label="Open navigation menu">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <ul class="topbar-items fadeInDown">
+            <li>
+                <button mat-button [matMenuTriggerFor]="settingsMenu">
+                    <mat-icon>settings</mat-icon><span class="topbar-item-name">Settings</span>
+                </button>
+                <mat-menu #settingsMenu="matMenu">
+                    <button mat-menu-item (click)="openChangePasswordDialog()">
+                        <mat-icon>key</mat-icon><span>Change Password</span>
+                    </button>
+                    <button mat-menu-item (click)="logout()">
+                        <mat-icon>logout</mat-icon><span>Logout</span>
+                    </button>
+                </mat-menu>
+            </li>
+        </ul>
+    </div>
+</div>
+<div *ngIf="showSideMenu" class="transition-delay">
+    <app-sidemenu></app-sidemenu>
+</div>
+<ng-template #changePasswordDialog>
+    <h2 mat-dialog-title>Change Password</h2>
+    <form [formGroup]="changePasswordForm" (ngSubmit)="onSubmit()">
+        <mat-dialog-content class="password-form">
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Old Password</mat-label>
+                <input matInput formControlName="oldpassword" [type]="hideOldPassword ? 'password' : 'text'" autocomplete="current-password">
+                <button mat-icon-button matSuffix type="button" (click)="hideOldPassword = !hideOldPassword" aria-label="Toggle old password visibility">
+                    <mat-icon>{{ hideOldPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                <mat-error *ngIf="submitted && f.oldpassword.errors?.required">This field is required.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>New Password</mat-label>
+                <input matInput formControlName="newpassword" [type]="hideNewPassword ? 'password' : 'text'" autocomplete="new-password">
+                <button mat-icon-button matSuffix type="button" (click)="hideNewPassword = !hideNewPassword" aria-label="Toggle new password visibility">
+                    <mat-icon>{{ hideNewPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                <mat-hint>Use lowercase, uppercase, a number, a special character, and at least 8 characters.</mat-hint>
+                <mat-error *ngIf="submitted && f.newpassword.errors?.required">This field is required.</mat-error>
+                <mat-error *ngIf="submitted && f.newpassword.errors?.pattern">The password does not meet the password policy requirements.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Confirm Password</mat-label>
+                <input matInput formControlName="confirmpassword" [type]="hideConfirmPassword ? 'password' : 'text'" autocomplete="new-password">
+                <button mat-icon-button matSuffix type="button" (click)="hideConfirmPassword = !hideConfirmPassword" aria-label="Toggle confirmation password visibility">
+                    <mat-icon>{{ hideConfirmPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                <mat-error *ngIf="submitted && f.confirmpassword.errors?.required">This field is required.</mat-error>
+                <mat-error *ngIf="f.newpassword.value?.length > 2 && f.confirmpassword.value !== f.newpassword.value">Passwords do not match.</mat-error>
+            </mat-form-field>
+            <p *ngIf="error" class="text-error" role="alert">{{error}}</p>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <button mat-button type="button" (click)="closeChangePasswordDialog()">Cancel</button>
+            <button mat-flat-button color="primary" type="submit">Submit</button>
+        </mat-dialog-actions>
+    </form>
+</ng-template>

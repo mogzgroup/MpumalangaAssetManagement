@@ -151,8 +151,6 @@ export class TemplateFourTwoComponent implements OnInit {
       cashFlowYear5: this.acquisitionPlanForm.controls["cashFlowYear5"].value,
       reqiured: 'true'
     };
-
-    //var index = this.acquisitionPlans.indexOf(this.selectedAcquisitionPlan); 
     this.acquisitionPlans[this.index] = acquisitionPlan;
     this.isEdit = false;
     this.uampService.assignUamp(this.uamp);
@@ -383,3 +381,4 @@ export class TemplateFourTwoComponent implements OnInit {
     this.router.navigate(['uamp']);
   }
 }
+

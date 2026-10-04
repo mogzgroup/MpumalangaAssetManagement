@@ -228,3 +228,4 @@ export class TemplateFiveTwoComponent implements OnInit {
     this.router.navigate(['uamp']);
   }
 }
+

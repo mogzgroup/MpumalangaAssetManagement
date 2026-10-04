@@ -37,8 +37,6 @@ export class ViewUampComponent implements OnInit {
   mtefAllocatoion(year: number, mtefAllocatoion: string, previousYearMtefAllocatoion: string, templete: string) {
     let amount: number = 0;
     let arraryList = this.getTempleteDate(templete);
-   
-    //if(this.uamp[templete]){
     arraryList.forEach(element => {
       if (element[previousYearMtefAllocatoion]) {
         if (year === 1) {
@@ -247,3 +245,4 @@ export class ViewUampComponent implements OnInit {
   }
 
 }
+

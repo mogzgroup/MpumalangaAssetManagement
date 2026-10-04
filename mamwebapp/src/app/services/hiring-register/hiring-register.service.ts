@@ -26,3 +26,4 @@ export class HiringRegisterService {
     return this.http.post<boolean>(`${environment.apiUrl}/api/hiringregister/deletehiredproperty`, hiredProperty);
   }
 }
+

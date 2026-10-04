@@ -23,3 +23,4 @@ describe('LeaseRegisterComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

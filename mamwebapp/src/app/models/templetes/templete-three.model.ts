@@ -4,3 +4,4 @@ export class TempleteThree {
     id:Number = 0;
     strategicAssessments: Array<StrategicAssessment>;
 }
+

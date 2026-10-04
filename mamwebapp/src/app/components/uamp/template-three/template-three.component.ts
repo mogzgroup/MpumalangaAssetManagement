@@ -257,7 +257,6 @@ export class TemplateThreeComponent implements OnInit {
     );
   }
 
-
   back(){
     this.router.navigate(['uampDetails/uampTemp22']);
   }
@@ -279,3 +278,4 @@ export class TemplateThreeComponent implements OnInit {
     this.router.navigate(['uamp']);
   }
 }
+

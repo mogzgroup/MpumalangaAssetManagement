@@ -1,0 +1,55 @@
+<div class="ui-g ui-fluid">
+    <form [formGroup]="municipalUtilityServiceForm" style="width: 100%;">
+        <div class="formgrid grid">
+            <div class="field grid col-6">
+                <span class="p-input-icon-left p-1 w-full">
+                    <label for="name">Name</label>
+                    <p-dropdown inputId="name" [style]="{'width':'274px'}" [options]="names" class="ui-inputtext ui-widget mt-2" formControlName="name" placeholder="Please select" optionLabel="name"></p-dropdown>       
+                </span>
+            </div>
+            <div class="field grid col-3">
+                <span class="p-input-icon-left p-1 w-full ">
+                    <label for="cost">Cost</label>
+                    <p-inputNumber  [inputStyle]="{'width':'120px'}" formControlName="cost" mode="currency" class="ui-inputtext ui-widget p-1 w-full" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                </span>
+            </div>
+            <div class="field grid col-3" style="float: right;">
+                <button style="height:fit-content; width: fit-content;float: right;margin-left: 35%;margin-top: 32px;" (click)="addMunicipalUtilityService()" pButton pRipple type="button" icon="pi pi-plus" iconPos="left" class="p-button-rounded btn-add" label="Add"></button>
+            </div>
+        </div>
+    </form>
+
+    <p-table styleClass="p-datatable-striped" [value]="municipalUtilityServices" [responsive]="true">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Name</th>   
+                <th style="width: 30%;">Cost</th>
+                <th style="width: 10%;"></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-municipalUtilityService let-index="rowIndex">
+            <tr>
+                <td>{{municipalUtilityService.name}}</td>
+                <td>{{municipalUtilityService.cost | currency:'ZAR':'R'}}</td>
+                <td style="text-align: center;" *ngIf="municipalUtilityServices.length > 0">
+                    <button (click)="deleteMunicipalUtilityService(index)" pButton pRipple type="button" icon="pi pi-trash" class="p-button-outlined button-outlined" ></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <tr>      
+                <td></td>          
+                <td style="float: left;">Total: {{sum() | currency:'ZAR':'R'}}</td>
+                <td></td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-footer>
+    <div>
+        <button style="float: left; margin-top: 15px;" type="button" pButton 
+        (click)="cancel()" label="Cancel" class="ui-button-secondary"></button>
+        <button style="float: right; margin-top: 15px" type="button" (click)="onSubmit()" pButton
+         label="Submit"></button>
+    </div>
+</p-footer>

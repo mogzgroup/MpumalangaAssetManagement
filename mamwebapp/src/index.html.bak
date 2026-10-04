@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Mpumalanga Asset Management System</title>
+  <base href="/">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script src="https://maps.google.com/maps/api/js?libraries=places&key=AIzaSyCME2KGL3biqhYGWKurDBl8Jl-umo4YefQ&region=ZAF"></script>
+</head>
+<body style="margin: 0;font-family:'calibri'">
+  <app-root></app-root>
+  <script>
+ /*$(document).ready(function(){
+
+    function p2Tooltip() {
+        var p2 = $("#p2");
+        p2.tooltip({ content: '<b style="color: red">Tooltip</b> <i>text</i>' });
+        document.getElementById("p2d").title = '&ltdiv style="height:200px; border: 1px solid #c8c8c8;font-family: sans-serif; background: orange; z-index: 1;color: darkred;border-radius: 0px 5px 5px 5px;margin-top: 95px;border-top: 3px solid #c8c8c8;position: absolute;width: 90%;line-height: 0;font-size: 13px;padding: 5px;"&gt;'
+        +'&lt;h3 style="margin-top: 5px; margin-bottom: 5px;"&gt;P2&lt;/h3&gt;&lt;br /&gt;'
+        +'&lt;h5&gt;Performance Standard&lt;/h5&gt;'
+        +'&lt;p&gt;tdtsgfdkjfhsj ljghsdjhkjsgdskfgh slghsdk gds&lt;/p&gt; &lt;br /&gt;'
+        +'&lt;h5&gt;Condition Standard&lt;/h5&gt;'
+        +'&lt;p&gt;tdtsgfdkjfhsj ljghsdjhkjsgdskf sdvdsv fgg rgdfgfdg gdg dgdf hdhdfgh slghsdk gds&lt;/p&gt;'
+        +'&lt;/div&gt;';
+    }  
+    
+    function rateOnMouseOut(){
+      document.getElementById("p2").innerHTML  = ''
+    }
+  });*/
+</script>
+</body>
+</html>

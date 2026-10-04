@@ -3,3 +3,4 @@ export class OptimalSupportingAccommodation{
     mission: String;
     supportingAccommodation: String;
 }
+

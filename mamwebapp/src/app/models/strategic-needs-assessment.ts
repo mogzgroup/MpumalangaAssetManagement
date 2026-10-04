@@ -14,3 +14,4 @@ export class TermRequirement{
     norm : string;     
     requirement: string;
 }
+

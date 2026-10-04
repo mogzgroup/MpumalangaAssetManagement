@@ -23,3 +23,4 @@ export class Fault {
     statusColor?: string;
     isDeleted: boolean;
 }
+

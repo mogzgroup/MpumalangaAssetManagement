@@ -211,7 +211,7 @@
                 </div>
             </div>
             <div style="margin-bottom: 36px;">
-                <button style="float: right;" (click)="showdelete=false;saveConditionAssessment()" pButton type="button"
+                <button style="float: right;" (click)="showdelete=false;saveConditionAssessment()" type="button"
                     label="Save" class="ui-button-info"></button>
             </div>
         </p-panel>
@@ -517,33 +517,8 @@
 
         <br /><br />
 
-        <!--<p-panel header="Technical Condition Assessment History" [toggleable]="true" collapsed="true">
-            <ng-template pTemplate="icons">
-                <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu>
-            </ng-template>
-            <p-timeline [value]="conditionAssessments" align="alternate" styleClass="customized-timeline" *ngIf="dataIsLoaded">
-                <ng-template pTemplate="marker" let-conditionAssessment>
-                    <span class="custom-marker p-shadow-2" [style.backgroundColor]="conditionAssessment.color">
-                        <i class="pi pi-user"></i>
-                    </span>
-                </ng-template>
-                <ng-template pTemplate="content" let-conditionAssessment>
-                    <p-card styleClass="card" [header]="conditionAssessment.displayName" [subheader]="conditionAssessment.date">
-                        <div *ngFor="let rate of conditionAssessment.rates">
-                            <h6 style="margin: 12px 0px 0px 0px;">{{rate.name}}</h6>
-                            <i [ngClass]="{'pi-star': rate.value >= 1,'pi-star-o': rate.value != 1}" class="pi rate mr-2"></i>
-                            <i [ngClass]="{'pi-star': rate.value >= 2,'pi-star-o': rate.value != 2}" class="pi rate mr-2"></i>
-                            <i [ngClass]="{'pi-star': rate.value >= 3,'pi-star-o': rate.value != 3}" class="pi rate mr-2"></i>
-                            <i *ngIf="rate.key !== 4 && rate.key !== 5" [ngClass]="{'pi-star': rate.value >= 4,'pi-star-o': rate.value != 4}" class="pi rate mr-2"></i>
-                            <i *ngIf="rate.key !== 4 && rate.key !== 5" [ngClass]="{'pi-star': rate.value >= 5,'pi-star-o': rate.value != 5}" class="pi rate mr-2"></i>
-                            <i *ngIf="rate.key === 6" [ngClass]="{'pi-star': rate.value >= 6,'pi-star-o': rate.value != 6}" class="pi rate mr-2"></i>
-                            <i *ngIf="rate.key === 6" [ngClass]="{'pi-star': rate.value >= 7,'pi-star-o': rate.value != 7}" class="pi rate mr-2"></i>
-                            <i *ngIf="rate.key === 6" [ngClass]="{'pi-star': rate.value >= 8,'pi-star-o': rate.value != 8}" class="pi rate mr-2"></i>
-                            <i *ngIf="rate.key === 6" [ngClass]="{'pi-star': rate.value >= 9,'pi-star-o': rate.value != 9}" class="pi rate mr-2"></i>
-                        </div>           
-                    </p-card>
-                </ng-template>
-            </p-timeline>
-        </p-panel>-->
+        
     </p-tabPanel>
 </p-tabView>
+
+

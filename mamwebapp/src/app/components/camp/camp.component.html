@@ -6,7 +6,7 @@
 <div>
     <span>
         <div style="text-align: end;padding: 20px;">
-            <button pButton type="button" label="Start CAMP" (click)="startCamp()"></button>
+            <button type="button" label="Start CAMP" (click)="startCamp()"></button>
         </div>
     </span>
 </div>
@@ -31,7 +31,7 @@
             <td>
                 <div style="text-align: center;">
                     <p-splitButton label="More" [model]="buttonItems" (onDropdownClick)="selectCamp(camp)"
-                        styleClass="p-button-secondary">
+                        mat-button>
                     </p-splitButton>
                 </div>
             </td>
@@ -48,8 +48,6 @@
     </div>
     <app-view-camp [camp]="camp" *ngIf="!generatingCamp"></app-view-camp>
 </p-dialog>
-
-
 
 <div *ngIf="showCAMP" class="dialogBackgroud"></div>
 <p-dialog [(visible)]="showCAMP" resizable="true" style="width:auto;height:auto;" *ngIf="showCAMP" [style]="{width: '95vw'}" [baseZIndex]="10000">
@@ -96,16 +94,18 @@
         </p-tabView>
     </p-body>
     <p-footer>
-        <button *ngIf="activeIndex === 0" style="float: left; margin-top: 15px;" type="button" pButton
+        <button *ngIf="activeIndex === 0" style="float: left; margin-top: 15px;" type="button"
             (click)="cancel()" label="Cancel" class="ui-button-secondary"></button>
-        <button *ngIf="activeIndex !== 0" style="float: left; margin-top: 15px;" type="button" pButton
+        <button *ngIf="activeIndex !== 0" style="float: left; margin-top: 15px;" type="button"
             icon="pi pi-angle-left" (click)="back(); activeIndex = activeIndex - 1" label="Back"
             class="ui-button-secondary"></button>
         <button *ngIf="activeIndex !== 10" style="float: right; margin-top: 15px" type="button"
-            (click)="next(); activeIndex = activeIndex + 1" pButton icon="pi pi-angle-right" label="Next"></button>
-        <button style="float: right; margin-top: 15px;margin-right: 10px" type="button" pButton icon="pi pi-check"
+            (click)="next(); activeIndex = activeIndex + 1" icon="pi pi-angle-right" label="Next"></button>
+        <button style="float: right; margin-top: 15px;margin-right: 10px" type="button" icon="pi pi-check"
             label="Save" (click)="onSave()"></button>
         <button *ngIf="activeIndex === 10" style="float: right; margin-top: 15px;margin-right: 10px"
-            (click)="onSubmit()" type="submit" pButton icon="pi pi-check" label="Submit"></button>
+            (click)="onSubmit()" type="submit" icon="pi pi-check" label="Submit"></button>
     </p-footer>
 </p-dialog>
+
+

@@ -23,3 +23,4 @@ describe('AssetregisterComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

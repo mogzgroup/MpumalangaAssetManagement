@@ -1,0 +1,193 @@
+<div class="stepsdemo-content mt-5">
+    <p-card>
+        <ng-template pTemplate="subtitle">
+            Acquisition Plan: New accommodation requirements (Capital projects)            
+        </ng-template>
+        <small>NB: This template although generally used for office accommodation may be expanded further for users
+                that have specific requirements in terms of their functional area e.g. special requ for new schools, clinics,
+                hospital. etc.
+        </small>
+        <ng-template pTemplate="content">
+            <p-table styleClass="p-datatable-striped" [value]="acquisitionPlans"
+                [responsive]="true" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
+                responsiveLayout="scroll" [rowsPerPageOptions]="[5,10,15]">
+                <ng-template pTemplate="caption">
+                    <div class="p-d-flex right p-jc-between text-right">
+                        <p-button pTooltip="Add Strategic Assessment" type="button" icon="pi pi-plus"
+                            styleClass="p-button-text"
+                            (click)="displayDialog = true; dialogHeader = 'Add Strategic Assessment'"></p-button>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>District/ Region</th>
+                        <th>Town</th>
+                        <th>Service Description</th>
+                        <th>Budget Type</th>
+                        <th>Size/ Extent (m²)</th>
+                        <th>Year <br><small>in which initial needs were submitted</small></th>
+                        <th>Acquisition Type</th>
+                        <th>Status</th>
+                        <th>Cash Flow <small>(MTEF Year 1)</small></th>
+                        <th>Cash Flow <small>(MTEF Year 2)</small></th>
+                        <th>Cash Flow <small>(MTEF Year 3)</small></th>
+                        <th>Cash Flow <small>(MTEF Year 4)</small></th>
+                        <th>Cash Flow <small>(MTEF Year 5)</small></th>
+                        <th>Total Amount Required</th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-acquisitionPlan>
+                    <tr>
+                        <td>{{acquisitionPlan.districtRegion}}</td>
+                        <td>{{acquisitionPlan.town}}</td>
+                        <td>{{acquisitionPlan.serviceDescription}}</td>
+                        <td>{{acquisitionPlan.budgetType}}</td>
+                        <td>{{acquisitionPlan.extent}}</td>
+                        <td>{{acquisitionPlan.initialNeedYear}}</td>
+                        <td>{{acquisitionPlan.acquisitionType}}</td>
+                        <td>{{acquisitionPlan.status}}</td>
+                        <td>{{acquisitionPlan.cashFlowYear1 | currency:'ZAR':'R'}}</td>
+                        <td>{{acquisitionPlan.cashFlowYear2 | currency:'ZAR':'R'}}</td>
+                        <td>{{acquisitionPlan.cashFlowYear3 | currency:'ZAR':'R'}}</td>
+                        <td>{{acquisitionPlan.cashFlowYear4 | currency:'ZAR':'R'}}</td>
+                        <td>{{acquisitionPlan.cashFlowYear5 | currency:'ZAR':'R'}}</td>
+                        <td>{{calculateDbTotalAmountRequired(acquisitionPlan) | currency:'ZAR':'R'}}</td>
+                        <td style="text-align: center;width: 82px;" *ngIf="acquisitionPlans.length > 0">
+                            <p-splitButton label="More" *ngIf="mode != 'View'" [model]="buttonItems"
+                                (onDropdownClick)="selectAcquisitionPlan(acquisitionPlan)"
+                                styleClass="p-button-secondary">
+                            </p-splitButton>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </ng-template>
+    </p-card>
+</div>
+
+<div *ngIf="displayDialog" class="dialogBackgroud"></div>
+<p-dialog header="{{dialogHeader}}" [(visible)]="displayDialog" [style]="{width: '80vw'}">
+    <p-body>
+        <form [formGroup]="acquisitionPlanForm">
+            <div class="formgrid grid">
+                <div class="field grid col-3">
+                    <label for="region">District/ Region</label>
+                    <p-dropdown (onChange)="setLocalMunicipalities($event)" [style]="{'width':'100%'}"
+                        class="ui-inputtext ui-widget" placeholder="Please select" inputId="districtRegion"
+                        [options]="regions" formControlName="districtRegion" optionLabel="name">
+                    </p-dropdown>
+                </div>
+                <div class="field grid col-3">
+                    <label for="status">Local Municipality</label>
+                    <p-dropdown [style]="{'width':'100%'}" class="ui-inputtext ui-widget" placeholder="Please select"
+                        inputId="status" [options]="localMunicipalities" formControlName="status" optionLabel="name">
+                    </p-dropdown>
+                </div>
+                <div class="field grid col-3">
+                    <label for="acquisitionType">Acquisition Type</label>
+                    <p-dropdown [style]="{'width':'100%'}" class="ui-inputtext ui-widget" placeholder="Please select"
+                        inputId="acquisitionType" [options]="acquisitionTypes" formControlName="acquisitionType"
+                        optionLabel="name"></p-dropdown>
+                </div>
+                <div class="field grid col-3">
+                    <label for="initialNeedYear">Year <small> in which initial request was submitted</small></label>
+                    <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" placeholder="Please select"
+                        [ngModelOptions]="{standalone: true}" formControlName="initialNeedYear"
+                        [options]="initialNeedYears"
+                        optionLabel="name"></p-dropdown>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field grid col-3">
+                    <label for="town">Town</label>
+                    <input formControlName="town" autocomplete="off" type="text" pInputText
+                        class="ui-inputtext ui-widget">
+                </div>
+                <div class="field grid col-3">
+                    <label for="town">Service Description</label>
+                    <input formControlName="serviceDescription" autocomplete="off" type="text" pInputText
+                        class="ui-inputtext ui-widget">
+                </div>
+                <div class="field grid col-3">
+                    <label for="town">Budget Type</label>
+                    <input formControlName="budgetType" autocomplete="off" type="text" pInputText
+                        class="ui-inputtext ui-widget">
+                </div>
+                <div class="field grid col-3">
+                    <label for="town">Size/ Extent <small>(m²)</small></label>
+                    <p-inputNumber formControlName="extent" mode="decimal" class="ui-inputtext ui-widget">
+                    </p-inputNumber>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field grid col-3">
+                    <label for="cashFlowYear1">Cash Flow <small>(MTEF Year 1)</small></label>
+                    <p-inputNumber (keydown)="calculateTotalAmountRequired()" formControlName="cashFlowYear1"
+                        mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
+                </div>
+                <div class="field grid col-3">
+                    <label for="cashFlowYear2">Cash Flow <small>(MTEF Year 2)</small></label>
+                    <p-inputNumber (keydown)="calculateTotalAmountRequired()" formControlName="cashFlowYear2"
+                        mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
+                </div>
+                <div class="field grid col-3">
+                    <label for="cashFlowYear3">Cash Flow <small>(MTEF Year 3)</small></label>
+                    <p-inputNumber (keydown)="calculateTotalAmountRequired()" formControlName="cashFlowYear3"
+                        mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
+                </div>
+                <div class="field grid col-3">
+                    <label for="cashFlowYear4">Cash Flow <small>(MTEF Year 4)</small></label>
+                    <p-inputNumber (keydown)="calculateTotalAmountRequired()" formControlName="cashFlowYear4"
+                        mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field grid col-3">
+                    <label for="cashFlowYear5">Cash Flow <small>(MTEF Year 5)</small></label>
+                    <p-inputNumber (keydown)="calculateTotalAmountRequired()" formControlName="cashFlowYear5"
+                        mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
+                </div>
+                <div class="field grid col-3">
+                    <label for="totalAmountRequired">Total Amount Required</label>
+                    <p-inputNumber disabled="true" formControlName="totalAmountRequired" mode="currency" currency="ZAR"
+                        locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
+                </div>
+                <div class="field grid col-3"></div>
+            </div>
+        </form>
+    </p-body>
+    <p-footer>
+        <div class="p-grid p-nogutter p-justify-between">
+            <p-button [style]="{'float':'left'}" styleClass="p-button-secondary" label="Cancel" (onClick)="displayDialog = false"
+                icon="pi pi-times"></p-button>
+            <p-button *ngIf="!isEdit" [style]="{'float':'right'}" label="Add" (onClick)="addAcquisitionPlan()"
+                icon="pi pi-check" iconPos="right"></p-button>
+            <p-button *ngIf="isEdit" [style]="{'float':'right'}" label="Update"
+                (onClick)="updateStrategicNeedsAssessment()" icon="pi pi-check" iconPos="right"></p-button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<div *ngIf="showComfirmationDelete" class="dialogBackgroud"></div>
+<p-dialog header="Confirmation" [(visible)]="showComfirmationDelete" [breakpoints]="{'960px': '75vw'}"
+    [style]="{width: '25vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    <p>Are you sure that you want to delete this acquisition plan?</p>
+    <p-footer>
+        <button style="float: left;" (click)="showComfirmationDelete=false" pButton type="button" label="No"
+            class="ui-button-info"></button>
+        <button style="float: right;" (click)="showComfirmationDelete=false;deleteOperationPlan()" pButton type="button"
+            label="Yes" class="ui-button-info"></button>
+    </p-footer>
+</p-dialog>
+
+<div class="uamp-footer">
+    <div class="p-grid p-nogutter p-justify-between">
+        <p-button styleClass="p-button-secondary" label="Back" (onClick)="back()" icon="pi pi-angle-left">
+        </p-button>
+        <p-button [style]="{'float':'right'}" label="Save" class="ml-1" (onClick)="save()" icon="pi pi-check"
+        iconPos="right"></p-button>
+        <p-button styleClass="btn-next" label="Next" (onClick)="nextPage()" icon="pi pi-angle-right"
+            iconPos="right"></p-button>
+    </div>
+</div>

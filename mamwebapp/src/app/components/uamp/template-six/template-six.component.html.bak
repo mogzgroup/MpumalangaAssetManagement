@@ -1,0 +1,132 @@
+<div class="mt-5">
+    <p-card>
+        <ng-template pTemplate="subtitle">
+            Surrender Plan: Accommodation/ land identified to be relinquished to custodian
+        </ng-template>
+        <ng-template pTemplate="content">
+            <p-table styleClass="p-datatable-striped" [value]="surrenderPlans" [responsive]="true" [paginator]="true"
+            [rows]="5" [showCurrentPageReport]="true" responsiveLayout="scroll" [rowsPerPageOptions]="[5,10,15]">
+            <ng-template pTemplate="caption">
+                <div class="p-d-flex right p-jc-between text-right">
+                    <p-button pTooltip="Add Surrender Plan" type="button" icon="pi pi-plus"
+                        styleClass="p-button-text"
+                        (click)="displayDialog = true; dialogHeader = 'Add Surrender Plan'"></p-button>
+                </div>
+            </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>District</th>               
+                        <th>Town</th>
+                        <th>Local Municipality</th>
+                        <th>Asset Type</th>
+                        <th>Current Street Address</th>
+                        <th>Property Description</th>
+                        <th>Allocated/ Lettable Space<br> <small>(M²) 0000.00</small></th>
+                        <th>Extent of Land<br> <small>(HA) 0000.0000</small></th>
+                        <th>Surrender Rationale</th>
+                        <th>Date of Proposed Hand-Over</th>
+                        <th>Contractual Obligations</th>
+                        <th>Relinquish</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-surrenderPlan let-rowIndex="rowIndex">
+                        <tr>
+                            <td>{{surrenderPlan.districtMunicipality}}</td>
+                            <td>{{surrenderPlan.town}}</td>
+                            <td>{{surrenderPlan.localAuthority}}</td>
+                            <td>{{surrenderPlan.type}}</td>
+                            <td><input [(ngModel)]="surrenderPlan.currentStreetAddress" [ngModelOptions]="{standalone: true}" autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget"></td>
+                            <td>{{surrenderPlan.name}}</td>
+                            <td><p-inputNumber class="ui-inputtext ui-widget" [(ngModel)]="surrenderPlan.allocatedLettableSpace" [ngModelOptions]="{standalone: true}"></p-inputNumber></td>
+                            <td>{{surrenderPlan.extent}}</td>
+                            <td><input [(ngModel)]="surrenderPlan.surrenderRationale" [ngModelOptions]="{standalone: true}" autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget"></td>
+                            <td><p-calendar  class="ui-inputtext ui-widget" [(ngModel)]="surrenderPlan.proposedHandOverDate" [ngModelOptions]="{standalone: true}" dateFormat="dd/mm/yy" showOtherMonths="true" showButtonBar="true"></p-calendar></td>
+                            <td><input [(ngModel)]="surrenderPlan.contractualObligations" [ngModelOptions]="{standalone: true}" autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget"></td>
+                            <td> <p-inputSwitch [(ngModel)]="surrenderPlan.relinquish" (onChange)="relinquishSurrenderPlan(surrenderPlan, $event)"></p-inputSwitch></td>
+                        </tr>
+                </ng-template>
+            </p-table>
+        </ng-template>
+    </p-card>
+</div>
+
+<div *ngIf="displayDialog" class="dialogBackgroud"></div>
+<p-dialog header="{{dialogHeader}}" [(visible)]="displayDialog" [style]="{width: '80vw'}">
+    <p-body>
+        <form [formGroup]="newSurrenderPlanForm">
+            <div class="formgrid grid">  
+                <div class="field grid col-3">
+                    <label for="district">District</label>
+                    <p-dropdown (onChange)="setLocalMunicipalities($event)" [style]="{'width':'100%'}" class="ui-inputtext ui-widget" placeholder="Please select" inputId="district" [options]="regions" formControlName="district" optionLabel="name"></p-dropdown>
+                </div>
+                <div class="field grid col-3">
+                    <label for="localMunicipality">Local Municipality</label>
+                    <p-dropdown [style]="{'width':'100%'}" class="ui-inputtext ui-widget" placeholder="Please select" inputId="localMunicipality" [options]="localMunicipalities" formControlName="localMunicipality" optionLabel="name"></p-dropdown>
+                </div>
+                <div class="field grid col-3">
+                    <label for="assetType">Asset Type</label>
+                    <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" placeholder="Please select" inputId="assetType" [options]="assetTypes" formControlName="assetType" optionLabel="name"></p-dropdown>
+                </div>
+                <div class="field grid col-3">
+                    <label for="propertyDescription">Property Description</label>
+                    <input formControlName="propertyDescription" autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
+                </div>  
+            </div>
+            <div class="formgrid grid">  
+                <div class="field grid col-3">
+                    <label for="town">Town</label>
+                    <input formControlName="town" autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
+                </div>
+                <div class="field grid col-3 pr-4">
+                    <label for="propertyDescription">Property Description</label>
+                    <input formControlName="propertyDescription" autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
+                </div> 
+                <div class="field grid col-3">
+                    <label for="allocatedLettableSpace">Allocated Lettable Space</label>
+                    <p-inputNumber formControlName="allocatedLettableSpace" mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
+                </div> 
+                <div class="field grid col-3">
+                    <label for="extentofLand">Extent of Land</label>
+                    <p-inputNumber formControlName="extentofLand" mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
+                </div>
+            </div>
+            <div class="formgrid grid">                         
+                <div class="field grid col-3">
+                    <label for="surrenderRationale">Surrender Rationale</label>
+                    <input formControlName="surrenderRationale" autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
+                </div> 
+                <div class="field grid col-3">
+                    <label for="contractualObligations">Contractual Obligations</label>
+                    <input formControlName="contractualObligations" autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
+                </div> 
+                <div class="field grid col-3">
+                    <label for="proposedHandOverDate">Proposed Hand Over Date</label>
+                    <p-calendar formControlName="proposedHandOverDate" class="ui-inputtext ui-widget" [ngModelOptions]="{standalone: true}" dateFormat="dd/mm/yy" showOtherMonths="true" showButtonBar="true"></p-calendar>
+                </div> 
+            </div>
+        </form>
+    </p-body>
+    <p-footer>
+        <div class="p-grid p-nogutter p-justify-between">
+            <p-button [style]="{'float':'left'}" styleClass="p-button-secondary" label="Cancel" (onClick)="displayDialog = false"
+                icon="pi pi-times"></p-button>
+            <p-button *ngIf="!isEdit" [style]="{'float':'right'}" label="Add" (onClick)="addSurrenderPlan()"
+                icon="pi pi-check" iconPos="right"></p-button>
+            <p-button *ngIf="isEdit" [style]="{'float':'right'}" label="Update" (onClick)="updateOperationPlan()"
+                icon="pi pi-check" iconPos="right"></p-button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+<div class="uamp-footer">
+    <div class="p-grid p-nogutter p-justify-between">
+        <p-button styleClass="p-button-secondary" label="Back" (onClick)="back()" icon="pi pi-angle-left">
+        </p-button>
+        <p-button [style]="{'float':'right'}" label="Save" class="ml-1" (onClick)="save()" icon="pi pi-check"
+        iconPos="right"></p-button>
+        <p-button styleClass="btn-next" label="Next" (onClick)="nextPage()" icon="pi pi-angle-right"
+            iconPos="right"></p-button>
+    </div>
+</div>

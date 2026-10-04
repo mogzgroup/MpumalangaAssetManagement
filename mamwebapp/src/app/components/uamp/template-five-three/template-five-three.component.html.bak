@@ -1,0 +1,102 @@
+<div class="mt-5">
+    <p-card>
+        <ng-template pTemplate="subtitle">
+            Operation Plan: assets leased out/ investment purposes assets
+        </ng-template>
+        <ng-template pTemplate="content">
+            <small>NB: THIS TEMPLATE IS FOR COMPLETION BY CUSTODIANS ONLY AND THOSE USERS THAT HAVE BEEN GRANTED THE
+                AUTHORITY TO LEASE OUT STATE OWNED ASSETS</small>
+            <p-table [paginator]="true" [value]="operationPlans" [paginator]="true"
+                [rows]="5" [showCurrentPageReport]="true" responsiveLayout="stacked" [rowsPerPageOptions]="[5,10,15]">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 150px;">District</th>
+                        <th style="width: 150px;">Town</th>
+                        <th style="width: 150px;">Local Municipality</th>
+                        <th style="width: 150px;">Asset Description</th>
+                        <th style="width: 150px;">Street Description</th>
+                        <th style="width: 150px;">Property Description</th>
+                        <th style="width: 150px;">Lease Type</th>
+                        <th style="width: 100px;">No. of Parking Bays</th>
+                        <th style="width: 150px;">Usable Space<br><small>(M²) 0000.00</small></th>
+                        <th style="width: 150px;">Construction Area<br><small>(M²) 0000.00</small></th>
+                        <th style="width: 120px;">Extent of Land<br><small>(HA) 0000.0000</small></th>
+                        <th style="width: 300px;">Lease Start Date</th>
+                        <th style="width: 300px;">Lease Start End</th>
+                        <th style="width: 150px;">Rental PM/PA</th>
+                        <th style="width: 150px;">Comments</th>
+                        <th style="width: 90px;">Leased</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-operationPlan let-rowIndex="rowIndex">
+                    <tr>
+                        <td>{{operationPlan.districtRegion}}</td>
+                        <td>{{operationPlan.town}}</td>
+                        <td>{{operationPlan.localAuthority}}</td>
+                        <td>{{operationPlan.assetDescription}}</td>
+                        <td>{{operationPlan.streetDescription}}</td>
+                        <td>{{operationPlan.repairDescription}}</td>
+                        <td>
+                            <p-dropdown [style]="{'width':'150px'}" [(ngModel)]="operationPlan.leaseTypeObj"
+                                class="ui-inputtext ui-widget" placeholder="Please select"
+                                [ngModelOptions]="{standalone: true}"
+                                (onChange)="onLeaseTypeChange(operationPlan, $event)" [options]="leaseTypes"
+                                optionLabel="name"></p-dropdown>
+                        </td>
+                        <td>
+                            <p-inputNumber [inputStyle]="{'width':'65px'}" class="ui-inputtext ui-widget"
+                                [(ngModel)]="operationPlan.noofParkingBays" [ngModelOptions]="{standalone: true}">
+                            </p-inputNumber>
+                        </td>
+                        <td>
+                            <p-inputNumber [inputStyle]="{'width':'130px'}" class="ui-inputtext ui-widget"
+                                [(ngModel)]="operationPlan.usableSpace" [ngModelOptions]="{standalone: true}">
+                            </p-inputNumber>
+                        </td>
+                        <td>
+                            <p-inputNumber [inputStyle]="{'width':'130px'}" class="ui-inputtext ui-widget"
+                                [(ngModel)]="operationPlan.constructionArea" [ngModelOptions]="{standalone: true}">
+                            </p-inputNumber>
+                        </td>
+                        <td>{{operationPlan.extent}}</td>
+                        <td>
+                            <p-calendar appendTo="body" class="ui-inputtext ui-widget" [(ngModel)]="operationPlan.leaseStartDate"
+                                [ngModelOptions]="{standalone: true}" dateFormat="dd/mm/yy" showOtherMonths="true"
+                                showButtonBar="true"></p-calendar>
+                        </td>
+                        <td>
+                            <p-calendar appendTo="body" class="ui-inputtext ui-widget" [(ngModel)]="operationPlan.leaseEndDate"
+                                [ngModelOptions]="{standalone: true}" dateFormat="dd/mm/yy" showOtherMonths="true"
+                                showButtonBar="true"></p-calendar>
+                        </td>
+                        <td>
+                            <p-inputNumber [inputStyle]="{'width':'130px'}" class="ui-inputtext ui-widget"
+                                [(ngModel)]="operationPlan.rentalPmPa" [ngModelOptions]="{standalone: true}"
+                                mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                        </td>
+                        <td><input [style]="{'width':'180px'}" [(ngModel)]="operationPlan.comment"
+                                [ngModelOptions]="{standalone: true}" autocomplete="off" type="text" pInputText
+                                class="ui-inputtext ui-widget"></td>
+                        <td>
+                            <p-inputSwitch (onChange)="onLeased(operationPlan, $event)"
+                                [(ngModel)]="operationPlan.leased"></p-inputSwitch>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </ng-template>
+    </p-card>
+</div>
+
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+<div class="uamp-footer">
+    <div class="p-grid p-nogutter p-justify-between">
+        <p-button styleClass="p-button-secondary" label="Back" (onClick)="back()" icon="pi pi-angle-left">
+        </p-button>
+        <p-button [style]="{'float':'right'}" label="Save" class="ml-1" (onClick)="save()" icon="pi pi-check"
+        iconPos="right"></p-button>
+        <p-button styleClass="btn-next" label="Next" (onClick)="nextPage()" icon="pi pi-angle-right"
+            iconPos="right"></p-button>
+    </div>
+</div>

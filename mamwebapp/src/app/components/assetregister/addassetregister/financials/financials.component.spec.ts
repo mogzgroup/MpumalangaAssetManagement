@@ -23,3 +23,4 @@ describe('FinancialsComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

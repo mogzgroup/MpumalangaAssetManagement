@@ -1,0 +1,9 @@
+
+<app-header *ngIf="loggedIn"></app-header><!--*ngIf="loggedIn"-->
+
+<!-- main app container -->
+<div class="container">
+  <router-outlet></router-outlet>
+</div>
+
+<ngx-loading-bar></ngx-loading-bar>

@@ -1,7 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-//import { PrimeNGConfig } from 'primeng/api';
 import { AuthenticationService } from '../app/services/authentication.service';
 import { User } from '../app/models/user.model';
 import { Role } from '../app/models/role.model';
@@ -43,9 +42,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-   // this.authenticationService.logout();
-    //this.router.navigate(['/login']);
-    //this.primengConfig.ripple = true;
 }
 
   logout() {
@@ -67,3 +63,4 @@ export class AppComponent implements OnInit {
       return false;
   }
 }
+

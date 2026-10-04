@@ -1,0 +1,45 @@
+<p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+
+<div class="text-center" style="color: red;" *ngIf="error">
+    <h5 class="mt-20">
+        <li class="pi pi-exclamation-triangle" style="color: red;font-size: xx-large;"></li>
+        <span> An error has occured...</span>
+    </h5>
+    <h6 class="color-aqua">{{errorMsg}}</h6>
+</div>
+
+<div>
+    <form [formGroup]="trackFaultForm" style="height: auto;">
+        <div class="p-fluid p-grid p-formgrid form-body">
+            <div class="formgrid grid">
+                <div class="field grid col-12">
+                    <span class="p-input-icon-left p-1">
+                        <label for="float-input">Enter your reference number</label>
+                        <input [(ngModel)]="referenceNumber" formControlName="referenceNumber" autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
+                        <div *ngIf="submitted && f.referenceNumber.errors" class="text-error"><br>
+                            <div *ngIf="f.referenceNumber.errors.required">This field is required.</div>
+                        </div>
+                    </span>
+                </div>                
+            </div>     
+        </div>
+    </form>
+    <br/>
+    <div style="text-align: center;">        
+        <button type="button" (click)="onSearch()" pButton label="Search"></button>      
+    </div>
+    <br/>
+    <div *ngIf="ticketisFound">
+        <p class="success">
+            Reference: {{referenceNumber}}
+            <br/>
+            Your fault status is <b>{{status}}</b> 
+        </p>
+    </div>
+
+    <div *ngIf="ticketNotFound">
+        <p class="not-found">
+            Fault not found
+        </p>
+    </div>
+</div>

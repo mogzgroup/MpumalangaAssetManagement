@@ -1,0 +1,185 @@
+<div class="stepsdemo-content mt-5">
+    <p-card>
+        <ng-template pTemplate="subtitle">
+            Strategic needs assessment: Current utilisation/ needs assessment od accommodation occured
+        </ng-template>
+        <ng-template pTemplate="content">
+            <p-table [value]="strategicAssessments" styleClass="p-datatable-striped" [value]="properties"
+                [responsive]="true" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
+                responsiveLayout="scroll" [rowsPerPageOptions]="[5,10,15]">
+                <ng-template pTemplate="caption">
+                    <div class="p-d-flex right p-jc-between text-right">
+                        <p-button pTooltip="Add Strategic Assessment" type="button" icon="pi pi-plus" styleClass="p-button-text"
+                            (click)="displayDialog = true; dialogHeader = 'Add Strategic Assessment'"></p-button>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th></th>
+                        <th colspan="4" style="width: 25%;">Requirements in Terms of Approved Organogram</th>
+                        <th colspan="4" style="width: 25%;">Requirements in Terms of filled & budgeted Posts</th>
+                        <th></th>
+                        <th colspan="2">Space Utilisation</th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <th>Post Description/ Title</th>
+                        <th>Level</th>
+                        <th>Quantity</th>
+                        <th>Norm</th>
+                        <th>Requirement</th>
+                        <th>Level</th>
+                        <th>Quantity</th>
+                        <th>Norm</th>
+                        <th>Requirement</th>
+                        <th>Allocated Space</th>
+                        <th>Surplus (+) or Shortage (-) of Accommodation(m²)</th>
+                        <th>Percentage Utilised</th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-strategicAssessment let-rowIndex="rowIndex">
+                    <tr class="ui-widget-header"
+                        *ngIf="rowGroupMetadata[strategicAssessment.district].index === rowIndex">
+                        <td colspan="13">
+                            <span style="font-weight:bold">{{strategicAssessment.district}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>{{strategicAssessment.postDescriptionTitle}}</td>
+                        <td>{{strategicAssessment.fbpLevel}}</td>
+                        <td>{{strategicAssessment.fbpQuantity}}</td>
+                        <td>{{strategicAssessment.fbpNorm}}</td>
+                        <td>{{strategicAssessment.fbpRequirement}}</td>
+                        <td>{{strategicAssessment.aoLevel}}</td>
+                        <td>{{strategicAssessment.aoQuantity}}</td>
+                        <td>{{strategicAssessment.aoNorm}}</td>
+                        <td>{{strategicAssessment.aoRequirement}}</td>
+                        <td>{{strategicAssessment.allocatedSpace}}</td>
+                        <td>{{strategicAssessment.surplusShortageAccommodation}}</td>
+                        <td [ngClass]="strategicAssessment.percentageUtilised < 0 ? 'red' : 'textColor'">
+                            {{strategicAssessment.percentageUtilised | number : '1.2-2'}}%</td>
+                        <td style="text-align: center;" *ngIf="strategicAssessments.length > 0">
+                            <p-splitButton label="More" *ngIf="mode != 'View'" [model]="buttonItems"
+                                (onDropdownClick)="selectStrategicNeedsAssessment(strategicAssessment)"
+                                styleClass="p-button-secondary">
+                            </p-splitButton>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </ng-template>
+    </p-card>
+</div>
+
+<div *ngIf="displayDialog" class="dialogBackgroud"></div>
+<p-dialog header="{{dialogHeader}}" [(visible)]="displayDialog" [style]="{width: '80vw'}">
+    <p-body>
+        <form [formGroup]="assessmentStrategicForm">
+            <div class="formgrid grid">
+                <div class="field col-6">
+                    <small for="district">District</small>
+                    <input formControlName="district" autocomplete="off" type="text"
+                        pInputText class="ui-inputtext ui-widget w-full">
+                </div>
+            </div>
+
+            <div>
+
+                <div class="formgrid grid pt-5">
+                    <div class="field col-6">
+                        <span class="p-float-label p-input-icon-left w-full">
+                            <input formControlName="postDescriptionTitle" autocomplete="off" type="text" pInputText
+                                class="ui-inputtext ui-widget w-full pr-3">
+                            <label for="float-input">Post Description/ Title</label>
+                        </span>
+                    </div>
+
+                    <div class="field col-6" style="margin-top: -35px;">
+                        <label for="allocatedSpace" class="col-fixed">Allocated Space</label>
+                        <p-inputNumber class="ui-inputtext ui-widget" formControlName="allocatedSpace"></p-inputNumber>
+                        <small>As per usable office space</small>
+                    </div>
+
+                </div>
+
+                <div class="formgrid grid">
+                    <div class="col-6 pr-5">
+                        <span class="mb-5">Requirements in Terms of filled & budgeted Posts</span>
+                        <br>
+                        <div class="formgrid grid">
+                            <div class="field col-4">
+                                <label for="fbpLevel" class="col-fixed">Level</label>
+                                <p-inputNumber formControlName="fbpLevel" class="ui-inputtext ui-widget">
+                                </p-inputNumber>
+                            </div>
+                            <div class="field col-4">
+                                <label for="fbpQuantity" class="col-fixed">Quantity</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="fbpQuantity">
+                                </p-inputNumber>
+                            </div>
+                            <div class="field col-4">
+                                <label for="fbpNorm" class="col-fixed">Norm</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="fbpNorm"></p-inputNumber>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <span>Requirements in Terms of Approved Organogram</span><br>
+                        <div class="formgrid grid">
+                            <div class="field col-4">
+                                <label for="aoLevel" class="col-fixed">Level</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="aoLevel"></p-inputNumber>
+                            </div>
+
+                            <div class="field col-4">
+                                <label for="float-input" class="col-fixed w-4">Quantity</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="aoQuantity">
+                                </p-inputNumber>
+                            </div>
+
+                            <div class="field col-4">
+                                <label for="float-input" class="col-fixed w-4">Norm</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="aoNorm"></p-inputNumber>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </p-body>
+    <p-footer>
+        <div class="p-grid p-nogutter p-justify-between">
+            <p-button [style]="{'float':'left'}" styleClass="p-button-secondary" label="Cancel" (onClick)="displayDialog = false"
+                icon="pi pi-times"></p-button>
+            <p-button *ngIf="!isEdit" [style]="{'float':'right'}" label="Add" (onClick)="addStrategicNeedsAssessment()"
+                icon="pi pi-check" iconPos="right"></p-button>
+            <p-button *ngIf="isEdit" [style]="{'float':'right'}" label="Update" (onClick)="updateStrategicNeedsAssessment()"
+                icon="pi pi-check" iconPos="right"></p-button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+
+<div *ngIf="showComfirmationDelete" class="dialogBackgroud"></div>
+<p-dialog header="Confirmation" [(visible)]="showComfirmationDelete" [breakpoints]="{'960px': '75vw'}"
+    [style]="{width: '25vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    <p>Are you sure that you want to delete this strategic assessment?</p>
+    <p-footer>
+        <button style="float: left;" (click)="showComfirmationDelete=false" pButton type="button" label="No"
+            class="ui-button-info"></button>
+        <button style="float: right;" (click)="showComfirmationDelete=false;deleteStrategicAssessment()" pButton
+            type="button" label="Yes" class="ui-button-info"></button>
+    </p-footer>
+</p-dialog>
+
+<div class="uamp-footer">
+    <div class="p-grid p-nogutter p-justify-between">
+        <p-button styleClass="p-button-secondary" label="Back" (onClick)="back()" icon="pi pi-angle-left">
+        </p-button>
+        <p-button [style]="{'float':'right'}" label="Save" class="ml-1" (onClick)="save()" icon="pi pi-check"
+        iconPos="right"></p-button>
+        <p-button styleClass="btn-next" label="Next" (onClick)="nextPage()" icon="pi pi-angle-right"
+            iconPos="right"></p-button>
+    </div>
+</div>

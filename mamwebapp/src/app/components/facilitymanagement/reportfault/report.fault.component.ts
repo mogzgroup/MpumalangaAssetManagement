@@ -71,3 +71,4 @@ export class ReportFaultComponent implements OnInit {
     return result;
   }
 }
+

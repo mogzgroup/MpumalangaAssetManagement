@@ -6,3 +6,4 @@ export class CurrentUtlisation {
     allocatedSpace: string;
     percentageUtitlised: string;
 }
+

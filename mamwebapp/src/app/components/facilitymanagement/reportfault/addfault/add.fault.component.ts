@@ -131,7 +131,6 @@ export class AddFaultComponent implements OnInit {
           }
           this.isSuccessful = true;
         } else {
-          //this.showToast('Report a Fault', 'Your fault has not been added successfully.', 'error');
         }
       },
         error => {
@@ -207,3 +206,4 @@ export class AddFaultComponent implements OnInit {
     window.location.reload();
   }
 }
+

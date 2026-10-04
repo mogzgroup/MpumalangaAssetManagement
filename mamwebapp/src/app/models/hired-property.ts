@@ -30,3 +30,4 @@ export class HiredProperty {
     latitude: string;
     longitude: string
 }
+

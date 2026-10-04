@@ -109,7 +109,7 @@
                     </div>
                     <div class="field grid col-4">
                         <button type="button" style="height: fit-content;bottom: -19px; width: fit-content;"
-                            (click)="onAddNote()" pButton label="Add"></button>
+                            (click)="onAddNote()" mat-button>Add</button>
                     </div>
                 </div>
                 <div class="field grid col-12">
@@ -207,14 +207,17 @@
 <p-footer>
     <div>
         <button *ngIf="isUpdated" class="p-button-secondary" style="right: 180px;width: fit-content;bottom: 35px;position: absolute;
-                    height: fit-content;" type="button" (click)="onCancel();" pButton label="Close"></button>
+                    height: fit-content;" type="button" (click)="onCancel();" mat-button>Close</button>
 
         <button *ngIf="!showCloseTicket() && selectedServiceRequest.status != 'Close'" style="right: 35px;width: fit-content;float: right;
-                    height: fit-content;" type="button" (click)="onSubmit(); activeIndex = 2" pButton
+                    height: fit-content;" type="button" (click)="onSubmit(); activeIndex = 2"
             label="Submit"></button>
 
         <button *ngIf="showCloseTicket() && selectedServiceRequest.status != 'Close'"
             style="right: 35px; float: right; width: fit-content; height: fit-content;" type="button"
-            (click)="onCloseicket()" pButton label="Close This Ticket"></button>
+            (click)="onCloseicket()" mat-button>Close This Ticket</button>
     </div>
 </p-footer>
+
+
+

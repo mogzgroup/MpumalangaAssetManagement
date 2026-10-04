@@ -1,0 +1,139 @@
+<p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+
+<div class="text-center" style="color: red;" *ngIf="error">
+    <h5 class="mt-20">
+        <li class="pi pi-exclamation-triangle" style="color: red;font-size: xx-large;"></li>
+        <span> An error has occured...</span>
+    </h5>
+    <h6 class="color-aqua">{{errorMsg}}</h6>
+</div>
+
+<form [formGroup]="reportFaultForm" *ngIf="!isSuccessful">
+    <div class="p-fluid p-grid p-formgrid form-body">
+        <div class="formgrid grid">
+            <div class="field grid col-12">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Town</label>
+                    <p-autoComplete (onSelect)="onTownChange($event)" class="ui-inputtext ui-widget"
+                        [(ngModel)]="selectedTown" [suggestions]="filteredTowns" formControlName="townName"
+                        (completeMethod)="filterTown($event)" field="name" [dropdown]="true">
+                        <ng-template let-town pTemplate="item">
+                            <div class="country-item">
+                                <div>{{town.name}}</div>
+                            </div>
+                        </ng-template>
+                    </p-autoComplete>
+                    <br/>
+                    <div *ngIf="submitted && f.townName.errors" class="text-error" style="top: 50px;"><br>
+                        <div *ngIf="f.townName.errors.required">This field is required.</div>
+                    </div>
+                </span>
+            </div>
+
+            <div class="field grid col-12">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Building name</label>
+                    <p-autoComplete styleClass="long-text" [disabled]="!enableBuilding" class="ui-inputtext ui-widget"
+                        [(ngModel)]="selectedBuilding" [suggestions]="filteredBuildings"
+                        (completeMethod)="filterBuilding($event)" (onSelect)="onBuildingChange($event)" field="name"
+                        [dropdown]="true" formControlName="buildingName">
+                        <ng-template let-building pTemplate="item">
+                            <div>
+                                <div>{{building.name}}</div>
+                            </div>
+                        </ng-template>
+                    </p-autoComplete>
+                    <div *ngIf="submitted && f.buildingName.errors" class="text-error" style="top: 50px;"><br>
+                        <div *ngIf="f.buildingName.errors.required">This field is required.</div>
+                    </div>
+                </span>
+            </div>
+
+            <div class="field grid col-12">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Exact Location of Issue</label>
+                    <input formControlName="propertyDescription" autocomplete="off" type="text" pInputText
+                        class="ui-inputtext ui-widget">
+                    <div *ngIf="submitted && f.propertyDescription.errors" class="text-error"><br>
+                        <div *ngIf="f.propertyDescription.errors.required">This field is required.</div>
+                    </div>
+                </span>
+            </div>
+
+            <div class="field grid col-12">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Description of the issue</label>
+                    <input formControlName="descriptionoftheIssue" autocomplete="off" type="text" pInputText
+                        class="ui-inputtext ui-widget">
+                    <div *ngIf="submitted && f.descriptionoftheIssue.errors" class="text-error"><br>
+                        <div *ngIf="f.descriptionoftheIssue.errors.required">This field is required.</div>
+                    </div>
+                </span>
+            </div>
+
+            <div class="field grid col-12">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Name & Surname</label>
+                    <input formControlName="nameSurname" autocomplete="off" type="text" pInputText
+                        class="ui-inputtext ui-widget">
+                    <div *ngIf="submitted && f.nameSurname.errors" class="text-error"><br>
+                        <div *ngIf="f.nameSurname.errors.required">This field is required.</div>
+                    </div>
+                </span>
+            </div>
+
+            <div class="field grid col-12">
+                <span class="p-input-icon-left p-1">
+                    <label for="float-input">Contact Number</label>
+                    <input type="text" pattern="[0-9]+" maxlength="10" placeholder="(000) 000 0000"
+                        formControlName="contactNumber" autocomplete="off" type="text" pInputText
+                        class="ui-inputtext ui-widget">
+                    <div *ngIf="submitted && f.contactNumber.errors" class="text-error"><br>
+                        <div *ngIf="f.contactNumber.errors.required">This field is required.</div>
+                    </div>
+                </span>
+            </div>
+
+            <div class="field grid col-12">
+                <p-fileUpload accept="image/*" chooseLabel="Add a picture" [showUploadButton]="false" styleClass="file-upload"
+                    [showCancelButton]="false" (onRemove)="onRemoveAttachment($event)" multiple="multiple"
+                    (onSelect)="onChooseFile($event.files)">
+                    <ng-template pTemplate="content">
+                        <ul *ngFor="let file of attachments; let i = index" style="list-style-type:none;">
+                            <li>
+                                <p><a target="_blank" href="{{ file.url }}">{{ file.name }}</a></p>
+                            </li>
+                        </ul>
+                    </ng-template>
+                </p-fileUpload>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+<div *ngIf="isSuccessful">
+    <p class="success">
+        Your fault has been successfully reported.
+        <br />
+        Your reference number is <strong>{{fault.referenceNo}}</strong>
+    </p>
+    <br /> <br />
+</div>
+
+<p-footer>
+    <div style="text-align: center;">
+        <a class="link" style="float: left;margin-top: 15px;" (click)="showTrackTicketDialog=true">Track Progress</a>
+        <button style="float: right" type="button" *ngIf="!isSuccessful" (click)="onSubmit()" pButton
+            label="Submit"></button>
+        <button style="float: right" type="button" *ngIf="isSuccessful" (click)="onDone()" pButton
+            label="Done"></button>
+    </div>
+</p-footer>
+
+<div *ngIf="showTrackTicketDialog" class="dialogBackgroud"></div>
+<p-dialog [(visible)]="showTrackTicketDialog" *ngIf="showTrackTicketDialog" [style]="{width: '95%'}"
+    [baseZIndex]="10000">
+    <p-header> Track Progress </p-header>
+    <app-track-ticket></app-track-ticket>
+</p-dialog>

@@ -40,3 +40,4 @@ export class UserService {
     return this.http.post<boolean>(`${environment.apiUrl}/api/user/deleteuser`,user);
   }
 }
+

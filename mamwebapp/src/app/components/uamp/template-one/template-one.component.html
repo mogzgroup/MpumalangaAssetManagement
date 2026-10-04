@@ -31,12 +31,7 @@
                             mission)</span>
                     </span>
                 </div>
-                <!--<div class="field col-12 md-12"> 
-                    <button *ngIf="!isEdit" pButton title="Add Programme" label="Add Programme" type="button"
-                         icon="pi pi-plus" style="float: right;width: auto;"></button>
-                    <button *ngIf="isEdit" pButton title="Update Programme" label="Update Programme" type="button"
-                        (click)="onUpdate()" icon="pi pi-pencil" style="float: right;width: auto;"></button>
-                </div>-->
+                
             </div>
 
             <div class="mt-5">
@@ -45,9 +40,7 @@
                     [rowsPerPageOptions]="[5,10,15]">
                     <ng-template pTemplate="caption">
                         <div class="p-d-flex right p-jc-between text-right">
-                            <p-button pTooltip="Add Programme" type="button" icon="pi pi-plus"
-                                styleClass="p-button-text"
-                                (click)="displayDialog = true; dialogHeader = 'Add Programme'"></p-button>
+                            <button mat-button pTooltip="Add Programme" type="button" (click)="displayDialog = true; dialogHeader = 'Add Programme'"><span class="pi pi-plus"></span>Add Programme</button>
                         </div>
                     </ng-template>
                     <ng-template pTemplate="header">
@@ -67,7 +60,7 @@
                             <td>{{programme.rationaleChosenSolution}}</td>
                             <td style="text-align: center;" *ngIf="programmes.length > 0">
                                 <p-splitButton label="More" *ngIf="mode != 'View'" [model]="buttonItems"
-                                    (onDropdownClick)="selectProgramme(programme)" styleClass="p-button-secondary">
+                                    (onDropdownClick)="selectProgramme(programme)" mat-button>
                                 </p-splitButton>
                             </td>
                         </tr>
@@ -125,23 +118,21 @@
     </p-body>
     <p-footer>
         <div class="p-grid p-nogutter p-justify-between">
-            <p-button [style]="{'float':'left'}" styleClass="p-button-secondary" label="Cancel" (onClick)="displayDialog = false"
-                icon="pi pi-times"></p-button>
-            <p-button *ngIf="!isEdit" [style]="{'float':'right'}" label="Add" (onClick)="addProgram()"
-                icon="pi pi-angle-right" iconPos="right"></p-button>
-            <p-button *ngIf="isEdit" [style]="{'float':'right'}" label="Update" (onClick)="onUpdate()"
-                icon="pi pi-check" iconPos="right"></p-button>
+            <button mat-button [style]="{'float':'left'}" mat-button (click)="displayDialog = false" >Cancel</button>
+            <button mat-button *ngIf="!isEdit" [style]="{'float':'right'}" (click)="addProgram()" >Add</button>
+            <button mat-button *ngIf="isEdit" [style]="{'float':'right'}" (click)="onUpdate()" >Update</button>
         </div>
     </p-footer>
 </p-dialog>
 
 <div class="uamp-footer">
     <div class="p-grid p-nogutter p-justify-between">
-        <p-button styleClass="p-button-secondary" label="Cancel" (onClick)="cancel()" icon="pi pi-angle-left">
-        </p-button>
-        <p-button [style]="{'float':'right'}" label="Save" class="ml-1" (onClick)="save()" icon="pi pi-check"
-        iconPos="right"></p-button>
-        <p-button styleClass="btn-next" label="Next" (onClick)="nextPage()" icon="pi pi-angle-right"
-            iconPos="right"></p-button>
+        <button mat-button (click)="cancel()"><span class="pi pi-angle-left"></span>Cancel</button>
+        
+        <button mat-button [style]="{'float':'right'}" (click)="save()" class="ml-1" >Save</button>
+        <button mat-button styleClass="btn-next" (click)="nextPage()" >Next</button>
     </div>
 </div>
+
+
+

@@ -51,3 +51,4 @@ export class LeasedPropertiesService {
         return this.http.post<any>(`${environment.apiUrl}/api/facility/uploadSnagListFiles/`+ fileName, formData,{ headers: header });
       }
 }
+

@@ -23,3 +23,4 @@ describe('GapAnalysisComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

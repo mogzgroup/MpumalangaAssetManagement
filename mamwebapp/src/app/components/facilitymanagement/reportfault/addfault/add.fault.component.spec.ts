@@ -23,3 +23,4 @@ describe('AddFaultComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

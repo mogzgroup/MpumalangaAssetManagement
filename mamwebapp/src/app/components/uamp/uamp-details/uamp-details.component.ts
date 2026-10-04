@@ -9,7 +9,7 @@ import { UAMP } from 'src/app/models/uamp.model';
   selector: 'app-uamp-details',
   templateUrl: './uamp-details.component.html',
   styles: [`
-        :host /deep/ .ui-steps .ui-steps-item {
+        :host ::ng-deep .ui-steps .ui-steps-item {
             width: 20%;
         }
     `],
@@ -73,3 +73,4 @@ export class UampDetailsComponent implements OnInit {
     ];
   }
 }
+

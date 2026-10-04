@@ -1,7 +1,6 @@
 <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 <div style="text-align: -webkit-center;width: 100%;">
 
-
     <div class="text-center" style="color: red;" *ngIf="error">
         <h5 class="mt-20">
             <li class="pi pi-exclamation-triangle" style="color: red;font-size: xx-large;"></li>
@@ -34,13 +33,7 @@
     <p-header><img style="float: left" class="logo-img" src="../../../assets/images/logo.png"><br/>
         Mpumalanga facilities Management  </p-header>
     <p-content style="text-align: center;">
-      <!--  <div *ngIf="!isSuccessful">
-            <ngx-qrcode [elementType]="elementType" [value]="value" cssClass="aclass" errorCorrectionLevel="L">
-            </ngx-qrcode>
-            <div>
-                <span>Scan Me</span>
-            </div>
-        </div>-->
+      
         <div >
             <p>What would you like to do?</p>
         </div>
@@ -48,12 +41,13 @@
     <p-footer>
         <div>
            
-            <button type="button" style="float: left;width: 45%;margin-left: -6px;" (click)="showReportFaultDialog=true" pButton
+            <button type="button" style="float: left;width: 45%;margin-left: -6px;" (click)="showReportFaultDialog=true"
                 label="Report Fault"></button>
 
                 
         </div>
-        <!--<button style="float: right" type="button" *ngIf="!isSuccessful" (click)="isSuccessful=true" pButton
-            label="Continue"></button>-->
+        
     </p-footer>
 </p-dialog>
+
+

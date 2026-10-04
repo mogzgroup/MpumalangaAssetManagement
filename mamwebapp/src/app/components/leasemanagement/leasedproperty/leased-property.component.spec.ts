@@ -23,3 +23,4 @@ describe('ViewPropertyComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

@@ -1,0 +1,29 @@
+<div class="layout-menu-container">
+    <div class="profile profile-expanded">
+        <img class="profile-image" src="../../../assets/images/profile.png" alt="">
+        <span class="profile-name">{{currentUser?.name}} {{currentUser?.surname}}</span>
+    </div>
+    <mat-nav-list aria-label="Main navigation">
+        <a mat-list-item *ngIf="!isDepartmantUser()" (click)="navigate('dashboard')" matTooltip="Dashboard" aria-label="Dashboard">
+            <mat-icon matListItemIcon>dashboard</mat-icon>
+        </a>
+        <a mat-list-item *ngIf="isAdmin()" (click)="navigate('users')" matTooltip="Users" aria-label="Users">
+            <mat-icon matListItemIcon>group</mat-icon>
+        </a>
+        <a mat-list-item *ngIf="!isDepartmantUser() || isAdmin()" (click)="navigate('assetregister')" matTooltip="Asset Register" aria-label="Asset Register">
+            <mat-icon matListItemIcon>inventory_2</mat-icon>
+        </a>
+        <a mat-list-item (click)="navigate('leaseRegister')" matTooltip="Lease Management" aria-label="Lease Management">
+            <mat-icon matListItemIcon>menu_book</mat-icon>
+        </a>
+        <a mat-list-item (click)="navigate('facility')" matTooltip="Facility Management" aria-label="Facility Management">
+            <mat-icon matListItemIcon>event</mat-icon>
+        </a>
+        <a mat-list-item (click)="navigate('uamp')" matTooltip="UAMP" aria-label="UAMP">
+            <mat-icon matListItemIcon>domain</mat-icon>
+        </a>
+        <a mat-list-item (click)="navigate('camp')" matTooltip="CAMP" aria-label="CAMP">
+            <mat-icon matListItemIcon>description</mat-icon>
+        </a>
+    </mat-nav-list>
+</div>

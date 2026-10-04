@@ -1,0 +1,231 @@
+<div class="mt-5">
+    <p-card>
+        <ng-template pTemplate="subtitle">
+            Budget for MTEF period [5 Years]
+        </ng-template>
+        <ng-template pTemplate="content">
+            <p-table styleClass="p-datatable-striped" responsiveLayout="stack" [paginator]="true" [rows]="5"
+                [showCurrentPageReport]="true" [rowsPerPageOptions]="[5,10,15]"
+                [value]="mtefBudgetPeriods" [responsive]="true" sortField="group" sortMode="single" (onSort)="onSort()">
+                <ng-template pTemplate="caption">
+                    <div class="p-d-flex right p-jc-between text-right">
+                        <p-button pTooltip="Add Budget for MTEF Period" type="button" icon="pi pi-plus"
+                            styleClass="p-button-text"
+                            (click)="displayDialog = true; dialogHeader = 'Add Budget for MTEF Period'"></p-button>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 230px;"></th>
+                        <th style="width: 250px;" colspan="3">MTEF YEAR 1</th>
+                        <th style="width: 250px;" colspan="3">MTEF YEAR 2</th>
+                        <th style="width: 250px;" colspan="3">MTEF YEAR 3</th>
+                        <th style="width: 250px;" colspan="3">MTEF YEAR 4</th>
+                        <th style="width: 250px;" colspan="3">MTEF YEAR 5</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th style="width: 150px;">MTEF Allocation</th>
+                        <th style="width: 150px;">Required Budget</th>
+                        <th style="width: 150px;">Shortfall</th>
+                        <th style="width: 150px;">MTEF Allocation</th>
+                        <th style="width: 150px;">Required Budget</th>
+                        <th style="width: 150px;">Shortfall</th>
+                        <th style="width: 150px;">MTEF Allocation</th>
+                        <th style="width: 150px;">Required Budget</th>
+                        <th style="width: 150px;">Shortfall</th>
+                        <th style="width: 150px;">MTEF Allocation</th>
+                        <th style="width: 150px;">Required Budget</th>
+                        <th style="width: 150px;">Shortfall</th>
+                        <th style="width: 150px;">MTEF Allocation</th>
+                        <th style="width: 150px;">Required Budget</th>
+                        <th style="width: 150px;">Shortfall</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-mtefBudgetPeriod let-rowIndex="rowIndex">
+                    <tr class="ui-widget-header" *ngIf="rowGroupMetadata[mtefBudgetPeriod.group].index === rowIndex">
+                        <td colspan="20">
+                            <span style="font-weight:bold">{{mtefBudgetPeriod.group}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>{{mtefBudgetPeriod.title}}</td>
+                        <td  [ngClass]="{'grayBackgroud':mtefBudgetPeriod.title.includes('Shortfall')}" *ngIf="!mtefBudgetPeriod.title.includes('Total')">
+                            <p-inputNumber *ngIf="mtefBudgetPeriod.title !== '% Shortfall'" class="ui-inputtext ui-widget" (ngModelChange)="onKeydown($event, mtefBudgetPeriod)" [(ngModel)]="mtefBudgetPeriod.year1Allocation"
+                                ></p-inputNumber>
+                                
+                        </td>
+                        <td *ngIf="mtefBudgetPeriod.title.includes('Total')">{{mtefBudgetPeriod.year1Allocation | currency:'ZAR':'R'}}</td>
+                        <td [ngClass]="{'grayBackgroud':mtefBudgetPeriod.title.includes('Shortfall')}"><span *ngIf="mtefBudgetPeriod.title !== '% Shortfall'">{{mtefBudgetPeriod.year1RequiredBudget | currency:'ZAR':'R'}}</span></td>
+                        <td>{{mtefBudgetPeriod.year1Shortfall | currency:'ZAR':'R'}}</td>
+                        <td>{{mtefBudgetPeriod.year2Allocation | currency:'ZAR':'R'}}</td>
+                        <td>{{mtefBudgetPeriod.year2RequiredBudget | currency:'ZAR':'R'}}</td>
+                        <td>{{mtefBudgetPeriod.year2Shortfall | currency:'ZAR':'R'}}</td>
+                        <td>{{mtefBudgetPeriod.year3Allocation | currency:'ZAR':'R'}}</td>
+                        <td>{{mtefBudgetPeriod.year3RequiredBudget | currency:'ZAR':'R'}}</td>
+                        <td>{{mtefBudgetPeriod.year3Shortfall | currency:'ZAR':'R'}}</td>
+                        <td>{{mtefBudgetPeriod.year4Allocation | currency:'ZAR':'R'}}</td>
+                        <td>{{mtefBudgetPeriod.year4RequiredBudget | currency:'ZAR':'R'}}</td>
+                        <td>{{mtefBudgetPeriod.year4Shortfall | currency:'ZAR':'R'}}</td>
+                        <td>{{mtefBudgetPeriod.year5Allocation | currency:'ZAR':'R'}}</td>
+                        <td>{{mtefBudgetPeriod.year5RequiredBudget | currency:'ZAR':'R'}}</td>
+                        <td>{{mtefBudgetPeriod.year5Shortfall | currency:'ZAR':'R'}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </ng-template>
+    </p-card>
+</div>
+
+
+<div *ngIf="displayDialog" class="dialogBackgroud"></div>
+<p-dialog header="{{dialogHeader}}" [(visible)]="displayDialog" [style]="{width: '80vw'}">
+    <p-body>
+        <form [formGroup]="budgetPeriodForm">
+            <div class="formgrid grid">
+                <div class="field col-6">
+                    <label for="group">Group</label>
+                    <p-dropdown [style]="{'width':'100%'}" class="ui-inputtext ui-widget"
+                        placeholder="Please select" inputId="group" [options]="groups" formControlName="group"
+                        optionLabel="name"></p-dropdown>
+                </div>
+            </div>
+
+            <div>
+                <div class="formgrid grid">
+                    <div class="field col-6 mt-3">
+                        <label for="title">Title</label>
+                        <input formControlName="title" autocomplete="off" type="text" pInputText
+                            class="ui-inputtext ui-widget w-full pr-3">
+                    </div>
+                    <div class="col-6">
+                        <strong>MTEF Year 1</strong><br>
+                        <div class="formgrid grid">
+                            <div class="field col-4">
+                                <label for="year1Allocation" class="col-fixed">MTEF Allocation</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="year1Allocation"
+                                    mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                            </div>
+                            <div class="field col-4">
+                                <label for="year1RequiredBudget" class="col-fixed">Required Budget</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="year1RequiredBudget"
+                                    mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                            </div>
+                            <div class="field col-4">
+                                <label for="year1Shortfall" class="col-fixed">Shortfall</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="year1Shortfall"
+                                    mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="col-6">
+                        <strong>MTEF Year 2</strong><br>
+                        <div class="formgrid grid">
+                            <div class="field col-4">
+                                <label for="year2Allocation" class="col-fixed">MTEF Allocation</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="year2Allocation"
+                                    mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                            </div>
+                            <div class="field col-4">
+                                <label for="year2RequiredBudget" class="col-fixed">Required Budget</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="year2RequiredBudget"
+                                    mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                            </div>
+                            <div class="field col-4">
+                                <label for="year2Shortfall" class="col-fixed">Shortfall</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="year2Shortfall"
+                                    mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <strong>MTEF Year 3</strong><br>
+                        <div class="formgrid grid">
+                            <div class="field col-4">
+                                <label for="year3Allocation" class="col-fixed">MTEF Allocation</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="year3Allocation"
+                                    mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                            </div>
+                            <div class="field col-4">
+                                <label for="year3RequiredBudget" class="col-fixed">Required Budget</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="year3RequiredBudget"
+                                    mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                            </div>
+                            <div class="field col-4">
+                                <label for="year3Shortfall" class="col-fixed">Shortfall</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="year3Shortfall"
+                                    mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="formgrid grid">
+                    <div class="col-6">
+                        <strong>MTEF Year 4</strong><br>
+                        <div class="formgrid grid">
+                            <div class="field col-4">
+                                <label for="year4Allocation" class="col-fixed">MTEF Allocation</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="year4Allocation"
+                                    mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                            </div>
+                            <div class="field col-4">
+                                <label for="year4RequiredBudget" class="col-fixed">Required Budget</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="year4RequiredBudget"
+                                    mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                            </div>
+                            <div class="field col-4">
+                                <label for="year4Shortfall" class="col-fixed">Shortfall</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="year4Shortfall"
+                                    mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <strong>MTEF Year 5</strong><br>
+                        <div class="formgrid grid">
+                            <div class="field col-4">
+                                <label for="year5Allocation" class="col-fixed">MTEF Allocation</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="year5Allocation"
+                                    mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                            </div>
+                            <div class="field col-4">
+                                <label for="year5RequiredBudget" class="col-fixed">Required Budget</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="year5RequiredBudget"
+                                    mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                            </div>
+                            <div class="field col-4">
+                                <label for="year5Shortfall" class="col-fixed">Shortfall</label>
+                                <p-inputNumber class="ui-inputtext ui-widget" formControlName="year5Shortfall"
+                                    mode="currency" currency="ZAR" locale="en-ZA"></p-inputNumber>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </p-body>
+    <p-footer>
+        <div class="p-grid p-nogutter p-justify-between">
+            <p-button [style]="{'float':'left'}" styleClass="p-button-secondary" label="Cancel" (onClick)="displayDialog = false"
+                icon="pi pi-times"></p-button>
+            <p-button *ngIf="!isEdit" [style]="{'float':'right'}" label="Add" (onClick)="addBudgetforMtefPeriod()"
+                icon="pi pi-check" iconPos="right"></p-button>
+            <p-button *ngIf="isEdit" [style]="{'float':'right'}" label="Update" (onClick)="updateOperationPlan()"
+                icon="pi pi-check" iconPos="right"></p-button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<div class="uamp-footer">
+    <div class="p-grid p-nogutter p-justify-between">
+        <p-button styleClass="p-button-secondary" label="Back" (onClick)="back()" icon="pi pi-angle-left">
+        </p-button>
+        <p-button styleClass="p-button-success" [style]="{'float':'right'}" label="Submit" (onClick)="submit()" icon="pi pi-check"
+        iconPos="right"></p-button>
+        <p-button [style]="{'float':'right'}" label="Save" class="ml-1" (onClick)="save()" icon="pi pi-check"
+        iconPos="right"></p-button>
+    </div>
+</div>

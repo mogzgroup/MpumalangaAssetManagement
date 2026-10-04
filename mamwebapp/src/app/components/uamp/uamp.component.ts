@@ -9,7 +9,6 @@ import { UampService } from '../../services/uamp/uamp.service';
 import { TempleteTwoPointOne } from 'src/app/models/templetes/templete-two-point-one.model';
 import { Router } from '@angular/router';
 
-
 @Component({
   standalone: false,
   selector: 'app-uamp',
@@ -65,7 +64,6 @@ export class UampComponent implements OnInit {
       }
     }, 3000);
   }
-
 
   ngOnInit() {  
     this.authenticationService.currentUser.pipe().subscribe(x => {
@@ -128,8 +126,6 @@ export class UampComponent implements OnInit {
     this.value = 10;
     this.startCounter();
     this.getUamp(this.uamp.id)   
-    //this.uampService.assignUamp(this.uampbv n); 
-    // this.templeteTwoPointOne = this.uamp.nativeElement.templeteTwoPointOne;   
   }
 
   startUamp() {
@@ -235,3 +231,4 @@ export class UampComponent implements OnInit {
     return result;
   }
 }
+

@@ -31,3 +31,4 @@ export class SupplierService {
         return this.http.post<boolean>(`${environment.apiUrl}/api/supplier/deletesupplier`, supplier);
     }
 }
+

@@ -10,8 +10,7 @@
                     responsiveLayout="scroll" [rowsPerPageOptions]="[5,10,15]">
                     <ng-template pTemplate="caption">
                         <div class="p-d-flex right p-jc-between text-right">
-                            <p-button pTooltip="Add Property" type="button" icon="pi pi-plus" styleClass="p-button-text"
-                                (click)="displayDialog = true; dialogHeader = 'Add Property'"></p-button>
+                            <button mat-button pTooltip="Add Property" type="button" (click)="displayDialog = true; dialogHeader = 'Add Property'"><span class="pi pi-plus"></span>Add Property</button>
                         </div>
                     </ng-template>
                     <ng-template pTemplate="header">
@@ -120,9 +119,7 @@
                                     [ngModelOptions]="{standalone: true}"
                                     (onChange)="onRequiredPerformanceStandardChange(property, $event)"
                                     [options]="requiredPerformanceStandards" optionLabel="name"></p-dropdown>
-                                <!-- <div *ngIf="submitted && p.requiredPerfomanceStandard.errors" class="text-error"><br>
-                                        <div *ngIf="p.requiredPerfomanceStandard.errors.required">This field is required.</div>
-                                    </div>-->
+                                
                             </td>
                             <td>
                                 <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
@@ -130,9 +127,7 @@
                                     [options]="accessibilities" [(ngModel)]="property.accessibilityObj"
                                     optionLabel="name">
                                 </p-dropdown>
-                                <!--<div *ngIf="submitted && p.accessibility.errors" class="text-error"><br>
-                                        <div *ngIf="p.accessibility.errors.required">This field is required.</div>
-                                    </div>-->
+                                
                             </td>
                             <td>
                                 <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
@@ -140,9 +135,7 @@
                                     (onChange)="conditionRatingCahnged(property, $event)" inputId="conditionRating"
                                     [options]="conditionRatings" placeholder="Please select"
                                     [ngModelOptions]="{standalone: true}" optionLabel="name"></p-dropdown>
-                                <!--<div *ngIf="submitted && p.conditionRatings.errors" class="text-error"><br>
-                                        <div *ngIf="p.conditionRatings.errors.required">This field is required.</div>
-                                    </div>-->
+                                
                             </td>
                             <td>
                                 <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
@@ -150,9 +143,7 @@
                                     [ngModelOptions]="{standalone: true}"
                                     (onChange)="onSuitabilityIndexChange(property, $event)"
                                     [options]="suitabilityIndexs" optionLabel="name"></p-dropdown>
-                                <!--<div *ngIf="submitted && p.suitabilityIndex.errors" class="text-error"><br>
-                                        <div *ngIf="p.suitabilityIndex.errors.required">This field is required.</div>
-                                    </div>-->
+                                
                             </td>
                             <td>
                                 <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
@@ -160,9 +151,7 @@
                                     [ngModelOptions]="{standalone: true}"
                                     (onChange)="onOperatingPerformanceIndexChange(property, $event)"
                                     [options]="operatingPerformanceIndexs" optionLabel="name"></p-dropdown>
-                                <!--<div *ngIf="submitted && p.operationalPerformanceIndex.errors" class="text-error"><br>
-                                        <div *ngIf="p.operationalPerformanceIndex.errors.required">This field is required.</div>
-                                    </div>-->
+                                
                             </td>
                             <td>
                                 <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
@@ -170,9 +159,7 @@
                                     [ngModelOptions]="{standalone: true}"
                                     (onChange)="onFunctionalPerformanceChange(property, $event)"
                                     [options]="functionalPerformanceIndexs" optionLabel="name"></p-dropdown>
-                                <!-- <div *ngIf="submitted && p.functionalPerformanceIndex.errors" class="text-error"><br>
-                                        <div *ngIf="p.functionalPerformanceIndex.errors.required">This field is required.</div>
-                                    </div>-->
+                                
                             </td>
                             <td>
                                 <input [(ngModel)]="property.leaseTerm" style="width: 130px;"
@@ -366,23 +353,21 @@
     </p-body>
     <p-footer>
         <div class="p-grid p-nogutter p-justify-between">
-            <p-button [style]="{'float':'left'}" styleClass="p-button-secondary" label="Cancel" (onClick)="displayDialog = false"
-                icon="pi pi-times"></p-button>
-            <p-button *ngIf="!isEdit" [style]="{'float':'right'}" label="Add" (onClick)="addProperty()"
-                icon="pi pi-check" iconPos="right"></p-button>
-            <p-button *ngIf="isEdit" [style]="{'float':'right'}" label="Update" (onClick)="onUpdate()"
-                icon="pi pi-check" iconPos="right"></p-button>
+            <button mat-button [style]="{'float':'left'}" mat-button (click)="displayDialog = false" >Cancel</button>
+            <button mat-button *ngIf="!isEdit" [style]="{'float':'right'}" (click)="addProperty()" >Add</button>
+            <button mat-button *ngIf="isEdit" [style]="{'float':'right'}" (click)="onUpdate()" >Update</button>
         </div>
     </p-footer>
 </p-dialog>
 
 <div class="uamp-footer">
     <div class="p-grid p-nogutter p-justify-between">
-        <p-button styleClass="p-button-secondary" label="Back" (onClick)="back()" icon="pi pi-angle-left">
-        </p-button>
-        <p-button [style]="{'float':'right'}" label="Save" class="ml-1" (onClick)="save()" icon="pi pi-check"
-        iconPos="right"></p-button>
-        <p-button styleClass="btn-next" label="Next" (onClick)="nextPage()" icon="pi pi-angle-right"
-            iconPos="right"></p-button>
+        <button mat-button (click)="back()"><span class="pi pi-angle-left"></span>Back</button>
+        
+        <button mat-button [style]="{'float':'right'}" (click)="save()" class="ml-1" >Save</button>
+        <button mat-button styleClass="btn-next" (click)="nextPage()" >Next</button>
     </div>
 </div>
+
+
+

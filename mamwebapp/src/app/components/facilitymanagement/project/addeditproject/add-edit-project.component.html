@@ -8,7 +8,6 @@
     <h6 class="color-aqua">{{errorMsg}}</h6>
 </div>
 
-
 <p-tabView [(activeIndex)]="activeIndex">
     <p-tabPanel header="Details" style="background-color: var(--surface-b); color: var(--text-color);">
         <form [formGroup]="projectForm">
@@ -310,7 +309,7 @@
                     </div>
                     <div class="field grid col-4">
                         <div style="text-align: center">
-                            <button class="btn-add" type="button" (click)="onAddSupplier()" pButton label="Add"></button>
+                            <button class="btn-add" type="button" (click)="onAddSupplier()" mat-button>Add</button>
                         </div>                        
                     </div>
                 </div>
@@ -347,7 +346,7 @@
                         <td style="text-align: center;">
                             <p-splitButton style="width: 90px;" [style]="{'width':'90px'}" label="More" *ngIf="mode != 'View'" [model]="buttonItems"
                                 (onDropdownClick)="selectSupplier(rowData)"
-                                styleClass="p-button-secondary">
+                                mat-button>
                             </p-splitButton>
                         </td>
                     </tr>
@@ -362,14 +361,15 @@
 
     </div>
     <div>
-        <button style="float: left; margin-top: 15px;" type="button" pButton label="Cancel"
+        <button style="float: left; margin-top: 15px;" type="button" mat-button
             class="ui-button-secondary"></button>
         <button *ngIf="activeIndex > 0" style="float: left; margin-top: 15px; margin-left: 15px;" type="button" pButton
             icon="pi pi-angle-left" (click)="activeIndex = activeIndex - 1" label="Back"
             class="ui-button-secondary"></button>
         <button *ngIf="activeIndex < 2" style="float: right; margin-top: 15px" type="button"
-            (click)="saveDetails()" pButton icon="pi pi-angle-right" label="Next"></button>
-        <button *ngIf="activeIndex == 2" style="float: right; margin-top: 15px" type="button" (click)="onSaveSuppliers();"
-            pButton label="Save"></button>
+            (click)="saveDetails()" icon="pi pi-angle-right" label="Next"></button>
+        <button *ngIf="activeIndex == 2" style="float: right; margin-top: 15px" type="button" (click)="onSaveSuppliers();" mat-button>Save</button>
     </div>
 </p-footer>
+
+

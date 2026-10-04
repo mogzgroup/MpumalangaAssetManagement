@@ -6,3 +6,4 @@ export class ProjectSupplier {
     supplierId: number;
     supplier?: Supplier;
 }
+

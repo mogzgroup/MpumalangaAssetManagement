@@ -1,0 +1,28 @@
+<p-table [value]="[{}]">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Programme</th>
+            <th>Optimal Assets</th>
+            <th>Gap between optimal assets and currently utilised assets</th>
+            <th>Quantified need statement</th>
+            <th>Priority</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData>
+        <tr *ngFor="let gapAnalysis of gapAnalyses">
+            <td><textarea [(ngModel)]="gapAnalysis.programme" [rows]="6" [cols]="38" pInputTextarea></textarea></td>
+            <td><textarea [(ngModel)]="gapAnalysis.optimalAssets" [rows]="6" [cols]="38" pInputTextarea></textarea></td>
+            <td><textarea [(ngModel)]="gapAnalysis.gapOptimalAssetsUtilisedAssets" [rows]="6" [cols]="38" pInputTextarea></textarea></td>
+            <td><textarea [(ngModel)]="gapAnalysis.quantifiedNeedStatement" [rows]="6" [cols]="38" pInputTextarea></textarea></td>
+            <td><textarea [(ngModel)]="gapAnalysis.priority" [rows]="6" [cols]="38" pInputTextarea></textarea></td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<div>
+    <span>
+        <div style="text-align: end;padding: 20px;">
+            <button pButton type="button" label="Add Gap Analysis" (click)="addGapAnalysis()" ></button>
+        </div>
+    </span>
+</div>

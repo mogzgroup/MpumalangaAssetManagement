@@ -1,0 +1,375 @@
+<p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+
+<div class="text-center" style="color: red;" *ngIf="error">
+    <h5 class="mt-20">
+        <li class="pi pi-exclamation-triangle" style="color: red;font-size: xx-large;"></li><span> An error has
+            occured...</span>
+    </h5>
+    <h6 class="color-aqua">{{errorMsg}}</h6>
+</div>
+
+
+<p-tabView [(activeIndex)]="activeIndex">
+    <p-tabPanel header="Details" style="background-color: var(--surface-b); color: var(--text-color);">
+        <form [formGroup]="projectForm">
+            <div class="p-fluid p-grid p-formgrid form-body">
+                <div class="formgrid grid">
+                    <div class="field grid col-4">
+                        <span class="p-input-icon-left p-1">
+                            <label for="float-input">District</label>
+                            <p-dropdown appendTo="body" class="ui-inputtext ui-widget" [disabled]="isViewOnly"
+                                [style]="{'width':'470px'}" inputId="district" [options]="districts"
+                                placeholder="Please Select" formControlName="district"
+                                (onChange)="onDistrictChange($event); showAssets=true" optionLabel="name">
+                            </p-dropdown>
+                            <div *ngIf="submitted && f.district.errors" class="text-error"><br>
+                                <div *ngIf="f.district.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="field grid col-4">
+                        <span class="p-input-icon-left p-1">
+                            <label for="float-input">Property</label>
+                            <p-dropdown appendTo="body" class="ui-inputtext ui-widget" [disabled]="isViewOnly"
+                                [style]="{'width':'570px'}" inputId="property" [options]="properties"
+                                placeholder="Please Select" formControlName="property"
+                                (onChange)="onPropertyChange($event); showAll=true" optionLabel="name">
+                            </p-dropdown>
+                            <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
+                                <div *ngIf="f.fileReferenceNumber.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                    </div>
+
+                    <div class="field grid col-4">
+                        <span class="p-input-icon-left p-1">
+                            <label for="float-input">Order Number</label>
+                            <input class="disabled" [ngModelOptions]="{standalone: true}" [readonly]="true" [(ngModel)]="project.orderNumber" autocomplete="off" type="text"
+                                pInputText class="ui-inputtext ui-widget">
+                        </span>
+                    </div>
+                </div>
+
+                <p-fieldset legend="General" [toggleable]="true" styleClass="mt-2">
+                    <div class="formgrid grid">
+                        <div class="field grid col-4">
+                            <span class="p-input-icon-left p-1">
+                                <label for="float-input">Name</label>
+                                <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
+                                    formControlName="name" autocomplete="off" type="text" pInputText
+                                    class="ui-inputtext ui-widget">
+                                <div *ngIf="submitted && f.name.errors" class="text-error"><br>
+                                    <div *ngIf="f.name.errors.required">This field is required.</div>
+                                </div>
+                            </span>
+                        </div>
+                        <div class="field grid col-4">
+                            <span class="p-input-icon-left p-1 w-full">
+                                <label for="startDate">Start Date</label>
+                                <p-calendar appendTo="body" class="center-date-picker" appendTo="body" [ngClass]="{'disabled': isViewOnly}" class="ui-inputtext ui-widget"
+                                    [disabled]="isViewOnly" formControlName="startDate" dateFormat="dd/mm/yy"
+                                    showOtherMonths="true" showButtonBar="true"></p-calendar>
+                                <div *ngIf="submitted && f.startDate.errors" class="text-error"><br>
+                                    <div *ngIf="f.startDate.errors.required">This field is required.</div>
+                                </div>
+                            </span>
+                        </div>
+                        <div class="field grid col-4">
+                            <span class="p-input-icon-left p-1 w-full">
+                                <label for="completionDate">Practical Completion Date</label>
+                                <p-calendar appendTo="body" [ngClass]="{'disabled': isViewOnly}" class="ui-inputtext ui-widget"
+                                    [disabled]="isViewOnly" formControlName="completionDate" dateFormat="dd/mm/yy"
+                                    showOtherMonths="true" showButtonBar="true"></p-calendar>
+                                <div *ngIf="submitted && f.completionDate.errors" class="text-error"><br>
+                                    <div *ngIf="f.completionDate.errors.required">This field is required.</div>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="formgrid grid">
+                        <div class="field grid col-4">
+                            <span class="p-input-icon-left p-1">
+                                <label for="float-input">Planned Duration</label>
+                                <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
+                                    formControlName="duration" autocomplete="off" type="text" pInputText
+                                    class="ui-inputtext ui-widget">
+                                <div *ngIf="submitted && f.duration.errors" class="text-error"><br>
+                                    <div *ngIf="f.duration.errors.required">This field is required.</div>
+                                </div>
+                            </span>
+                        </div>
+                        <div class="field grid col-4">
+                            <span class="p-input-icon-left p-1">
+                                <label for="float-input">Scope of work</label>
+                                <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
+                                    formControlName="scope" autocomplete="off" type="text" pInputText
+                                    class="ui-inputtext ui-widget">
+                                <div *ngIf="submitted && f.scope.errors" class="text-error"><br>
+                                    <div *ngIf="f.scope.errors.required">This field is required.</div>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                </p-fieldset>
+                
+
+                <div class="formgrid grid" style="margin-top:unset !important">
+                    <div class="field grid col-4" [ngStyle]="{'margin-top': !financeChecked ? '45px' : 'unset'}"
+                        style="position: relative;">
+                        <div class="field-checkbox" class="check-box-container">
+                            <label>Are the project financials available?</label>
+                            <p-checkbox [style]="{'margin-left':'15px'}" (onChange)="hasProjectFinanceChange($event)"
+                                formControlName="hasProjectFinance" [binary]="true" inputId="binary"></p-checkbox>
+                            <span class="parent-project" for="binary" *ngIf="!financeChecked">No</span>
+                            <span class="parent-project" for="binary" *ngIf="financeChecked">Yes</span>
+                        </div>
+                    </div>
+                    <div class="field grid col-4" *ngIf="financeChecked">
+                        <span class="p-input-icon-left p-1">
+                            <label for="amount">Amount</label>
+                            <p-inputNumber class="ui-inputtext ui-widget" [disabled]="isViewOnly"
+                                formControlName="amount" mode="currency" currency="ZAR" locale="en-ZA">
+                            </p-inputNumber>
+                            <div *ngIf="submitted && f.amount.errors" class="text-error"><br>
+                                <div *ngIf="f.amount.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="field grid col-4" *ngIf="financeChecked">
+                        <span class="p-input-icon-left p-1">
+                            <label for="account">Account</label>
+                            <p-inputNumber mode="decimal" class="ui-inputtext ui-widget" [disabled]="isViewOnly"
+                                formControlName="account" [useGrouping]="false">
+                            </p-inputNumber>
+                            <div *ngIf="submitted && f.account.errors" class="text-error"><br>
+                                <div *ngIf="f.account.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field grid col-4" [ngStyle]="{'margin-top': !hasParentChecked ? '30px' : 'unset'}"
+                        style="position: relative;">
+                        <div class="field-checkbox" class="check-box-container">
+                            <label>Does this project have a parent?</label>
+                            <p-checkbox [style]="{'margin-left':'35px'}" (onChange)="hasParentChange($event)"
+                                formControlName="hasParentProject" [binary]="true" inputId="binary"></p-checkbox>
+                            <span class="parent-project" for="binary" *ngIf="!hasParentChecked">No</span>
+                            <span class="parent-project" for="binary" *ngIf="hasParentChecked">Yes</span>
+                        </div>
+                    </div>
+                    <div class="field grid col-4" *ngIf="hasParentChecked">
+                        <span class="p-input-icon-left p-1">
+                            <label for="float-input">Parent Project</label>
+                            <p-dropdown appendTo="body" class="ui-inputtext ui-widget" [disabled]="isViewOnly"
+                                [style]="{'width':'570px'}" inputId="property" [options]="properties"
+                                placeholder="Please Select" formControlName="property"
+                                (onChange)="onProperty($event); showAll=true" optionLabel="name">
+                            </p-dropdown>
+                            <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
+                                <div *ngIf="f.fileReferenceNumber.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </p-tabPanel>
+
+    <p-tabPanel header="Managed By" style="background-color: var(--surface-b);
+        color: var(--text-color);">
+        <form [formGroup]="managedByForm">
+            <div class="p-fluid p-grid p-formgrid form-body">
+                <div class="formgrid grid">
+                    <div class="field grid col-4">
+                        <span class="p-input-icon-left p-1">
+                            <label for="float-input">Managed By</label>
+                            <p-dropdown appendTo="body" class="ui-inputtext ui-widget" [disabled]="isViewOnly"
+                                [style]="{'width':'470px'}" inputId="managedBy" [options]="managedBylist"
+                                placeholder="Please Select" formControlName="managedBy"
+                                (onChange)="onManagedByChange($event)" optionLabel="name">
+                            </p-dropdown>
+                            <div *ngIf="submitted && m.managedBy.errors" class="text-error"><br>
+                                <div *ngIf="m.managedBy.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="field grid col-4">
+                        <span class="p-input-icon-left p-1">
+                            <label *ngIf="!isManagedByExternalCompany" for="float-input">Employee Name</label>
+                            <label *ngIf="isManagedByExternalCompany" for="float-input">Business Name</label>
+                            <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" formControlName="name"
+                                autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
+                            <div *ngIf="submitted && m.name.errors" class="text-error"><br>
+                                <div *ngIf="m.name.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="field grid col-4">
+                        <span class="p-input-icon-left p-1">
+                            <label *ngIf="!isManagedByExternalCompany" for="float-input">Employee Number</label>
+                            <label *ngIf="isManagedByExternalCompany" for="float-input">Business Reg Number</label>
+                            <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" formControlName="employeeCompanyNumber"
+                                autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
+                            <div *ngIf="submitted && m.employeeCompanyNumber.errors" class="text-error"><br>
+                                <div *ngIf="m.employeeCompanyNumber.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                        
+                    </div>
+                </div>
+
+                <div class="formgrid grid">
+                    <div class="field grid col-4">
+                        <span class="p-input-icon-left p-1">
+                            <label for="float-input">Contact Name</label>
+                            <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" formControlName="contactName"
+                                autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
+                            <div *ngIf="submitted && m.contactName.errors" class="text-error"><br>
+                                <div *ngIf="m.contactName.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="field grid col-4">
+                        <span class="p-input-icon-left p-1">
+                            <label for="float-input">Contact Number</label>                                
+                            <input type="text" pattern="[0-9]+" maxlength="10" placeholder="(000) 000 0000" formControlName="contactNumber" autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
+                            <div *ngIf="submitted && m.contactNumber.errors" class="text-error"><br>
+                                <div *ngIf="m.contactNumber.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                    </div>
+                   
+                </div>
+            </div>
+        </form>
+    </p-tabPanel>
+
+    <p-tabPanel header="Suppliers" style="background-color: var(--surface-b);
+        color: var(--text-color);">
+        <form [formGroup]="supplierForm">
+            <div class="p-fluid p-grid p-formgrid form-body">
+                <div class="formgrid grid">
+                    <div class="field grid col-4">
+                        <span class="p-input-icon-left p-1">
+                            <label for="float-input">Supplier</label>
+                            <p-dropdown appendTo="body" class="ui-inputtext ui-widget" [disabled]="isViewOnly" (onChange)="onSupplierChange($event);"
+                                [style]="{'width':'470px'}" inputId="supplier" [options]="supplierDropdownOptions"
+                                placeholder="Please Select" formControlName="supplier" optionLabel="name">
+                            </p-dropdown>
+                            <div *ngIf="submitted && s.supplier.errors" class="text-error"><br>
+                                <div *ngIf="s.supplier.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="field grid col-4">
+                        <span class="p-input-icon-left p-1">
+                            <label for="float-input">Company Name</label>
+                            <input [ngModelOptions]="{standalone: true}" [(ngModel)]="projectSupplier.companyName" [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
+                                autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
+                            <div *ngIf="submitted && s.companyName.errors" class="text-error"><br>
+                                <div *ngIf="s.companyName.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="field grid col-4">
+                        <span class="p-input-icon-left p-1">
+                            <label for="float-input">Cumpany Number</label>               
+                            <input [ngModelOptions]="{standalone: true}" [(ngModel)]="projectSupplier.companyNumber" [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
+                                autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
+                            <div *ngIf="submitted && s.companyNumber.errors" class="text-error"><br>
+                                <div *ngIf="s.companyNumber.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="formgrid grid">
+                    <div class="field grid col-4">
+                        <span class="p-input-icon-left p-1">
+                            <label for="float-input">Contact Name</label>                            
+                            <input [ngModelOptions]="{standalone: true}" [(ngModel)]="projectSupplier.contactName" [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
+                                autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
+                            <div *ngIf="submitted && s.contactName.errors" class="text-error"><br>
+                                <div *ngIf="s.contactName.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="field grid col-4">
+                        <span class="p-input-icon-left p-1">
+                            <label for="float-input">Contact Number</label>
+                            <p-inputMask [ngModelOptions]="{standalone: true}" [(ngModel)]="projectSupplier.contactNumber" [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" 
+                            class="ui-inputtext ui-widget" mask="(999) 999 9999"
+                            placeholder="(000) 000 0000"></p-inputMask>
+                            <div *ngIf="submitted && s.contactNumber.errors" class="text-error"><br>
+                                <div *ngIf="s.contactNumber.errors.required">This field is required.</div>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="field grid col-4">
+                        <div style="text-align: center">
+                            <button class="btn-add" type="button" (click)="onAddSupplier()" pButton label="Add"></button>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="formgrid grid">
+            <p-table #dt [columns]="supplierCols" [paginator]="true" [rows]="5" selectionMode="single"
+                rowExpandMode="single" [value]="this.project.projectSuppliers" dataKey="id" editMode="row"
+                styleClass="p-datatable-striped">
+                <ng-template pTemplate="caption">
+                    <div style="text-align: right">
+                        <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+                        <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" type="text"
+                            pInputText size="50" placeholder="Global Filter" class="ui-inputtext ui-widget"
+                            (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th *ngFor="let col of supplierCols">
+                            {{col.header}}
+                            <p-sortIcon [field]="col.field" ariaLabel="Activate to sort"
+                                ariaLabelDesc="Activate to sort in descending order"
+                                ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                        </th>
+                        <th style="width:10em">Actions</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
+                    <tr [pEditableRow]="rowData">
+                        <td *ngFor="let col of supplierCols">
+                            {{rowData[col.field]}}
+                        </td>
+                        <td style="text-align: center;">
+                            <p-splitButton style="width: 90px;" [style]="{'width':'90px'}" label="More" *ngIf="mode != 'View'" [model]="buttonItems"
+                                (onDropdownClick)="selectSupplier(rowData)"
+                                styleClass="p-button-secondary">
+                            </p-splitButton>
+                        </td>
+                    </tr>
+
+                </ng-template>
+            </p-table>
+        </div>
+    </p-tabPanel>
+</p-tabView>
+<p-footer>
+    <div style="text-align: center;" *ngIf="errorMsg != ''">
+
+    </div>
+    <div>
+        <button style="float: left; margin-top: 15px;" type="button" pButton label="Cancel"
+            class="ui-button-secondary"></button>
+        <button *ngIf="activeIndex > 0" style="float: left; margin-top: 15px; margin-left: 15px;" type="button" pButton
+            icon="pi pi-angle-left" (click)="activeIndex = activeIndex - 1" label="Back"
+            class="ui-button-secondary"></button>
+        <button *ngIf="activeIndex < 2" style="float: right; margin-top: 15px" type="button"
+            (click)="saveDetails()" pButton icon="pi pi-angle-right" label="Next"></button>
+        <button *ngIf="activeIndex == 2" style="float: right; margin-top: 15px" type="button" (click)="onSaveSuppliers();"
+            pButton label="Save"></button>
+    </div>
+</p-footer>

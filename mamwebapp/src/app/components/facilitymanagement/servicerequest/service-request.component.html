@@ -48,14 +48,13 @@
                 </td>
 
                 <td style="text-align: center;">
-                    <p-splitButton label="More" [model]="buttonItems" (onDropdownClick)="selectFacility(rowData)" styleClass="p-button-secondary">                    
+                    <p-splitButton label="More" [model]="buttonItems" (onDropdownClick)="selectFacility(rowData)" mat-button>                    
                     </p-splitButton>
                 </td>
             </tr>
         </ng-template>
     </p-table>
 </div>
-
 
 <div *ngIf="showDialog || showPrintDialog" class="dialogBackgroud"></div>
 <p-dialog [(visible)]="showDialog" *ngIf="showDialog" [style]="{width: '70vw'}"
@@ -69,7 +68,9 @@
     [draggable]="false" [resizable]="false">
     <p>Are you sure to delete this service request?</p>
     <p-dialog-footer>
-            <button style="float: left;" (click)="showdelete=false" pButton type="button" label="No" class="ui-button-info"></button>
-            <button style="float: right;" (click)="onDeleteFault()" pButton type="button" label="Yes" class="ui-button-info"></button>
+            <button style="float: left;" (click)="showdelete=false" type="button" label="No" class="ui-button-info"></button>
+            <button style="float: right;" (click)="onDeleteFault()" type="button" label="Yes" class="ui-button-info"></button>
     </p-dialog-footer>
 </p-dialog>
+
+

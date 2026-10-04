@@ -4,3 +4,4 @@ export class FacilityType {
     name: string;
     facilityZonings: Array<FacilityZoning>
 }
+

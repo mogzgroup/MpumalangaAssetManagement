@@ -94,8 +94,6 @@ export class ViewServiceRequestComponent implements OnInit {
       }
     },
       (error) => {
-        //this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get fault' });
-        //this.isSuccessful = false;
       });
 
     this.projectService.getProjects().subscribe(projects => {
@@ -111,7 +109,6 @@ export class ViewServiceRequestComponent implements OnInit {
       }
     },
       (error) => {
-        //this.isSuccessful = false;
       });
 
     if (this.selectedServiceRequest.hasCompletionCertificate) {
@@ -202,7 +199,6 @@ export class ViewServiceRequestComponent implements OnInit {
   showToast(summary: string, detail: string, severity: string) {
     this.messageService.add({ severity, summary, detail });
   }
-
 
   onCloseicket() {
     this.isUpdated = false;
@@ -347,3 +343,4 @@ export class ViewServiceRequestComponent implements OnInit {
     return this.selectedServiceRequest.completionCertificateUrl;
   }
 }
+

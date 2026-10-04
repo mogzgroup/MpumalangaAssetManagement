@@ -23,3 +23,4 @@ export class ConditionAssessmentService {
         return this.http.post<number>(`${environment.apiUrl}/api/conditionassessment/saveconditionassessment`,ConditionAssessment);
       }
 }
+

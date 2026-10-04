@@ -308,3 +308,4 @@ export class UserComponent implements OnInit, AfterViewInit {
     this.index = index;
   }
 }
+

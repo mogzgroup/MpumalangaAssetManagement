@@ -1,0 +1,1620 @@
+node.exe : (node:24972) [DEP0060] DeprecationWarning: The `util._extend` API 
+is deprecated. Please use Object.assign() instead.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:24972) [D...sign() instead. 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+ERROR in src/app/components/uamp/template-four-one/template-four-one.component.
+html:97:37 - error TS2339: Property 'onInitialNeedYearChange' does not exist 
+on type 'TemplateFourOneComponent'.
+
+97                         (onChange)="onInitialNeedYearChange(operationPlan, 
+$event)" [options]="initialNeedYears"
+                                       ~~~~~~~~~~~~~~~~~~~~~~~
+
+  
+src/app/components/uamp/template-four-one/template-four-one.component.ts:14:16
+    14   templateUrl: './template-four-one.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TemplateFourOneComponent.
+src/app/components/uamp/template-four-one/template-four-one.component.html:97:6
+1 - error TS2339: Property 'operationPlan' does not exist on type 
+'TemplateFourOneComponent'.
+
+97                         (onChange)="onInitialNeedYearChange(operationPlan, 
+$event)" [options]="initialNeedYears"
+                                                               ~~~~~~~~~~~~~
+
+  
+src/app/components/uamp/template-four-one/template-four-one.component.ts:14:16
+    14   templateUrl: './template-four-one.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TemplateFourOneComponent.
+src/app/components/uamp/template-four-one/template-four-one.component.html:179:
+77 - error TS2339: Property 'deleteOperationPlan' does not exist on type 
+'TemplateFourOneComponent'.
+
+179         <button style="float: right;" 
+(click)="showComfirmationDelete=false;deleteOperationPlan()" pButton 
+type="button"
+                                                                               
+ ~~~~~~~~~~~~~~~~~~~
+
+  
+src/app/components/uamp/template-four-one/template-four-one.component.ts:14:16
+    14   templateUrl: './template-four-one.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TemplateFourOneComponent.
+src/app/components/uamp/template-two-one/add-municipal-utility-services/add-mun
+icipal-utility-services.html:51:18 - error TS2551: Property 'cancel' does not 
+exist on type 'AddMunicipalUtilityServicesComponent'. Did you mean 'cancal'?
+
+51         (click)="cancel()" label="Cancel" 
+class="ui-button-secondary"></button>
+                    ~~~~~~
+
+  src/app/components/uamp/template-two-one/add-municipal-utility-services/add-m
+unicipal-utility-services.ts:12:16
+    12   templateUrl: './add-municipal-utility-services.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component 
+AddMunicipalUtilityServicesComponent.
+src/app/components/uamp/template-two-two/template-two-two.component.html:371:31
+ - error TS2339: Property 'isEdit' does not exist on type 
+'TemplateTwoTwoComponent'.
+
+371             <p-button *ngIf="!isEdit" [style]="{'float':'right'}" 
+label="Add" (onClick)="addProperty()"
+                                  ~~~~~~
+
+  src/app/components/uamp/template-two-two/template-two-two.component.ts:19:16
+    19   templateUrl: './template-two-two.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TemplateTwoTwoComponent.
+src/app/components/uamp/template-two-two/template-two-two.component.html:373:30
+ - error TS2339: Property 'isEdit' does not exist on type 
+'TemplateTwoTwoComponent'.
+
+373             <p-button *ngIf="isEdit" [style]="{'float':'right'}" 
+label="Update" (onClick)="onUpdate()"
+                                 ~~~~~~
+
+  src/app/components/uamp/template-two-two/template-two-two.component.ts:19:16
+    19   templateUrl: './template-two-two.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TemplateTwoTwoComponent.
+src/app/components/uamp/template-two-two/template-two-two.component.html:373:92
+ - error TS2339: Property 'onUpdate' does not exist on type 
+'TemplateTwoTwoComponent'.
+
+373             <p-button *ngIf="isEdit" [style]="{'float':'right'}" 
+label="Update" (onClick)="onUpdate()"
+                                                                               
+                ~~~~~~~~
+
+  src/app/components/uamp/template-two-two/template-two-two.component.ts:19:16
+    19   templateUrl: './template-two-two.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TemplateTwoTwoComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:3:29 - error TS2339: Property 'activeIndex' does not exist on type 
+'ConditionAssessmentComponent'.
+
+3 <p-tabView [(activeIndex)]="activeIndex">
+                              ~~~~~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:3:29 - error TS2339: Property 'activeIndex' does not exist on type 
+'ConditionAssessmentComponent'.
+
+3 <p-tabView [(activeIndex)]="activeIndex">
+                              ~~~~~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:9:57 - error TS2339: Property 'items' does not exist on type 
+'ConditionAssessmentComponent'.
+
+9                 <p-menu #menu id="config_menu" [model]="items" 
+[popup]="true"></p-menu>
+                                                          ~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:11:50 - error TS2339: Property 'mode' does not exist on type 
+'ConditionAssessmentComponent'.
+
+11             <div class="ui-g-12 ui-md-12" *ngIf="mode != 'View'">
+                                                    ~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:16:45 - error TS2339: Property 'landFiles' does not exist on type 
+'ConditionAssessmentComponent'.
+
+16                     <ul *ngFor="let file of landFiles; let i = index" 
+style="list-style-type:none;">
+                                               ~~~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:214:56 - error TS2339: Property 'showdelete' does not exist on type 
+'ConditionAssessmentComponent'.
+
+214                 <button style="float: right;" 
+(click)="showdelete=false;saveConditionAssessment()" pButton type="button"
+                                                           ~~~~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:223:57 - errorm TS2339: Property 'items' does not exist on type 
+'ConditionAssessmentComponent'.
+
+223                 <p-menu #menu id="config_menu" [model]="items" 
+[popup]="true"></p-menu>
+                                                            ~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:276:45 - error TS2339: Property 'landFiles' does not exist on type 
+'ConditionAssessmentComponent'.
+
+276                     <ul *ngFor="let file of landFiles; let i = index" 
+style="list-style-type:none;">
+                                                ~~~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:325:45 - error TS2339: Property 'landFiles' does not exist on type 
+'ConditionAssessmentComponent'.
+
+325                     <ul *ngFor="let file of landFiles; let i = index" 
+style="list-style-type:none;">
+                                                ~~~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:337:81 - error TS2339: Property 'lcValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+337                         <p-selectButton [options]="paymentOptions" 
+[(ngModel)]="lcValue" multiple="multiple"
+                                                                               
+     ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:337:81 - error TS2339: Property 'lcValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+337                         <p-selectButton [options]="paymentOptions" 
+[(ngModel)]="lcValue" multiple="multiple"
+                                                                               
+     ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:346:81 - error TS2339: Property 'cbValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+346                         <p-selectButton [options]="paymentOptions" 
+[(ngModel)]="cbValue" multiple="multiple"
+                                                                               
+     ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:346:81 - error TS2339: Property 'cbValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+346                         <p-selectButton [options]="paymentOptions" 
+[(ngModel)]="cbValue" multiple="multiple"
+                                                                               
+     ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:355:81 - error TS2339: Property 'hsValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+355                         <p-selectButton [options]="paymentOptions" 
+[(ngModel)]="hsValue" multiple="multiple"
+                                                                               
+     ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:355:81 - error TS2339: Property 'hsValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+355                         <p-selectButton [options]="paymentOptions" 
+[(ngModel)]="hsValue" multiple="multiple"
+                                                                               
+     ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:367:45 - error TS2339: Property 'landFiles' does not exist on type 
+'ConditionAssessmentComponent'.
+
+367                     <ul *ngFor="let file of landFiles; let i = index" 
+style="list-style-type:none;">
+                                                ~~~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:379:[93m79 - error TS2339: Property 'lcValue' does not exist on 
+type 'ConditionAssessmentComponent'.
+
+379                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="lcValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:379:79 - error TS2339: Property 'lcValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+379                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="lcValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:388:79 - error TS2339: Property 'arValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+388                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="arValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:388:79 - error TS2339: Property 'arValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+388                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="arValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:397:79 - error TS2339: Property 'pVvalue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+397                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="pVvalue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:397:79 - error TS2339: Property 'pVvalue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+397                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="pVvalue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:406:79 - error TS2339: Property 'sValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+406                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="sValue" optionLabel="label"
+                                                                               
+   ~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:406:79 - error TS2339: Property 'sValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+406                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="sValue" optionLabel="label"
+                                                                               
+   ~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:415:79 - error TS2339: Property 'tValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+415                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="tValue" optionLabel="label"
+                                                                               
+   ~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:415:79 - error TS2339: Property 'tValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+415                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="tValue" optionLabel="label"
+                                                                               
+   ~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:424:79 - error TS2339: Property 'ewValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+424                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="ewValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:424:79 - error TS2339: Property 'ewValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+424                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="ewValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:435:45 - error TS2339: Property 'landFiles' does not exist on type 
+'ConditionAssessmentComponent'.
+
+435                     <ul *ngFor="let file of landFiles; let i = index" 
+style="list-style-type:none;">
+                                                ~~~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:447:79 - error TS2339: Property 'cocValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+447                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="cocValue" optionLabel="label"
+                                                                               
+   ~~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:447:79 - error TS2339: Property 'cocValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+447                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="cocValue" optionLabel="label"
+                                                                               
+   ~~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:456:79 - error TS2339: Property 'slValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+456                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="slValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:456:79 - error TS2339: Property 'slValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+456                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="slValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:465:79 - error TS2339: Property 'sgwValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+465                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="sgwValue" optionLabel="label"
+                                                                               
+   ~~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:465:79 - error TS2339: Property 'sgwValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+465                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="sgwValue" optionLabel="label"
+                                                                               
+   ~~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:474:79 - error TS2339: Property 'fdValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+474                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="fdValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:474:79 - error TS2339: Property 'fdValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+474                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="fdValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:483:79 - error TS2339: Property 'feValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+483                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="feValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:483:79 - error TS2339: Property 'feValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+483                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="feValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:492:79 - error TS2339: Property 'erValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+492                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="erValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:492:79 - error TS2339: Property 'erValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+492                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="erValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:[93m14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:501:79 - error TS2339: Property 'erisValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+501                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="erisValue" optionLabel="label"
+                                                                               
+   ~~~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:501:79 - error TS2339: Property 'erisValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+501                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="erisValue" optionLabel="label"
+                                                                               
+   ~~~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:510:79 - error TS2339: Property 'bpValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+510                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="bpValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/assetregister/conditionassessment/condition-assessment.compo
+nent.html:510:79 - error TS2339: Property 'bpValue' does not exist on type 
+'ConditionAssessmentComponent'.
+
+510                         <p-selectButton [options]="stateOptions" 
+[(ngModel)]="bpValue" optionLabel="label"
+                                                                               
+   ~~~~~~~
+
+  src/app/components/assetregister/conditionassessment/condition-assessment.com
+ponent.ts:14:16
+    14   templateUrl: './condition-assessment.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ConditionAssessmentComponent.
+src/app/components/leasemanagement/lease-management.component.html:14:92 - 
+error TS2339: Property 'options' does not exist on type 
+'LeaseManagementComponent'.
+
+14         <google-map height="400px" width="100%" [zoom]="zoom" 
+[center]="center" [options]="options">
+                                                                               
+               ~~~~~~~
+
+  src/app/components/leasemanagement/lease-management.component.ts:13:16
+    13   templateUrl: './lease-management.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component LeaseManagementComponent.
+src/app/components/leasemanagement/lease-management.component.html:15:37 - 
+error TS2339: Property 'openInfo' does not exist on type 
+'LeaseManagementComponent'.
+
+15             <map-marker (mapClick)="openInfo(marker)" *ngFor="let marker of 
+markers"
+                                       ~~~~~~~~
+
+  src/app/components/leasemanagement/lease-management.component.ts:13:16
+    13   templateUrl: './lease-management.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component LeaseManagementComponent.
+src/app/components/leasemanagement/lease-management.component.html:19:33 - 
+error TS2339: Property 'dialogHeader' does not exist on type 
+'LeaseManagementComponent'.
+
+19             <map-info-window>{{ dialogHeader }}</map-info-window>
+                                   ~~~~~~~~~~~~
+
+  src/app/components/leasemanagement/lease-management.component.ts:13:16
+    13   templateUrl: './lease-management.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component LeaseManagementComponent.
+src/app/components/leasemanagement/lease-management.component.html:67:38 - 
+error TS2339: Property 'addUpdateAsset' does not exist on type 
+'LeaseManagementComponent'.
+
+67     <app-leased-property (newAsset)='addUpdateAsset($event)' 
+[selectedLeasedProperty]="selectedLeasedProperty">
+  [0m                                      ~~~~~~~~~~~~~~
+
+  src/app/components/leasemanagement/lease-management.component.ts:13:16
+    13   templateUrl: './lease-management.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component LeaseManagementComponent.
+src/app/components/hiring/hiring.component.html:17:97 - error TS2339: Property 
+'options' does not exist on type 'HiringComponent'.
+
+17         <google-map #map height="400px" width="100%" [zoom]="zoom" 
+[center]="center" [options]="options">
+                                                                               
+                    ~~~~~~~
+
+  src/app/components/hiring/hiring.component.ts:17:16
+    17   templateUrl: './hiring.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component HiringComponent.
+src/app/components/hiring/hiring.component.html:18:37 - error TS2339: Property 
+'openInfo' does not exist on type 'HiringComponent'.
+
+18             <map-marker (mapClick)="openInfo(marker)" *ngFor="let marker of 
+markers"
+                                       ~~~~~~~~
+
+  src/app/components/hiring/hiring.component.ts:17:16
+    17   templateUrl: './hiring.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component HiringComponent.
+src/app/components/hiring/hiring.component.html:22:33 - error TS2339: Property 
+'dialogHeader' does not exist on type 'HiringComponent'.
+
+22             <map-info-window>{{ dialogHeader }}</map-info-window>
+                                   ~~~~~~~~~~~~
+
+  src/app/components/hiring/hiring.component.ts:17:16
+    17   templateUrl: './hiring.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component HiringComponent.
+src/app/components/hiring/hiring.component.html:89:45 - error TS2339: Property 
+'l' does not exist on type 'HiringComponent'.
+
+89                                 <div 
+*ngIf="l.propertyCode.errors.required">This field is required.</div>
+                                               ~
+
+  src/app/components/hiring/hiring.component.ts:17:16
+    17   templateUrl: './hiring.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component HiringComponent.
+src/app/components/hiring/hiring.component.html:101:45 - error TS2339: 
+Property 'l' does not exist on type 'HiringComponent'.
+
+101                                 <div 
+*ngIf="l.rentalAmount.errors.required">This field is required.</div>
+                                                ~
+
+  src/app/components/hiring/hiring.component.ts:17:16
+    17   templateUrl: './hiring.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component HiringComponent.
+src/app/components/hiring/hiring.component.html:113:45 - error TS2339: 
+Property 'l' does not exist on type 'HiringComponent'.
+
+113                                 <div 
+*ngIf="l.startRentalAmount.errors.required">This field is required.</div>
+                                                ~
+
+  src/app/components/hiring/hiring.component.ts:17:16
+    17   templateUrl: './hiring.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component HiringComponent.
+src/app/components/hiring/hiring.component.html:196:45 - error TS2339: 
+Property 'l' does not exist on type 'HiringComponent'.
+
+196                                 <div 
+*ngIf="l.staffNumber.errors.required">This field is required.</div>
+                                                ~
+
+  src/app/components/hiring/hiring.component.ts:17:16
+    17   templateUrl: './hiring.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component HiringComponent.
+src/app/components/hiring/hiring.component.html:219:45 - error TS2339: 
+Property 'l' does not exist on type 'HiringComponent'.
+
+219                                 <div 
+*ngIf="l.escalationRate.errors.required">This field is required.</div>
+                                                ~
+
+  src/app/components/hiring/hiring.component.ts:17:16
+    17   templateUrl: './hiring.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component HiringComponent.
+src/app/components/hiring/hiring.component.html:298:106 - error TS2554: 
+Expected 0 arguments, but got 1.
+
+298             <p-fileUpload [showUploadButton]="false" 
+[showCancelButton]="false" (onRemove)="onRemoveFile($event)"
+                                                                               
+                              ~~~~~~
+
+  src/app/components/hiring/hiring.component.ts:17:16
+    17   templateUrl: './hiring.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component HiringComponent.
+src/app/components/facilitymanagement/facility-management.component.html:4:53 
+- error TS2339: Property 'error' does not exist on type 
+'FacilityManagementComponent'.
+
+4 <div class="text-center" style="color: red;" *ngIf="error">
+                                                      ~~~~~
+
+  src/app/components/facilitymanagement/facility-management.component.ts:14:16
+    14   templateUrl: './facility-management.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component FacilityManagementComponent.
+src/app/components/facilitymanagement/facility-management.component.html:9:30 
+- error TS2339: Property 'errorMsg' does not exist on type 
+'FacilityManagementComponent'.
+
+9     <h6 class="color-aqua">{{errorMsg}}</h6>
+                               ~~~~~~~~
+
+  src/app/components/facilitymanagement/facility-management.component.ts:14:16
+    14   templateUrl: './facility-management.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component FacilityManagementComponent.
+src/app/components/facilitymanagement/reportfault/report.fault.component.html:5
+:57 - error TS2339: Property 'error' does not exist on type 
+'ReportFaultComponent'.
+
+5     <div class="text-center" style="color: red;" *ngIf="error">
+                                                          ~~~~~
+
+  src/app/components/facilitymanagement/reportfault/report.fault.component.ts:1
+2:16
+    m12   templateUrl: './report.fault.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ReportFaultComponent.
+src/app/components/facilitymanagement/reportfault/report.fault.component.html:1
+0:34 - error TS2339: Property 'errorMsg' does not exist on type 
+'ReportFaultComponent'.
+
+10         <h6 class="color-aqua">{{errorMsg}}</h6>
+                                    ~~~~~~~~
+
+  src/app/components/facilitymanagement/reportfault/report.fault.component.ts:1
+2:16
+    12   templateUrl: './report.fault.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ReportFaultComponent.
+src/app/components/facilitymanagement/reportfault/report.fault.component.html:3
+2:13 - error TS2339: Property 'showDialog' does not exist on type 
+'ReportFaultComponent'.
+
+32 <div *ngIf="showDialog" class="dialogBackgroud"></div>
+               ~~~~~~~~~~
+
+  src/app/components/facilitymanagement/reportfault/report.fault.component.ts:1
+2:16
+    12   templateUrl: './report.fault.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ReportFaultComponent.
+src/app/components/facilitymanagement/reportfault/report.fault.component.html:3
+3:43 - error TS2339: Property 'showDialog' does not exist on type 
+'ReportFaultComponent'.
+
+33 <p-dialog [(visible)]="showDialog" *ngIf="showDialog" [style]="{width: 
+'95%'}" [baseZIndex]="10000">
+                                             ~~~~~~~~~~
+
+  src/app/components/facilitymanagement/reportfault/report.fault.component.ts:m
+12:16
+    12   templateUrl: './report.fault.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ReportFaultComponent.
+src/app/components/facilitymanagement/reportfault/report.fault.component.html:3
+3:24 - error TS2339: Property 'showDialog' does not exist on type 
+'ReportFaultComponent'.
+
+33 <p-dialog [(visible)]="showDialog" *ngIf="showDialog" [style]="{width: 
+'95%'}" [baseZIndex]="10000">
+                          ~~~~~~~~~~
+
+  src/app/components/facilitymanagement/reportfault/report.fault.component.ts:1
+2:16
+    12   templateUrl: './report.fault.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ReportFaultComponent.
+src/app/components/facilitymanagement/reportfault/report.fault.component.html:3
+3:24 - error TS2339: Property 'showDialog' does not exist on type 
+'ReportFaultComponent'.
+
+33 <p-dialog [(visible)]="showDialog" *ngIf="showDialog" [style]="{width: 
+'95%'}" [baseZIndex]="10000">
+                          ~~~~~~~~~~
+
+  src/app/components/facilitymanagement/reportfault/report.fault.component.ts:1
+2:16
+    12   templateUrl: './report.fault.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ReportFaultComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:31:53 - error 
+TS2339: Property 'items' does not exist on type 'ViewUampComponent'.
+
+31             <p-menu #menu id="config_menu" [model]="items" 
+[popup]="true"></p-menu>
+                                                       ~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:58:53 - error 
+TS2339: Property 'items' does not exist on type 'ViewUampComponent'.
+
+58             <p-menu #menu id="config_menu" [model]="items" 
+[popup]="true"></p-menu>
+                                                       ~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:122:53 - error 
+TS2339: Property 'items' does not exist on type 'ViewUampComponent'.
+
+122             <p-menu #menu id="config_menu" [model]="items" 
+[popup]="true"></p-menu>
+                                                        ~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:183:53 - error 
+TS2339: Property 'items' does not exist on type 'ViewUampComponent'.
+
+183             <p-menu #menu id="config_menu" [model]="items" 
+[popup]="true"></p-menu>
+                                                        ~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:235:53 - error 
+TS2339: Property 'items' does not exist on type 'ViewUampComponent'.
+
+235             <p-menu #menu id="config_menu" [model]="items" 
+[popup]="true"></p-menu>
+                                                        ~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:279:53 - error 
+TS2339: Property 'items' does not exist on type 'ViewUampComponent'.
+
+279             <p-menu #menu id="config_menu" [model]="items" 
+[popup]="true"></p-menu>
+                                                        ~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:326:53 - error 
+TS2339: Property 'items' does not exist on type 'ViewUampComponent'.
+
+326             <p-menu #menu id="config_menu" [model]="items" 
+[popup]="true"></p-menu>
+                                                        ~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.tsm:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:370:53 - error 
+TS2339: Property 'items' does not exist on type 'ViewUampComponent'.
+
+370             <p-menu #menu id="config_menu" [model]="items" 
+[popup]="true"></p-menu>
+                                                        ~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:417:53 - error 
+TS2339: Property 'items' does not exist on type 'ViewUampComponent'.
+
+417             <p-menu #menu id="config_menu" [model]="items" 
+[popup]="true"></p-menu>
+                                                        ~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:469:53 - error 
+TS2339: Property 'items' does not exist on type 'ViewUampComponent'.
+
+469             <p-menu #menu id="config_menu" [model]="items" 
+[popup]="true"></p-menu>
+                                                        ~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    [7m7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:511:53 - error 
+TS2339: Property 'items' does not exist on type 'ViewUampComponent'.
+
+511             <p-menu #menu id="config_menu" [model]="items" 
+[popup]="true"></p-menu>
+                                                        ~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:688:60 - error 
+TS2339: Property 'municipalUtilityServices' does not exist on type 
+'ViewUampComponent'.
+
+688                 <tr *ngFor="let municipalUtilityService of 
+municipalUtilityServices">
+                                                               
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:691:159 - error 
+TS2554: Expected 3 arguments, but got 4.
+
+691                     <td>{{amountRequiredMUS(1, 'mtefAllocatoion' + 
+municipalUtilityService.name +'Y1', 'amountRequired' + 
+municipalUtilityService.name +'Y1', municipalUtilityService.totalCost) | 
+currency:'ZAR':'R'}}</td>
+                                                                               
+                                                                               
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:692:154 - error 
+TS2554: Expected 3 arguments, but got 4.
+
+692                     <td>{{shortfallMUS(1, 'mtefAllocatoion' + 
+municipalUtilityService.name +'Y1', 'amountRequired' + 
+municipalUtilityService.name +'Y1', municipalUtilityService.totalCost) | 
+currency:'ZAR':'R'}}</td>
+                                                                               
+                                                                              
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:694:159 - error 
+TS2554: Expected 3 arguments, but got 4.
+
+694                     <td>{{amountRequiredMUS(2, 'mtefAllocatoion' + 
+municipalUtilityService.name +'Y2', 'amountRequired' + 
+municipalUtilityService.name +'Y2', municipalUtilityService.totalCost) | 
+currency:'ZAR':'R'}}</td>
+                                                                               
+                                                                               
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:695:154 - error 
+TS2554: Expected 3 arguments, but got 4.
+
+695                     <td>{{shortfallMUS(2, 'mtefAllocatoion' + 
+municipalUtilityService.name +'Y2', 'amountRequired' + 
+municipalUtilityService.name +'Y2', municipalUtilityService.totalCost) | 
+currency:'ZAR':'R'}}</td>
+                                                                               
+                                                                              
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:697:159 - error 
+TS2554: Expected 3 arguments, but got 4.
+
+697                     <td>{{amountRequiredMUS(3, 'mtefAllocatoion' + 
+municipalUtilityService.name +'Y3', 'amountRequired' + 
+municipalUtilityService.name +'Y3', municipalUtilityService.totalCost) | 
+currency:'ZAR':'R'}}</td>
+                                                                               
+                                                                               
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:698:154 - error 
+TS2554: Expected 3 arguments, but got 4.
+
+698                     <td>{{shortfallMUS(3, 'mtefAllocatoion' + 
+municipalUtilityService.name +'Y3', 'amountRequired' + 
+municipalUtilityService.name +'Y3', municipalUtilityService.totalCost) | 
+currency:'ZAR':'R'}}</td>
+                                                                               
+                                                                              
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:700:159 - error 
+TS2554: Expected 3 arguments, but got 4.
+
+700                     <td>{{amountRequiredMUS(4, 'mtefAllocatoion' + 
+municipalUtilityService.name +'Y4', 'amountRequired' + 
+municipalUtilityService.name +'Y4', municipalUtilityService.totalCost) | 
+currency:'ZAR':'R'}}</td>
+                                                                               
+                                                                               
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:701:154 - error 
+TS2554: Expected 3 arguments, but got 4.
+
+701                     <td>{{shortfallMUS(4, 'mtefAllocatoion' + 
+municipalUtilityService.name +'Y4', 'amountRequired' + 
+municipalUtilityService.name +'Y4', municipalUtilityService.totalCost) | 
+currency:'ZAR':'R'}}</td>
+                                                                               
+                                                                              
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:703:159 - error 
+TS2554: Expected 3 arguments, but got 4.
+
+703                     <td>{{amountRequiredMUS(5, 'mtefAllocatoion' + 
+municipalUtilityService.name +'Y5', 'amountRequired' + 
+municipalUtilityService.name +'Y5', municipalUtilityService.totalCost) | 
+currency:'ZAR':'R'}}</td>
+                                                                               
+                                                                               
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/uamp/view-uamp/view-uamp.component.html:704:154 - error 
+TS2554: Expected 3 arguments, but got 4.
+
+704                     <td>{{shortfallMUS(5, 'mtefAllocatoion' + 
+municipalUtilityService.name +'Y5', 'amountRequired' + 
+municipalUtilityService.name +'Y5', municipalUtilityService.totalCost) | 
+currency:'ZAR':'R'}}</td>
+                                                                               
+                                                                              
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/uamp/view-uamp/view-uamp.component.ts:7:16
+    7   templateUrl: './view-uamp.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ViewUampComponent.
+src/app/components/assetregister/addassetregister/addassetregister.component.ht
+ml:107:51 - error TS2339: Property 'multi' does not exist on type 
+'AddassetregisterComponent'.
+
+107                                     [styleClass]="multi-select" 
+[disabled]="isViewOnly" [style]="{'width':'570px'}"
+                                                      ~~~~~
+
+  src/app/components/assetregister/addassetregister/addassetregister.component.
+ts:17:16
+    17   templateUrl: './addassetregister.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddassetregisterComponent.
+src/app/components/assetregister/addassetregister/addassetregister.component.ht
+ml:107:57 - error TS2339: Property 'select' does not exist on type 
+'AddassetregisterComponent'.
+
+107                                     [styleClass]="multi-select" 
+[disabled]="isViewOnly" [style]="{'width':'570px'}"
+                                                            ~~~~~~
+
+  src/app/components/assetregister/addassetregister/addassetregister.component.
+ts:17:16
+    17   templateUrl: './addassetregister.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddassetregisterComponent.
+src/app/components/assetregister/addassetregister/addassetregister.component.ht
+ml:106:112 - error TS2339: Property 'option' does not exist on type 
+'AddassetregisterComponent'.
+
+106                                 <p-multiSelect class="ui-inputtext 
+ui-widget" (onClick)="onOptionClick($event, option)"
+                                                                               
+                                    ~~~~~~
+
+  src/app/components/assetregister/addassetregister/addassetregister.component.
+ts:17:16
+    17   templateUrl: './addassetregister.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddassetregisterComponent.
+src/app/components/assetregister/addassetregister/addassetregister.component.ht
+ml:780:78 - error TS2339: Property 'upload' does not exist on type 
+'AddassetregisterComponent'.
+
+780                         name="myfile[]" multiple="multiple" 
+(uploadHandler)="upload($event)"></p-fileUpload>
+                                                                               
+  ~~~~~~
+
+  src/app/components/assetregister/addassetregister/addassetregister.component.
+ts:17:16
+    17   templateUrl: './addassetregister.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddassetregisterComponent.
+src/app/components/leasemanagement/leasedproperty/leased-property.component.htm
+l:132:37 - error TS2339: Property 'landFiles' does not exist on type 
+'LeasedPropertyComponent'.
+
+132             <ul *ngFor="let file of landFiles; let i = index" 
+style="list-style-type:none;">
+    m                                    ~~~~~~~~~
+
+  src/app/components/leasemanagement/leasedproperty/leased-property.component.t
+s:10:16
+    10   templateUrl: './leased-property.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component LeasedPropertyComponent.
+src/app/components/leasemanagement/leasedproperty/leased-property.component.htm
+l:143:37 - error TS2339: Property 'landFiles' does not exist on type 
+'LeasedPropertyComponent'.
+
+143             <ul *ngFor="let file of landFiles; let i = index" 
+style="list-style-type:none;">
+                                        ~~~~~~~~~
+
+  src/app/components/leasemanagement/leasedproperty/leased-property.component.t
+s:10:16
+    10   templateUrl: './leased-property.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component LeasedPropertyComponent.
+src/app/components/facilitymanagement/project/project.component.html:4:53 - 
+error TS2339: Property 'error' does not exist on type 'ProjectComponent'.
+
+4 <div class="text-center" style="color: red;" *ngIf="error">
+                                                      ~~~~~
+
+  src/app/components/facilitymanagement/project/project.component.ts:10:16
+    10   templateUrl: './project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ProjectComponent.
+src/app/components/facilitymanagement/project/project.component.html:13:133 - 
+error TS2339: Property 'dialogHeader' does not exist on type 
+'ProjectComponent'.
+
+13     <button *ngIf="currentUser.roleId == 2 || currentUser.roleId == 3" 
+style="float: right;" (click)="addProject();showDialog=true; dialogHeader='New 
+Project'" pButton type="button" label="Add New"
+                                                                               
+                                                        ~~~~~~~~~~~~
+
+  src/app/components/facilitymanagement/project/project.component.ts:10:16
+    10   templateUrl: './project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ProjectComponent.
+src/app/components/facilitymanagement/project/project.component.html:57:19 - 
+error TS2339: Property 'dialogHeader' does not exist on type 
+'ProjectComponent'.
+
+57     <p-header> {{ dialogHeader }} </p-header>
+                     ~~~~~~~~~~~~
+
+  src/app/components/facilitymanagement/project/project.component.ts:10:16
+    10   templateUrl: './project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ProjectComponent.
+src/app/components/facilitymanagement/project/project.component.html:58:39 - 
+error TS2339: Property 'addUpdateAsset' does not exist on type 
+'ProjectComponent'.
+
+58     <app-add-edit-project (newAsset)='addUpdateAsset($event)' 
+[project]="project"></app-add-edit-project>
+                                         ~~~~~~~~~~~~~~
+
+  src/app/components/facilitymanagement/project/project.component.ts:10:16
+    10   templateUrl: './project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ProjectComponent.
+src/app/components/facilitymanagement/servicerequest/service-request.component.
+html:4:53 - error TS2339: Property 'error' does not exist on type 
+'ServiceRequestComponent'.
+
+4 <div class="text-center" style="color: red;" *ngIf="error">
+                                                      ~~~~~
+
+  src/app/components/facilitymanagement/servicerequest/service-request.componen
+t.ts:11:16
+    11   templateUrl: './service-request.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ServiceRequestComponent.
+src/app/components/facilitymanagement/servicerequest/service-request.component.
+html:60:27 - error TS2339: Property 'showPrintDialog' does not exist on type 
+'ServiceRequestComponent'.
+
+60 <div *ngIf="showDialog || showPrintDialog" class="dialogBackgroud"></div>
+                             ~~~~~~~~~~~~~~~
+
+  src/app/components/facilitymanagement/servicerequest/service-request.componen
+t.ts:11:16
+    11   templateUrl: './service-request.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ServiceRequestComponent.
+src/app/components/facilitymanagement/project/addeditproject/add-edit-project.c
+omponent.html:3:53 - error TS2339: Property 'error' does not exist on type 
+'AddEditProjectComponent'.
+
+3 <div class="text-center" style="color: red;" *ngIf="error">
+                                                      ~~~~~
+
+  src/app/components/facilitymanagement/project/addeditproject/add-edit-project
+.component.ts:16:16
+    16   templateUrl: './add-edit-project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddEditProjectComponent.
+src/app/components/facilitymanagement/project/addeditproject/add-edit-project.c
+omponent.html:23:71 - error TS2339: Property 'showAssets' does not exist on 
+type 'AddEditProjectComponent'.
+
+23                                 (onChange)="onDistrictChange($event); 
+showAssets=true" optionLabel="name">
+                                                                         
+~~~~~~~~~~
+
+  src/app/components/facilitymanagement/project/addeditproject/add-edit-project
+.component.ts:16:16
+    16   templateUrl: './add-edit-project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddEditProjectComponent.
+src/app/components/facilitymanagement/project/addeditproject/add-edit-project.c
+omponent.html:36:71 - error TS2339: Property 'showAll' does not exist on type 
+'AddEditProjectComponent'.
+
+36                                 (onChange)="onPropertyChange($event); 
+showAll=true" optionLabel="name">
+                                                                         
+~~~~~~~
+
+  src/app/components/facilitymanagement/project/addeditproject/add-edit-project
+.component.ts:16:16
+    16   templateUrl: './add-edit-project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddEditProjectComponent.
+src/app/components/facilitymanagement/project/addeditproject/add-edit-project.c
+omponent.html:168:45 - error TS2339: Property 'onProperty' does not exist on 
+type 'AddEditProjectComponent'.
+
+168                                 (onChange)="onProperty($event); 
+showAll=true" optionLabel="name">
+                                                ~~~~~~~~~~
+
+  src/app/components/facilitymanagement/project/addeditproject/add-edit-project
+.component.ts:16:16
+    16   templateUrl: './add-edit-project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddEditProjectComponent.
+src/app/components/facilitymanagement/project/addeditproject/add-edit-project.c
+omponent.html:168:65 - error TS2339: Property 'showAll' does not exist on type 
+'AddEditProjectComponent'.
+
+168                                 (onChange)="onProperty($event); 
+showAll=true" optionLabel="name">
+                                                                    ~~~~~~~
+
+  src/app/components/facilitymanagement/project/addeditproject/add-edit-project
+.component.ts:16:16
+    16   templateUrl: './add-edit-project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddEditProjectComponent.
+src/app/components/facilitymanagement/project/addeditproject/add-edit-project.c
+omponent.html:194:54 - error TS2339: Property 'm' does not exist on type 
+'AddEditProjectComponent'.
+
+194                             <div *ngIf="submitted && m.managedBy.errors" 
+class="text-error"><br>
+                                                         ~
+
+  src/app/components/facilitymanagement/project/addeditproject/add-edit-project
+.component.ts:16:16
+    16   templateUrl: './add-edit-project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddEditProjectComponent.
+src/app/components/facilitymanagement/project/addeditproject/add-edit-project.c
+omponent.html:195:45 - error TS2339: Property 'm' does not exist on type 
+'AddEditProjectComponent'.
+
+195                                 <div 
+*ngIf="m.managedBy.errors.required">This field is required.</div>
+                                                ~
+
+  src/app/components/facilitymanagement/project/addeditproject/add-edit-project
+.component.ts:16:16
+    16   templateUrl: './add-edit-project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddEditProjectComponent.
+src/app/components/facilitymanagement/project/addeditproject/add-edit-project.c
+omponent.html:205:54 - error TS2339: Property 'm' does not exist on type 
+'AddEditProjectComponent'.
+
+205                             <div *ngIf="submitted && m.name.errors" 
+class="text-error"><br>
+                                                         ~
+
+  src/app/components/facilitymanagement/project/addeditproject/add-edit-project
+.component.ts:16:16
+    16   templateUrl: './add-edit-project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddEditProjectComponent.
+src/app/components/facilitymanagement/project/addeditproject/add-edit-project.c
+omponent.html:206:45 - error TS2339: Property 'm' does not exist on type 
+'AddEditProjectComponent'.
+
+206                                 <div *ngIf="m.name.errors.required">This 
+field is required.</div>
+                                                ~
+
+  src/app/components/facilitymanagement/project/addeditproject/add-edit-project
+.component.ts:16:16
+    16   templateUrl: './add-edit-project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddEditProjectComponent.
+src/app/components/facilitymanagement/project/addeditproject/add-edit-project.c
+omponent.html:216:54 - error TS2339: Property 'm' does not exist on type 
+'AddEditProjectComponent'.
+
+216                             <div *ngIf="submitted && 
+m.employeeCompanyNumber.errors" class="text-error"><br>
+                                                         ~
+
+  src/app/components/facilitymanagement/project/addeditproject/add-edit-project
+.component.ts:16:16
+    16   templateUrl: './add-edit-project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddEditProjectComponent.
+src/app/components/facilitymanagement/project/addeditproject/add-edit-project.c
+omponent.html:217:45 - error TS2339: Property 'm' does not exist on type 
+'AddEditProjectComponent'.
+
+217                                 <div 
+*ngIf="m.employeeCompanyNumber.errors.required">This field is required.</div>
+                                                ~
+
+  src/app/components/facilitymanagement/project/addeditproject/add-edit-project
+.component.ts:16:16
+    16   templateUrl: './add-edit-project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddEditProjectComponent.
+src/app/components/facilitymanagement/project/addeditproject/add-edit-project.c
+omponent.html:230:54 - error TS2339: Property 'm' does not exist on type 
+'AddEditProjectComponent'.
+
+230                             <div *ngIf="submitted && m.contactName.errors" 
+class="text-error"><br>
+                                                         ~
+
+  src/app/components/facilitymanagement/project/addeditproject/add-edit-project
+.component.ts:16:16
+    16   templateUrl: './add-edit-project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddEditProjectComponent.
+src/app/components/facilitymanagement/project/addeditproject/add-edit-project.c
+omponent.html:231:45 - error TS2339: Property 'm' does not exist on type 
+'AddEditProjectComponent'.
+
+231                                 <div 
+*ngIf="m.contactName.errors.required">This field is required.</div>
+                                                ~
+
+  src/app/components/facilitymanagement/project/addeditproject/add-edit-project
+.component.ts:16:16
+    16   templateUrl: './add-edit-project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddEditProjectComponent.
+src/app/components/facilitymanagement/project/addeditproject/add-edit-project.c
+omponent.html:239:54 - error TS2339: Property 'm' does not exist on type 
+'AddEditProjectComponent'.
+
+239                             <div *ngIf="submitted && 
+m.contactNumber.errors" class="text-error"><br>
+                                                         ~
+
+  src/app/components/facilitymanagement/project/addeditproject/add-edit-project
+.component.ts:16:16
+    16   templateUrl: './add-edit-project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddEditProjectComponent.
+src/app/components/facilitymanagement/project/addeditproject/add-edit-project.c
+omponent.html:240:45 - error TS2339: Property 'm' does not exist on type 
+'AddEditProjectComponent'.
+
+240                                 <div 
+*ngIf="m.contactNumber.errors.required">This field is required.</div>
+                                                ~
+
+  src/app/components/facilitymanagement/project/addeditproject/add-edit-project
+.component.ts:16:16
+    16   templateUrl: './add-edit-project.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AddEditProjectComponent.
+src/app/components/facilitymanagement/reportfault/trackticket/track.ticket.comp
+onent.html:3:53 - error TS2339: Property 'error' does not exist on type 
+'TrackTicketComponent'.
+
+3 <div class="text-center" style="color: red;" *ngIf="error">
+                                                      ~~~~~
+
+  src/app/components/facilitymanagement/reportfault/trackticket/track.ticket.co
+mponent.ts:10:16
+    10   templateUrl: './track.ticket.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TrackTicketComponent.
+src/app/components/facilitymanagement/reportfault/trackticket/track.ticket.comp
+onent.html:8:30 - error TS2339: Property 'errorMsg' does not exist on type 
+'TrackTicketComponent'.
+
+8     <h6 class="color-aqua">{{errorMsg}}</h6>
+                               ~~~~~~~~
+
+  src/app/components/facilitymanagement/reportfault/trackticket/track.ticket.co
+mponent.ts:10:16
+    10   templateUrl: './track.ticket.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TrackTicketComponent.
+

@@ -1,0 +1,59 @@
+<p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+<div style="text-align: -webkit-center;width: 100%;">
+
+
+    <div class="text-center" style="color: red;" *ngIf="error">
+        <h5 class="mt-20">
+            <li class="pi pi-exclamation-triangle" style="color: red;font-size: xx-large;"></li>
+            <span> An error has occured...</span>
+        </h5>
+        <h6 class="color-aqua">{{errorMsg}}</h6>
+    </div>
+
+</div>
+
+<div *ngIf="showReportFaultDialog" class="dialogBackgroud dialogNoBackgroud"></div>
+<p-dialog [(visible)]="showReportFaultDialog" *ngIf="showReportFaultDialog" [style]="{width: '97%'}"
+    [baseZIndex]="10000">
+    <p-header>
+        <img style="float: left; width: 80px;
+        margin-top: 15px;" class="logo-img" src="../../../assets/images/logo.png"> <h3>Mpumalanga facilities Management</h3> 
+    </p-header>
+    <app-add-fault></app-add-fault>
+</p-dialog>
+
+<div *ngIf="showTrackTicketDialog" class="dialogBackgroud"></div>
+<p-dialog [(visible)]="showTrackTicketDialog" *ngIf="showTrackTicketDialog" [style]="{width: '95%'}"
+    [baseZIndex]="10000">
+    <p-header> Track Progress </p-header>
+    <app-track-ticket></app-track-ticket>
+</p-dialog>
+
+<div *ngIf="showDialog" class="dialogBackgroud"></div>
+<p-dialog [(visible)]="showDialog" *ngIf="showDialog" [style]="{width: '95%'}" [baseZIndex]="10000">
+    <p-header><img style="float: left" class="logo-img" src="../../../assets/images/logo.png"><br/>
+        Mpumalanga facilities Management  </p-header>
+    <p-content style="text-align: center;">
+      <!--  <div *ngIf="!isSuccessful">
+            <ngx-qrcode [elementType]="elementType" [value]="value" cssClass="aclass" errorCorrectionLevel="L">
+            </ngx-qrcode>
+            <div>
+                <span>Scan Me</span>
+            </div>
+        </div>-->
+        <div >
+            <p>What would you like to do?</p>
+        </div>
+    </p-content>
+    <p-footer>
+        <div>
+           
+            <button type="button" style="float: left;width: 45%;margin-left: -6px;" (click)="showReportFaultDialog=true" pButton
+                label="Report Fault"></button>
+
+                
+        </div>
+        <!--<button style="float: right" type="button" *ngIf="!isSuccessful" (click)="isSuccessful=true" pButton
+            label="Continue"></button>-->
+    </p-footer>
+</p-dialog>
