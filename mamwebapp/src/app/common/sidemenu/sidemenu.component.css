@@ -81,6 +81,7 @@
     height: 145px;
     text-align: center;
     background-size: 250px 145px;
+    background-color: #006430;
     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16);
     -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16);
     -moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16);
@@ -99,6 +100,14 @@
     vertical-align: middle;
     font-size: 1em;
     text-transform: capitalize;
+}
+
+.layout-menu-container mat-nav-list {
+    padding-top: 8px;
+}
+
+.layout-menu-container a[mat-list-item] {
+    justify-content: center;
 }
 
 .ui-widget, .ui-widget * {

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
 import { first } from 'rxjs/operators';
 import { LeasedProperty } from 'src/app/models/leased-property.model';
@@ -10,13 +10,17 @@ import { LeasedPropertiesService } from 'src/app/services/leased-property/leased
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
+  standalone: false,
   selector: 'app-facility-management',
   templateUrl: './facility-management.component.html',
   styleUrls: ['./facility-management.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService,]
 })
 export class FacilityManagementComponent implements OnInit {
 
+  error = '';
+  errorMsg = '';
   public newCount: number = 0;
   public inProgressCount: number = 0;
   public completedCount: number = 0;

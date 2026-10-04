@@ -1,12 +1,14 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../../../app/services/authentication.service';
 import { User } from '../../../app/models/user.model';
 import { Role } from 'src/app/models/role.model';
 
 @Component({
+  standalone: false,
   selector: 'app-sidemenu',
   templateUrl: './sidemenu.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./sidemenu.component.css']
 })
 export class SidemenuComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { GapAnalysisComponent } from './gap-analysis.component';
 
@@ -6,7 +6,7 @@ describe('GapAnalysisComponent', () => {
   let component: GapAnalysisComponent;
   let fixture: ComponentFixture<GapAnalysisComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ GapAnalysisComponent ]
     })

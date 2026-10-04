@@ -33,7 +33,7 @@
             <div class="field grid col-12">
                 <span class="p-input-icon-left p-1">
                     <label for="float-input">Building name</label>
-                    <p-autoComplete [styleClass]="long-text" [disabled]="!enableBuilding" class="ui-inputtext ui-widget"
+                    <p-autoComplete styleClass="long-text" [disabled]="!enableBuilding" class="ui-inputtext ui-widget"
                         [(ngModel)]="selectedBuilding" [suggestions]="filteredBuildings"
                         (completeMethod)="filterBuilding($event)" (onSelect)="onBuildingChange($event)" field="name"
                         [dropdown]="true" formControlName="buildingName">

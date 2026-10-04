@@ -1,18 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { UserService } from '../../services/user/user.service';
-import { MessageService } from 'primeng/api';
 import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
+  standalone: false,
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
-  providers: [MessageService]
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class LoginComponent implements OnInit {
+
+  @ViewChild('forgotPasswordDialog') forgotPasswordDialog: TemplateRef<unknown>;
 
   loginForm: FormGroup;
   loading = false;
@@ -25,6 +29,8 @@ export class LoginComponent implements OnInit {
   forgotPasswordError = '';
   forgotPasswordLoading = false;
   forgotPasswordSubmitted = false;
+  hidePassword = true;
+  private forgotPasswordDialogRef: MatDialogRef<unknown> | null = null;
 
   constructor(
     private userService: UserService,
@@ -32,7 +38,8 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService,
-    private messageService: MessageService
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
     // redirect to home if already logged in
     if (this.authenticationService.currentUserValue) {
@@ -59,6 +66,12 @@ export class LoginComponent implements OnInit {
 
   // convenience getter for easy access to form fields
   get ff() { return this.forgotPasswordForm.controls; }
+
+  openForgotPasswordDialog() {
+    this.forgotPasswordDialogRef = this.dialog.open(this.forgotPasswordDialog, {
+      width: 'min(92vw, 480px)'
+    });
+  }
 
   onSubmit() {
     this.submitted = true;
@@ -104,7 +117,7 @@ export class LoginComponent implements OnInit {
     var randomstring = Math.random().toString(36).slice(-8);
     this.userService.forgotpassword(this.ff.username.value, randomstring).pipe(first()).subscribe(isUpdated => {
       if (isUpdated) {
-        this.showDialog = false;
+        this.forgotPasswordDialogRef?.close();
         this.showToast('Forgot Password', 'Please check your email to change your passsword');
         this.forgotPasswordLoading = false;
       } else {
@@ -115,7 +128,7 @@ export class LoginComponent implements OnInit {
   }
 
   showToast(summary: string, detail: string) {
-    this.messageService.add({severity:'success', summary:summary, detail:detail});
+    this.snackBar.open(detail, summary, { duration: 5000 });
   }
 
 }

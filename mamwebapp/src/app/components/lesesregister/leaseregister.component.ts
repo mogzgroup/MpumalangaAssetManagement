@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 
 @Component({
+  standalone: false,
   selector: 'app-leaseregister',
   templateUrl: './leaseregister.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./leaseregister.component.css']
 })
 export class LeaseRegisterComponent implements OnInit {

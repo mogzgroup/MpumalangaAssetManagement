@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { RadioButtonModule, RadioControlRegistry } from 'primeng/radiobutton';
@@ -8,12 +8,17 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
+  standalone: false,
   selector: 'app-report-fault',
   templateUrl: './report.fault.component.html',
   styleUrls: ['./report.fault.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService, ConfirmationService, RadioControlRegistry]
 })
 export class ReportFaultComponent implements OnInit {
+  public error = '';
+  public errorMsg = '';
+  public showDialog = false;
   public submitted = false;
   public isSuccessful = false;
   public reportFaultForm: FormGroup;

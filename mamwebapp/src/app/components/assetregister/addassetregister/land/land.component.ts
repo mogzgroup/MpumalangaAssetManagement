@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
+  standalone: false,
   selector: 'app-land',
   templateUrl: './land.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./land.component.css']
 })
 export class LandComponent implements OnInit {

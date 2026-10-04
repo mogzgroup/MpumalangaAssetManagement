@@ -1,64 +1,29 @@
 <div class="layout-menu-container">
-    <p-scrollpanel>
-        <div class="ui-scrollpanel ui-widget ui-widget-content ui-corner-all" style="height: 100%; background-color: #006430;">
-            <div class="ui-scrollpanel-wrapper">
-                <div class="ui-scrollpanel-content">
-                    <div class="menu-scroll-content">
-                        <div class="profile profile-expanded">
-                            <a class="ng-tns-c0-26" href="#">
-                                <img class="profile-image" height="90px" class="" src="../../../assets/images/profile.png"><br>
-                                <span class="profile-name">{{currentUser.name}} {{currentUser.surname}}</span>
-                            </a>
-                        </div>
-                        <ul app-submenu="" class="ultima-menu ultima-main-menu clearfix ng-tns-c1-0" parentactive="true" root="true" visible="true">
-                            <li class="ng-tns-c1-0 ng-star-inserted" *ngIf="!isDepartmantUser()">
-                                <a class="ripplelink active-menuitem-routerlink" (click)="navigate('dashboard')">
-                                    <i class="pi pi-home" pTooltip="Dashboard"></i>
-                                </a>
-                            </li>
-                            <li class="ng-tns-c1-0 ng-star-inserted" *ngIf="isAdmin()">
-                                <a class="ripplelink" (click)="navigate('users')">
-                                    <i class="pi pi-users" pTooltip="Users"></i>
-                                </a>
-                            </li>
-
-                            <li class="ng-tns-c1-0 ng-star-inserted" *ngIf="!isDepartmantUser() || isAdmin()">
-                                <a class="ripplelink" (click)="navigate('assetregister')">
-                                    <i class="pi pi-table" pTooltip="Asset Register"></i>
-                                </a>
-                            </li>
-
-                            <li class="ng-tns-c1-0 ng-star-inserted">
-                                <a class="ripplelink" (click)="navigate('leaseRegister')">
-                                    <i class="pi pi-book" pTooltip="Lease Management"></i>
-                                </a>
-                            </li>
-
-                            <li class="ng-tns-c1-0 ng-star-inserted">
-                                <a class="ripplelink" (click)="navigate('facility')">
-                                    <i class="pi pi-calendar" pTooltip="Facility Management"></i>
-                                </a>
-                            </li>
-
-                            <li class="ng-tns-c1-0 ng-star-inserted">
-                                <a class="ripplelink" (click)="navigate('uamp')">
-                                    <i class="pi pi-desktop" pTooltip="UAMP"></i>
-                                </a>
-                            </li>
-
-                            <li class="ng-tns-c1-0 ng-star-inserted">
-                                <a class="ripplelink" (click)="navigate('camp')">
-                                    <i class="pi pi-file" pTooltip="CAMP"></i>
-                                </a>
-                            </li>
-                        </ul>   
-                    </div>
-                </div>
-            </div>
-            <div class="ui-scrollpanel-bar ui-scrollpanel-bar-x" style="width: 99.6047%; left: 0%; bottom: -960px;">
-            </div>
-            <div class="ui-scrollpanel-bar ui-scrollpanel-bar-y ui-scrollpanel-hidden"
-                style="height: 45.0891%; top: calc(0% - 9px); right: -225px;"></div>
-        </div>
-    </p-scrollpanel>
+    <div class="profile profile-expanded">
+        <img class="profile-image" src="../../../assets/images/profile.png" alt="">
+        <span class="profile-name">{{currentUser?.name}} {{currentUser?.surname}}</span>
+    </div>
+    <mat-nav-list aria-label="Main navigation">
+        <a mat-list-item *ngIf="!isDepartmantUser()" (click)="navigate('dashboard')" matTooltip="Dashboard" aria-label="Dashboard">
+            <mat-icon matListItemIcon>dashboard</mat-icon>
+        </a>
+        <a mat-list-item *ngIf="isAdmin()" (click)="navigate('users')" matTooltip="Users" aria-label="Users">
+            <mat-icon matListItemIcon>group</mat-icon>
+        </a>
+        <a mat-list-item *ngIf="!isDepartmantUser() || isAdmin()" (click)="navigate('assetregister')" matTooltip="Asset Register" aria-label="Asset Register">
+            <mat-icon matListItemIcon>inventory_2</mat-icon>
+        </a>
+        <a mat-list-item (click)="navigate('leaseRegister')" matTooltip="Lease Management" aria-label="Lease Management">
+            <mat-icon matListItemIcon>menu_book</mat-icon>
+        </a>
+        <a mat-list-item (click)="navigate('facility')" matTooltip="Facility Management" aria-label="Facility Management">
+            <mat-icon matListItemIcon>event</mat-icon>
+        </a>
+        <a mat-list-item (click)="navigate('uamp')" matTooltip="UAMP" aria-label="UAMP">
+            <mat-icon matListItemIcon>domain</mat-icon>
+        </a>
+        <a mat-list-item (click)="navigate('camp')" matTooltip="CAMP" aria-label="CAMP">
+            <mat-icon matListItemIcon>description</mat-icon>
+        </a>
+    </mat-nav-list>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { UampService } from 'src/app/services/uamp/uamp.service';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -13,9 +13,11 @@ import { Router } from '@angular/router';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
+  standalone: false,
   selector: 'app-template-four-two',
   templateUrl: './template-four-two.component.html',
   styleUrls: ['./template-four-two.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService]
 })
 export class TemplateFourTwoComponent implements OnInit {
@@ -33,6 +35,8 @@ export class TemplateFourTwoComponent implements OnInit {
   isEdit: boolean = false;
   requiredOptions: any[];
   displayDialog: boolean = false;
+  dialogHeader: string = '';
+  mode: string = 'Edit';
   index: number = 0;
   isLoading: boolean = false;
 
@@ -181,6 +185,14 @@ export class TemplateFourTwoComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Error Occurred', detail: 'An error occurred while processing your request. please try again!' });
       });
     }    
+  }
+
+  updateOperationPlan() {
+    if (this.isEdit) {
+      this.updateAcquisitionPlan();
+    } else {
+      this.addAcquisitionPlan();
+    }
   }
 
   addAcquisitionPlan() {

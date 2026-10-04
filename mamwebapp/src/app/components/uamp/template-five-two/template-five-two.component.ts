@@ -1,19 +1,20 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
 import { Facility } from 'src/app/models/facility.model';
 import { UampService } from 'src/app/services/uamp/uamp.service';
 import { OperationPlan } from 'src/app/models/operation-plan.model';
 import { UAMP } from 'src/app/models/uamp.model';
-import { element } from 'protractor';
 import { Router } from '@angular/router';
 import { SharedService } from 'src/app/services/shared.service';
 import { first } from 'rxjs/operators';
 
 @Component({
+  standalone: false,
   selector: 'app-template-five-two',
   templateUrl: './template-five-two.component.html',
   styleUrls: ['./template-five-two.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService]
 })
 export class TemplateFiveTwoComponent implements OnInit {
@@ -26,6 +27,9 @@ export class TemplateFiveTwoComponent implements OnInit {
   localMunicipalities: any[];
   uamp: UAMP;
   displayDialog: boolean = false;
+  dialogHeader: string = '';
+  isEdit: boolean = false;
+  mode: string = 'Edit';
   isLoading: boolean = false;
 
   constructor(private router: Router, private sharedService: SharedService, private uampService: UampService, private formBuilder: FormBuilder, private messageService: MessageService) {
@@ -133,6 +137,14 @@ export class TemplateFiveTwoComponent implements OnInit {
       if (e.value != undefined) {
         this.localMunicipalities = this.sharedService.getLocalMunicipalities(e.value.factor);
       }
+    }
+  }
+
+  updateOperationPlan() {
+    if (this.isEdit) {
+      this.addOperationPlan();
+    } else {
+      this.addOperationPlan();
     }
   }
 

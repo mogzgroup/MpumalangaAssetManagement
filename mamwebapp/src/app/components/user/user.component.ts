@@ -1,29 +1,33 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { first } from 'rxjs/operators';
 import { User } from '../../models/user.model';
 import { UserService } from '../../services/user/user.service';
-import { MenuItem, MessageService } from 'primeng/api';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../services/authentication.service';
-import { ConfirmationService } from 'primeng/api';
 import { FormControl } from '@angular/forms';
 
 @Component({
+  standalone: false,
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css'],
-  providers: [MessageService, ConfirmationService]
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
-export class UserComponent implements OnInit {
+export class UserComponent implements OnInit, AfterViewInit {
   loading = false;
   isAdding = false;
   showComfirmaDelete = false;
   showResetPasswordComfirmation: boolean = false;
   users: User[] = [];
   clonedUsers: User[] = [];
-  cols: any[];
-  items: MenuItem[];
-  home: MenuItem;
+  displayedColumns: string[] = ['name', 'surname', 'email', 'createdDate', 'role', 'department', 'reset', 'actions'];
+  dataSource = new MatTableDataSource<User>([]);
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   addUserForm: FormGroup;
   submitted = false;
   error = '';
@@ -39,15 +43,12 @@ export class UserComponent implements OnInit {
   errorMsg: string = 'error';
   departments: any[] = [];
   selectedRole: Number = 0;
-  buttonItems: MenuItem[];
   header: string = 'Add User';
 
   constructor(private userService: UserService,
     private formBuilder: FormBuilder,
-    private confirmationService: ConfirmationService,
     private authenticationService: AuthenticationService,
-    private messageService: MessageService,
-    private changeDetectionRef: ChangeDetectorRef) { }
+    private snackBar: MatSnackBar) { }
   roles: any[];
 
   ngOnInit() {
@@ -55,18 +56,6 @@ export class UserComponent implements OnInit {
     this.authenticationService.currentUser.subscribe(x => {
       this.currentUser = x;
     });
-
-    this.buttonItems = [
-      {
-        label: 'Update', icon: 'pi pi-pencil', command: () =>
-          this.update()
-      },
-      { separator: true },
-      {
-        label: 'Delete', icon: 'pi pi-trash', command: () =>
-          this.confirmDelete()
-      }
-    ];
 
     this.roles = [
       { name: 'Viewer', code: 'V', factor: 1 },
@@ -93,18 +82,6 @@ export class UserComponent implements OnInit {
       { name: 'Finance', code: 'F', factor: 11 },
     ];    
 
-    this.items = [{ icon: 'pi pi-home', url: 'dashboard' },
-    { label: 'Users' }];
-
-    this.cols = [
-      { field: 'name', header: 'Name' },
-      { field: 'surname', header: 'Surname' },
-      { field: 'email', header: 'Email' },
-      { field: 'createdDate', header: 'Created Date' },
-      { field: 'role', header: 'Role', element: true },
-      { field: 'department', header: 'Department', element: true },
-    ];
-
     this.initUser();
 
     this.loading = true;
@@ -112,7 +89,18 @@ export class UserComponent implements OnInit {
       this.loading = false;
       this.users = users;
       this.clonedUsers = users;
+      this.dataSource.data = users;
     });
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  applyFilter(value: string) {
+    this.dataSource.filter = value.trim().toLowerCase();
+    this.dataSource.paginator?.firstPage();
   }
 
   initUser(){
@@ -175,14 +163,14 @@ export class UserComponent implements OnInit {
   }
 
   showToast(summary: string, detail: string) {
-    this.messageService.add({ severity: 'success', summary: summary, detail: detail });
+    this.snackBar.open(detail, summary, { duration: 5000 });
   }
   showErrorToast(summary: string, detail: string) {
-    this.messageService.add({ severity: 'error', summary: summary, detail: detail });
+    this.snackBar.open(detail, summary, { duration: 7000, panelClass: ['mat-mdc-snack-bar-error'] });
   }
 
-  setRole(e) {
-    this.selectedRole = e.value.factor
+  setRole(role: any) {
+    this.selectedRole = role.factor;
   }
 
   onRowEditInit(e) { }
@@ -225,15 +213,16 @@ export class UserComponent implements OnInit {
     this.userService.updateUser(user).pipe().subscribe(newUser => {
       if (newUser) {
         this.users[this.index] = user;
-        this.messageService.add({ severity: 'success', summary: 'Update User', detail: 'User has been updated successful.' });
+        this.dataSource.data = [...this.users];
+        this.showToast('Update User', 'User has been updated successful.');
       } else {
-        this.messageService.add({ severity: 'error', summary: 'Update User', detail: 'User has been updated successful' });
+        this.showErrorToast('Update User', 'User has not been updated successfully.');
       }
       this.showDialog = false;
       this.isAdding = false;
     },
       error => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occurred', detail: 'An error occurred while processing your request. please try again!' });
+        this.showErrorToast('Error Occurred', 'An error occurred while processing your request. Please try again.');
         this.error = error;
         this.isAdding = false;
       });
@@ -243,15 +232,16 @@ export class UserComponent implements OnInit {
     this.userService.addUser(user).pipe().subscribe(newUser => {
       if (newUser.id != 0) {
         this.users.push(newUser);
+        this.dataSource.data = [...this.users];
         this.showToast('Add User', 'User has been added successful');
       } else {
-        this.messageService.add({ severity: 'error', summary: 'Add User', detail: 'User is not added successful.' });
+        this.showErrorToast('Add User', 'User was not added successfully.');
       }
       this.showDialog = false;
       this.isAdding = false;
     },
       error => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occurred', detail: 'An error occurred while processing your request. please try again!' });
+        this.showErrorToast('Error Occurred', 'An error occurred while processing your request. Please try again.');
         this.error = error;
         this.isAdding = false;
       });
@@ -264,11 +254,11 @@ export class UserComponent implements OnInit {
         this.showToast('Reset Password', 'Please check your email to reset your password');
         this.loading = false;
       } else {
-        this.messageService.add({ severity: 'error', summary: 'Reset Password', detail: 'Failed to reset your password.' });
+        this.showErrorToast('Reset Password', 'Failed to reset your password.');
         this.loading = false;
       }
     }, error => {
-      this.messageService.add({ severity: 'error', summary: 'Error Occurred', detail: 'An error occurred while processing your request. please try again!' });
+      this.showErrorToast('Error Occurred', 'An error occurred while processing your request. Please try again.');
       this.loading = false;
     });
   }
@@ -276,14 +266,15 @@ export class UserComponent implements OnInit {
   deleteUser() {
     this.userService.deleteUser(this.selectedUser).pipe(first()).subscribe(isDeleted => {
       if (isDeleted) {
-        this.messageService.add({ severity: 'warn', summary: 'Delete User', detail: 'User has been deleted successful.' });
+        this.showToast('Delete User', 'User has been deleted successfully.');
         this.users.splice(this.index, 1);
+        this.dataSource.data = [...this.users];
       } else {
-        this.messageService.add({ severity: 'error', summary: 'Delete User', detail: 'User is not deleted successful.' });
+        this.showErrorToast('Delete User', 'User was not deleted successfully.');
       }
       this.loading = false;
     }, error => {
-      this.messageService.add({ severity: 'error', summary: 'Error Occurred', detail: 'An error occurred while processing your request. please try again!' });
+      this.showErrorToast('Error Occurred', 'An error occurred while processing your request. Please try again.');
     });
   }
 

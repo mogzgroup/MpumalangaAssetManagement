@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { UampService } from 'src/app/services/uamp/uamp.service';
 import { MenuItem, MessageService } from 'primeng/api';
@@ -11,9 +11,11 @@ import { Router } from '@angular/router';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
+  standalone: false,
   selector: 'app-template-five-one',
   templateUrl: './template-five-one.component.html',
   styleUrls: ['./template-five-one.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService]
 })
 export class TemplateFiveOneComponent implements OnInit {
@@ -31,6 +33,8 @@ export class TemplateFiveOneComponent implements OnInit {
   selectedOperationPlan: OperationPlan;
   isEdit: boolean = false;
   displayDialog: boolean = false;
+  dialogHeader: string = '';
+  mode: string = 'Edit';
   isLoading: boolean = false;
 
   constructor(private sharedService: SharedService, private router: Router, private facilityService: FacilityService, public uampService: UampService, private formBuilder: FormBuilder, private messageService: MessageService) {
@@ -89,6 +93,14 @@ export class TemplateFiveOneComponent implements OnInit {
 
     this.operationPlans = this.uamp.templeteFivePointOne.operationPlans;
   }  
+
+  updateOperationPlan() {
+    if (this.isEdit) {
+      this.onUpdate();
+    } else {
+      this.addOperationPlan();
+    }
+  }
 
   update() {
     const districtRegion = this.regions.filter(r => r.name == this.selectedOperationPlan.districtRegion)[0];

@@ -1,7 +1,9 @@
-import { Component, ViewChild, EventEmitter, Output, OnInit, AfterViewInit, Input } from '@angular/core';
+import { Component, ViewChild, EventEmitter, Output, OnInit, AfterViewInit, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
+  standalone: false,
     selector: 'AutocompleteComponent',
+    changeDetection: ChangeDetectionStrategy.Eager,
     template: `
       <input class="input"
         type="text"
@@ -13,7 +15,7 @@ import { Component, ViewChild, EventEmitter, Output, OnInit, AfterViewInit, Inpu
 export class AutocompleteComponent implements OnInit, AfterViewInit {
     @Input() adressType: string;
     @Output() setAddress: EventEmitter<any> = new EventEmitter();
-    @ViewChild('addresstext',{static: false}) addresstext: any;
+    @ViewChild('addresstext') addresstext: any;
 
     autocompleteInput: string;
     queryWait: boolean;

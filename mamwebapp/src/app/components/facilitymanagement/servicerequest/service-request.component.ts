@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { Fault } from 'src/app/models/fault.model';
 import { Project } from 'src/app/models/project.model';
@@ -7,13 +7,17 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { FaultService } from 'src/app/services/facility-management/fault.service';
 
 @Component({
+  standalone: false,
   selector: 'app-service-request',
   templateUrl: './service-request.component.html',
   styleUrls: ['./service-request.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService, ConfirmationService]
 })
 export class ServiceRequestComponent implements OnInit {
 
+  public error = '';
+  public showPrintDialog = false;
   public loading: boolean = false;
   public showdelete:boolean = false;
   public serviceRequests: Array<Fault> = [];

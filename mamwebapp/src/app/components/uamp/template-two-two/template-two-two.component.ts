@@ -1,5 +1,5 @@
 import { NumberSymbol } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormControl, Validators } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { FormGroup } from '@angular/forms';
@@ -15,9 +15,11 @@ import { first } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
 
 @Component({
+  standalone: false,
   selector: 'app-template-two-two',
   templateUrl: './template-two-two.component.html',
   styleUrls: ['./template-two-two.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService]
 })
 export class TemplateTwoTwoComponent implements OnInit {
@@ -43,6 +45,8 @@ export class TemplateTwoTwoComponent implements OnInit {
   displayDialog: boolean = false;
   dialogHeader: string = '';
   isLoading: boolean = false;
+  isViewOnly: boolean = false;
+  isEdit: boolean = false;
 
   constructor(private messageService: MessageService, private router: Router, private uampService: UampService, private sharedService: SharedService, private formBuilder: FormBuilder, private authenticationService: AuthenticationService) {
     this.uampService.uampChange.subscribe((value) => {
@@ -135,13 +139,43 @@ export class TemplateTwoTwoComponent implements OnInit {
 
   get p() { return this.propertyForm.controls; }
 
-  setLocalMunicipalities(e, property: Property) {
+  setLocalMunicipalities(e, property?: Property) {
     if (e != undefined) {
       if (e.value != undefined) {
         this.localMunicipalities = this.sharedService.getLocalMunicipalities(e.value.factor);
-        property.districtRegion = e.value.name;
+        if (property) {
+          property.districtRegion = e.value.name;
+        }
       }
     }
+  }
+
+  onRequiredPerformanceStandardChange(property: Property, e) {
+    if (property) {
+      property.requiredPerformanceStandard = e.value.name;
+    }
+  }
+
+  onSuitabilityIndexChange(property: Property, e) {
+    if (property) {
+      property.suitabilityIndex = e.value.name;
+    }
+  }
+
+  onOperatingPerformanceIndexChange(property: Property, e) {
+    if (property) {
+      property.operatingPerformanceIndex = e.value.name;
+    }
+  }
+
+  onFunctionalPerformanceChange(property: Property, e) {
+    if (property) {
+      property.functionalPerformanceIndex = e.value.name;
+    }
+  }
+
+  onUpdate() {
+    this.addProperty();
   }
 
   addProperty() {

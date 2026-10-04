@@ -1,10 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { StrategicAssessment } from 'src/app/models/strategic-assessment.model';
 import { UAMP } from 'src/app/models/uamp.model';
 
 @Component({
+  standalone: false,
   selector: 'app-uamp-details',
   templateUrl: './uamp-details.component.html',
   styles: [`
@@ -13,6 +14,7 @@ import { UAMP } from 'src/app/models/uamp.model';
         }
     `],
   styleUrls: ['./uamp-details.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })
 export class UampDetailsComponent implements OnInit {

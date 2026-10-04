@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { RadioControlRegistry } from 'primeng/radiobutton';
@@ -12,9 +12,11 @@ import { SupplierService } from 'src/app/services/facility-management/supplier.s
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
+  standalone: false,
   selector: 'app-add-edit-project',
   templateUrl: './add-edit-project.component.html',
   styleUrls: ['./add-edit-project.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService, ConfirmationService, RadioControlRegistry]
 })
 export class AddEditProjectComponent implements OnInit {
@@ -22,6 +24,12 @@ export class AddEditProjectComponent implements OnInit {
   @Input() project: Project;
   public isSuccessful = false;
   public projectForm: FormGroup;
+  public submitted = false;
+  public isViewOnly = false;
+  public mode = 'Edit';
+  public error = '';
+  public showAssets = false;
+  public showAll = false;
 
   val: string;
   val6: string;
@@ -128,7 +136,9 @@ export class AddEditProjectComponent implements OnInit {
     this.buildForm();
   }
 
-  get f() { return this.projectForm.controls; }
+  get f() { return this.projectForm ? this.projectForm.controls : {}; }
+  get s() { return this.projectForm ? this.projectForm.controls : {}; }
+  get m() { return this.managedByForm ? this.managedByForm.controls : {}; }
 
   SetPropertyDropdown() {
     const property = this.properties.filter(d => Number(d.code) === this.project.propertyId)[0];
@@ -331,6 +341,10 @@ export class AddEditProjectComponent implements OnInit {
 
   onPropertyChange(e: any) {
     this.project.propertyId = Number(e.value.code);
+  }
+
+  onProperty(e: any) {
+    this.onPropertyChange(e);
   }
 
   hasParentChange(e) {

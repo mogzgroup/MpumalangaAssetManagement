@@ -1,14 +1,18 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { StrategicAssessment } from 'src/app/models/strategic-assessment.model';
 import { UAMP } from 'src/app/models/uamp.model';
 
 @Component({
+  standalone: false,
   selector: 'app-view-uamp',
   templateUrl: './view-uamp.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./view-uamp.component.css']
 })
 export class ViewUampComponent implements OnInit {
   activeIndex: number = 0;
+  items: any[] = [];
+  municipalUtilityServices: any[] = [];
   @Input() uamp: UAMP;
 
   constructor() { }
@@ -16,7 +20,7 @@ export class ViewUampComponent implements OnInit {
   ngOnInit() {
     let df = this.uamp;
     if(this.uamp.templeteTwoPointTwo.properties){
-      this.getMunicipalUtilityServices(this.uamp.templeteTwoPointTwo.properties);
+      this.municipalUtilityServices = this.getMunicipalUtilityServices(this.uamp.templeteTwoPointTwo.properties);
     }
   }
 
@@ -140,7 +144,7 @@ export class ViewUampComponent implements OnInit {
     return amount;
   }
 
-  amountRequiredMUS(year: number, mtefAllocatoion: string, amountRequired: string) {
+  amountRequiredMUS(year: number, mtefAllocatoion: string, amountRequired: string, value?: number) {
     let amount: number = 0;
 
     if (mtefAllocatoion) {
@@ -150,7 +154,7 @@ export class ViewUampComponent implements OnInit {
     return amount;
   }
 
-  shortfallMUS(year: number, mtefAllocatoion: string, amountRequired: string) {
+  shortfallMUS(year: number, mtefAllocatoion: string, amountRequired: string, value?: number) {
     let amount: number = 0;
     let name = "shortfall" + mtefAllocatoion + year;
 

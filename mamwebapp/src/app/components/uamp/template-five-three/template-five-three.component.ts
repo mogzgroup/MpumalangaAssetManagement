@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
 import { UampService } from 'src/app/services/uamp/uamp.service';
@@ -9,9 +9,11 @@ import { Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 
 @Component({
+  standalone: false,
   selector: 'app-template-five-three',
   templateUrl: './template-five-three.component.html',
   styleUrls: ['./template-five-three.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService]
 })
 export class TemplateFiveThreeComponent implements OnInit {
@@ -53,7 +55,7 @@ export class TemplateFiveThreeComponent implements OnInit {
     this.operationPlans = this.uamp.templeteFivePointThree.operationPlans;
   } 
 
-  onLeased(operationPlan: OperationPlan, e, index: number){
+  onLeased(operationPlan: OperationPlan, e, index?: number){
     if(e.checked){
       this.confirmationService.confirm({
         message: 'Are you sure that this property is leased?',
@@ -66,6 +68,12 @@ export class TemplateFiveThreeComponent implements OnInit {
     });
     }else{
       operationPlan.leased = false;
+    }
+  }
+
+  onLeaseTypeChange(operationPlan: OperationPlan, e) {
+    if (operationPlan) {
+      operationPlan.leaseType = e.value && e.value.name ? e.value.name : e.value;
     }
   }
 

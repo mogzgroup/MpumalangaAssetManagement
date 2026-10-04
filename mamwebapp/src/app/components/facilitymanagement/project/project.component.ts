@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { Project } from 'src/app/models/project.model';
 import { User } from 'src/app/models/user.model';
@@ -6,13 +6,17 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ProjectService } from 'src/app/services/facility-management/project.service';
 
 @Component({
+  standalone: false,
   selector: 'app-project',
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService, ConfirmationService]
 })
 export class ProjectComponent implements OnInit {
 
+  public error = '';
+  public dialogHeader = '';
   public project: Project;
   public isSuccessful: boolean = false;
   public loading: boolean = false;
@@ -161,6 +165,8 @@ export class ProjectComponent implements OnInit {
   selectProject(project: Project) {
     this.project = project;
   }
+
+  addUpdateAsset(event: any) { }
 
 
 }

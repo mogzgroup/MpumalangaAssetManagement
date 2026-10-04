@@ -1,9 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Facility } from 'src/app/models/facility.model';
 
 @Component({
+  standalone: false,
   selector: 'app-print-asset',
   templateUrl: './print-asset.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./print-asset.component.css']
 })
 export class PrintAssetComponent implements OnInit {

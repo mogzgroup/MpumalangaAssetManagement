@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { flatMap } from 'rxjs/operators';
 import { FaultNote } from 'src/app/models/fault-note.model';
@@ -12,9 +12,11 @@ import { SupplierService } from 'src/app/services/facility-management/supplier.s
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
+  standalone: false,
   selector: 'app-view-service-request',
   templateUrl: './view-service-request.component.html',
   styleUrls: ['./view-service-request.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService, ConfirmationService]
 })
 export class ViewServiceRequestComponent implements OnInit {
@@ -49,6 +51,20 @@ export class ViewServiceRequestComponent implements OnInit {
   public attachments: any = [];
   public showCompletionCertificateUrl = false;
   public showContractInvoiceUrl = false;
+  public error: boolean = false;
+  public submitted: boolean = false;
+  public activeIndex: number = 0;
+
+  get f() {
+    return {
+      supplier: { errors: null },
+      contactNumber: { errors: null }
+    };
+  }
+
+  get s() {
+    return this.f;
+  }
 
   constructor(private authenticationService: AuthenticationService, private sharedService: SharedService,
     private messageService: MessageService, private projectService: ProjectService,
@@ -253,6 +269,14 @@ export class ViewServiceRequestComponent implements OnInit {
         }
       };
     });
+  }
+
+  onRemoveCompletionCertificate(evt: any) {
+    this.completionCertificate = null;
+  }
+
+  onRemoveContractInvoice(evt: any) {
+    this.contractInvoice = null;
   }
 
   onAddNote() {

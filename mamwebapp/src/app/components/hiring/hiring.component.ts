@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, Output, AfterViewInit, EventEmitter, Input, NgZone } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, Output, AfterViewInit, EventEmitter, Input, NgZone, ChangeDetectionStrategy } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { User } from '../../models/user.model';
 import { HiringRegisterService } from '../../services/hiring-register/hiring-register.service';
@@ -8,14 +8,15 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { ConfirmationService } from 'primeng/api';
 import { FormControl } from '@angular/forms';
 import { SharedService } from 'src/app/services/shared.service';
-import { type } from 'os';
 import { HiredProperty } from 'src/app/models/hired-property';
 import { DatePipe } from '@angular/common';
 
 @Component({
+  standalone: false,
   selector: 'app-hiring',
   templateUrl: './hiring.component.html',
   styleUrls: ['./hiring.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService, ConfirmationService]
 })
 
@@ -38,6 +39,7 @@ export class HiringComponent implements OnInit {
   isView: boolean = false;
   files: any[] = [];
   center: google.maps.LatLngLiteral;
+  options: google.maps.MapOptions = {};
   markers = [];
   zoom = 8;
   showComfirmaDelete = false;
@@ -64,6 +66,7 @@ export class HiringComponent implements OnInit {
   selectedRole: Number = 0;
   buttonItems: MenuItem[];
   header: string = 'Add Candidate';
+  dialogHeader = '';
 
   constructor(private hiringRegisterService: HiringRegisterService,
     private formBuilder: FormBuilder,
@@ -284,6 +287,11 @@ export class HiringComponent implements OnInit {
   }
 
   get f() { return this.hiringForm.controls; }
+  get l() { return this.hiringForm.controls; }
+
+  openInfo(marker: any) {
+    this.dialogHeader = marker.title;
+  }
 
   onSubmit() {
 
@@ -404,7 +412,7 @@ export class HiringComponent implements OnInit {
     }
   }
 
-  onRemoveFile() { }
+  onRemoveFile(event: any) { }
   onSelectFile(files: any) { }
   showToast(summary: string, detail: string) {
     this.messageService.add({ severity: 'success', summary: summary, detail: detail });

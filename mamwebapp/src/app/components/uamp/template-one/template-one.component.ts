@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
 import { first } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -9,9 +9,11 @@ import { UampService } from 'src/app/services/uamp/uamp.service';
 import { Router } from '@angular/router';
 
 @Component({
+  standalone: false,
   selector: 'app-template-one',
   templateUrl: './template-one.component.html',
   styleUrls: ['./template-one.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService]
 })
 export class TemplateOneComponent implements OnInit {
@@ -33,6 +35,18 @@ export class TemplateOneComponent implements OnInit {
   uamp: UAMP = { templeteOne: { id: 0, optimalSupportingAccommodation: this.optimalSupportingAccommodation, programmes: [] } };
   @Output() updatedUamp = new EventEmitter();
   isLoading: boolean = false;
+  mode: string = 'Edit';
+
+  get o() {
+    return {
+      mission: { errors: null },
+      optimalSupportingAccommodation: { errors: null }
+    };
+  }
+
+  get p() {
+    return this.programmeForm ? this.programmeForm.controls : {};
+  }
 
   constructor(private router: Router, private formBuilder: FormBuilder, private messageService: MessageService, private uampService: UampService) {
     this.uampService.uampChange.subscribe((value) => {

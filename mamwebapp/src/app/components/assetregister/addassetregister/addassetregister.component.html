@@ -103,8 +103,8 @@
                         <div class="field grid col-3">
                             <span class="p-input-icon-left p-1">
                                 <label for="userDepartment">User Department</label>
-                                <p-multiSelect class="ui-inputtext ui-widget" (onClick)="onOptionClick($event, option)"
-                                    [styleClass]="multi-select" [disabled]="isViewOnly" [style]="{'width':'570px'}"
+                                <p-multiSelect class="ui-inputtext ui-widget" (onClick)="onOptionClick($event)"
+                                    styleClass="multi-select" [disabled]="isViewOnly" [style]="{'width':'570px'}"
                                     placeholder="Please Select" inputId="userDepartment" [options]="userDepartments"
                                     formControlName="userDepartment" optionLabel="name"></p-multiSelect>
                                 <div *ngIf="submitted && l.userDepartment.errors" class="text-error">
@@ -777,7 +777,7 @@
                 <div class="ui-g-12 ui-md-12">
                     <p-fileUpload #iFiles [showUploadButton]="false" [showCancelButton]="false"
                         (onRemove)="onImprovementRemoveFile($event)" (onSelect)="onImprovementSelectFile($event.files)"
-                        name="myfile[]" multiple="multiple" (uploadHandler)="upload($event)"></p-fileUpload>
+                        name="myfile[]" multiple="multiple"></p-fileUpload>
                     <div>
                         <ul *ngFor="let file of improvementFiles; let i = index" style="list-style-type:none;">
                             <li>

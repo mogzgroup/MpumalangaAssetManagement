@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MenuItem, MessageService } from 'primeng/api';
 import { Subscription, Observable } from 'rxjs';
@@ -9,13 +9,14 @@ import { ConfirmationService } from 'primeng/api';
 import { User } from 'src/app/models/user.model';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { isNumber } from 'util';
 import { Router } from '@angular/router';
 
 @Component({
+  standalone: false,
   selector: 'app-addassetregister',
   templateUrl: './addassetregister.component.html',
   styleUrls: ['./addassetregister.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService, ConfirmationService]
 })
 
@@ -826,7 +827,7 @@ export class AddassetregisterComponent implements OnInit {
     this.messageService.add({ severity: 'success', summary: summary, detail: detail });
   }
 
-  onOptionClick(e, f){}
+  onOptionClick(e, f?){}
 
   initFacility() {
     this.improvements = this.facility.improvements;
@@ -1027,13 +1028,13 @@ export class AddassetregisterComponent implements OnInit {
     {
       this.titleDeedIsInvalid = true;
     }
-    if(lastNumbers.length != 4 || !isNumber(Number(lastNumbers)))
+    if(lastNumbers.length != 4 || !Number.isFinite(Number(lastNumbers)))
       this.titleDeedIsInvalid = true;
    
     if(specialCharacter != '/')
       this.titleDeedIsInvalid = true;
 
-    if(firstNumbers.length != 4 || !isNumber(Number(firstNumbers)))
+    if(firstNumbers.length != 4 || !Number.isFinite(Number(firstNumbers)))
       this.titleDeedIsInvalid = true;
   }
 

@@ -1,8 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { element } from 'protractor';
 import { first } from 'rxjs/operators';
 import { Facility } from 'src/app/models/facility.model';
 import { MtefBudgetPeriod } from 'src/app/models/mtef-budget-period.model';
@@ -11,9 +10,11 @@ import { SharedService } from 'src/app/services/shared.service';
 import { UampService } from 'src/app/services/uamp/uamp.service';
 
 @Component({
+  standalone: false,
   selector: 'app-template-seven',
   templateUrl: './template-seven.component.html',
   styleUrls: ['./template-seven.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService]
 })
 export class TemplateSevenComponent implements OnInit {
@@ -26,6 +27,9 @@ export class TemplateSevenComponent implements OnInit {
   mtefBudgetPeriods: MtefBudgetPeriod[];
   rowGroupMetadata: any;
   displayDialog: boolean = false;
+  dialogHeader: string = '';
+  isEdit: boolean = false;
+  mode: string = 'Edit';
   year1Allocation: number = 0;
 
   constructor(private messageService: MessageService, private sharedService: SharedService, private router: Router, private uampService: UampService, private formBuilder: FormBuilder) {
@@ -71,6 +75,14 @@ export class TemplateSevenComponent implements OnInit {
       this.router.navigate(['uamp']);
 
     this.mtefBudgetPeriods =  this.sharedService.calculateBudgetPeriods(this.uamp).templeteSeven.mtefBudgetPeriods;
+  }
+
+  updateOperationPlan() {
+    if (this.isEdit) {
+      this.addBudgetforMtefPeriod();
+    } else {
+      this.addBudgetforMtefPeriod();
+    }
   }
 
   onKeydown(event,  mtefBudgetPeriod: MtefBudgetPeriod) {
@@ -152,7 +164,7 @@ export class TemplateSevenComponent implements OnInit {
 
         let property = propertyName.endsWith(year.toString());
         if (_property && property) {
-          if (this.uamp.templeteSeven[propertyName] != NaN) {
+          if (!Number.isNaN(Number(this.uamp.templeteSeven[propertyName]))) {
             if (_property && containStr) {
               amount = amount + this.uamp.templeteSeven[propertyName];
             }
@@ -188,7 +200,7 @@ export class TemplateSevenComponent implements OnInit {
         let _property = propertyName.startsWith(startWith);
         let property = propertyName.endsWith(year.toString());
         if (_property && property) {
-          if (this.uamp.templeteSeven[propertyName] != NaN) {
+          if (!Number.isNaN(Number(this.uamp.templeteSeven[propertyName]))) {
             amount = amount + this.uamp.templeteSeven[propertyName];
           }
         }

@@ -1,11 +1,10 @@
-import { Component, ElementRef, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { MenuItem, MessageService } from 'primeng/api';
 import { User } from '../../models/user.model';
 import { UserService } from '../../services/user/user.service';
 import { FacilityService } from '../../services/facility/facility.service';
 import { AuthenticationService } from '../../services/authentication.service';
-import { Message } from 'primeng//api';
 //import { FacilityZoning } from 'src/app/models/Facility-zoning';
 import { FacilityType } from 'src/app/models/facility-type.model';
 import { DashboardWedge } from 'src/app/models/dashboard-wedge.model';
@@ -15,6 +14,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 
 
 @Component({
+  standalone: false,
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   animations: [
@@ -37,7 +37,8 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
     ])
   ],
   styleUrls: ['./dashboard.component.css']
-  , providers: [MessageService]
+  , changeDetection: ChangeDetectionStrategy.Eager,
+ providers: [MessageService]
 })
 export class DashboardComponent implements OnInit {
   showDialog: boolean = false;
@@ -52,7 +53,7 @@ export class DashboardComponent implements OnInit {
   userFromApi: User;
   items: MenuItem[];
   home: MenuItem;
-  msgs: Message[] = [];
+  msgs: { severity: string; summary: string; detail: string }[] = [];
   data: any;
   nonResidentialBuildings: any;
   dwellings: any;
@@ -62,8 +63,8 @@ export class DashboardComponent implements OnInit {
   numberofProperties: any;
   signedoffProperties: any;
   facilitySummaries: Array<facilitySummaryChart> = [];
-  @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
-  @ViewChild(MapInfoWindow, { static: false }) info: MapInfoWindow;
+  @ViewChild(GoogleMap) map: GoogleMap;
+  @ViewChild(MapInfoWindow) info: MapInfoWindow;
   zoom = 8;
   dialogHeader = ''
   markers = [];

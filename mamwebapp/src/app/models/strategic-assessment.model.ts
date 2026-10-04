@@ -5,7 +5,7 @@ export class StrategicAssessment{
     postDescriptionTitle: string;
     allocatedSpace: Number;
     surplusShortageAccommodation: Number;
-    percentageUtilised: Number;
+    percentageUtilised: number;
     fbpLevel: Number;
     fbpQuantity: Number;
     fbpNorm: Number;

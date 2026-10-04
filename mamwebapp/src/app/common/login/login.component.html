@@ -1,4 +1,3 @@
-<p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 <div class="login-body">
     <div class="mobile-banner">
         <img src="../../../assets/images/logo.png" alt="prestige-layout">
@@ -15,32 +14,31 @@
                 <h1>Login</h1>
                 <p>Welcome, please use the form to sign-in.</p>
                 <div class="username-container">
-                    <label>Username</label>
-                    <div class="login-input">
-                        <input style="padding-left: 1em;" formControlName="username" type="text" autocomplete="off" placeholder="Username"
-                            class="ui-inputtext ui-widget" [ngClass]="{ 'is-invalid': submitted && f.username.errors }">
-                        <div *ngIf="submitted && f.username.errors" class="text-error">
-                            <div *ngIf="f.username.errors.required">username is required.</div>
-                        </div>
-                    </div>
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Username</mat-label>
+                        <input matInput formControlName="username" autocomplete="username">
+                        <mat-error *ngIf="submitted && f.username.errors?.required">Username is required.</mat-error>
+                    </mat-form-field>
                 </div>
                 <div class="password-container">
-                    <label>Password</label>
-                    <div class="login-input" style="margin-top: unset;">
-                        <p-password [toggleMask]="true" [feedback]="false" placeholder="Password" formControlName="password" class="ui-inputtext ui-widget"></p-password>
-                        <!--<input formControlName="password" type="password" autocomplete="off" placeholder="Password"
-                            class="ui-inputtext ui-widget" [ngClass]="{ 'is-invalid': submitted && f.username.errors }">-->
-                        <div *ngIf="submitted && f.password.errors" class="text-error">
-                            <div *ngIf="f.password.errors.required">password is required.</div>
-                        </div>
-                    </div>
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Password</mat-label>
+                        <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" autocomplete="current-password">
+                        <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword"
+                            [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'">
+                            <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                        </button>
+                        <mat-error *ngIf="submitted && f.password.errors?.required">Password is required.</mat-error>
+                    </mat-form-field>
                 </div>
                 <div class="forgetpassword-container">
-                    <a (click)="showDialog = !showDialog" class="forget-password">Forgot Password?</a>
+                    <button mat-button type="button" (click)="openForgotPasswordDialog()" class="forget-password">Forgot Password?</button>
                 </div>
                 <div>
-                    <p-button styleClass="w-full" type="Submit" [disabled]="loading" label="Sign In" 
-                    iconPos="right" [loading]="loading"></p-button>  
+                    <button mat-flat-button color="primary" class="w-full" type="submit" [disabled]="loading">
+                        <mat-spinner *ngIf="loading" diameter="18" aria-label="Signing in"></mat-spinner>
+                        <span *ngIf="!loading">Sign In</span>
+                    </button>
                 </div>
                 <div *ngIf="error" class="alert alert-danger mt-3 mb-0 text-error text-center">{{error}}</div>
             </form>
@@ -48,27 +46,20 @@
     </div>
 </div>
 
-<div *ngIf="showDialog" class="dialogBackgroud"></div>
-
-<p-dialog header="Forgot Password" [(visible)]="showDialog" [style]="{width: '40vw'}" [baseZIndex]="10000">
+<ng-template #forgotPasswordDialog>
+    <h2 mat-dialog-title>Forgot Password</h2>
     <form [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordSubmit()">
-        <div class="p-fluid p-grid p-formgrid">
-            <span class="p-float-label p-input-icon-left mt-5">
-                <i class="pi pi-user"></i>
-                <input formControlName="username" type="text" style="padding-left: 30px !important" pInputText class="ui-inputtext ui-widget"
-                    [ngClass]="{ 'is-invalid': forgotPasswordSubmitted && ff.username.errors }" required>
-                <label for="float-input">Username</label>
-
-                <div *ngIf="forgotPasswordSubmitted && ff.username.errors" class="text-error">
-                    <div *ngIf="ff.username.errors.required">This field is required.</div>
-                </div>
-            </span>
-            <div style="padding-left: 35%;" *ngIf="forgotPasswordError"
-                class="alert alert-danger mt-3 mb-0 text-error text-center">{{forgotPasswordError}}</div>
-        </div>
-        <p-dialog-footer>
-            <button style="float: left;" type="button" pButton icon="pi pi-times" (click)="showDialog=false" label="Cancel" class="ui-button-secondary mt-2"></button>
-            <button style="float: right; margin-top: 0.5em;" [disabled]="forgotPasswordLoading" pButton pRipple type="submit" label="Submit" class="p-button-raised p-button-success"></button>
-        </p-dialog-footer>
+        <mat-dialog-content>
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Username</mat-label>
+                <input matInput formControlName="username" autocomplete="username" required>
+                <mat-error *ngIf="forgotPasswordSubmitted && ff.username.errors?.required">This field is required.</mat-error>
+            </mat-form-field>
+            <p *ngIf="forgotPasswordError" class="text-error" role="alert">{{forgotPasswordError}}</p>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <button mat-button type="button" mat-dialog-close>Cancel</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="forgotPasswordLoading">Submit</button>
+        </mat-dialog-actions>
     </form>
-</p-dialog>
+</ng-template>

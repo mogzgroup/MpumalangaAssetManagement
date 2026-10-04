@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { RadioControlRegistry } from 'primeng/radiobutton';
@@ -6,13 +6,17 @@ import { FaultService } from 'src/app/services/facility-management/fault.service
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
+  standalone: false,
   selector: 'app-track-ticket',
   templateUrl: './track.ticket.component.html',
   styleUrls: ['./track.ticket.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService, ConfirmationService, RadioControlRegistry]
 })
 export class TrackTicketComponent implements OnInit {
 
+  public error = '';
+  public errorMsg = '';
   public attachments: [];
   public submitted = false;
   public ticketisFound = false;

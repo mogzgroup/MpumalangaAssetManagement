@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -10,9 +10,11 @@ import { SharedService } from 'src/app/services/shared.service';
 import { Fault } from '../../../../models/fault.model';
 
 @Component({
+  standalone: false,
   selector: 'app-add-fault',
   templateUrl: './add.fault.component.html',
   styleUrls: ['./add.fault.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService, ConfirmationService, RadioControlRegistry]
 })
 export class AddFaultComponent implements OnInit {
@@ -30,6 +32,10 @@ export class AddFaultComponent implements OnInit {
   public filteredBuildings: any = [];
   public buildings: any = [];
   public enableBuilding: boolean = false;
+  public error: boolean = false;
+  public errorMsg: string = '';
+  public selectedTown: any;
+  public selectedBuilding: any;
 
   getReferenceNumber(length): string {
     let result = '';

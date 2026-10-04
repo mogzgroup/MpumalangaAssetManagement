@@ -1,8 +1,8 @@
-import { Component, OnInit, Input, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, AfterViewInit, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { User } from 'src/app/models/user.model';
 import { Subject } from 'rxjs/internal/Subject';
 import { first } from 'rxjs/operators';
-import { MenuItem, MessageService, Message } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { UAMP } from 'src/app/models/uamp.model';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UampService } from '../../services/uamp/uamp.service';
@@ -11,9 +11,11 @@ import { Router } from '@angular/router';
 
 
 @Component({
+  standalone: false,
   selector: 'app-uamp',
   templateUrl: './uamp.component.html',
   styleUrls: ['./uamp.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService],
 })
 export class UampComponent implements OnInit { 
@@ -32,7 +34,8 @@ export class UampComponent implements OnInit {
   uamp: UAMP;
   buttonItems: MenuItem[];
   templateOne: any;
-  erMsgs: Message[];
+  erMsgs: { severity: string; summary: string; detail: string }[] = [];
+  error: string = '';
   items = [
     { icon: 'pi pi-home',url: 'dashboard' },
     { label: 'UAMP' }];

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
 import { first } from 'rxjs/operators';
 import { LeasedProperty } from 'src/app/models/leased-property.model';
@@ -9,14 +9,16 @@ import { LeasedPropertiesService } from 'src/app/services/leased-property/leased
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
+  standalone: false,
   selector: 'app-lease-management',
   templateUrl: './lease-management.component.html',
   styleUrls: ['./lease-management.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService,]
 })
 export class LeaseManagementComponent implements OnInit {
   @Input() leasedProperties: Array<LeasedProperty>;
-  @ViewChild('exportLP', { static: false }) myDiv: ElementRef<HTMLElement>;
+  @ViewChild('exportLP') myDiv: ElementRef<HTMLElement>;
   showLMDDialog: boolean = false;
   loading: boolean;
   dataIsLoaded: boolean = false;
@@ -25,6 +27,8 @@ export class LeaseManagementComponent implements OnInit {
   isBusy: boolean;
   errorMsg: string; 
   error = '';
+  options: google.maps.MapOptions = {};
+  dialogHeader = '';
   center: google.maps.LatLngLiteral;
   markers = [];
   zoom = 8;
@@ -209,6 +213,13 @@ export class LeaseManagementComponent implements OnInit {
   selectLeasedProperty(leasedProperty: LeasedProperty) {
     this.selectedLeasedProperty = leasedProperty;
   }
+
+  openInfo(marker: any) {
+    this.dialogHeader = marker.title;
+  }
+
+  addUpdateAsset(event: any) { }
+
   exportLeasedProperty() {
     this.leasedPropertiesService.getLeasedPropertyDetails(this.selectedLeasedProperty).pipe(first()).subscribe(leasedProperty => {
       this.selectedLeasedProperty = leasedProperty;

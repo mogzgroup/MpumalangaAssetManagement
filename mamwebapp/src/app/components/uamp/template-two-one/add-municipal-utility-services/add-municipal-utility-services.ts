@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { UampService } from 'src/app/services/uamp/uamp.service';
 import { MenuItem } from 'primeng/api';
@@ -8,8 +8,10 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 
 @Component({
+  standalone: false,
   selector: 'app-add-municipal-utility-services',
   templateUrl: './add-municipal-utility-services.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./add-municipal-utility-services.css']
 })
 export class AddMunicipalUtilityServicesComponent implements OnInit {
@@ -78,7 +80,11 @@ export class AddMunicipalUtilityServicesComponent implements OnInit {
     this.dialogRef.close(this.property);
   }
 
+  cancel(){
+    this.resetForm();
+  }
+
   cancal(){
-    
+    this.cancel();
   }
 }

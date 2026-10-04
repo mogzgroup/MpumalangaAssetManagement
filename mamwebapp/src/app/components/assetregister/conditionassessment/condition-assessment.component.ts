@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 import { MessageService, PrimeIcons } from 'primeng/api';
 import { first } from 'rxjs/operators';
 import { ConditionAssessment } from 'src/app/models/condition-assessment.model';
@@ -10,9 +10,11 @@ import { ConditionAssessmentService } from 'src/app/services/condition-assessmen
 import { AssetregisterComponent } from '../assetregister.component';
 
 @Component({
+  standalone: false,
   selector: 'app-condition-assessment',
   templateUrl: './condition-assessment.component.html',
   styleUrls: ['./condition-assessment.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService]
 })
 export class ConditionAssessmentComponent implements OnInit {
@@ -124,6 +126,27 @@ export class ConditionAssessmentComponent implements OnInit {
   currentUser: User;
   stateOptions: any[];
   paymentOptions: any[];
+  activeIndex: number = 0;
+  items: any[] = [];
+  mode: string = 'Edit';
+  landFiles: any[] = [];
+  showdelete: boolean = false;
+  lcValue: any;
+  cbValue: any;
+  hsValue: any;
+  arValue: any;
+  pVvalue: any;
+  sValue: any;
+  tValue: any;
+  ewValue: any;
+  cocValue: any;
+  fdValue: any;
+  feValue: any;
+  erValue: any;
+  erisValue: any;
+  bpValue: any;
+  slValue: any;
+  sgwValue: any;
 
   constructor(private authenticationService: AuthenticationService, public conditionAssessmentService: ConditionAssessmentService, private messageService: MessageService) {
     this.stateOptions = [{label: 'Available', value: 'available'}, {label: 'Not Available', value: 'notAvailable'}];

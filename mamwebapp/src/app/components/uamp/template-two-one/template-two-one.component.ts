@@ -1,6 +1,5 @@
-import { element } from 'protractor';
 import { MessageService } from 'primeng/api';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { UAMP } from 'src/app/models/uamp.model';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FormControl, FormArray } from '@angular/forms';
@@ -15,9 +14,11 @@ import { SharedService } from 'src/app/services/shared.service';
 import { first } from 'rxjs/operators';
 
 @Component({
+  standalone: false,
   selector: 'app-template-two-one',
   templateUrl: './template-two-one.component.html',
   styleUrls: ['./template-two-one.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService, DialogService, DynamicDialogRef]
 })
 export class TemplateTwoOneComponent implements OnInit {

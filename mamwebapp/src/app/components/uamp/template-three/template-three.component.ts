@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { UampService } from 'src/app/services/uamp/uamp.service';
 import { Facility } from 'src/app/models/facility.model';
 import { MenuItem, MessageService } from 'primeng/api';
@@ -11,9 +11,11 @@ import { first } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 @Component({
+  standalone: false,
   selector: 'app-template-three',
   templateUrl: './template-three.component.html',
   styleUrls: ['./template-three.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService]
 })
 export class TemplateThreeComponent implements OnInit {
@@ -29,6 +31,7 @@ export class TemplateThreeComponent implements OnInit {
   selectedStrategicAssessment:StrategicAssessment;
   displayDialog: boolean = false;
   dialogHeader: string = '';
+  mode: string = 'Edit';
   isLoading: boolean = false;
 
   constructor(private router: Router, public uampService: UampService, private formBuilder: FormBuilder, private messageService: MessageService) {
@@ -154,6 +157,14 @@ export class TemplateThreeComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Error Occurred', detail: 'An error occurred while processing your request. please try again!' });
       });
     }    
+  }
+
+  updateStrategicNeedsAssessment() {
+    if (this.isEdit) {
+      this.onUpdate();
+    } else {
+      this.addStrategicNeedsAssessment();
+    }
   }
 
   addStrategicNeedsAssessment() {

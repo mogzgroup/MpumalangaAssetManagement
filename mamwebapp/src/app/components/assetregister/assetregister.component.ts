@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, Input, OnChanges, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, Input, OnChanges, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { FacilityService } from '../../services/facility/facility.service';
 import { MenuItem, MessageService } from 'primeng/api';
@@ -11,9 +11,11 @@ import { User } from 'src/app/models/user.model';
 import { Router } from '@angular/router';
 
 @Component({
+  standalone: false,
   selector: 'app-assetregister',
   templateUrl: './assetregister.component.html',
   styleUrls: ['./assetregister.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService, ConfirmationService]
 })
 export class AssetregisterComponent implements OnInit  {

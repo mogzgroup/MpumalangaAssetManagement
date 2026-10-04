@@ -8,7 +8,7 @@
                 hospital. etc.
         </small>
         <ng-template pTemplate="content">
-            <p-table styleClass="p-datatable-striped" [value]="acquisitionPlans" [value]="properties"
+            <p-table styleClass="p-datatable-striped" [value]="acquisitionPlans"
                 [responsive]="true" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
                 responsiveLayout="scroll" [rowsPerPageOptions]="[5,10,15]">
                 <ng-template pTemplate="caption">
@@ -94,7 +94,7 @@
                     <label for="initialNeedYear">Year <small> in which initial request was submitted</small></label>
                     <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" placeholder="Please select"
                         [ngModelOptions]="{standalone: true}" formControlName="initialNeedYear"
-                        (onChange)="onInitialNeedYearChange(operationPlan, $event)" [options]="initialNeedYears"
+                        [options]="initialNeedYears"
                         optionLabel="name"></p-dropdown>
                 </div>
             </div>

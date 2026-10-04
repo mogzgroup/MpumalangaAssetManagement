@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { UampService } from 'src/app/services/uamp/uamp.service';
 import { MenuItem, MessageService } from 'primeng/api';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -10,9 +10,11 @@ import { Router } from '@angular/router';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
+  standalone: false,
   selector: 'app-template-four-one',
   templateUrl: './template-four-one.component.html',
   styleUrls: ['./template-four-one.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService]
 })
 export class TemplateFourOneComponent implements OnInit {
@@ -31,6 +33,8 @@ export class TemplateFourOneComponent implements OnInit {
   selectedAcquisitionPlan: AcquisitionPlan;
   isEdit: boolean = false;
   displayDialog: boolean = false;
+  dialogHeader: string = '';
+  mode: string = 'Edit';
   isLoading: boolean = false;
 
   constructor(private sharedService: SharedService, private router: Router, public uampService: UampService, private formBuilder: FormBuilder, private messageService: MessageService) {
@@ -150,6 +154,10 @@ export class TemplateFourOneComponent implements OnInit {
     this.selectedAcquisitionPlan = acquisitionPlan;
   }
 
+  deleteOperationPlan() {
+    this.deleteAcquisitionPlan();
+  }
+
   deleteAcquisitionPlan() {
     if (this.selectedAcquisitionPlan.id == 0) {
       var index = this.acquisitionPlans.indexOf(this.selectedAcquisitionPlan);
@@ -166,6 +174,14 @@ export class TemplateFourOneComponent implements OnInit {
       }, error => {
         this.messageService.add({ severity: 'error', summary: 'Error Occurred', detail: 'An error occurred while processing your request. please try again!' });
       });
+    }
+  }
+
+  updateStrategicNeedsAssessment() {
+    if (this.isEdit) {
+      this.onUpdate();
+    } else {
+      this.addAcquisitionPlan();
     }
   }
 
