@@ -18,7 +18,6 @@ namespace MAM.API.Services
         }
 
         public List<Camp> GetCamps(string department) {
-            return null;
             using (var _campRepository = new CampRepository(_appSettings))
             {
                 return _campRepository.GetCamps(department);

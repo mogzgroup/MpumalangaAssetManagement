@@ -55,43 +55,30 @@ namespace MAM.BusinessLayer.Repositories
 
         public List<DashboardWedge> GetDashboardWedges()
         {
-            List<DashboardWedge> list = new List<DashboardWedge>();
-            List<Facility> facilities = new List<Facility>();
-            List<string> dashboardWedges = new List<string>();
-            dashboardWedges.Add("Number of properties");
-            dashboardWedges.Add("Signed off properties");
-            dashboardWedges.Add("Non Residential Buildings");
-            dashboardWedges.Add("Dwellings");
-            dashboardWedges.Add("Land");
-
-            using (var dataAccess = new DataAccess.Repositories.FacilityRepository(appSettings.ConnectionString))
+            // Compute counts directly in the database using lightweight queries to avoid
+            // loading the full Facility graph into memory which can cause timeouts or
+            // memory pressure in production.
+            var list = new List<DashboardWedge>();
+            using (var db = new DataAccess.DataContext(appSettings.ConnectionString))
             {
-                var _facilities = dataAccess.GetFacilities();
+                // Total properties (excluding deleted)
+                var total = db.Facilities.Count(f => f.Status != null && f.Status.ToLower() != "deleted");
 
-                foreach (var wedge in dashboardWedges)
-                {
-                    DashboardWedge dashboardWedge = new DashboardWedge();
-                    dashboardWedge.Name = wedge;
-                    if (dashboardWedge.Name == "Number of properties")
-                    {
-                        dashboardWedge.Total = _facilities.Count();
-                    }
-                    if (dashboardWedge.Name == "Signed off properties")
-                    {
-                        dashboardWedge.Total = _facilities.Where(d => d.Status == "Signed off").Count();
-                    }
-                    if (dashboardWedge.Name == "Non Residential Buildings")
-                        dashboardWedge.Total = _facilities.Where(d => d.Type == "Non Residential").Count();
+                // Signed off properties
+                var signedOff = db.Facilities.Count(f => f.Status != null && f.Status == "Signed off");
 
-                    if (dashboardWedge.Name == "Dwellings")
-                        dashboardWedge.Total = _facilities.Where(d => d.Type == "Dwelling").Count();
+                // Types
+                var nonResidential = db.Facilities.Count(f => f.Type != null && f.Type == "Non Residential");
+                var dwellings = db.Facilities.Count(f => f.Type != null && f.Type == "Dwelling");
+                var land = db.Facilities.Count(f => f.Type != null && f.Type == "Land");
 
-                    if (dashboardWedge.Name == "Land")
-                        dashboardWedge.Total = _facilities.Where(d => d.Type == "Land").Count();
-
-                    list.Add(dashboardWedge);
-                }
+                list.Add(new DashboardWedge { Name = "Number of properties", Total = total });
+                list.Add(new DashboardWedge { Name = "Signed off properties", Total = signedOff });
+                list.Add(new DashboardWedge { Name = "Non Residential Buildings", Total = nonResidential });
+                list.Add(new DashboardWedge { Name = "Dwellings", Total = dwellings });
+                list.Add(new DashboardWedge { Name = "Land", Total = land });
             }
+
             return list;
         }
 
@@ -186,34 +173,26 @@ namespace MAM.BusinessLayer.Repositories
 
         public List<MapCoordinate> GetMapCoordinates()
         {
-            List<MapCoordinate> mapCoordinates = new List<MapCoordinate>();
-            using (var dataAccess = new DataAccess.Repositories.FacilityRepository(appSettings.ConnectionString))
+            // Use a lightweight projection to avoid loading full Facility graphs (prevents heavy memory / timeout issues)
+            using (var db = new DataAccess.DataContext(appSettings.ConnectionString))
             {
-                var facilities = dataAccess.GetFacilities();
-                foreach (var item in facilities)
-                {
-                    if (item.Land != null)
-                    {
-                        if (item.Land.GeographicalLocation != null)
-                        {
-                            if (!string.IsNullOrEmpty(item.Land.GeographicalLocation.Longitude) && !string.IsNullOrEmpty(item.Land.GeographicalLocation.Latitude))
+                var query = from f in db.Facilities
+                            join l in db.Lands on f.LandId equals l.Id into lj
+                            from l in lj.DefaultIfEmpty()
+                            join gl in db.GeographicalLocations on l.GeographicalLocationId equals gl.Id into glj
+                            from gl in glj.DefaultIfEmpty()
+                            where gl != null && !string.IsNullOrEmpty(gl.Longitude) && !string.IsNullOrEmpty(gl.Latitude)
+                            select new MapCoordinate
                             {
-                                MapCoordinate mapCoordinate = new MapCoordinate()
-                                {
-                                    Longitude = item.Land.GeographicalLocation.Longitude.Replace(",", "."),
-                                    Latitude = item.Land.GeographicalLocation.Latitude.Replace(",", "."),
-                                    Description = item.Name,
-                                    FacilityId = item.Id,
-                                    FacilityType = FacilityTypes.Dwellings
-                                };
-                                mapCoordinates.Add(mapCoordinate);
-                            }
-                        }
-                    }
+                                Longitude = gl.Longitude.Replace(",", "."),
+                                Latitude = gl.Latitude.Replace(",", "."),
+                                Description = f.Name,
+                                FacilityId = f.Id,
+                                FacilityType = FacilityTypes.Dwellings
+                            };
 
-                }
+                return query.ToList();
             }
-            return mapCoordinates;
         }
 
         public List<Facility> GetAllFacilities()

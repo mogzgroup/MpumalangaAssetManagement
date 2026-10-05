@@ -30,15 +30,32 @@ namespace MAM.BusinessLayer.Repositories
         {
             using (var dataAccess = new DataAccess.Repositories.UserRepository(appSettings.ConnectionString))
             {
+                // Basic validation to avoid duplicate usernames/emails.
+                // Note: a unique DB index is recommended to make this bulletproof under concurrency.
+                var existingByUsername = dataAccess.GetUser(user.Username);
+                if (existingByUsername != null)
+                    throw new MAM.BusinessLayer.Helpers.ValidationException("Username is already in use.");
+
+                var existingByEmail = dataAccess.GetUserByEmail(user.Email);
+                if (existingByEmail != null)
+                    throw new MAM.BusinessLayer.Helpers.ValidationException("Email is already in use.");
+
                 string realPassword = user.Password;
                 string password = EncryptDecryptHelper.Encrypt(user.Password);
                 user.Password = password;
+
                 dataAccess.AddUser(user.ConvertToUserTable(user));
 
-                //Send Email
-                EmailService emailService = new EmailService(appSettings);
-                Task sendEmailTask = new Task(() => emailService.NewUserEmail(user.ConvertToUserTable(user), realPassword));
-                sendEmailTask.Start();
+                // Send Email asynchronously without blocking the request thread.
+                try
+                {
+                    EmailService emailService = new EmailService(appSettings);
+                    Task.Run(() => emailService.NewUserEmail(user.ConvertToUserTable(user), realPassword));
+                }
+                catch
+                {
+                    // Do not fail user creation if email sending fails; log4net will capture details.
+                }
 
                 User newUser = user.ConvertToUser(dataAccess.GetUser(user.Username), appSettings.ConnectionString);
                 return newUser;
@@ -67,18 +84,30 @@ namespace MAM.BusinessLayer.Repositories
 
         public List<User> GetUsers()
         {
-            List<User> list = new List<User>();
             using (var dataAccess = new DataAccess.Repositories.UserRepository(appSettings.ConnectionString))
             {
-               List<DataAccess.Tables.User> users = dataAccess.GetUsers();
-                foreach (var user in users)
-                {                    
-                    User _user = new User();                 
-                    _user = _user.ConvertToUser(user, appSettings.ConnectionString);
-                    list.Add(_user);
-                }
-                return list;
-            }            
+                var users = dataAccess.GetUsers();
+
+                return users
+                    .Select(user => new User
+                    {
+                        Id = user.Id,
+                        Name = user.Name,
+                        Surname = user.Surname,
+                        Username = user.Username,
+                        Password = user.Password,
+                        RoleId = user.RoleId,
+                        IsActive = user.IsActive,
+                        Email = user.Email,
+                        PasswordIsChanged = user.PasswordIsChanged,
+                        CreatedDate = user.CreatedDate,
+                        ModifiedDate = user.ModifiedDate,
+                        CreatedUserId = user.CreatedUserId,
+                        ModifiedUserId = user.ModifiedUserId,
+                        Department = user.Department
+                    })
+                    .ToList();
+            }
         }
 
         public User Login(string username, string password)

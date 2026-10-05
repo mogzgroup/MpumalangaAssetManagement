@@ -16,8 +16,22 @@ namespace MAM.BusinessLayer.Helpers
         {
             appSettings = settings;
         }
+        private bool IsEmailConfigured()
+        {
+            return !string.IsNullOrWhiteSpace(appSettings?.EmailUserName)
+                   && !string.IsNullOrWhiteSpace(appSettings?.EmailPassword)
+                   && !string.IsNullOrWhiteSpace(appSettings?.EmailHost)
+                   && !string.IsNullOrWhiteSpace(appSettings?.FromEmailAddress)
+                   && appSettings.EmailPot > 0;
+        }
         public void SendResertPasswordEmail(DataAccess.Tables.User user, string decriptedPassword)
         {
+            if (!IsEmailConfigured())
+            {
+                // Email not configured for this deployment; skip sending.
+                return;
+            }
+
             SmtpClient client = new SmtpClient
             {
                 DeliveryMethod = SmtpDeliveryMethod.Network,
@@ -41,12 +55,18 @@ namespace MAM.BusinessLayer.Helpers
             }
             catch (Exception ex)
             {
-                throw ex;
+                // Log exception to database for diagnostics, but do not fail caller when email delivery is unavailable.
+                LogExceptionToDb(ex, nameof(EmailService), "SendResertPasswordEmail");
             }
         }
 
         public void ForgotPasswordEmail(DataAccess.Tables.User user, string decriptedPassword)
         {
+            if (!IsEmailConfigured())
+            {
+                return;
+            }
+
             SmtpClient client = new SmtpClient
             {
                 DeliveryMethod = SmtpDeliveryMethod.Network,
@@ -70,12 +90,17 @@ namespace MAM.BusinessLayer.Helpers
             }
             catch (Exception ex)
             {
-                //throw ex;
+                LogExceptionToDb(ex, nameof(EmailService), "ForgotPasswordEmail");
             }
         }
 
         public void NewUserEmail(DataAccess.Tables.User user, string realPassword)
         {
+            if (!IsEmailConfigured())
+            {
+                return;
+            }
+
             SmtpClient client = new SmtpClient
             {
                 DeliveryMethod = SmtpDeliveryMethod.Network,
@@ -99,7 +124,38 @@ namespace MAM.BusinessLayer.Helpers
             }
             catch (Exception ex)
             {
-                //throw ex;
+                LogExceptionToDb(ex, nameof(EmailService), "NewUserEmail");
+            }
+        }
+
+        private void LogExceptionToDb(Exception ex, string logger, string message)
+        {
+            try
+            {
+                // AppSettings contains ConnectionString; if not configured, skip DB logging.
+                if (string.IsNullOrWhiteSpace(appSettings?.ConnectionString))
+                    return;
+
+                using (var ctx = new MAM.DataAccess.DataContext(appSettings.ConnectionString))
+                {
+                    var entry = new MAM.DataAccess.Tables.AuditLog
+                    {
+                        Id = Guid.NewGuid().ToString("N").Substring(0, 10),
+                        Date = DateTime.UtcNow,
+                        Thread = System.Threading.Thread.CurrentThread.ManagedThreadId.ToString(),
+                        Level = "ERROR",
+                        Logger = logger,
+                        Message = message,
+                        Exception = ex.ToString()
+                    };
+
+                    ctx.AuditLogs.Add(entry);
+                    ctx.SaveChanges();
+                }
+            }
+            catch
+            {
+                // Swallow any errors while logging to DB to avoid affecting primary flow (email sending).
             }
         }
     }

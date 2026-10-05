@@ -53,6 +53,7 @@ namespace MAM.DataAccess
         public DbSet<Fault> Faults { get; set; }
 
         public DbSet<FaultNote> FaultNotes { get; set; }
+        public DbSet<MAM.DataAccess.Tables.AuditLog> AuditLogs { get; set; }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -37,8 +37,8 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
-                throw ex;
+                log.Error("Error", ex);
+                throw;
             }
         }
 
@@ -53,8 +53,8 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
-                throw ex;
+                log.Error("Error", ex);
+                throw;
             }
         }
 
@@ -92,8 +92,8 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info(ex);
-                throw ex;
+                log.Error("Error", ex);
+                throw;
             }
 
             isUploaded = true;
@@ -111,8 +111,8 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Error(ex);
-                throw ex;
+                log.Error("Error", ex);
+                throw;
             }
         }
 
@@ -151,7 +151,7 @@ namespace MAM.API.Controllers
             catch (Exception ex)
             {
                 log.Error(ex);
-                throw ex;
+                throw;
             }
 
             isUploaded = true;

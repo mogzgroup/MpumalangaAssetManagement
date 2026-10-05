@@ -57,6 +57,17 @@ namespace MAM.DataAccess.Repositories
             }
         }
 
+        public User GetUserByEmail(string email)
+        {
+            using (var db = new DataContext(_connectionString))
+            {
+                if (string.IsNullOrWhiteSpace(email))
+                    return null;
+
+                return db.Users.FirstOrDefault(b => b.Email.ToLower() == email.ToLower());
+            }
+        }
+
         public User GetUser(int id)
         {
             using (var db = new DataContext(_connectionString))

@@ -15,7 +15,7 @@ namespace MAM.API.Controllers
     [ApiController]
     public class FacilityController : BaseController
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(UserController));
+        private static readonly ILog log = LogManager.GetLogger(typeof(FacilityController));
 
         private IFacilityService _facilityService;
         private readonly UploadStorage _uploadStorage;
@@ -38,7 +38,7 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
+                log.Error("Error in GetFacilityZonings", ex);
                 throw;
             }
         }
@@ -54,7 +54,7 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
+                log.Error("Error in GetDashboardWedges", ex);
                 throw;
             }
         }
@@ -70,7 +70,7 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
+                log.Error("Error in GetFacilitySummaries", ex);
                 throw;
             }
         }
@@ -86,7 +86,7 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
+                log.Error("Error in GetMapCoordinates", ex);
                 throw;
             }
         }
@@ -102,7 +102,7 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
+                log.Info("Error", ex);
                 throw;
             }
         }
@@ -118,7 +118,7 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
+                log.Error("Error", ex);
                 throw;
             }
         }
@@ -134,7 +134,7 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
+                log.Error("Error", ex);
                 throw;
             }
         }
@@ -150,7 +150,7 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
+                log.Error("Error", ex);
                 throw;
             }
         }
@@ -166,8 +166,8 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
-                throw ex;
+                log.Error("Error", ex);
+                throw;
             }
         }
 
@@ -182,8 +182,8 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
-                throw ex;
+                log.Error("Error", ex);
+                throw;
             }
         }
 
@@ -197,8 +197,8 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
-                throw ex;
+                log.Error("Error", ex);
+                throw;
             }
         }
 
@@ -212,8 +212,8 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
-                throw ex;
+                log.Error("Error", ex);
+                throw;
             }
         }
 
@@ -228,8 +228,8 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
-                throw ex;
+                log.Error("Error", ex);
+                throw;
             }
         }
 

@@ -1,0 +1,41 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using MAM.BusinessLayer.Models;
+using System;
+
+namespace MAM.API.Controllers
+{
+    [ApiController]
+    [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+    [Route("api/[controller]")]
+    public class HealthController : ControllerBase
+    {
+        private readonly AppSettings _appSettings;
+
+        public HealthController(IOptions<AppSettings> appSettings)
+        {
+            _appSettings = appSettings.Value;
+        }
+
+        [HttpGet]
+        public IActionResult Get()
+        {
+            try
+            {
+                // Lightweight liveness check
+                var result = new
+                {
+                    status = "ok",
+                    timestamp = DateTime.UtcNow,
+                };
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // If this fails for any reason, return 503 with a safe payload
+                return StatusCode(503, new { status = "unavailable" });
+            }
+        }
+    }
+}

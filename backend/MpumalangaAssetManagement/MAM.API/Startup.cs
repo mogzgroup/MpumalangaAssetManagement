@@ -28,7 +28,8 @@ namespace MAM.API
         public void ConfigureServices(IServiceCollection services)
         {
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson();
 
             // Swagger
             services.AddSwaggerGen(c =>
@@ -39,6 +40,15 @@ namespace MAM.API
                     Version = "v1",
                 });
                 c.CustomSchemaIds(type => type.FullName.Replace("+", "."));
+            });
+
+            // Require authentication by default for all endpoints; allow anonymous on specific actions with [AllowAnonymous]
+            services.AddAuthorization(options =>
+            {
+                // FallbackPolicy will apply to all endpoints that do not have an [AllowAnonymous] attribute
+                options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
             });
 
             // Strongly typed settings
@@ -117,8 +127,10 @@ namespace MAM.API
             // Configure logging (load log4net once at startup)
             try
             {
-                Controllers.BaseController.SetLog4NetConfiguration(
-                    Configuration["AppSettings:ConnectionString"]);
+                // Provide the log4net ADO appender with the application's connection string
+                // from AppSettings so log4net uses the same database as the app.
+                var settings = Configuration.GetSection("AppSettings").Get<AppSettings>() ?? new AppSettings();
+                Controllers.BaseController.SetLog4NetConfiguration(settings.ConnectionString);
             }
             catch
             {
@@ -178,20 +190,33 @@ namespace MAM.API
             RequireSetting(settings.ConnectionString, "AppSettings:ConnectionString");
             RequireSetting(settings.JwtIssuer, "AppSettings:JwtIssuer");
             RequireSetting(settings.JwtAudience, "AppSettings:JwtAudience");
-            RequireSetting(settings.EmailUserName, "AppSettings:EmailUserName");
-            RequireSetting(settings.EmailPassword, "AppSettings:EmailPassword");
-            RequireSetting(settings.EmailHost, "AppSettings:EmailHost");
-            RequireSetting(settings.FromEmailAddress, "AppSettings:FromEmailAddress");
+            // Email settings are optional for deployments that do not use SMTP.
+            // If any email setting is present, require the set to be complete so email functionality works.
+            var emailSet = !string.IsNullOrWhiteSpace(settings.EmailUserName)
+                           || !string.IsNullOrWhiteSpace(settings.EmailHost)
+                           || !string.IsNullOrWhiteSpace(settings.FromEmailAddress);
+
+            if (emailSet)
+            {
+                RequireSetting(settings.EmailUserName, "AppSettings:EmailUserName");
+                RequireSetting(settings.EmailPassword, "AppSettings:EmailPassword");
+                RequireSetting(settings.EmailHost, "AppSettings:EmailHost");
+                RequireSetting(settings.FromEmailAddress, "AppSettings:FromEmailAddress");
+
+                if (settings.EmailPot <= 0)
+                {
+                    throw new InvalidOperationException("Configuration 'AppSettings:EmailPot' must be greater than zero when email is enabled.");
+                }
+            }
+
             RequireSetting(settings.WebAppURL, "AppSettings:WebAppURL");
             RequireSetting(settings.UploadsFolder, "AppSettings:UploadsFolder");
 
-            if (settings.EmailPot <= 0)
-            {
-                throw new InvalidOperationException("Configuration 'AppSettings:EmailPot' must be greater than zero.");
-            }
+            // JwtIssuer and JwtAudience may be simple identifiers (not necessarily absolute URLs).
+            RequireSetting(settings.JwtIssuer, "AppSettings:JwtIssuer");
+            RequireSetting(settings.JwtAudience, "AppSettings:JwtAudience");
 
-            ValidateAbsoluteUri(settings.JwtIssuer, "AppSettings:JwtIssuer");
-            ValidateAbsoluteUri(settings.JwtAudience, "AppSettings:JwtAudience");
+            // WebAppURL must be an absolute URL
             ValidateAbsoluteUri(settings.WebAppURL, "AppSettings:WebAppURL");
 
             foreach (var origin in settings.AllowedOrigins ?? Array.Empty<string>())

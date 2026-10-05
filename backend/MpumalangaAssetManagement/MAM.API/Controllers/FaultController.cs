@@ -43,7 +43,7 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Info("Error");
+                log.Error("Error", ex);
                 throw;
             }
         }

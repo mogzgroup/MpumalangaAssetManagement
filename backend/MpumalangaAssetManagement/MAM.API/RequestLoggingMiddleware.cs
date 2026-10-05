@@ -59,7 +59,14 @@ namespace MAM.API
                         body = MaskSensitiveValues(body);
                 }
 
+                // Try get correlation id set earlier in the pipeline
+                var correlationId = context.Items.ContainsKey(MAM.API.Middleware.CorrelationIdMiddleware.CorrelationIdHeader)
+                    ? context.Items[MAM.API.Middleware.CorrelationIdMiddleware.CorrelationIdHeader]?.ToString()
+                    : null;
+
                 var logMessage = $"HTTP {method} {path} from {remoteIp} user={user}";
+                if (!string.IsNullOrEmpty(correlationId))
+                    logMessage = $"[{correlationId}] " + logMessage;
                 if (!string.IsNullOrEmpty(body))
                     logMessage += $" body={body}";
 

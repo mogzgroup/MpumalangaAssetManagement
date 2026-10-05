@@ -80,7 +80,7 @@ namespace MAM.API.Controllers
             catch (Exception ex)
             {
                 log.Error(ex);
-                throw ex;
+                throw;
             }
         }
 
@@ -112,10 +112,9 @@ namespace MAM.API.Controllers
                 return Ok(result);
             }
             catch (Exception ex)
-
             {
                 log.Error(ex);
-                throw ex;
+                throw;
             }
         }
 
@@ -149,7 +148,7 @@ namespace MAM.API.Controllers
             catch (Exception ex)
             {
                 log.Error(ex);
-                throw ex;
+                throw;
             }
         }
 
