@@ -14,5 +14,9 @@ namespace MAM.BusinessLayer.Models
         public string FromEmailAddress { get; set; }
         public string WebAppURL { get; set; }
         public string ConnectionString { get; set; }
+        public string JwtIssuer { get; set; }
+        public string JwtAudience { get; set; }
+        public string[] AllowedOrigins { get; set; }
+        public string UploadsFolder { get; set; }
     }
 }

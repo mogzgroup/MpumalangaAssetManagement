@@ -1,27 +1,33 @@
-# Mamwebapp
-
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.2.0.
-
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+# Asset Management web application
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Install dependencies with `npm ci`, then build the production bundle with:
 
-## Running unit tests
+```sh
+npm run build -- --configuration production
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Deploy the generated browser files from `dist/mamwebapp/browser` to the web root.
+The production build calls the API at the same origin under `/api`; the IIS
+rewrite configuration forwards those requests to the API listener on
+`127.0.0.1:5000`. Install IIS URL Rewrite and Application Request Routing, and
+enable ARR proxying on the server.
 
-## Running end-to-end tests
+## Runtime configuration
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Before publishing, set `googleMapsApiKey` in
+`src/assets/runtime-config.json` (or replace the file in the deployment
+artifact). This is a browser-visible key, not a secret: restrict it by HTTP
+referrer and enable only the Google Maps APIs the application uses.
 
-## Further help
+The checked-in template intentionally has no key. The application still starts
+without one, but map and Places features will not load.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+## Development
+
+Run `npm start` for the Angular development server at
+`http://localhost:4200/`. The development proxy forwards `/api` to the local
+API at `https://localhost:44391`.
+
+Run tests with `npm test`.

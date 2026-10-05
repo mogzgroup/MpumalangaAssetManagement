@@ -245,11 +245,15 @@ export class LeaseManagementComponent implements OnInit, AfterViewInit {
   }
 
   exportExcel() {
-    import("xlsx").then(xlsx => {
-      const worksheet = xlsx.utils.json_to_sheet(this.leasedProperties);
-      const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
-      const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
-      this.saveAsExcelFile(excelBuffer, "products");
+    import('exceljs').then(async ExcelJS => {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('data');
+      const columns = new Set<string>();
+      this.leasedProperties.forEach(property => Object.keys(property).forEach(key => columns.add(key)));
+      worksheet.columns = Array.from(columns, key => ({ header: key, key }));
+      this.leasedProperties.forEach(property => worksheet.addRow(property));
+      const excelBuffer = await workbook.xlsx.writeBuffer();
+      this.saveAsExcelFile(excelBuffer, 'products');
     });
   }
 

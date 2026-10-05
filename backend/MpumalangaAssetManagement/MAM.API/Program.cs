@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
+using System.IO;
 
 namespace MAM.API
 {
@@ -8,8 +8,7 @@ namespace MAM.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            builder.WebHost.UseUrls("http://127.0.0.1:5000");
+            Directory.SetCurrentDirectory(builder.Environment.ContentRootPath);
 
             var startup = new Startup(builder.Configuration);
 

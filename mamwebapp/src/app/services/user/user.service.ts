@@ -18,15 +18,27 @@ export class UserService {
   }
 
   changePassword(username: string, newPassword: string,oldPassword: string ) {
-    return this.http.get<boolean>(`${environment.apiUrl}/api/user/changepassword/${username}/${newPassword}/${oldPassword}`);
+    return this.http.post<boolean>(
+      `${environment.apiUrl}/api/user/changepassword`,
+      { username, newPassword, oldPassword },
+      this.httpOptions
+    );
   }
 
   resetPassword(username: string, password: string) {
-    return this.http.get<boolean>(`${environment.apiUrl}/api/user/resetpassword/${username}/${password}`);
+    return this.http.post<boolean>(
+      `${environment.apiUrl}/api/user/resetpassword`,
+      { username, password },
+      this.httpOptions
+    );
   }
 
   forgotpassword(username: string, password: string) {
-    return this.http.get<boolean>(`${environment.apiUrl}/api/user/forgotpassword/${username}/${password}`);
+    return this.http.post<boolean>(
+      `${environment.apiUrl}/api/user/forgotpassword`,
+      { username, password },
+      this.httpOptions
+    );
   }
 
   addUser(user: User) {
@@ -40,4 +52,3 @@ export class UserService {
     return this.http.post<boolean>(`${environment.apiUrl}/api/user/deleteuser`,user);
   }
 }
-

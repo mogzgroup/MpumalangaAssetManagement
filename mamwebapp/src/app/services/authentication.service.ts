@@ -28,7 +28,11 @@ export class AuthenticationService {
 
     login(username: string, password: string) {
         const reqHeader = new HttpHeaders({ 'Content-Type': 'application/json', 'No-Auth': 'True' });
-        return this.http.get<any>(`${environment.apiUrl}/api/user/login/${username}/${password}`, {headers: reqHeader})
+        return this.http.post<any>(
+            `${environment.apiUrl}/api/user/authenticate`,
+            { username, password },
+            { headers: reqHeader }
+        )
             .pipe(map(user => {
                 // login successful if there's a jwt token in the response
                 if (user && user.token) {

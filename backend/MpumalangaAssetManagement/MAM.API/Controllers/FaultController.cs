@@ -23,10 +23,12 @@ namespace MAM.API.Controllers
         private static readonly ILog log = LogManager.GetLogger(typeof(FaultController));
 
         private IFaultService _faultService;
+        private readonly UploadStorage _uploadStorage;
 
-        public FaultController(IFaultService FaultService)
+        public FaultController(IFaultService FaultService, UploadStorage uploadStorage)
         {
             _faultService = FaultService;
+            _uploadStorage = uploadStorage;
             // log4net configured at application startup
         }
 
@@ -115,8 +117,7 @@ namespace MAM.API.Controllers
     [Route("getFiles/{fileReference}")]
     public IActionResult GetFiles(string fileReference)
     {
-        var pathToSave = Directory.GetCurrentDirectory();
-        var fullPath = Path.Combine(pathToSave, "Uploads", "Faults");
+        var fullPath = _uploadStorage.GetDirectory("Faults");
         var files = Directory.GetFiles(fullPath).Where(f => f.Contains(fileReference)).ToList();
         return Ok(files);
     }
@@ -137,7 +138,7 @@ namespace MAM.API.Controllers
                 var oFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
                 string _fileName = fileName + "_" + i + Path.GetExtension(oFileName);
                 var folderName = Path.Combine("Uploads", "Faults");
-                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+                var pathToSave = _uploadStorage.GetDirectory("Faults");
 
                 if (file.Length > 0)
                 {

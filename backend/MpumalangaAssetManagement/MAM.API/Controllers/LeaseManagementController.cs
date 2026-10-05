@@ -17,10 +17,12 @@ namespace MAM.API.Controllers
         private static readonly ILog log = LogManager.GetLogger(typeof(LeaseManagementController));
 
         private ILeaseManagementService _leaseManagementService;
+        private readonly UploadStorage _uploadStorage;
 
-        public LeaseManagementController(ILeaseManagementService leaseManagementService)
+        public LeaseManagementController(ILeaseManagementService leaseManagementService, UploadStorage uploadStorage)
         {
             _leaseManagementService = leaseManagementService;
+            _uploadStorage = uploadStorage;
             // log4net configured at application startup
         }
 
@@ -71,7 +73,7 @@ namespace MAM.API.Controllers
                     var oFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
                     string _fileName = fileName + "_" + i + Path.GetExtension(oFileName);
                     var folderName = Path.Combine("Uploads", "HandoverDocuments");
-                    var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+                    var pathToSave = _uploadStorage.GetDirectory("HandoverDocuments");
 
                     if (file.Length > 0)
                     {
@@ -129,7 +131,7 @@ namespace MAM.API.Controllers
                     var oFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
                     string _fileName = fileName + "_" + i + Path.GetExtension(oFileName);
                     var folderName = Path.Combine("Uploads", "SnagList");
-                    var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+                    var pathToSave = _uploadStorage.GetDirectory("SnagList");
 
                     if (file.Length > 0)
                     {

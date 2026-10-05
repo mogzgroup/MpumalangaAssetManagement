@@ -127,6 +127,22 @@ namespace MAM.API.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("resetpassword")]
+        public IActionResult ResetPassword([FromBody] AuthenticateModel model)
+        {
+            try
+            {
+                bool isReset = _userService.ResetPassword(model.Username, model.Password);
+                return Ok(isReset);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                throw;
+            }
+        }
+
         [HttpGet]
         [Route("forgotpassword/{username}/{password}")]
         public IActionResult ForgotPassword(string username, string password)
@@ -140,6 +156,22 @@ namespace MAM.API.Controllers
             {
                 log.Error(ex);
                 throw ex;
+            }
+        }
+
+        [HttpPost]
+        [Route("forgotpassword")]
+        public IActionResult ForgotPassword([FromBody] AuthenticateModel model)
+        {
+            try
+            {
+                bool isReset = _userService.ForgotPassword(model.Username, model.Password);
+                return Ok(isReset);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                throw;
             }
         }
 
@@ -159,6 +191,27 @@ namespace MAM.API.Controllers
                 log.Error(ex);
                 throw ex;
             }            
+        }
+
+        [HttpPost]
+        [Route("changepassword")]
+        public IActionResult ChangePassword([FromBody] PasswordChangeModel model)
+        {
+            try
+            {
+                bool isChanged = _userService.ChangePassword(
+                    model.Username,
+                    model.NewPassword,
+                    model.OldPassword);
+                if (!isChanged)
+                    return BadRequest(new { message = "Old password is incorrect" });
+                return Ok(isChanged);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                throw;
+            }
         }
 
         [HttpPost]

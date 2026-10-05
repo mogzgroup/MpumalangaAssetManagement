@@ -48,9 +48,11 @@ namespace MAM.API.Services
 
                 // authentication successful so generate jwt token
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+                var key = Encoding.UTF8.GetBytes(_appSettings.Secret);
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
+                    Issuer = _appSettings.JwtIssuer,
+                    Audience = _appSettings.JwtAudience,
                     Subject = new ClaimsIdentity(new Claim[]
                     {
                     new Claim(ClaimTypes.Name, user.Id.ToString())
@@ -110,4 +112,3 @@ namespace MAM.API.Services
 
     }
 }
-

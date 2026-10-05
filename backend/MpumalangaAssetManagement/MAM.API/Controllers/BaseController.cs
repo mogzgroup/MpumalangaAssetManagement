@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Reflection;
 using System.Xml;
 
@@ -8,9 +9,9 @@ namespace MAM.API.Controllers
     {
         private static bool _log4netConfigured = false;
 
-        public static void SetLog4NetConfiguration()
+        public static void SetLog4NetConfiguration(string connectionString)
         {
-            if (_log4netConfigured)
+            if (_log4netConfigured || string.IsNullOrWhiteSpace(connectionString))
                 return;
 
             try
@@ -24,6 +25,14 @@ namespace MAM.API.Controllers
                 {
                     log4netConfig.Load(stream);
                 }
+
+                var connectionStringNode = log4netConfig.SelectSingleNode(
+                    "/log4net/appender[@name='AdoNetAppender']/connectionString") as XmlElement;
+                if (connectionStringNode == null)
+                {
+                    throw new InvalidOperationException("The log4net database connection setting is missing.");
+                }
+                connectionStringNode.SetAttribute("value", connectionString);
 
                 var repository = Assembly.GetEntryAssembly() != null
                     ? log4net.LogManager.GetRepository(Assembly.GetEntryAssembly())

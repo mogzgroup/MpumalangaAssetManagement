@@ -210,10 +210,14 @@ export class HiringComponent implements OnInit {
   }
 
   exportExcel() {
-    import("xlsx").then(xlsx => {
-      const worksheet = xlsx.utils.json_to_sheet(this.hiredProperties);
-      const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
-      const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+    import('exceljs').then(async ExcelJS => {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('data');
+      const columns = new Set<string>();
+      this.hiredProperties.forEach(property => Object.keys(property).forEach(key => columns.add(key)));
+      worksheet.columns = Array.from(columns, key => ({ header: key, key }));
+      this.hiredProperties.forEach(property => worksheet.addRow(property));
+      const excelBuffer = await workbook.xlsx.writeBuffer();
       this.saveAsExcelFile(excelBuffer);
     });
   }
