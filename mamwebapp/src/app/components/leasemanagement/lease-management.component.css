@@ -39,6 +39,11 @@
     border-radius: 10px;
 }
 
+.lease-map app-maplibre-map {
+    display: block;
+    height: 180px;
+}
+
 .lease-table-scroll {
     min-height: 0;
     flex: 1 1 auto;

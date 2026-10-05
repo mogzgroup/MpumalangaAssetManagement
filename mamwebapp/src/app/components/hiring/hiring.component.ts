@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, Output, AfterViewInit, EventEmitter, Input, NgZone, ChangeDetectionStrategy, TemplateRef } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { first } from 'rxjs/operators';
 import { User } from '../../models/user.model';
 import { HiringRegisterService } from '../../services/hiring-register/hiring-register.service';
@@ -11,6 +12,9 @@ import { SharedService } from 'src/app/services/shared.service';
 import { HiredProperty } from 'src/app/models/hired-property';
 import { DatePipe } from '@angular/common';
 import { ToastService } from 'src/app/services/toast.service';
+import { OpenStreetMapGeocodingService, GeocodingResult } from 'src/app/services/openstreetmap-geocoding.service';
+import { mapConfig } from 'src/app/shared/map/map-config';
+import { MapMarkerData, validCoordinates } from 'src/app/shared/map/map-marker.model';
 
 @Component({
   standalone: false,
@@ -28,6 +32,9 @@ export class HiringComponent implements OnInit {
 
   loadingProperties = false;
   propertiesLoadError = '';
+  isGeocodingAddress = false;
+  addressSearchError = '';
+  addressResults: GeocodingResult[] = [];
   isAdding = false;
   isUpdating = false;
   deletingHiredProperty = false;
@@ -41,10 +48,9 @@ export class HiringComponent implements OnInit {
   hiredProperties: HiredProperty[] = [];
   isView: boolean = false;
   files: any[] = [];
-  center: google.maps.LatLngLiteral;
-  options: google.maps.MapOptions = {};
-  markers = [];
-  zoom = 8;
+  center: [number, number] = mapConfig.defaultCenter;
+  markers: MapMarkerData[] = [];
+  zoom = mapConfig.defaultZoom;
   showResetPasswordComfirmation: boolean = false;
   clonedHiredProperties: HiredProperty[] = [];
   cols: any[];
@@ -72,23 +78,20 @@ export class HiringComponent implements OnInit {
   @ViewChild('deletePropertyDialog') deletePropertyDialog: TemplateRef<unknown>;
   private propertyDialogRef: MatDialogRef<unknown> | null = null;
   private deleteDialogRef: MatDialogRef<unknown> | null = null;
+  @ViewChild(MatAutocompleteTrigger) private addressAutocompleteTrigger: MatAutocompleteTrigger;
 
   constructor(private hiringRegisterService: HiringRegisterService,
     private formBuilder: FormBuilder,
     private authenticationService: AuthenticationService,
     private datePipe: DatePipe,
     private toastService: ToastService,
+    private geocodingService: OpenStreetMapGeocodingService,
     private dialog: MatDialog,
     private sharedService: SharedService,
     public zone: NgZone) { }
   roles: any[];
 
   ngOnInit() {
-    this.center = {
-      lat: -26.0722042,
-      lng: 30.0752488,
-    };
-    this.markers.push(this.center);
     this.loadHiredProperties();
 
     this.authenticationService.currentUser.subscribe(x => {
@@ -127,37 +130,7 @@ export class HiringComponent implements OnInit {
         this.toastService.showError(this.propertiesLoadError);
         return;
       }
-      this.markers = [];
-      let placesService: google.maps.places.PlacesService;
       properties.forEach(element => {
-        const latitude = Number(element.latitude);
-        const longitude = Number(element.longitude);
-        if (Number.isFinite(latitude) && Number.isFinite(longitude) && latitude !== 0 && longitude !== 0) {
-          this.markers.push({
-            position: { lat: latitude, lng: longitude },
-            title: element.propertyCode + ': ' + (element.address || element.propertyCode)
-          });
-        } else if (element.address && element.address.trim() !== '') {
-          placesService ??= new google.maps.places.PlacesService(document.createElement('div'));
-          const request = {
-            query: element.address,
-            fields: ['name', 'geometry'],
-          };
-          placesService.findPlaceFromQuery(request, (results, status) => {
-            if (status == google.maps.places.PlacesServiceStatus.OK) {
-              if (results[0].geometry) {
-                let maker = {
-                  position: {
-                    lat: Number(results[0].geometry.location.lat()),
-                    lng: Number(results[0].geometry.location.lng()),
-                  },
-                  title: element.propertyCode + ": " +element.address,
-                };
-                this.markers.push(maker);
-              }
-            }
-          });
-        }
         const terminationDateCheck = this.monthDiff(new Date(element.terminationDate), new Date());
         element.status = new Date(element.terminationDate) < new Date() ? "red" : terminationDateCheck <= -6 ? "green" : terminationDateCheck > -6 ? "yellow" : "";
         element.createdDate = this.datePipe.transform(element.createdDate, "yyyy-MM-dd");
@@ -167,6 +140,7 @@ export class HiringComponent implements OnInit {
       });
       this.hiredProperties = properties;
       this.clonedHiredProperties = properties;
+      this.syncPropertyMarkers();
       this.updateVisibleProperties();
     }, error => {
       this.loadingProperties = false;
@@ -175,20 +149,70 @@ export class HiringComponent implements OnInit {
     });
   }
 
-  trackMarker(index: number, marker: {
-    position?: google.maps.LatLngLiteral;
-    lat?: number;
-    lng?: number;
-    title?: string;
-  }): string {
-    const position = marker.position || marker;
-    return `${position.lat}:${position.lng}:${marker.title || index}`;
+  searchAddressCoordinates(): void {
+    const address = String(this.f.address.value ?? '').trim();
+    if (!address || this.isGeocodingAddress) {
+      return;
+    }
+
+    this.isGeocodingAddress = true;
+    this.addressSearchError = '';
+    this.addressResults = [];
+    this.geocodingService.searchAddress(address).pipe(first()).subscribe({
+      next: results => {
+        this.isGeocodingAddress = false;
+        this.addressResults = Array.isArray(results) ? results : [];
+        if (!this.addressResults.length) {
+          this.addressSearchError = 'No matching location was found. You can keep the address without map coordinates.';
+        } else {
+          this.addressAutocompleteTrigger?.openPanel();
+        }
+      },
+      error: error => {
+        this.isGeocodingAddress = false;
+        this.addressSearchError = 'Address lookup is unavailable. You can still enter the address manually.';
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
+      }
+    });
   }
 
-  handleAddressChange(address: any) {
-    this.address.fullAddress = address.name
-    this.address.latitude = address.geometry.location.lat()
-    this.address.longitude = address.geometry.location.lng()
+  onAddressInputChanged(): void {
+    this.addressResults = [];
+    this.addressSearchError = '';
+  }
+
+  selectAddressResult(event: MatAutocompleteSelectedEvent): void {
+    const result = event.option.value as GeocodingResult;
+    const coordinates = validCoordinates(result?.lon, result?.lat);
+    if (!coordinates) {
+      this.addressSearchError = 'The selected result did not contain valid coordinates.';
+      return;
+    }
+    this.f.address.setValue(result.display_name);
+    this.address = {
+      fullAddress: result.display_name,
+      longitude: coordinates[0],
+      latitude: coordinates[1]
+    };
+    this.addressResults = [];
+    this.addressSearchError = '';
+    this.addressAutocompleteTrigger?.closePanel();
+  }
+
+  private syncPropertyMarkers(): void {
+    this.markers = this.hiredProperties.reduce((markers: MapMarkerData[], property) => {
+      const coordinates = validCoordinates(property.longitude, property.latitude);
+      if (coordinates) {
+        markers.push({
+          id: property.id,
+          longitude: coordinates[0],
+          latitude: coordinates[1],
+          title: property.propertyCode + ': ' + (property.address || property.propertyCode),
+          description: property.address
+        });
+      }
+      return markers;
+    }, []);
   }
 
   monthDiff(d1: Date, d2: Date) {
@@ -306,6 +330,9 @@ export class HiringComponent implements OnInit {
   openAddPropertyDialog() {
     this.header = 'Add Property';
     this.isView = false;
+    this.address = {};
+    this.addressResults = [];
+    this.addressSearchError = '';
     this.initForm();
     this.openPropertyDialog();
   }
@@ -331,6 +358,13 @@ export class HiringComponent implements OnInit {
 
   setProperty() {
     this.submitted = false;
+    this.address = {
+      fullAddress: this.selectedHiredProperty.address,
+      latitude: this.selectedHiredProperty.latitude,
+      longitude: this.selectedHiredProperty.longitude
+    };
+    this.addressResults = [];
+    this.addressSearchError = '';
     const district = this.districts.filter(d => d.name == this.selectedHiredProperty.district)[0];
     const type = this.types.filter(d => d.name == this.selectedHiredProperty.type.trim())[0];
     const userDepartment = this.userDepartments.filter(d => d.name == this.selectedHiredProperty.userDepartment.trim())[0];
@@ -373,7 +407,7 @@ export class HiringComponent implements OnInit {
   get f() { return this.hiringForm.controls; }
   get l() { return this.hiringForm.controls; }
 
-  openInfo(marker: any) {
+  openInfo(marker: MapMarkerData) {
     this.dialogHeader = marker.title;
   }
 
@@ -413,7 +447,11 @@ export class HiringComponent implements OnInit {
     hiredProperty.escalationRate = this.hiringForm.controls["escalationRate"].value;
     hiredProperty.escalationDate = this.hiringForm.controls["escalationDate"].value;
     hiredProperty.area = this.hiringForm.controls["area"].value;
-    hiredProperty.address = this.address.fullAddress;
+    hiredProperty.address = this.f.address.value;
+    hiredProperty.latitude = this.address.fullAddress === hiredProperty.address && this.address.latitude != null
+      ? String(this.address.latitude) : '';
+    hiredProperty.longitude = this.address.fullAddress === hiredProperty.address && this.address.longitude != null
+      ? String(this.address.longitude) : '';
     hiredProperty.createdByUser = this.currentUser;
     hiredProperty.createdUserId = this.currentUser.id;
     hiredProperty.createdDate = new Date();
@@ -460,7 +498,12 @@ export class HiringComponent implements OnInit {
     hiredProperty.escalationRate = this.hiringForm.controls["escalationRate"].value;
     hiredProperty.escalationDate = this.hiringForm.controls["escalationDate"].value;
     hiredProperty.area = this.hiringForm.controls["area"].value;
-    hiredProperty.address = this.address.fullAddress;
+    hiredProperty.address = this.f.address.value;
+    const coordinatesSelectedForAddress = this.address.fullAddress === hiredProperty.address;
+    hiredProperty.latitude = coordinatesSelectedForAddress && this.address.latitude != null
+      ? String(this.address.latitude) : '';
+    hiredProperty.longitude = coordinatesSelectedForAddress && this.address.longitude != null
+      ? String(this.address.longitude) : '';
     hiredProperty.createdByUser = this.currentUser;
     hiredProperty.createdUserId = this.currentUser.id;
     hiredProperty.createdDate = new Date();
@@ -492,6 +535,7 @@ export class HiringComponent implements OnInit {
         _hiredProperty.startingDate = this.datePipe.transform(hiredProperty.startingDate, "EEEE, d MMMM, y");
         _hiredProperty.terminationDate = this.datePipe.transform(hiredProperty.terminationDate, "EEEE, d MMMM, y");
         this.hiredProperties.push(_hiredProperty);
+        this.syncPropertyMarkers();
         this.updateVisibleProperties();
         this.toastService.showSuccess('Property added successfully.');
         this.propertyDialogRef?.close();
@@ -528,6 +572,7 @@ export class HiringComponent implements OnInit {
         _hiredProperty.startingDate = this.datePipe.transform(hiredProperty.startingDate, "EEEE, d MMMM, y");
         _hiredProperty.terminationDate = this.datePipe.transform(hiredProperty.terminationDate, "EEEE, d MMMM, y");
         this.hiredProperties[this.index] = hiredProperty;
+        this.syncPropertyMarkers();
         this.updateVisibleProperties();
         this.propertyDialogRef?.close();
       } else {
@@ -585,6 +630,7 @@ export class HiringComponent implements OnInit {
       if (isDeleted) {
         this.toastService.showSuccess('Property deleted successfully.');
         this.hiredProperties.splice(this.index, 1);
+        this.syncPropertyMarkers();
         this.updateVisibleProperties();
         this.deleteDialogRef?.close();
       } else {

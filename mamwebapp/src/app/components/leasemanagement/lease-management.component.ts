@@ -11,6 +11,9 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { LeasedPropertiesService } from 'src/app/services/leased-property/leased-property.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { ToastService } from 'src/app/services/toast.service';
+import { OpenStreetMapGeocodingService } from 'src/app/services/openstreetmap-geocoding.service';
+import { mapConfig } from 'src/app/shared/map/map-config';
+import { MapMarkerData, validCoordinates } from 'src/app/shared/map/map-marker.model';
 
 @Component({
   standalone: false,
@@ -30,11 +33,10 @@ export class LeaseManagementComponent implements OnInit, AfterViewInit {
   showComfirmaDelete: boolean = false;
   doExport: boolean = false;
   isBusy: boolean;
-  options: google.maps.MapOptions = {};
   dialogHeader = '';
-  center: google.maps.LatLngLiteral;
-  markers = [];
-  zoom = 8;
+  center: [number, number] = mapConfig.defaultCenter;
+  markers: MapMarkerData[] = [];
+  zoom = mapConfig.defaultZoom;
   selectedLeasedProperty: LeasedProperty;
   index: any;
   currentUser: User;
@@ -63,6 +65,7 @@ export class LeaseManagementComponent implements OnInit, AfterViewInit {
     private authenticationService: AuthenticationService,
     private datePipe: DatePipe,
     private toastService: ToastService,
+    private geocodingService: OpenStreetMapGeocodingService,
     private dialog: MatDialog
   ) {
     this.selectedLeasedProperty = this.sharedService.initLeasedProperty();
@@ -85,35 +88,14 @@ export class LeaseManagementComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator?.firstPage();
   }
 
-  codeAddress(address) {
-    const geocoder = new google.maps.Geocoder()
-    geocoder.geocode({ 'address': address }, (results, status) => {
-        console.log(results);
-        var latLng = {lat: results[0].geometry.location.lat (), lng: results[0].geometry.location.lng ()};
-        console.log (latLng);
-        if (status == 'OK') {
-            var marker = new google.maps.Marker({
-                position: latLng,
-                //map: map
-            });
-            //console.log (map);
-        } else {
-            this.toastService.showError('Unable to find this address. Please check it and try again.');
-        }
-    });
-}
-
   getLeasedProperties() {
     if (this.loading) {
       return;
     }
     this.loading = true;
     this.loadError = '';
-    this.center = {
-      lat: -26.0722042,
-      lng: 30.0752488,
-    };
-    this.markers = [this.center];
+    this.center = mapConfig.defaultCenter;
+    this.markers = [];
     this.leasedPropertiesService.getLeasedProperties().pipe(first()).subscribe(properties => {
       this.loading = false;
       if (!Array.isArray(properties)) {
@@ -122,16 +104,6 @@ export class LeaseManagementComponent implements OnInit, AfterViewInit {
         return;
       }
       properties.forEach(element => {
-       
-        let maker = {
-          position: {
-            lat: Number(element.latitude),
-            lng: Number(element.longitude),
-          },
-          title: element.propertyCode + ": " + element.facilityName,
-          //options: { animation: google.maps.Animation.BOUNCE },
-        };
-        this.markers.push(maker);
         const terminationDateCheck = this.monthDiff(new Date(element.terminationDate), new Date());
         element.status = new Date(element.terminationDate) < new Date() ? "red" : terminationDateCheck <= -6 ? "green" : terminationDateCheck > -6 ? "yellow" : "";
         element.createdDate = this.datePipe.transform(element.createdDate, "yyyy-MM-dd");
@@ -140,6 +112,7 @@ export class LeaseManagementComponent implements OnInit, AfterViewInit {
         element.terminationDate = this.datePipe.transform(element.terminationDate, "EEEE, d MMMM, y");
         element.userDepartment = this.currentUser?.department || element.userDepartment;
       });
+      this.markers = this.buildPropertyMarkers(properties);
       this.leasedProperties = properties;
       this.dataSource.data = properties;
       this.dataIsLoaded = true;
@@ -148,6 +121,23 @@ export class LeaseManagementComponent implements OnInit, AfterViewInit {
       this.loadError = 'Unable to load leased properties. Please try again.';
       this.toastService.showError(this.toastService.getApiErrorMessage(error));
     });
+  }
+
+  private buildPropertyMarkers(properties: LeasedProperty[]): MapMarkerData[] {
+    const propertyMarkers: MapMarkerData[] = [];
+    properties.forEach((property, index) => {
+      const coordinates = validCoordinates(property?.longitude, property?.latitude);
+      if (coordinates) {
+        propertyMarkers.push({
+          id: property.fileReference || `${coordinates[0]}:${coordinates[1]}:${index}`,
+          longitude: coordinates[0],
+          latitude: coordinates[1],
+          title: property.propertyCode + ': ' + property.facilityName,
+          description: property.facilityName
+        });
+      }
+    });
+    return propertyMarkers;
   }
 
   monthDiff(d1: Date, d2: Date) {
@@ -208,7 +198,10 @@ export class LeaseManagementComponent implements OnInit, AfterViewInit {
         if (isDeleted) {
           this.toastService.showSuccess('Leased property deleted successfully.');
           const index = this.leasedProperties.indexOf(this.selectedLeasedProperty);
-          this.leasedProperties.splice(index, 1);
+          if (index >= 0) {
+            this.leasedProperties.splice(index, 1);
+          }
+          this.markers = this.buildPropertyMarkers(this.leasedProperties);
           this.dataSource.data = this.leasedProperties;
           this.deletePropertyDialogRef?.close();
         } else {
@@ -295,19 +288,23 @@ export class LeaseManagementComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getAddress(address: string){
-      var bounds = new google.maps.LatLngBounds();
-      // This is making the Geocode request
-      var geocoder = new google.maps.Geocoder();
-      //geocoder.geocode({ 'latLng': latlng },  (results, status) =>{
-          if (status !== google.maps.GeocoderStatus.OK) {
-              this.toastService.showError('Unable to find this address. Please try again.');
-          }
-          // This is checking to see if the Geoeode Status is OK before proceeding
-          if (status == google.maps.GeocoderStatus.OK) {
-         //     console.log(results);
-        //      var address = (results[0].formatted_address);
-          }
-      //});
+  getAddress(address: string) {
+    this.geocodingService.searchAddress(address).pipe(first()).subscribe({
+      next: results => {
+        const result = results?.[0];
+        const coordinates = validCoordinates(result?.lon, result?.lat);
+        if (!result || !coordinates) {
+          this.toastService.showWarning('Unable to find valid coordinates for this address.');
+          return;
+        }
+        this.markers = [...this.markers, {
+          longitude: coordinates[0],
+          latitude: coordinates[1],
+          title: result.display_name,
+          description: result.display_name
+        }];
+      },
+      error: error => this.toastService.showError(this.toastService.getApiErrorMessage(error))
+    });
   }
 }

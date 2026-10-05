@@ -9,8 +9,11 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { FacilityType } from 'src/app/models/facility-type.model';
 import { DashboardWedge } from 'src/app/models/dashboard-wedge.model';
 import { facilitySummaryChart } from 'src/app/models/facility-summary-chart.model';
-import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { ToastService } from 'src/app/services/toast.service';
+import { mapConfig } from 'src/app/shared/map/map-config';
+import { MapMarkerData, validCoordinates } from 'src/app/shared/map/map-marker.model';
+import { MapCoordinate } from 'src/app/models/map-oordinate.model';
 
 
 @Component({
@@ -46,6 +49,9 @@ export class DashboardComponent implements OnInit {
   loadingZonings = true;
   loadingWedges = true;
   loadingFacilitySummaries = true;
+  zoningsLoadError = '';
+  wedgesLoadError = '';
+  mapLoadError = '';
   zonings: Array<FacilityType> = [];
   facilityType: FacilityType;
   wedges: Array<DashboardWedge> = [];
@@ -61,150 +67,141 @@ export class DashboardComponent implements OnInit {
   numberofProperties: any;
   signedoffProperties: any;
   facilitySummaries: Array<facilitySummaryChart> = [];
-  @ViewChild(GoogleMap) map: GoogleMap;
-  @ViewChild(MapInfoWindow) info: MapInfoWindow;
-  zoom = 8;
+  zoom = mapConfig.defaultZoom;
   dialogHeader = ''
-  markers = [];
-  center: google.maps.LatLngLiteral
-  options: google.maps.MapOptions = {
-    mapTypeId: 'hybrid',
-    zoomControl: true,
-    scrollwheel: true,
-    disableDoubleClickZoom: true,
-    maxZoom: 18,
-    minZoom: 7,
-  };  
+  markers: MapMarkerData[] = [];
+  center: [number, number] = mapConfig.defaultCenter;
 
   constructor(
     private userService: UserService,
     private facilityService: FacilityService,
     private authenticationService: AuthenticationService,
-    private dialog: MatDialog) {
+    private dialog: MatDialog,
+    private toastService: ToastService) {
     this.currentUser = this.authenticationService.currentUserValue;
   }
 
-  logCenter() {
-    console.log(JSON.stringify(this.map.getCenter()))
-  }
   ngOnInit() {
 
-    //navigator.geolocation.getCurrentPosition((position) => {
-    this.center = {
-      lat: -26.0722042,
-      lng: 30.0752488,
-    };
     this.addMarker();
-    //})
 
-    this.facilityService.getFacilityZonings().pipe(first()).subscribe(zonings => {
-      this.loadingZonings = false;
-      this.zonings = zonings;
-      this.facilityType = this.zonings[0];
-      this.barChartdata = {
-        labels: ['Non Residential Buildings', 'Dwellings', 'Land'],
-        datasets: [
-          {
-            data: [this.nonResidentialBuildings.total, this.dwellings.total, this.land.total],
-           /* backgroundColor: [
-              "#000000",
-              "#ed3c76",
-              "#599597"
-            ],
-            hoverBackgroundColor: [
-              "#147df0",
-              "#ed3c76",
-              "#599597"
-            ]*/
-          }]
-      };
-    });
+    this.loadZonings();
 
     this.facilityService.getFacilitySummaries().pipe(first()).subscribe(facilitySummaries => {
       this.loadingFacilitySummaries = false;
-      this.facilitySummaries = facilitySummaries;
+      this.facilitySummaries = Array.isArray(facilitySummaries) ? facilitySummaries : [];
+      const summaries = this.facilitySummaries[1]?.facilitySummaries;
+      if (!Array.isArray(summaries) || summaries.length < 3) {
+        this.toastService.showError('Facility summaries could not be loaded because the server returned incomplete data.');
+        return;
+      }
       this.lineChartdata = {
         labels: ['Opening Balance', 'Additions', 'PPeaIn', 'PPeaOut', 'Disposals', 'Closing Balance'],
         datasets: [
           {
-            label: facilitySummaries[1].facilitySummaries[0].facilityType,
+            label: summaries[0].facilityType,
             backgroundColor: '#ed3c76',
             borderColor: '#1E88E5',
-            data: [facilitySummaries[1].facilitySummaries[0].openingBalance
-              , facilitySummaries[1].facilitySummaries[0].additions
-              , facilitySummaries[1].facilitySummaries[0].ppeaIn
-              , facilitySummaries[1].facilitySummaries[0].ppeaOut
-              , facilitySummaries[1].facilitySummaries[0].disposals
-              , facilitySummaries[1].facilitySummaries[0].closingBalance]
+            data: [summaries[0].openingBalance, summaries[0].additions, summaries[0].ppeaIn,
+              summaries[0].ppeaOut, summaries[0].disposals, summaries[0].closingBalance]
 
           },
           {
-            label: facilitySummaries[1].facilitySummaries[1].facilityType,
-            data: [facilitySummaries[1].facilitySummaries[1].openingBalance
-              , facilitySummaries[1].facilitySummaries[1].additions
-              , facilitySummaries[1].facilitySummaries[1].ppeaIn
-              , facilitySummaries[1].facilitySummaries[1].ppeaOut
-              , facilitySummaries[1].facilitySummaries[1].disposals
-              , facilitySummaries[1].facilitySummaries[1].closingBalance],
+            label: summaries[1].facilityType,
+            data: [summaries[1].openingBalance, summaries[1].additions, summaries[1].ppeaIn,
+              summaries[1].ppeaOut, summaries[1].disposals, summaries[1].closingBalance],
             fill: false,
             backgroundColor: '#42A5F5',
             borderColor: '#7CB342',
           },
           {
-            label: facilitySummaries[1].facilitySummaries[2].facilityType,
-            data: [facilitySummaries[1].facilitySummaries[2].openingBalance
-              , facilitySummaries[1].facilitySummaries[2].additions
-              , facilitySummaries[1].facilitySummaries[2].ppeaIn
-              , facilitySummaries[1].facilitySummaries[2].ppeaOut
-              , facilitySummaries[1].facilitySummaries[2].disposals
-              , facilitySummaries[1].facilitySummaries[2].closingBalance],
+            label: summaries[2].facilityType,
+            data: [summaries[2].openingBalance, summaries[2].additions, summaries[2].ppeaIn,
+              summaries[2].ppeaOut, summaries[2].disposals, summaries[2].closingBalance],
             fill: false,
             backgroundColor: '#599597',
             borderColor: '#599597'
           }
         ]
       };
+    }, error => {
+      this.loadingFacilitySummaries = false;
+      this.toastService.showError(this.toastService.getApiErrorMessage(error));
     });
 
     this.facilityService.getDashboardWedges().pipe(first()).subscribe(wedges => {
       this.loadingWedges = false;
-      this.wedges = wedges;
-      this.nonResidentialBuildings = this.wedges.filter(w => w.name == "Non Residential Buildings")[0];
-      this.dwellings = this.wedges.filter(w => w.name == "Dwellings")[0];
-      this.land = this.wedges.filter(w => w.name == "Land")[0];
-      this.signedoffProperties = this.wedges.filter(w => w.name == "Signed off properties")[0];
-      this.numberofProperties = this.wedges.filter(w => w.name == "Number of properties")[0];
-
-      this.data = {
-        labels: ['Non Residential Buildings', 'Dwellings', 'Land', 'Number of properties', 'Signed off properties'],
-        datasets: [
-          {
-            data: [this.nonResidentialBuildings.total, this.dwellings.total, this.land.total, this.numberofProperties.total, this.signedoffProperties.total],
-            backgroundColor: [
-              "#147df0",
-              "#ed3c76",
-              "#599597",
-              "#fdde60",
-              "#66cfb6"
-            ],
-            hoverBackgroundColor: [
-              "#147df0",
-              "#ed3c76",
-              "#599597",
-              "#fdde60",
-              "#66cfb6"
-            ]
-          }]
-      };
+      this.setDashboardWedges(wedges);
+    }, error => {
+      this.loadingWedges = false;
+      this.wedgesLoadError = this.toastService.getApiErrorMessage(error);
+      this.toastService.showError(this.wedgesLoadError);
     });
   }
 
-  openInfo(marker) {
-    this.dialogHeader = marker.data.description;
+  loadWedges(): void {
+    this.loadingWedges = true;
+    this.wedgesLoadError = '';
+    this.facilityService.getDashboardWedges().pipe(first()).subscribe(wedges => {
+      this.loadingWedges = false;
+      this.setDashboardWedges(wedges);
+    }, error => {
+      this.loadingWedges = false;
+      this.wedgesLoadError = this.toastService.getApiErrorMessage(error);
+      this.toastService.showError(this.wedgesLoadError);
+    });
+  }
+
+  loadZonings(): void {
+    this.loadingZonings = true;
+    this.zoningsLoadError = '';
+    this.facilityService.getFacilityZonings().pipe(first()).subscribe(zonings => {
+      this.loadingZonings = false;
+      this.zonings = Array.isArray(zonings) ? zonings : [];
+      this.facilityType = this.zonings[0];
+    }, error => {
+      this.loadingZonings = false;
+      this.zoningsLoadError = this.toastService.getApiErrorMessage(error);
+      this.toastService.showError(this.zoningsLoadError);
+    });
+  }
+
+  private setDashboardWedges(wedges: Array<DashboardWedge>): void {
+    if (!Array.isArray(wedges)) {
+      this.setWedgesLoadError('Dashboard totals could not be loaded because the server returned invalid data.');
+      return;
+    }
+    this.wedges = wedges;
+    this.nonResidentialBuildings = this.wedges.find(w => w?.name === 'Non Residential Buildings');
+    this.dwellings = this.wedges.find(w => w?.name === 'Dwellings');
+    this.land = this.wedges.find(w => w?.name === 'Land');
+    this.signedoffProperties = this.wedges.find(w => w?.name === 'Signed off properties');
+    this.numberofProperties = this.wedges.find(w => w?.name === 'Number of properties');
+
+    const requiredWedges = [
+      this.nonResidentialBuildings,
+      this.dwellings,
+      this.land,
+      this.signedoffProperties,
+      this.numberofProperties
+    ];
+    if (requiredWedges.some(wedge => !wedge || !Number.isFinite(Number(wedge.total)))) {
+      this.setWedgesLoadError('Dashboard totals could not be loaded because the server returned incomplete data.');
+    }
+  }
+
+  private setWedgesLoadError(message: string): void {
+    this.wedgesLoadError = message;
+    this.toastService.showError(message);
+  }
+
+  openInfo(marker: MapMarkerData) {
+    const coordinate = marker.data as MapCoordinate;
+    this.dialogHeader = marker.title;
     const selectedAsset = {
       mode: 'ViewTODO',
-      facilityId: marker.data.facilityId,
-      facilityType: marker.data.facilityType
+      facilityId: coordinate.facilityId,
+      facilityType: coordinate.facilityType
     };
     this.dialog.open(this.assetDialog, {
       width: '90vw',
@@ -214,24 +211,35 @@ export class DashboardComponent implements OnInit {
 
   addMarker() {
     this.facilityService.getMapCoordinates().pipe(first()).subscribe(mapCoordinates => {
-      mapCoordinates.forEach(element => {
-        let maker = {
-          position: {
-            lat: Number(element.latitude),
-            lng: Number(element.longitude),
-          },
-          // label: {
-          //   color: 'red',
-          //   text: element.description
-          // },
+      if (!Array.isArray(mapCoordinates)) {
+        this.mapLoadError = 'Map locations could not be loaded.';
+        return;
+      }
+      const nextMarkers: MapMarkerData[] = [];
+      mapCoordinates.forEach((element, index) => {
+        const coordinates = validCoordinates(element?.longitude, element?.latitude);
+        if (!coordinates) {
+          return;
+        }
+        nextMarkers.push({
+          id: element.facilityId ?? `${coordinates[0]}:${coordinates[1]}:${index}`,
+          longitude: coordinates[0],
+          latitude: coordinates[1],
           data: element,
           title: element.description,
-          //options: { animation: google.maps.Animation.BOUNCE },
-        };
-
-        this.markers.push(maker);
-
+          description: element.address
+        });
       });
+      this.markers = nextMarkers;
+    }, error => {
+      this.mapLoadError = this.toastService.getApiErrorMessage(error);
+      this.toastService.showError(this.mapLoadError);
     });
+  }
+
+  retryMapLocations(): void {
+    this.mapLoadError = '';
+    this.markers = [];
+    this.addMarker();
   }
 }

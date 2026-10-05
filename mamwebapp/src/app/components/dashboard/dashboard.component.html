@@ -16,7 +16,8 @@
             <span class="stat-icon buildings"><mat-icon>business</mat-icon></span>
             <div class="stat-copy">
                 <span class="stat-label">Non-residential buildings</span>
-                <strong *ngIf="!loadingWedges">{{ nonResidentialBuildings?.total ?? 0 }}</strong>
+                <strong *ngIf="!loadingWedges && !wedgesLoadError">{{ nonResidentialBuildings?.total ?? 0 }}</strong>
+                <strong *ngIf="wedgesLoadError" aria-label="Unavailable">—</strong>
                 <mat-progress-spinner *ngIf="loadingWedges" mode="indeterminate" diameter="24"></mat-progress-spinner>
             </div>
         </mat-card-content>
@@ -26,7 +27,8 @@
             <span class="stat-icon dwellings"><mat-icon>home_work</mat-icon></span>
             <div class="stat-copy">
                 <span class="stat-label">Dwellings</span>
-                <strong *ngIf="!loadingWedges">{{ dwellings?.total ?? 0 }}</strong>
+                <strong *ngIf="!loadingWedges && !wedgesLoadError">{{ dwellings?.total ?? 0 }}</strong>
+                <strong *ngIf="wedgesLoadError" aria-label="Unavailable">—</strong>
                 <mat-progress-spinner *ngIf="loadingWedges" mode="indeterminate" diameter="24"></mat-progress-spinner>
             </div>
         </mat-card-content>
@@ -36,12 +38,20 @@
             <span class="stat-icon land"><mat-icon>landscape</mat-icon></span>
             <div class="stat-copy">
                 <span class="stat-label">Land</span>
-                <strong *ngIf="!loadingWedges">{{ land?.total ?? 0 }}</strong>
+                <strong *ngIf="!loadingWedges && !wedgesLoadError">{{ land?.total ?? 0 }}</strong>
+                <strong *ngIf="wedgesLoadError" aria-label="Unavailable">—</strong>
                 <mat-progress-spinner *ngIf="loadingWedges" mode="indeterminate" diameter="24"></mat-progress-spinner>
             </div>
         </mat-card-content>
     </mat-card>
 </section>
+
+<div class="dashboard-data-error" *ngIf="wedgesLoadError">
+    <span>Asset totals could not be loaded.</span>
+    <button mat-button type="button" (click)="loadWedges()">
+        <mat-icon>refresh</mat-icon>Retry
+    </button>
+</div>
 
 <section class="dashboard-content-grid">
     <mat-card class="dashboard-panel map-panel">
@@ -52,14 +62,18 @@
         </mat-card-header>
         <mat-card-content>
             <div class="dashboard-map">
-                <google-map class="dashboard-google-map" height="100%" width="100%"
-                    [zoom]="zoom" [center]="center" [options]="options">
-                    <map-marker (mapClick)="openInfo(marker)" *ngFor="let marker of markers"
-                        [position]="marker.position" [label]="marker.label" [title]="marker.title"
-                        [options]="marker.options">
-                    </map-marker>
-                    <map-info-window>{{ dialogHeader }}</map-info-window>
-                </google-map>
+                <app-maplibre-map
+                    [markers]="markers"
+                    [center]="center"
+                    [zoom]="zoom"
+                    (markerSelected)="openInfo($event)">
+                </app-maplibre-map>
+                <div class="map-load-error" *ngIf="mapLoadError">
+                    <span>Asset locations could not be loaded.</span>
+                    <button mat-button type="button" (click)="retryMapLocations()">
+                        <mat-icon>refresh</mat-icon>Retry
+                    </button>
+                </div>
             </div>
         </mat-card-content>
     </mat-card>
@@ -92,7 +106,13 @@
                     <tr mat-row *matRowDef="let row; columns: zoningColumns"></tr>
                 </table>
             </div>
-            <div class="zoning-empty" *ngIf="!loadingZonings && !facilityType?.facilityZonings?.length">
+            <div class="zoning-empty" *ngIf="!loadingZonings && zoningsLoadError">
+                <span>Zoning information could not be loaded.</span>
+                <button mat-button type="button" (click)="loadZonings()">
+                    <mat-icon>refresh</mat-icon>Retry
+                </button>
+            </div>
+            <div class="zoning-empty" *ngIf="!loadingZonings && !zoningsLoadError && !facilityType?.facilityZonings?.length">
                 No zoning information is currently available.
             </div>
             <div class="zoning-loading" *ngIf="loadingZonings">

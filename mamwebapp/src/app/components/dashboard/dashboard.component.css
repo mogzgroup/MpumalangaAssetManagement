@@ -195,10 +195,31 @@
     background: #eff3f0;
 }
 
-.dashboard-google-map {
-    display: block;
-    width: 100%;
-    height: 100%;
+.map-load-error,
+.dashboard-data-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #687970;
+    text-align: center;
+}
+
+.map-load-error {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.94);
+}
+
+.dashboard-map {
+    position: relative;
+}
+
+.dashboard-data-error {
+    justify-content: flex-start;
+    margin: -0.75rem 0 1rem;
+    color: #8a3c28;
 }
 
 .table-scroll {

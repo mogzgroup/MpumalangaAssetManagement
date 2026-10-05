@@ -3,9 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { GoogleMapsModule } from '@angular/google-maps'
 import { CurrencyPipe, DatePipe} from '@angular/common';
-import { AutocompleteComponent } from './google-places.component';
 import { JwtInterceptor } from '../app/helpers/jwt.interceptor';
 import { ErrorInterceptor } from '../app/helpers/error.interceptor';
 import { HttpCacheInterceptor } from './helpers/http-cache.interceptor';
@@ -84,11 +82,12 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MapLibreMapComponent } from './shared/map/maplibre-map.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AutocompleteComponent,
+    MapLibreMapComponent,
     TemplateOneComponent,
     FooterComponent,
     HeaderComponent,
@@ -170,12 +169,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     AppRoutingModule,
     BrowserAnimationsModule,    
     HttpClientModule,
-    GoogleMapsModule,
-    //GooglePlaceModule,
     //NgxQRCodeModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: HttpCacheInterceptor, multi: true },
     {
       provide: MAT_DIALOG_DEFAULT_OPTIONS,

@@ -16,28 +16,12 @@
         </button>
     </div>
 
-    <google-map
-        #map
-        height="180px"
-        width="100%"
-        [zoom]="zoom"
+    <app-maplibre-map
+        [markers]="markers"
         [center]="center"
-        [options]="options">
-
-        <map-marker
-            *ngFor="let marker of markers; trackBy: trackMarker"
-            (mapClick)="openInfo(marker)"
-            [position]="marker.position"
-            [label]="marker.label"
-            [title]="marker.title"
-            [options]="marker.options">
-        </map-marker>
-
-        <map-info-window>
-            {{ dialogHeader }}
-        </map-info-window>
-
-    </google-map>
+        [zoom]="zoom"
+        (markerSelected)="openInfo($event)">
+    </app-maplibre-map>
 </section>
 
 
@@ -603,10 +587,23 @@
                             <input
                                 matInput
                                 formControlName="address"
-                                ngx-google-places-autocomplete
-                                (onAddressChange)="handleAddressChange($event)"
+                                (input)="onAddressInputChanged()"
+                                [matAutocomplete]="addressAutocomplete"
                                 [readonly]="isView"
                                 required>
+                            <button mat-icon-button matSuffix type="button"
+                                aria-label="Find address coordinates"
+                                (click)="searchAddressCoordinates()"
+                                [disabled]="isView || isGeocodingAddress || !f.address.value">
+                                <mat-spinner *ngIf="isGeocodingAddress" diameter="20"></mat-spinner>
+                                <mat-icon *ngIf="!isGeocodingAddress">search</mat-icon>
+                            </button>
+                            <mat-autocomplete #addressAutocomplete="matAutocomplete"
+                                (optionSelected)="selectAddressResult($event)">
+                                <mat-option *ngFor="let result of addressResults" [value]="result">
+                                    {{ result.display_name }}
+                                </mat-option>
+                            </mat-autocomplete>
 
                             <mat-error
                                 *ngIf="
@@ -619,6 +616,15 @@
                             </mat-error>
 
                         </mat-form-field>
+                        <div class="address-lookup-message" *ngIf="addressSearchError" role="status">
+                            {{ addressSearchError }}
+                        </div>
+                        <div class="address-lookup-attribution">
+                            Address search data © OpenStreetMap contributors.
+                            <span *ngIf="address.latitude != null && address.longitude != null">
+                                Selected coordinates: {{ address.latitude }}, {{ address.longitude }}
+                            </span>
+                        </div>
 
 
                         <!-- Town -->

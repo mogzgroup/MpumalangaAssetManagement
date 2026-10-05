@@ -5,6 +5,7 @@ import {
   HttpRequest,
   HttpResponse
 } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 
 import { AuthenticationService } from '../services/authentication.service';
@@ -30,7 +31,8 @@ describe('HttpCacheInterceptor', () => {
   beforeEach(() => {
     const currentUser = { id: 7, token: 'test-token' };
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
-    interceptor = new HttpCacheInterceptor(new AuthenticationService(null));
+    const router = jasmine.createSpyObj<Router>('Router', ['navigate']);
+    interceptor = new HttpCacheInterceptor(new AuthenticationService(null, router));
     handler = new CountingHttpHandler();
   });
 

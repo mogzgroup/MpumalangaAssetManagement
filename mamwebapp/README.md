@@ -14,15 +14,26 @@ rewrite configuration forwards those requests to the API listener on
 `127.0.0.1:5000`. Install IIS URL Rewrite and Application Request Routing, and
 enable ARR proxying on the server.
 
-## Runtime configuration
+## Maps
 
-Before publishing, set `googleMapsApiKey` in
-`src/assets/runtime-config.json` (or replace the file in the deployment
-artifact). This is a browser-visible key, not a secret: restrict it by HTTP
-referrer and enable only the Google Maps APIs the application uses.
+Maps use MapLibre GL JS with the OpenFreeMap Liberty style and OpenStreetMap
+data. No map API key is required. Map panels include provider and OpenStreetMap
+attribution. Address coordinate lookup uses OpenStreetMap Nominatim only when
+the user explicitly requests a search; a selected result stores its coordinates
+alongside a hired property.
 
-The checked-in template intentionally has no key. The application still starts
-without one, but map and Places features will not load.
+The Dashboard plots facility coordinates; selecting a facility opens its
+existing asset-details dialog. Hiring and Lease Management display their
+property coordinates in clustered, clickable markers with address/property
+popups. The map keeps the previous Mpumalanga center and zoom, and uses
+MapLibre's navigation controls for pan and zoom.
+
+## Authentication
+
+The frontend stores the authenticated user and JWT in browser local storage so
+the session survives a page refresh. The HTTP interceptor adds the bearer token
+to API requests only; a `401 Unauthorized` response clears the stored session
+and returns the user to the login page.
 
 ## Development
 

@@ -11,7 +11,8 @@ export class LeasedProperty {
     startingDate?: Date;
     terminationDate?: Date;
     landId: number;
+    latitude?: string;
+    longitude?: string;
     landUseManagementDetail: LandUseManagementDetail;
     leaseStatus: LeaseStatus;
 }
-
