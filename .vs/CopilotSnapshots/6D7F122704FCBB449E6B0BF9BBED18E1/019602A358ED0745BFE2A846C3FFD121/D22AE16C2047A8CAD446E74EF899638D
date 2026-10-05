@@ -1,0 +1,22 @@
+﻿{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Warning"
+    }
+  },
+  "AllowedHosts": "localhost;127.0.0.1",
+  "AppSettings": {
+    "EmailUserName": "massetmanagementsystem@mobilecentric.co.za",
+    "EmailPassword": "",
+    "EmailHost": "mail.mobilecentric.co.za",
+    "EmailPot": 25,
+    "FromEmailAddress": "noreply@mpg.gov.za",
+    "WebAppURL": "",
+    "ConnectionString": "",
+    "Secret": "",
+    "JwtIssuer": "",
+    "JwtAudience": "",
+    "AllowedOrigins": [],
+    "UploadsFolder": "Uploads"
+  }
+}

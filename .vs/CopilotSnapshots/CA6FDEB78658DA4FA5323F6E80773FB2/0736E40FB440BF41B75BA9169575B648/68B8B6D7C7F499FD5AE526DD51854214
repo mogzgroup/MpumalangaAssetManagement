@@ -1,0 +1,247 @@
+﻿using Microsoft.Extensions.Hosting;
+using System;
+using System.IO;
+using System.Text;
+using MAM.API.Services;
+using MAM.BusinessLayer.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
+namespace MAM.API
+{
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllers()
+                .AddNewtonsoftJson();
+
+            // Swagger disabled temporarily to resolve build issues with OpenApi types.
+            // Re-enable and adjust OpenAPI package references if needed once root cause is fixed.
+
+            // Require authentication by default for all endpoints; allow anonymous on specific actions with [AllowAnonymous]
+            services.AddAuthorization(options =>
+            {
+                // FallbackPolicy will apply to all endpoints that do not have an [AllowAnonymous] attribute
+                options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+            });
+
+            // Strongly typed settings
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            var appSettings = appSettingsSection.Get<AppSettings>() ?? new AppSettings();
+            ValidateAppSettings(appSettings);
+            services.Configure<AppSettings>(appSettingsSection);
+            var key = Encoding.UTF8.GetBytes(appSettings.Secret);
+            services.AddSingleton<UploadStorage>();
+
+            services.AddCors(options => options.AddPolicy("ConfiguredOrigins", policy =>
+            {
+                var allowedOrigins = appSettings.AllowedOrigins ?? Array.Empty<string>();
+                if (allowedOrigins.Length == 0)
+                {
+                    policy.SetIsOriginAllowed(_ => false);
+                    return;
+                }
+
+                policy.WithOrigins(allowedOrigins)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
+            }));
+
+            // JWT auth
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = true;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidIssuer = appSettings.JwtIssuer,
+                    ValidAudience = appSettings.JwtAudience,
+                };
+            });
+
+            // Register services
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IFacilityService, FacilityService>();
+            services.AddScoped<IUAMPService, UAMPService>();
+            services.AddScoped<IConditionAssessmentService, ConditionAssessmentService>();
+            services.AddScoped<ILeaseManagementService, LeaseManagementService>();
+            services.AddScoped<IHiringRegisterService, HiringRegisterService>();
+            services.AddScoped<IFaultService, FaultService>();
+            services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<ISupplierService, SupplierService>();
+            services.AddScoped<ICampService, CampService>();
+
+            // File upload limits
+            services.Configure<FormOptions>(options =>
+            {
+                options.ValueLengthLimit = int.MaxValue;
+                options.MultipartBodyLengthLimit = int.MaxValue;
+                options.MemoryBufferThreshold = int.MaxValue;
+            });
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            // Configure logging (load log4net once at startup)
+            try
+            {
+                // Provide the log4net ADO appender with the application's connection string
+                // from AppSettings so log4net uses the same database as the app.
+                var settings = Configuration.GetSection("AppSettings").Get<AppSettings>() ?? new AppSettings();
+                Controllers.BaseController.SetLog4NetConfiguration(settings.ConnectionString);
+            }
+            catch
+            {
+                // Swallow to avoid impacting startup; BaseController handles internal errors as well.
+            }
+
+            // Global exception handler should be first to catch exceptions from subsequent middlewares
+            app.UseExceptionHandling();
+
+            // Log incoming requests (method, path, user, small masked body)
+            app.UseRequestLogging();
+
+            app.UseRouting();
+            // Expose Swagger UI early so the middleware that serves the JSON and UI
+            // is not affected by the global authorization fallback policy.
+            if (env.IsDevelopment() || Configuration.GetValue<bool>("Swagger:Enabled"))
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                    c.RoutePrefix = "swagger";
+                    // Enable the Authorize button in Swagger UI to add a bearer token to requests
+                    c.OAuthClientId("swagger-ui");
+                    c.OAuthAppName("MAM API - Swagger");
+                });
+            }
+
+            // CORS
+            app.UseCors("ConfiguredOrigins");
+
+            // Auth
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            // Serve static files (wwwroot and Uploads)
+            app.UseStaticFiles(); // wwwroot
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    app.ApplicationServices.GetRequiredService<UploadStorage>().RootPath),
+                RequestPath = "/Uploads"
+            });
+
+            // Map controllers
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }
+
+        private static void ValidateAppSettings(AppSettings settings)
+        {
+            RequireSetting(settings.Secret, "AppSettings:Secret");
+            if (Encoding.UTF8.GetByteCount(settings.Secret) < 32)
+            {
+                throw new InvalidOperationException(
+                    "Configuration 'AppSettings:Secret' must contain at least 32 UTF-8 bytes.");
+            }
+
+            RequireSetting(settings.ConnectionString, "AppSettings:ConnectionString");
+            RequireSetting(settings.JwtIssuer, "AppSettings:JwtIssuer");
+            RequireSetting(settings.JwtAudience, "AppSettings:JwtAudience");
+            // Email settings are optional for deployments that do not use SMTP.
+            // If any email setting is present, require the set to be complete so email functionality works.
+            var emailSet = !string.IsNullOrWhiteSpace(settings.EmailUserName)
+                           || !string.IsNullOrWhiteSpace(settings.EmailHost)
+                           || !string.IsNullOrWhiteSpace(settings.FromEmailAddress);
+
+            if (emailSet)
+            {
+                RequireSetting(settings.EmailUserName, "AppSettings:EmailUserName");
+                RequireSetting(settings.EmailPassword, "AppSettings:EmailPassword");
+                RequireSetting(settings.EmailHost, "AppSettings:EmailHost");
+                RequireSetting(settings.FromEmailAddress, "AppSettings:FromEmailAddress");
+
+                if (settings.EmailPot <= 0)
+                {
+                    throw new InvalidOperationException("Configuration 'AppSettings:EmailPot' must be greater than zero when email is enabled.");
+                }
+            }
+
+            RequireSetting(settings.WebAppURL, "AppSettings:WebAppURL");
+            RequireSetting(settings.UploadsFolder, "AppSettings:UploadsFolder");
+
+            // JwtIssuer and JwtAudience may be simple identifiers (not necessarily absolute URLs).
+            RequireSetting(settings.JwtIssuer, "AppSettings:JwtIssuer");
+            RequireSetting(settings.JwtAudience, "AppSettings:JwtAudience");
+
+            // WebAppURL must be an absolute URL
+            ValidateAbsoluteUri(settings.WebAppURL, "AppSettings:WebAppURL");
+
+            foreach (var origin in settings.AllowedOrigins ?? Array.Empty<string>())
+            {
+                if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri) ||
+                    (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps) ||
+                    uri.GetLeftPart(UriPartial.Authority) != origin.TrimEnd('/'))
+                {
+                    throw new InvalidOperationException(
+                        $"Configuration 'AppSettings:AllowedOrigins' contains an invalid origin: '{origin}'.");
+                }
+            }
+        }
+
+        private static void RequireSetting(string value, string settingName)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new InvalidOperationException(
+                    $"Required configuration '{settingName}' is missing. Set it in appsettings or the deployment environment.");
+            }
+        }
+
+        private static void ValidateAbsoluteUri(string value, string settingName)
+        {
+            if (!Uri.TryCreate(value, UriKind.Absolute, out _))
+            {
+                throw new InvalidOperationException(
+                    $"Configuration '{settingName}' must be an absolute URL.");
+            }
+        }
+    }
+}

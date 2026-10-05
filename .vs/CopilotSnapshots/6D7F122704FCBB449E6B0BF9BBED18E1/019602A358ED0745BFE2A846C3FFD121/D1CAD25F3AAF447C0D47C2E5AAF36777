@@ -1,0 +1,108 @@
+﻿using System;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using log4net;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Builder;
+
+namespace MAM.API
+{
+    /// <summary>
+    /// Logs incoming HTTP requests (method, path, query, remote IP, user) and a limited, masked request body.
+    /// Designed to avoid logging sensitive headers such as Authorization.
+    /// </summary>
+    public class RequestLoggingMiddleware
+    {
+        private readonly RequestDelegate _next;
+        private static readonly ILog Log = LogManager.GetLogger(typeof(RequestLoggingMiddleware));
+        private const int MaxBodyLogChars = 4096;
+
+        public RequestLoggingMiddleware(RequestDelegate next)
+        {
+            _next = next;
+        }
+
+        public async Task Invoke(HttpContext context)
+        {
+            try
+            {
+                var request = context.Request;
+
+                // Get basic request info
+                var method = request.Method;
+                var path = request.Path + request.QueryString;
+                var remoteIp = context.Connection.RemoteIpAddress?.ToString();
+                var user = context.User?.Identity?.IsAuthenticated == true ? context.User.Identity.Name : "-";
+
+                string body = null;
+
+                // Only attempt to read body for methods that may have one
+                if (request.ContentLength.GetValueOrDefault() > 0 &&
+                    (method.Equals("POST", StringComparison.OrdinalIgnoreCase) ||
+                     method.Equals("PUT", StringComparison.OrdinalIgnoreCase) ||
+                     method.Equals("PATCH", StringComparison.OrdinalIgnoreCase)))
+                {
+                    // Allow multiple reads
+                    request.EnableBuffering();
+                    using (var reader = new StreamReader(request.Body, Encoding.UTF8, leaveOpen: true))
+                    {
+                        body = await reader.ReadToEndAsync();
+                        // truncate if too large
+                        if (!string.IsNullOrEmpty(body) && body.Length > MaxBodyLogChars)
+                            body = body.Substring(0, MaxBodyLogChars) + "...[truncated]";
+                        request.Body.Position = 0;
+                    }
+
+                    if (!string.IsNullOrEmpty(body))
+                        body = MaskSensitiveValues(body);
+                }
+
+                var logMessage = $"HTTP {method} {path} from {remoteIp} user={user}";
+                if (!string.IsNullOrEmpty(body))
+                    logMessage += $" body={body}";
+
+                Log.Info(logMessage);
+            }
+            catch (Exception ex)
+            {
+                // Do not block the request if logging fails
+                Log.Warn("Request logging failed", ex);
+            }
+
+            await _next(context);
+        }
+
+        private static string MaskSensitiveValues(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            try
+            {
+                // Mask common JSON fields like password, token, secret (simple regex-based masking)
+                input = Regex.Replace(input, "\"password\"\\s*:\\s*\".*?\"", "\"password\":\"****\"");
+                input = Regex.Replace(input, "\"oldPassword\"\\s*:\\s*\".*?\"", "\"oldPassword\":\"****\"");
+                input = Regex.Replace(input, "\"newPassword\"\\s*:\\s*\".*?\"", "\"newPassword\":\"****\"");
+                input = Regex.Replace(input, "\"token\"\\s*:\\s*\".*?\"", "\"token\":\"****\"");
+                input = Regex.Replace(input, "\"authorization\"\\s*:\\s*\".*?\"", "\"authorization\":\"****\"");
+                input = Regex.Replace(input, "\"secret\"\\s*:\\s*\".*?\"", "\"secret\":\"****\"");
+            }
+            catch
+            {
+                // If masking fails, return original input to avoid hiding bugs; logging will still be best-effort.
+            }
+
+            return input;
+        }
+    }
+
+    public static class RequestLoggingMiddlewareExtensions
+    {
+        public static IApplicationBuilder UseRequestLogging(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<RequestLoggingMiddleware>();
+        }
+    }
+}

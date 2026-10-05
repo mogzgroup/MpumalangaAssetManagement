@@ -1,0 +1,28 @@
+﻿{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Warning"
+    }
+  },
+  "ConnectionStrings": {
+    "log4net": "Server=197.242.157.60,1433;Database=AssetManagement;User Id=mam_api;Password=4c@YFsex#?zE;TrustServerCertificate=True;"
+  },
+  "AllowedHosts": "localhost;127.0.0.1",
+  "Swagger": {
+    "Enabled": false
+  },
+  "AppSettings": {
+    "EmailUserName": "massetmanagementsystem@mobilecentric.co.za",
+    "EmailPassword": "mamSystem@1234",
+    "EmailHost": "mail.mobilecentric.co.za",
+    "EmailPot": 25,
+    "FromEmailAddress": "noreply@mpg.gov.za",
+    "WebAppURL": "https://yourwebappurl.com",
+    "ConnectionString": "Server=197.242.157.60,1433;Database=AssetManagement;User Id=mam_api;Password=4c@YFsex#?zE;TrustServerCertificate=True;",
+    // Secret must be provided via environment variable in production. Do NOT commit production secrets to source control.
+    "JwtIssuer": "MobileCentric",
+    "JwtAudience": "MobileCentricAPI",
+    "AllowedOrigins": [],
+    "UploadsFolder": "Uploads"
+  }
+}

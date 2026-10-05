@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { FacilityType } from '../../models/facility-type.model';
 import { DashboardWedge } from '../../models/dashboard-wedge.model';
-import { facilitySummaryChart } from 'src/app/models/facility-summary-chart.model';
 import { MapCoordinate } from 'src/app/models/map-oordinate.model';
 import { Facility } from 'src/app/models/facility.model';
 import { Observable } from 'rxjs';
@@ -15,12 +13,9 @@ import { cachedGet } from '../../helpers/http-cache';
 })
 export class FacilityService {
 
-  private httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-  };
   constructor(private http: HttpClient) { }
   
-  getFacilityZonings(): Observable<any[]> {
+  getFacilityZonings(): Observable<FacilityType[]> {
     return cachedGet<FacilityType[]>(this.http, `${environment.apiUrl}/api/facility/getfacilityzonings`);
   }
 
@@ -28,10 +23,6 @@ export class FacilityService {
     return cachedGet<DashboardWedge[]>(this.http, `${environment.apiUrl}/api/facility/getdashboardwedges`);
   }
 
-  getFacilitySummaries() {
-    return cachedGet<Array<facilitySummaryChart>>(this.http, `${environment.apiUrl}/api/facility/getfacilitysummaries`);
-  }
-  
   getMapCoordinates() {
     return cachedGet<Array<MapCoordinate>>(this.http, `${environment.apiUrl}/api/facility/getmapcoordinates`);
   } 

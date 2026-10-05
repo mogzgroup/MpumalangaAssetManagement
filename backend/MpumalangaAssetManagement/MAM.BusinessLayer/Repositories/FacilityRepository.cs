@@ -1,6 +1,7 @@
 ﻿using MAM.BusinessLayer.Interfaces;
 using MAM.BusinessLayer.Models;
 using MAM.BusinessLayer.Models.Enums;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
@@ -25,32 +26,41 @@ namespace MAM.BusinessLayer.Repositories
 
         public List<FacilityType> GetFacilityZonings()
         {
-            Facility facility = new Facility();
-            List<FacilityType> facilityTypes = new List<FacilityType>();
-
-            using (var dataAccess = new DataAccess.Repositories.FacilityRepository(appSettings.ConnectionString))
+            using (var db = new DataAccess.DataContext(appSettings.ConnectionString))
             {
+                var zoningCounts =
+                    (from facility in db.Facilities.AsNoTracking()
+                     join land in db.Lands.AsNoTracking() on facility.LandId equals land.Id
+                     join landUse in db.LandUseManagementDetails.AsNoTracking()
+                         on land.LandUseManagementDetailId equals landUse.Id
+                     where facility.Status != null
+                         && facility.Status != "Deleted"
+                         && landUse.Zoning != null
+                     group facility by landUse.Zoning into zoning
+                     select new
+                     {
+                         Zoning = zoning.Key,
+                         SignedOff = zoning.Count(f => f.Status == "Completed"),
+                         Total = zoning.Count()
+                     }).ToList()
+                    .Where(zoning => !string.IsNullOrWhiteSpace(zoning.Zoning))
+                    .GroupBy(zoning => zoning.Zoning.Trim(), StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(zoning => zoning.Key)
+                    .Select(zoning => new FacilityZoning
+                    {
+                        Name = zoning.Key.ToLowerInvariant(),
+                        SignedOff = zoning.Sum(item => item.SignedOff),
+                        Total = zoning.Sum(item => item.Total)
+                    })
+                    .ToList();
+
                 FacilityType facilityType = new FacilityType()
                 {
                     Name = "Dwellings",
-                    FacilityZonings = new List<FacilityZoning>()
+                    FacilityZonings = zoningCounts
                 };
-
-                var facilities = facility.ConvertToFacilities(dataAccess.GetFacilities()).Where(f => f.Land.LandUseManagementDetail.Zoning != null);
-                var zonings = facilities.Select(d => d.Land.LandUseManagementDetail.Zoning.ToLower().Trim()).Distinct();
-                foreach (var zoning in zonings)
-                {
-                    FacilityZoning facilityZoning = new FacilityZoning()
-                    {
-                        Name = zoning,
-                        SignedOff = facilities.Where(d => d.Land.LandUseManagementDetail.Zoning.ToLower().Trim() == zoning.ToLower().Trim() && d.Status == "Completed").Count(),
-                        Total = facilities.Where(d => d.Land.LandUseManagementDetail.Zoning.ToLower().Trim() == zoning.ToLower().Trim()).Count(),
-                    };
-                    facilityType.FacilityZonings.Add(facilityZoning);
-                }
-                facilityTypes.Add(facilityType);
+                return new List<FacilityType> { facilityType };
             }
-            return facilityTypes;
         }
 
         public List<DashboardWedge> GetDashboardWedges()
@@ -58,28 +68,40 @@ namespace MAM.BusinessLayer.Repositories
             // Compute counts directly in the database using lightweight queries to avoid
             // loading the full Facility graph into memory which can cause timeouts or
             // memory pressure in production.
-            var list = new List<DashboardWedge>();
+            int total;
+            int signedOff;
+            int nonResidential;
+            int dwellings;
+            int land;
             using (var db = new DataAccess.DataContext(appSettings.ConnectionString))
             {
-                // Total properties (excluding deleted)
-                var total = db.Facilities.Count(f => f.Status != null && f.Status.ToLower() != "deleted");
+                var counts = db.Facilities.AsNoTracking()
+                    .GroupBy(_ => 1)
+                    .Select(facilities => new
+                    {
+                        Total = facilities.Count(f => f.Status != null && f.Status.ToLower() != "deleted"),
+                        SignedOff = facilities.Count(f => f.Status == "Signed off"),
+                        NonResidential = facilities.Count(f => f.Type == "Non Residential"),
+                        Dwellings = facilities.Count(f => f.Type == "Dwelling"),
+                        Land = facilities.Count(f => f.Type == "Land")
+                    })
+                    .SingleOrDefault();
 
-                // Signed off properties
-                var signedOff = db.Facilities.Count(f => f.Status != null && f.Status == "Signed off");
-
-                // Types
-                var nonResidential = db.Facilities.Count(f => f.Type != null && f.Type == "Non Residential");
-                var dwellings = db.Facilities.Count(f => f.Type != null && f.Type == "Dwelling");
-                var land = db.Facilities.Count(f => f.Type != null && f.Type == "Land");
-
-                list.Add(new DashboardWedge { Name = "Number of properties", Total = total });
-                list.Add(new DashboardWedge { Name = "Signed off properties", Total = signedOff });
-                list.Add(new DashboardWedge { Name = "Non Residential Buildings", Total = nonResidential });
-                list.Add(new DashboardWedge { Name = "Dwellings", Total = dwellings });
-                list.Add(new DashboardWedge { Name = "Land", Total = land });
+                total = counts?.Total ?? 0;
+                signedOff = counts?.SignedOff ?? 0;
+                nonResidential = counts?.NonResidential ?? 0;
+                dwellings = counts?.Dwellings ?? 0;
+                land = counts?.Land ?? 0;
             }
 
-            return list;
+            return new List<DashboardWedge>
+            {
+                new DashboardWedge { Name = "Number of properties", Total = total },
+                new DashboardWedge { Name = "Signed off properties", Total = signedOff },
+                new DashboardWedge { Name = "Non Residential Buildings", Total = nonResidential },
+                new DashboardWedge { Name = "Dwellings", Total = dwellings },
+                new DashboardWedge { Name = "Land", Total = land }
+            };
         }
 
         public List<FacilitySummaryChart> GetFacilitySummaries()

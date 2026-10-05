@@ -2,7 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
+import { Facility } from 'src/app/models/facility.model';
 import { AddassetregisterComponent } from './addassetregister.component';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { FacilityService } from 'src/app/services/facility/facility.service';
@@ -57,6 +58,35 @@ describe('AddassetregisterComponent', () => {
     expect(component).toBeTruthy();
     expect(component.mode).toBe('Add');
     expect(component.loading).toBeFalsy();
+  });
+
+  it('shows a successfully loaded asset and clears the loading state', () => {
+    const facility = Object.assign(new Facility(), { id: 30507, fileReference: 'ASSET-30507' });
+    facilityService.getFacilityById.and.returnValue(of(facility));
+    spyOn(component, 'initFacility');
+    spyOn(component, 'getFiles');
+    component.selectedAsset = { mode: 'View', facilityId: 30507, facilityType: 1 };
+
+    component.loadSelectedFacility();
+
+    expect(component.loading).toBeFalsy();
+    expect(component.loadError).toBeFalsy();
+    expect(component.facility).toBe(facility);
+    expect(component.initFacility).toHaveBeenCalled();
+    expect(component.getFiles).toHaveBeenCalledWith(facility.fileReference);
+  });
+
+  it('clears loading and shows a retryable error when asset details fail to load', () => {
+    facilityService.getFacilityById.and.returnValue(
+      throwError(() => new HttpErrorResponse({ status: 500 }))
+    );
+    component.selectedAsset = { mode: 'View', facilityId: 30507, facilityType: 1 };
+
+    component.loadSelectedFacility();
+
+    expect(component.loading).toBeFalsy();
+    expect(component.loadError).toBeTruthy();
+    expect(component.errorMsg).toBe('Unable to load the asset. Please try again.');
   });
 
   it('does not submit an invalid land form', () => {

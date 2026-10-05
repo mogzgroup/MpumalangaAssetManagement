@@ -1,0 +1,10 @@
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\bin\Release\MAM.Database.dacpac
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\bin\Release\MAM.Database.dll
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\bin\Release\MAM.Database.pdb
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\obj\Release\MAM.Database.sqlproj.AssemblyReference.cache
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\obj\Release\Model.xml
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\obj\Release\refactor.xml
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\obj\Release\postdeploy.sql
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\obj\Release\predeploy.sql
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\obj\Release\MAM.Database.dll
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\obj\Release\MAM.Database.pdb

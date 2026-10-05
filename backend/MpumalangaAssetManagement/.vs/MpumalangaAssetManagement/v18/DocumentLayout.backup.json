@@ -1,0 +1,867 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A30D770-5D6E-45F3-A2CE-FBCA56D9F46F}|MAM.BusinessLayer\\MAM.BusinessLayer.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.businesslayer\\repositories\\facilityrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A30D770-5D6E-45F3-A2CE-FBCA56D9F46F}|MAM.BusinessLayer\\MAM.BusinessLayer.csproj|solutionrelative:mam.businesslayer\\repositories\\facilityrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api.tests\\controllers\\faultcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|solutionrelative:mam.api.tests\\controllers\\faultcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\controllers\\facilitycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\controllers\\facilitycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api.tests\\controllers\\uampcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|solutionrelative:mam.api.tests\\controllers\\uampcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api.tests\\controllers\\leasemanagementcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|solutionrelative:mam.api.tests\\controllers\\leasemanagementcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api.tests\\controllers\\conditionassessmentcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|solutionrelative:mam.api.tests\\controllers\\conditionassessmentcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api.tests\\integrationtests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|solutionrelative:mam.api.tests\\integrationtests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api.tests\\controllers\\healthcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|solutionrelative:mam.api.tests\\controllers\\healthcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api.tests\\controllers\\campcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|solutionrelative:mam.api.tests\\controllers\\campcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api.tests\\controllers\\projectcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|solutionrelative:mam.api.tests\\controllers\\projectcontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\exceptionhandlingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\exceptionhandlingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api.tests\\controllers\\facilitycontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|solutionrelative:mam.api.tests\\controllers\\facilitycontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api.tests\\controllers\\usercontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|solutionrelative:mam.api.tests\\controllers\\usercontrollertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\controllers\\healthcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\controllers\\healthcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cmogo\\.copilot\\plans\\plan-add-per-controller-integration-test-files.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|MarkdownSecurePreview"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\docs\\frontend-samples\\angular-auth\\README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\docs\\frontend-samples\\angular-auth\\auth.guard.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\docs\\frontend-samples\\angular-auth\\auth.interceptor.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\docs\\frontend-samples\\angular-auth\\auth.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api.tests\\mam.api.tests.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|solutionrelative:mam.api.tests\\mam.api.tests.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api.tests\\unittest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3079B270-3EA2-DB6A-1ED4-93FF8A52086D}|MAM.API.Tests\\MAM.API.Tests.csproj|solutionrelative:mam.api.tests\\unittest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cmogo\\.copilot\\plans\\plan-run-and-validate-all-api-endpoints-and-tests-against-deployed-db.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|MarkdownSecurePreview"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\appsettings.production.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\appsettings.production.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\controllers\\faultcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\controllers\\faultcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A30D770-5D6E-45F3-A2CE-FBCA56D9F46F}|MAM.BusinessLayer\\MAM.BusinessLayer.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.businesslayer\\helpers\\emailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A30D770-5D6E-45F3-A2CE-FBCA56D9F46F}|MAM.BusinessLayer\\MAM.BusinessLayer.csproj|solutionrelative:mam.businesslayer\\helpers\\emailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DC3ABDFC-D388-417B-8E29-3393E8B4CF09}|MAM.DataAccess\\MAM.DataAccess.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.dataaccess\\datacontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DC3ABDFC-D388-417B-8E29-3393E8B4CF09}|MAM.DataAccess\\MAM.DataAccess.csproj|solutionrelative:mam.dataaccess\\datacontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DC3ABDFC-D388-417B-8E29-3393E8B4CF09}|MAM.DataAccess\\MAM.DataAccess.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.dataaccess\\tables\\auditlog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DC3ABDFC-D388-417B-8E29-3393E8B4CF09}|MAM.DataAccess\\MAM.DataAccess.csproj|solutionrelative:mam.dataaccess\\tables\\auditlog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\services\\campservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\services\\campservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\controllers\\conditionassessmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\controllers\\conditionassessmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\controllers\\uampcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\controllers\\uampcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\controllers\\suppliercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\controllers\\suppliercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\controllers\\leasemanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\controllers\\leasemanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\controllers\\hiringregistercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\controllers\\hiringregistercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\controllers\\projectcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\controllers\\projectcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\requestloggingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\requestloggingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\middleware\\correlationidmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\middleware\\correlationidmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A30D770-5D6E-45F3-A2CE-FBCA56D9F46F}|MAM.BusinessLayer\\MAM.BusinessLayer.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.businesslayer\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A30D770-5D6E-45F3-A2CE-FBCA56D9F46F}|MAM.BusinessLayer\\MAM.BusinessLayer.csproj|solutionrelative:mam.businesslayer\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A30D770-5D6E-45F3-A2CE-FBCA56D9F46F}|MAM.BusinessLayer\\MAM.BusinessLayer.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.businesslayer\\helpers\\validationexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A30D770-5D6E-45F3-A2CE-FBCA56D9F46F}|MAM.BusinessLayer\\MAM.BusinessLayer.csproj|solutionrelative:mam.businesslayer\\helpers\\validationexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DC3ABDFC-D388-417B-8E29-3393E8B4CF09}|MAM.DataAccess\\MAM.DataAccess.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.dataaccess\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DC3ABDFC-D388-417B-8E29-3393E8B4CF09}|MAM.DataAccess\\MAM.DataAccess.csproj|solutionrelative:mam.dataaccess\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\cmogo\\.copilot\\plans\\plan-refactor-and-performance-improvements-for-api-controllers.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|MarkdownSecurePreview"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\controllers\\basecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\controllers\\basecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\controllers\\campcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\controllers\\campcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\log4net.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\log4net.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\mam.api.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\mam.api.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|c:\\projects\\mpumalangaassetmanagement\\mpumalangaassetmanagement\\backend\\mpumalangaassetmanagement\\mam.api\\mam.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{A13842F5-26B6-4B0A-B85D-84DE4343B6E9}|MAM.API\\MAM.API.csproj|solutionrelative:mam.api\\mam.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Startup.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Startup.cs",
+              "RelativeDocumentMoniker": "MAM.API\\Startup.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Startup.cs",
+              "RelativeToolTip": "MAM.API\\Startup.cs",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAiwDcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-04T12:14:51.009Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "FacilityController.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\FacilityController.cs",
+              "RelativeDocumentMoniker": "MAM.API\\Controllers\\FacilityController.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\FacilityController.cs",
+              "RelativeToolTip": "MAM.API\\Controllers\\FacilityController.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAlwB4AAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-04T20:22:41.377Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\appsettings.json",
+              "RelativeDocumentMoniker": "MAM.API\\appsettings.json",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\appsettings.json",
+              "RelativeToolTip": "MAM.API\\appsettings.json",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAuwBAAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-10-05T12:27:21.353Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "FacilityRepository.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.BusinessLayer\\Repositories\\FacilityRepository.cs",
+              "RelativeDocumentMoniker": "MAM.BusinessLayer\\Repositories\\FacilityRepository.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.BusinessLayer\\Repositories\\FacilityRepository.cs",
+              "RelativeToolTip": "MAM.BusinessLayer\\Repositories\\FacilityRepository.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAAAB4AAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T11:35:05.042Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "MAM.API\\Controllers\\UserController.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\UserController.cs",
+              "RelativeToolTip": "MAM.API\\Controllers\\UserController.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAIAwwBkAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-04T20:23:32.823Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "UAMPControllerTests.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\UAMPControllerTests.cs",
+              "RelativeDocumentMoniker": "MAM.API.Tests\\Controllers\\UAMPControllerTests.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\UAMPControllerTests.cs",
+              "RelativeToolTip": "MAM.API.Tests\\Controllers\\UAMPControllerTests.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T15:23:02.231Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "LeaseManagementControllerTests.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\LeaseManagementControllerTests.cs",
+              "RelativeDocumentMoniker": "MAM.API.Tests\\Controllers\\LeaseManagementControllerTests.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\LeaseManagementControllerTests.cs",
+              "RelativeToolTip": "MAM.API.Tests\\Controllers\\LeaseManagementControllerTests.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T15:22:51.11Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "FaultControllerTests.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\FaultControllerTests.cs",
+              "RelativeDocumentMoniker": "MAM.API.Tests\\Controllers\\FaultControllerTests.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\FaultControllerTests.cs",
+              "RelativeToolTip": "MAM.API.Tests\\Controllers\\FaultControllerTests.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAACUAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T15:22:42.004Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "ConditionAssessmentControllerTests.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\ConditionAssessmentControllerTests.cs",
+              "RelativeDocumentMoniker": "MAM.API.Tests\\Controllers\\ConditionAssessmentControllerTests.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\ConditionAssessmentControllerTests.cs",
+              "RelativeToolTip": "MAM.API.Tests\\Controllers\\ConditionAssessmentControllerTests.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T15:21:57.823Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "IntegrationTests.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\IntegrationTests.cs",
+              "RelativeDocumentMoniker": "MAM.API.Tests\\IntegrationTests.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\IntegrationTests.cs",
+              "RelativeToolTip": "MAM.API.Tests\\IntegrationTests.cs",
+              "ViewState": "AgIAACgAAAAAAAAAAADwv6AAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T14:58:21.892Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "HealthControllerTests.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\HealthControllerTests.cs",
+              "RelativeDocumentMoniker": "MAM.API.Tests\\Controllers\\HealthControllerTests.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\HealthControllerTests.cs",
+              "RelativeToolTip": "MAM.API.Tests\\Controllers\\HealthControllerTests.cs",
+              "ViewState": "AgIAACYAAAAAAAAAAADwv0QAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T15:15:17.578Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "CAMPControllerTests.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\CAMPControllerTests.cs",
+              "RelativeDocumentMoniker": "MAM.API.Tests\\Controllers\\CAMPControllerTests.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\CAMPControllerTests.cs",
+              "RelativeToolTip": "MAM.API.Tests\\Controllers\\CAMPControllerTests.cs",
+              "ViewState": "AgIAADcAAAAAAAAAAAAwwEoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T15:33:18.769Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ProjectControllerTests.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\ProjectControllerTests.cs",
+              "RelativeDocumentMoniker": "MAM.API.Tests\\Controllers\\ProjectControllerTests.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\ProjectControllerTests.cs",
+              "RelativeToolTip": "MAM.API.Tests\\Controllers\\ProjectControllerTests.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAADgv4oAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T15:15:38.348Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "ExceptionHandlingMiddleware.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\ExceptionHandlingMiddleware.cs",
+              "RelativeDocumentMoniker": "MAM.API\\ExceptionHandlingMiddleware.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\ExceptionHandlingMiddleware.cs",
+              "RelativeToolTip": "MAM.API\\ExceptionHandlingMiddleware.cs",
+              "ViewState": "AgIAADMAAAAAAAAAAAAiwI4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-04T20:52:45.977Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "FacilityControllerTests.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\FacilityControllerTests.cs",
+              "RelativeDocumentMoniker": "MAM.API.Tests\\Controllers\\FacilityControllerTests.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\FacilityControllerTests.cs",
+              "RelativeToolTip": "MAM.API.Tests\\Controllers\\FacilityControllerTests.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAAcwHsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T15:16:05.243Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "UserControllerTests.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\UserControllerTests.cs",
+              "RelativeDocumentMoniker": "MAM.API.Tests\\Controllers\\UserControllerTests.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\Controllers\\UserControllerTests.cs",
+              "RelativeToolTip": "MAM.API.Tests\\Controllers\\UserControllerTests.cs",
+              "ViewState": "AgIAACgAAAAAAAAAAADwv1UAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T15:15:51.662Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "HealthController.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\HealthController.cs",
+              "RelativeDocumentMoniker": "MAM.API\\Controllers\\HealthController.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\HealthController.cs",
+              "RelativeToolTip": "MAM.API\\Controllers\\HealthController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T10:39:40.881Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "plan-add-per-controller-integration-test-files.md [Preview]",
+              "DocumentMoniker": "C:\\Users\\cmogo\\.copilot\\plans\\plan-add-per-controller-integration-test-files.md",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Users\\cmogo\\.copilot\\plans\\plan-add-per-controller-integration-test-files.md",
+              "ToolTip": "C:\\Users\\cmogo\\.copilot\\plans\\plan-add-per-controller-integration-test-files.md [Preview]",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\Users\\cmogo\\.copilot\\plans\\plan-add-per-controller-integration-test-files.md [Preview]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-10-05T15:23:42.216Z",
+              "EditorCaption": " [Preview]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "README.md",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\docs\\frontend-samples\\angular-auth\\README.md",
+              "RelativeDocumentMoniker": "..\\..\\docs\\frontend-samples\\angular-auth\\README.md",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\docs\\frontend-samples\\angular-auth\\README.md",
+              "RelativeToolTip": "..\\..\\docs\\frontend-samples\\angular-auth\\README.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-10-05T14:12:17.93Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "auth.interceptor.ts",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\docs\\frontend-samples\\angular-auth\\auth.interceptor.ts",
+              "RelativeDocumentMoniker": "..\\..\\docs\\frontend-samples\\angular-auth\\auth.interceptor.ts",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\docs\\frontend-samples\\angular-auth\\auth.interceptor.ts",
+              "RelativeToolTip": "..\\..\\docs\\frontend-samples\\angular-auth\\auth.interceptor.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-10-05T14:11:37.97Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "auth.service.ts",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\docs\\frontend-samples\\angular-auth\\auth.service.ts",
+              "RelativeDocumentMoniker": "..\\..\\docs\\frontend-samples\\angular-auth\\auth.service.ts",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\docs\\frontend-samples\\angular-auth\\auth.service.ts",
+              "RelativeToolTip": "..\\..\\docs\\frontend-samples\\angular-auth\\auth.service.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-10-05T14:10:59.557Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "auth.guard.ts",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\docs\\frontend-samples\\angular-auth\\auth.guard.ts",
+              "RelativeDocumentMoniker": "..\\..\\docs\\frontend-samples\\angular-auth\\auth.guard.ts",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\docs\\frontend-samples\\angular-auth\\auth.guard.ts",
+              "RelativeToolTip": "..\\..\\docs\\frontend-samples\\angular-auth\\auth.guard.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-10-05T14:11:58.992Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "MAM.API.Tests",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\MAM.API.Tests.csproj",
+              "RelativeDocumentMoniker": "MAM.API.Tests\\MAM.API.Tests.csproj",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\MAM.API.Tests.csproj",
+              "RelativeToolTip": "MAM.API.Tests\\MAM.API.Tests.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-10-05T14:57:41.726Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "UnitTest1.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\UnitTest1.cs",
+              "RelativeDocumentMoniker": "MAM.API.Tests\\UnitTest1.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API.Tests\\UnitTest1.cs",
+              "RelativeToolTip": "MAM.API.Tests\\UnitTest1.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T14:37:30.337Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "plan-run-and-validate-all-api-endpoints-and-tests-against-deployed-db.md [Preview]",
+              "DocumentMoniker": "C:\\Users\\cmogo\\.copilot\\plans\\plan-run-and-validate-all-api-endpoints-and-tests-against-deployed-db.md",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Users\\cmogo\\.copilot\\plans\\plan-run-and-validate-all-api-endpoints-and-tests-against-deployed-db.md",
+              "ToolTip": "C:\\Users\\cmogo\\.copilot\\plans\\plan-run-and-validate-all-api-endpoints-and-tests-against-deployed-db.md [Preview]",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\Users\\cmogo\\.copilot\\plans\\plan-run-and-validate-all-api-endpoints-and-tests-against-deployed-db.md [Preview]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-10-05T14:35:20.442Z",
+              "EditorCaption": " [Preview]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "MAM.API\\appsettings.Development.json",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\appsettings.Development.json",
+              "RelativeToolTip": "MAM.API\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAwwAoAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-10-05T14:06:18.768Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "appsettings.Production.json",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\appsettings.Production.json",
+              "RelativeDocumentMoniker": "MAM.API\\appsettings.Production.json",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\appsettings.Production.json",
+              "RelativeToolTip": "MAM.API\\appsettings.Production.json",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAwwBkAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-10-05T12:25:54.407Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "DataContext.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.DataAccess\\DataContext.cs",
+              "RelativeDocumentMoniker": "MAM.DataAccess\\DataContext.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.DataAccess\\DataContext.cs",
+              "RelativeToolTip": "MAM.DataAccess\\DataContext.cs",
+              "ViewState": "AgIAADEAAAAAAAAAAAAvwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T13:58:02.18Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "AuditLog.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.DataAccess\\Tables\\AuditLog.cs",
+              "RelativeDocumentMoniker": "MAM.DataAccess\\Tables\\AuditLog.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.DataAccess\\Tables\\AuditLog.cs",
+              "RelativeToolTip": "MAM.DataAccess\\Tables\\AuditLog.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T13:57:29.382Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "EmailService.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.BusinessLayer\\Helpers\\EmailService.cs",
+              "RelativeDocumentMoniker": "MAM.BusinessLayer\\Helpers\\EmailService.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.BusinessLayer\\Helpers\\EmailService.cs",
+              "RelativeToolTip": "MAM.BusinessLayer\\Helpers\\EmailService.cs",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAhwIAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T12:26:10.373Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "FaultController.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\FaultController.cs",
+              "RelativeDocumentMoniker": "MAM.API\\Controllers\\FaultController.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\FaultController.cs",
+              "RelativeToolTip": "MAM.API\\Controllers\\FaultController.cs",
+              "ViewState": "AgIAACQAAAAAAAAAAAAawA4AAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-04T20:22:48.503Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "CampService.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Services\\CampService.cs",
+              "RelativeDocumentMoniker": "MAM.API\\Services\\CampService.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Services\\CampService.cs",
+              "RelativeToolTip": "MAM.API\\Services\\CampService.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAAABcAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T13:50:18.423Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "UAMPController.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\UAMPController.cs",
+              "RelativeDocumentMoniker": "MAM.API\\Controllers\\UAMPController.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\UAMPController.cs",
+              "RelativeToolTip": "MAM.API\\Controllers\\UAMPController.cs",
+              "ViewState": "AgIAAGoAAAAAAAAAAAAawHYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-04T20:23:26.105Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "SupplierController.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\SupplierController.cs",
+              "RelativeDocumentMoniker": "MAM.API\\Controllers\\SupplierController.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\SupplierController.cs",
+              "RelativeToolTip": "MAM.API\\Controllers\\SupplierController.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAawCoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-04T20:23:17.717Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "ConditionAssessmentController.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\ConditionAssessmentController.cs",
+              "RelativeDocumentMoniker": "MAM.API\\Controllers\\ConditionAssessmentController.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\ConditionAssessmentController.cs",
+              "RelativeToolTip": "MAM.API\\Controllers\\ConditionAssessmentController.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAawAsAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-04T20:22:32.864Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "LeaseManagementController.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\LeaseManagementController.cs",
+              "RelativeDocumentMoniker": "MAM.API\\Controllers\\LeaseManagementController.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\LeaseManagementController.cs",
+              "RelativeToolTip": "MAM.API\\Controllers\\LeaseManagementController.cs",
+              "ViewState": "AgIAAI4AAAAAAAAAAAAhwGEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-04T20:28:56.939Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "HiringRegisterController.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\HiringRegisterController.cs",
+              "RelativeDocumentMoniker": "MAM.API\\Controllers\\HiringRegisterController.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\HiringRegisterController.cs",
+              "RelativeToolTip": "MAM.API\\Controllers\\HiringRegisterController.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAawAsAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-04T20:22:56.081Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "ProjectController.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\ProjectController.cs",
+              "RelativeDocumentMoniker": "MAM.API\\Controllers\\ProjectController.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\ProjectController.cs",
+              "RelativeToolTip": "MAM.API\\Controllers\\ProjectController.cs",
+              "ViewState": "AgIAAGEAAAAAAAAAAAAawAsAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-04T20:23:10.139Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "README.md",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\README.md",
+              "RelativeDocumentMoniker": "README.md",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\README.md",
+              "RelativeToolTip": "README.md",
+              "ViewState": "AgIAABgAAAAAAAAAAAApwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-10-05T01:26:59.714Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "RequestLoggingMiddleware.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\RequestLoggingMiddleware.cs",
+              "RelativeDocumentMoniker": "MAM.API\\RequestLoggingMiddleware.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\RequestLoggingMiddleware.cs",
+              "RelativeToolTip": "MAM.API\\RequestLoggingMiddleware.cs",
+              "ViewState": "AgIAADcAAAAAAAAAAAAAAHMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-04T20:51:48.939Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "CorrelationIdMiddleware.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Middleware\\CorrelationIdMiddleware.cs",
+              "RelativeDocumentMoniker": "MAM.API\\Middleware\\CorrelationIdMiddleware.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Middleware\\CorrelationIdMiddleware.cs",
+              "RelativeToolTip": "MAM.API\\Middleware\\CorrelationIdMiddleware.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T10:38:30.215Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.BusinessLayer\\Repositories\\UserRepository.cs",
+              "RelativeDocumentMoniker": "MAM.BusinessLayer\\Repositories\\UserRepository.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.BusinessLayer\\Repositories\\UserRepository.cs",
+              "RelativeToolTip": "MAM.BusinessLayer\\Repositories\\UserRepository.cs",
+              "ViewState": "AgIAACsAAAAAAAAAAAAAAFMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T03:18:18.651Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "ValidationException.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.BusinessLayer\\Helpers\\ValidationException.cs",
+              "RelativeDocumentMoniker": "MAM.BusinessLayer\\Helpers\\ValidationException.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.BusinessLayer\\Helpers\\ValidationException.cs",
+              "RelativeToolTip": "MAM.BusinessLayer\\Helpers\\ValidationException.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T10:46:27.833Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.DataAccess\\Repositories\\UserRepository.cs",
+              "RelativeDocumentMoniker": "MAM.DataAccess\\Repositories\\UserRepository.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.DataAccess\\Repositories\\UserRepository.cs",
+              "RelativeToolTip": "MAM.DataAccess\\Repositories\\UserRepository.cs",
+              "ViewState": "AgIAADUAAAAAAAAAAAAhwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-05T10:46:19.304Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "plan-refactor-and-performance-improvements-for-api-controllers.md [Preview]",
+              "DocumentMoniker": "C:\\Users\\cmogo\\.copilot\\plans\\plan-refactor-and-performance-improvements-for-api-controllers.md",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Users\\cmogo\\.copilot\\plans\\plan-refactor-and-performance-improvements-for-api-controllers.md",
+              "ToolTip": "C:\\Users\\cmogo\\.copilot\\plans\\plan-refactor-and-performance-improvements-for-api-controllers.md [Preview]",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\Users\\cmogo\\.copilot\\plans\\plan-refactor-and-performance-improvements-for-api-controllers.md [Preview]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-10-04T20:31:10.901Z",
+              "EditorCaption": " [Preview]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "BaseController.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\BaseController.cs",
+              "RelativeDocumentMoniker": "MAM.API\\Controllers\\BaseController.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\BaseController.cs",
+              "RelativeToolTip": "MAM.API\\Controllers\\BaseController.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAAAAcAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-04T20:22:00.067Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
+              "Title": "CAMPController.cs",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\CAMPController.cs",
+              "RelativeDocumentMoniker": "MAM.API\\Controllers\\CAMPController.cs",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\Controllers\\CAMPController.cs",
+              "RelativeToolTip": "MAM.API\\Controllers\\CAMPController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAwwAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-04T20:22:25.066Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 47,
+              "Title": "log4net.config",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\log4net.config",
+              "RelativeDocumentMoniker": "MAM.API\\log4net.config",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\log4net.config",
+              "RelativeToolTip": "MAM.API\\log4net.config",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAkwAwAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2026-10-04T12:33:27.67Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 49,
+              "Title": "MAM.API.csproj",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\MAM.API.csproj",
+              "RelativeDocumentMoniker": "MAM.API\\MAM.API.csproj",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\MAM.API.csproj",
+              "RelativeToolTip": "MAM.API\\MAM.API.csproj",
+              "ViewState": "AgIAABkAAAAAAAAAAABBwDAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-10-04T10:39:46.013Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 48,
+              "Title": "MAM.API",
+              "DocumentMoniker": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\MAM.API.csproj",
+              "RelativeDocumentMoniker": "MAM.API\\MAM.API.csproj",
+              "ToolTip": "C:\\Projects\\MpumalangaAssetManagement\\MpumalangaAssetManagement\\backend\\MpumalangaAssetManagement\\MAM.API\\MAM.API.csproj",
+              "RelativeToolTip": "MAM.API\\MAM.API.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-10-04T10:39:50.228Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

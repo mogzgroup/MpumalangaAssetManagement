@@ -23,7 +23,17 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/web.config"  
+              "src/web.config",
+              {
+                "glob": "maplibre-gl-worker.mjs",
+                "input": "node_modules/maplibre-gl/dist",
+                "output": "assets/maplibre-gl"
+              },
+              {
+                "glob": "maplibre-gl-shared.mjs",
+                "input": "node_modules/maplibre-gl/dist",
+                "output": "assets/maplibre-gl"
+              }
             ],
             "styles": [
                 "src/styles.css",

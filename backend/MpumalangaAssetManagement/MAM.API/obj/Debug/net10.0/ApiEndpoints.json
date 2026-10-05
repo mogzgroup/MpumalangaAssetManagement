@@ -1,0 +1,983 @@
+[
+  {
+    "ContainingType": "MAM.API.Controllers.CAMPController",
+    "Method": "GetCamps",
+    "RelativePath": "api/camp/getcamps/{department}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "department",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.ConditionAssessmentController",
+    "Method": "DeleteConditionAssessment",
+    "RelativePath": "api/conditionassessment/deleteConditionAssessment/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.ConditionAssessmentController",
+    "Method": "GetConditionAssessments",
+    "RelativePath": "api/conditionassessment/getconditionassessments/{facilityId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "facilityId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.ConditionAssessmentController",
+    "Method": "SaveConditionAssessment",
+    "RelativePath": "api/conditionassessment/saveConditionAssessment",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "conditionAssessment",
+        "Type": "MAM.BusinessLayer.Models.ConditionAssessment",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FacilityController",
+    "Method": "DeleteFacility",
+    "RelativePath": "api/facility/deleteFacility/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FacilityController",
+    "Method": "GetAllFacilities",
+    "RelativePath": "api/facility/getallfacilities",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FacilityController",
+    "Method": "GetAssetRegisterFacilities",
+    "RelativePath": "api/facility/getassetregisterfacilities",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FacilityController",
+    "Method": "GetBuildingsByTown",
+    "RelativePath": "api/facility/getbuildings/{town}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "town",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FacilityController",
+    "Method": "GetDashboardWedges",
+    "RelativePath": "api/facility/getdashboardwedges",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FacilityController",
+    "Method": "GetFacilityById",
+    "RelativePath": "api/facility/getFacilityByCode/{id}/{facilityType}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "facilityType",
+        "Type": "MAM.BusinessLayer.Models.Enums.FacilityTypes",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FacilityController",
+    "Method": "GetFacilitySummaries",
+    "RelativePath": "api/facility/getfacilitysummaries",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FacilityController",
+    "Method": "GetFacilityZonings",
+    "RelativePath": "api/facility/getfacilityzonings",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FacilityController",
+    "Method": "GetFiles",
+    "RelativePath": "api/facility/getFiles/{fileReference}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fileReference",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FacilityController",
+    "Method": "GetMapCoordinates",
+    "RelativePath": "api/facility/getmapcoordinates",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FacilityController",
+    "Method": "GetProperties",
+    "RelativePath": "api/facility/getproperties/{userDepartment}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userDepartment",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FacilityController",
+    "Method": "GetTowns",
+    "RelativePath": "api/facility/gettowns",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FacilityController",
+    "Method": "SaveFacility",
+    "RelativePath": "api/facility/saveFacility/{step}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "step",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "facility",
+        "Type": "MAM.BusinessLayer.Models.Facility",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FacilityController",
+    "Method": "UpdateFacility",
+    "RelativePath": "api/facility/updateFacility/{step}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "step",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "facility",
+        "Type": "MAM.BusinessLayer.Models.Facility",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FacilityController",
+    "Method": "UploadFiles",
+    "RelativePath": "api/facility/uploadFiles/{fileName}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fileName",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FaultController",
+    "Method": "Index",
+    "RelativePath": "api/fault",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FaultController",
+    "Method": "AddFault",
+    "RelativePath": "api/fault/addfault",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fault",
+        "Type": "MAM.BusinessLayer.Models.Fault",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FaultController",
+    "Method": "DeletFault",
+    "RelativePath": "api/fault/deletefault",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fault",
+        "Type": "MAM.BusinessLayer.Models.Fault",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FaultController",
+    "Method": "GetFaultByReferenceNo",
+    "RelativePath": "api/fault/getfaultbyreferenceno/{referenceNo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "referenceNo",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FaultController",
+    "Method": "GetFaults",
+    "RelativePath": "api/fault/getfaults",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FaultController",
+    "Method": "GetFiles",
+    "RelativePath": "api/fault/getFiles/{fileReference}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fileReference",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FaultController",
+    "Method": "UpdateFault",
+    "RelativePath": "api/fault/updatefault",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fault",
+        "Type": "MAM.BusinessLayer.Models.Fault",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.FaultController",
+    "Method": "UploadFiles",
+    "RelativePath": "api/fault/uploadFiles/{fileName}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fileName",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.HealthController",
+    "Method": "Get",
+    "RelativePath": "api/Health",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.HiringRegisterController",
+    "Method": "Index",
+    "RelativePath": "api/hiringregister",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.HiringRegisterController",
+    "Method": "AddHiredProperty",
+    "RelativePath": "api/hiringregister/addhiredproperty",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "hiredProperty",
+        "Type": "MAM.BusinessLayer.Models.HiredProperty",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.HiringRegisterController",
+    "Method": "DeletHiredProperty",
+    "RelativePath": "api/hiringregister/deletehiredproperty",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "hiredProperty",
+        "Type": "MAM.BusinessLayer.Models.HiredProperty",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.HiringRegisterController",
+    "Method": "GetHiredProperties",
+    "RelativePath": "api/hiringregister/gethiredproperties",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.HiringRegisterController",
+    "Method": "UpdateHiredProperty",
+    "RelativePath": "api/hiringregister/updatehiredproperty",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "hiredProperty",
+        "Type": "MAM.BusinessLayer.Models.HiredProperty",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.LeaseManagementController",
+    "Method": "DeleteLeasedProperty",
+    "RelativePath": "api/leasemanagement/deleteLeasedProperty",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "leasedProperty",
+        "Type": "MAM.BusinessLayer.Models.LeasedProperty",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.LeaseManagementController",
+    "Method": "GetLeasedProperties",
+    "RelativePath": "api/leasemanagement/getleasedproperties",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.LeaseManagementController",
+    "Method": "GetLeasedPropertyDetails",
+    "RelativePath": "api/leasemanagement/getleasedpropertydetails",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "leasedProperty",
+        "Type": "MAM.BusinessLayer.Models.LeasedProperty",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.LeaseManagementController",
+    "Method": "UploadHandoverDocuments",
+    "RelativePath": "api/leasemanagement/uploadHandoverDocuments/{fileName}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fileName",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.LeaseManagementController",
+    "Method": "UploadSnagListFiles",
+    "RelativePath": "api/leasemanagement/uploadSnagListFiles/{fileName}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fileName",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.ProjectController",
+    "Method": "Index",
+    "RelativePath": "api/project",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.ProjectController",
+    "Method": "AddProject",
+    "RelativePath": "api/project/addproject",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "project",
+        "Type": "MAM.BusinessLayer.Models.Project",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.ProjectController",
+    "Method": "DeletProject",
+    "RelativePath": "api/project/deleteproject",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "project",
+        "Type": "MAM.BusinessLayer.Models.Project",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.ProjectController",
+    "Method": "GetProjects",
+    "RelativePath": "api/project/getprojects",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.ProjectController",
+    "Method": "GetProperties",
+    "RelativePath": "api/project/getproperties",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.ProjectController",
+    "Method": "UpdateProject",
+    "RelativePath": "api/project/updateproject",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "project",
+        "Type": "MAM.BusinessLayer.Models.Project",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.SupplierController",
+    "Method": "Index",
+    "RelativePath": "api/supplier",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.SupplierController",
+    "Method": "AddSuppliers",
+    "RelativePath": "api/supplier/addsuppliers",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "suppliers",
+        "Type": "System.Collections.Generic.List\u00601[[MAM.BusinessLayer.Models.Supplier, MAM.BusinessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.SupplierController",
+    "Method": "GetSuppliers",
+    "RelativePath": "api/supplier/getsuppliers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UAMPController",
+    "Method": "GetUamp",
+    "RelativePath": "api/uamp/getampbyid/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UAMPController",
+    "Method": "GetUAMPs",
+    "RelativePath": "api/uamp/getuamps/{department}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "department",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UAMPController",
+    "Method": "GetUampTemplate",
+    "RelativePath": "api/uamp/getuamptemplate/{uampId}/{templateNumber}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "uampId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "templateNumber",
+        "Type": "System.Double",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UAMPController",
+    "Method": "GetUampWithTemplateOne",
+    "RelativePath": "api/uamp/getuampwithtemplateone/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UAMPController",
+    "Method": "SaveUserImmovableAssetManagementPlan",
+    "RelativePath": "api/uamp/saveuamp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userImmovableAssetManagementPlan",
+        "Type": "MAM.BusinessLayer.Models.UserImmovableAssetManagementPlan",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UAMPController",
+    "Method": "StartUserImmovableAssetManagementPlan",
+    "RelativePath": "api/uamp/startuamp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userImmovableAssetManagementPlan",
+        "Type": "MAM.BusinessLayer.Models.UserImmovableAssetManagementPlan",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UAMPController",
+    "Method": "Test",
+    "RelativePath": "api/uamp/test",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UserController",
+    "Method": "AddUser",
+    "RelativePath": "api/user/adduser",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "user",
+        "Type": "MAM.BusinessLayer.Model.User",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UserController",
+    "Method": "Authenticate",
+    "RelativePath": "api/user/authenticate",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "MAM.BusinessLayer.Models.AuthenticateModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UserController",
+    "Method": "ChangePassword",
+    "RelativePath": "api/user/changepassword",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "MAM.BusinessLayer.Models.PasswordChangeModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UserController",
+    "Method": "ChangePassword",
+    "RelativePath": "api/user/changepassword/{username}/{newPassword}/{oldPassword}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "username",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "newPassword",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "oldPassword",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UserController",
+    "Method": "DeletUser",
+    "RelativePath": "api/user/deleteUser",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "user",
+        "Type": "MAM.BusinessLayer.Model.User",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UserController",
+    "Method": "ForgotPassword",
+    "RelativePath": "api/user/forgotpassword",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "MAM.BusinessLayer.Models.AuthenticateModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UserController",
+    "Method": "ForgotPassword",
+    "RelativePath": "api/user/forgotpassword/{username}/{password}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "username",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "password",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UserController",
+    "Method": "GetAll",
+    "RelativePath": "api/user/getall",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UserController",
+    "Method": "Login",
+    "RelativePath": "api/user/login/{username}/{password}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "username",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "password",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UserController",
+    "Method": "ResetPassword",
+    "RelativePath": "api/user/resetpassword",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "MAM.BusinessLayer.Models.AuthenticateModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UserController",
+    "Method": "ResetPassword",
+    "RelativePath": "api/user/resetpassword/{username}/{password}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "username",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "password",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MAM.API.Controllers.UserController",
+    "Method": "UpdateUser",
+    "RelativePath": "api/user/updateUser",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "user",
+        "Type": "MAM.BusinessLayer.Model.User",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

@@ -1,0 +1,227 @@
+﻿using Microsoft.Extensions.Hosting;
+using System;
+using System.IO;
+using System.Text;
+using MAM.API.Services;
+using MAM.BusinessLayer.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+namespace MAM.API
+{
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllers();
+
+            // Swagger
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "My API",
+                    Version = "v1",
+                });
+                c.CustomSchemaIds(type => type.FullName.Replace("+", "."));
+            });
+
+            // Strongly typed settings
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            var appSettings = appSettingsSection.Get<AppSettings>() ?? new AppSettings();
+            ValidateAppSettings(appSettings);
+            services.Configure<AppSettings>(appSettingsSection);
+            var key = Encoding.UTF8.GetBytes(appSettings.Secret);
+            services.AddSingleton<UploadStorage>();
+
+            services.AddCors(options => options.AddPolicy("ConfiguredOrigins", policy =>
+            {
+                var allowedOrigins = appSettings.AllowedOrigins ?? Array.Empty<string>();
+                if (allowedOrigins.Length == 0)
+                {
+                    policy.SetIsOriginAllowed(_ => false);
+                    return;
+                }
+
+                policy.WithOrigins(allowedOrigins)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
+            }));
+
+            // JWT auth
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = true;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidIssuer = appSettings.JwtIssuer,
+                    ValidAudience = appSettings.JwtAudience,
+                };
+            });
+
+            // Register services
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IFacilityService, FacilityService>();
+            services.AddScoped<IUAMPService, UAMPService>();
+            services.AddScoped<IConditionAssessmentService, ConditionAssessmentService>();
+            services.AddScoped<ILeaseManagementService, LeaseManagementService>();
+            services.AddScoped<IHiringRegisterService, HiringRegisterService>();
+            services.AddScoped<IFaultService, FaultService>();
+            services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<ISupplierService, SupplierService>();
+            services.AddScoped<ICampService, CampService>();
+
+            // File upload limits
+            services.Configure<FormOptions>(options =>
+            {
+                options.ValueLengthLimit = int.MaxValue;
+                options.MultipartBodyLengthLimit = int.MaxValue;
+                options.MemoryBufferThreshold = int.MaxValue;
+            });
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            // Configure logging (load log4net once at startup)
+            try
+            {
+                Controllers.BaseController.SetLog4NetConfiguration(
+                    Configuration["AppSettings:ConnectionString"]);
+            }
+            catch
+            {
+                // Swallow to avoid impacting startup; BaseController handles internal errors as well.
+            }
+
+            // Global exception handler should be first to catch exceptions from subsequent middlewares
+            app.UseExceptionHandling();
+
+            // Log incoming requests (method, path, user, small masked body)
+            app.UseRequestLogging();
+
+            app.UseRouting();
+
+            // CORS
+            app.UseCors("ConfiguredOrigins");
+
+            // Auth
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            if (env.IsDevelopment() || Configuration.GetValue<bool>("Swagger:Enabled"))
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                    c.RoutePrefix = "swagger";
+                });
+            }
+
+            // Serve static files (wwwroot and Uploads)
+            app.UseStaticFiles(); // wwwroot
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    app.ApplicationServices.GetRequiredService<UploadStorage>().RootPath),
+                RequestPath = "/Uploads"
+            });
+
+            // Map controllers
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }
+
+        private static void ValidateAppSettings(AppSettings settings)
+        {
+            RequireSetting(settings.Secret, "AppSettings:Secret");
+            if (Encoding.UTF8.GetByteCount(settings.Secret) < 32)
+            {
+                throw new InvalidOperationException(
+                    "Configuration 'AppSettings:Secret' must contain at least 32 UTF-8 bytes.");
+            }
+
+            RequireSetting(settings.ConnectionString, "AppSettings:ConnectionString");
+            RequireSetting(settings.JwtIssuer, "AppSettings:JwtIssuer");
+            RequireSetting(settings.JwtAudience, "AppSettings:JwtAudience");
+            RequireSetting(settings.EmailUserName, "AppSettings:EmailUserName");
+            RequireSetting(settings.EmailPassword, "AppSettings:EmailPassword");
+            RequireSetting(settings.EmailHost, "AppSettings:EmailHost");
+            RequireSetting(settings.FromEmailAddress, "AppSettings:FromEmailAddress");
+            RequireSetting(settings.WebAppURL, "AppSettings:WebAppURL");
+            RequireSetting(settings.UploadsFolder, "AppSettings:UploadsFolder");
+
+            if (settings.EmailPot <= 0)
+            {
+                throw new InvalidOperationException("Configuration 'AppSettings:EmailPot' must be greater than zero.");
+            }
+
+            ValidateAbsoluteUri(settings.JwtIssuer, "AppSettings:JwtIssuer");
+            ValidateAbsoluteUri(settings.JwtAudience, "AppSettings:JwtAudience");
+            ValidateAbsoluteUri(settings.WebAppURL, "AppSettings:WebAppURL");
+
+            foreach (var origin in settings.AllowedOrigins ?? Array.Empty<string>())
+            {
+                if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri) ||
+                    (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps) ||
+                    uri.GetLeftPart(UriPartial.Authority) != origin.TrimEnd('/'))
+                {
+                    throw new InvalidOperationException(
+                        $"Configuration 'AppSettings:AllowedOrigins' contains an invalid origin: '{origin}'.");
+                }
+            }
+        }
+
+        private static void RequireSetting(string value, string settingName)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new InvalidOperationException(
+                    $"Required configuration '{settingName}' is missing. Set it in appsettings or the deployment environment.");
+            }
+        }
+
+        private static void ValidateAbsoluteUri(string value, string settingName)
+        {
+            if (!Uri.TryCreate(value, UriKind.Absolute, out _))
+            {
+                throw new InvalidOperationException(
+                    $"Configuration '{settingName}' must be an absolute URL.");
+            }
+        }
+    }
+}

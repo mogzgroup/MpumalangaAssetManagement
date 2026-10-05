@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MAM.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9b37eae26b28cb25e9e4256556bc7a6f62188d36")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+64b00cc1488dd6da5db62609f2d09752f2ae439f")]
 [assembly: System.Reflection.AssemblyProductAttribute("MAM.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MAM.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

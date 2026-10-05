@@ -1,0 +1,6 @@
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\bin\Debug\MAM.Database.dacpac
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\bin\Debug\MAM.Database.dll
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\bin\Debug\MAM.Database.pdb
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\obj\Debug\MAM.Database.sqlproj.AssemblyReference.cache
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\obj\Debug\MAM.Database.dll
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\obj\Debug\MAM.Database.pdb

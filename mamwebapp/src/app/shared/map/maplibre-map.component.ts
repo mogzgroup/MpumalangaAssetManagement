@@ -69,6 +69,7 @@ export class MapLibreMapComponent implements AfterViewInit, OnChanges, OnDestroy
         return;
       }
       this.maplibre = maplibre;
+      maplibre.setWorkerUrl(new URL('assets/maplibre-gl/maplibre-gl-worker.mjs', document.baseURI).href);
       this.map = new maplibre.Map({
         container: this.mapContainer.nativeElement,
         style: mapConfig.style,

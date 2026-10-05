@@ -36,10 +36,23 @@ namespace MAM.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "My API",
+                    Title = "MAM API",
                     Version = "v1",
                 });
                 c.CustomSchemaIds(type => type.FullName.Replace("+", "."));
+
+                // Add JWT bearer definition so Swagger UI can send Authorization: Bearer <token>
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT"
+                };
+
+                c.AddSecurityDefinition("Bearer", securityScheme);
             });
 
             // Require authentication by default for all endpoints; allow anonymous on specific actions with [AllowAnonymous]
@@ -144,14 +157,8 @@ namespace MAM.API
             app.UseRequestLogging();
 
             app.UseRouting();
-
-            // CORS
-            app.UseCors("ConfiguredOrigins");
-
-            // Auth
-            app.UseAuthentication();
-            app.UseAuthorization();
-
+            // Expose Swagger UI early so the middleware that serves the JSON and UI
+            // is not affected by the global authorization fallback policy.
             if (env.IsDevelopment() || Configuration.GetValue<bool>("Swagger:Enabled"))
             {
                 app.UseSwagger();
@@ -159,8 +166,18 @@ namespace MAM.API
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                     c.RoutePrefix = "swagger";
+                    // Enable the Authorize button in Swagger UI to add a bearer token to requests
+                    c.OAuthClientId("swagger-ui");
+                    c.OAuthAppName("MAM API - Swagger");
                 });
             }
+
+            // CORS
+            app.UseCors("ConfiguredOrigins");
+
+            // Auth
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             // Serve static files (wwwroot and Uploads)
             app.UseStaticFiles(); // wwwroot

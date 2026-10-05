@@ -1,0 +1,148 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using MAM.API.Services;
+using MAM.BusinessLayer.Models;
+using MAM.BusinessLayer.Model;
+using Xunit;
+
+namespace MAM.API.Tests
+{
+    public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+    {
+        private readonly WebApplicationFactory<Program> _factory;
+
+        public IntegrationTests(WebApplicationFactory<Program> factory)
+        {
+            _factory = factory.WithWebHostBuilder(builder =>
+            {
+                builder.UseEnvironment("Test");
+                // Ensure required AppSettings are present for tests (signing secret, issuer, audience)
+                builder.ConfigureAppConfiguration((context, conf) =>
+                {
+                    var dict = new Dictionary<string, string?>
+                    {
+                        ["AppSettings:Secret"] = "test-secret-should-be-long-enough-to-meet-requirements-123456",
+                        ["AppSettings:JwtIssuer"] = "MobileCentric",
+                        ["AppSettings:JwtAudience"] = "MobileCentricAPI"
+                    };
+                    conf.AddInMemoryCollection(dict);
+                });
+
+                builder.ConfigureTestServices(services =>
+                {
+                    // Replace IProjectService with a test double
+                    services.AddScoped<IProjectService, FakeProjectService>();
+
+                    // Replace IUserService with fake to avoid DB dependency on authenticate endpoint
+                    services.AddScoped<IUserService, FakeUserService>();
+                });
+            });
+        }
+
+        [Fact]
+        public async Task ProtectedEndpoint_WithoutToken_Returns401()
+        {
+            var client = _factory.CreateClient();
+            var response = await client.GetAsync("/api/project/getprojects");
+            if (response.StatusCode != System.Net.HttpStatusCode.Unauthorized)
+            {
+                var body = await response.Content.ReadAsStringAsync();
+                Assert.True(false, $"Expected 401 Unauthorized but got {(int)response.StatusCode} {response.StatusCode}. Response body: {body}");
+            }
+        }
+
+        [Fact]
+        public async Task Authenticate_InvalidCredentials_ReturnsBadRequest()
+        {
+            var client = _factory.CreateClient();
+            var res = await client.PostAsJsonAsync("/api/user/authenticate", new { Username = "bad", Password = "bad" });
+            if (res.StatusCode != System.Net.HttpStatusCode.BadRequest)
+            {
+                var body = await res.Content.ReadAsStringAsync();
+                Assert.True(false, $"Expected 400 BadRequest but got {(int)res.StatusCode} {res.StatusCode}. Response body: {body}");
+            }
+        }
+
+        [Fact]
+        public async Task ProtectedEndpoint_WithValidJwt_Returns200AndData()
+        {
+            // Get configuration from the test server to generate a valid token
+            var config = _factory.Services.GetRequiredService<IConfiguration>();
+            var appSettingsSection = config.GetSection("AppSettings");
+            var secret = appSettingsSection["Secret"] ?? "development-secret-should-be-long-enough-to-meet-requirements-123456";
+            var issuer = appSettingsSection["JwtIssuer"] ?? "MobileCentric";
+            var audience = appSettingsSection["JwtAudience"] ?? "MobileCentricAPI";
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Issuer = issuer,
+                Audience = audience,
+                Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "1") }),
+                Expires = DateTime.UtcNow.AddMinutes(30),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenString);
+
+            var res = await client.GetAsync("/api/project/getprojects");
+            if (res.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var body = await res.Content.ReadAsStringAsync();
+                Assert.True(false, $"Expected 200 OK but got {(int)res.StatusCode} {res.StatusCode}. Response body: {body}");
+            }
+
+            var projects = await res.Content.ReadFromJsonAsync<List<Project>>();
+            Assert.NotNull(projects);
+            Assert.Single(projects);
+            Assert.Equal("Test Project", projects[0].Name);
+        }
+
+        // Fake services
+        private class FakeProjectService : IProjectService
+        {
+            public int AddProject(Project project) => 1;
+            public bool DeleteProject(Project project) => true;
+            public List<Project> GetProjects() => new List<Project> { new Project { Id = 1, Name = "Test Project", CreatedDate = DateTime.UtcNow } };
+            public Project UpdateProject(Project project) => project;
+        }
+
+        private class FakeUserService : IUserService
+        {
+            public User AddUser(User user) => user;
+            public bool ChangePassword(string username, string newPassword, string oldPassword) => true;
+            public bool DeleteUser(User user) => true;
+            public List<User> GetAll() => new List<User>();
+            public User Authenticate(string username, string password)
+            {
+                // simple fake: return a user only for known test credentials
+                if (username == "test" && password == "password")
+                {
+                    return new User { Id = 1, Username = "test", Token = "FAKE" };
+                }
+                return null;
+            }
+            public bool ForgotPassword(string username, string newPassword) => true;
+            public bool ResetPassword(string username, string newPassword) => true;
+            public bool UpdateUser(User user) => true;
+        }
+    }
+}

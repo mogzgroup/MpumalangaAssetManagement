@@ -1,0 +1,87 @@
+2025/11/19 23:37:40	This log contains information about the import schema operation into project 'MAM.Database' on computer 'LAPTOP-AHKL522J' by user 'cmogo'.
+2025/11/19 23:37:41	Import of database schema has started.
+2025/11/19 23:37:51	Gathering database credentials
+2025/11/19 23:37:51	Gathering database options
+2025/11/19 23:37:51	Gathering generic database scoped configuration option
+2025/11/19 23:37:51	Gathering users
+2025/11/19 23:37:51	Gathering roles
+2025/11/19 23:37:51	Gathering application roles
+2025/11/19 23:37:51	Gathering role memberships
+2025/11/19 23:37:51	Gathering filegroups
+2025/11/19 23:37:51	Gathering full-text catalogs
+2025/11/19 23:37:51	Gathering assemblies
+2025/11/19 23:37:51	Gathering certificates
+2025/11/19 23:37:51	Gathering asymmetric keys
+2025/11/19 23:37:51	Gathering symmetric keys
+2025/11/19 23:37:52	Gathering encrypted symmetric keys
+2025/11/19 23:37:52	Gathering schemas
+2025/11/19 23:37:52	Gathering XML schema collections
+2025/11/19 23:37:52	Gathering user-defined data types
+2025/11/19 23:37:52	Gathering user-defined types
+2025/11/19 23:37:52	Gathering table types
+2025/11/19 23:37:52	Gathering unique keys for table types
+2025/11/19 23:37:52	Gathering primary keys for table types
+2025/11/19 23:37:52	Gathering indexes for table types
+2025/11/19 23:37:52	Gathering check constraints for table types
+2025/11/19 23:37:52	Gathering default constraints for table types
+2025/11/19 23:37:52	Gathering partition functions
+2025/11/19 23:37:52	Gathering partition schemes
+2025/11/19 23:37:52	Gathering functions
+2025/11/19 23:37:52	Gathering encrypted functions
+2025/11/19 23:37:52	Gathering aggregates
+2025/11/19 23:37:52	Gathering procedures
+2025/11/19 23:37:52	Gathering encrypted procedures
+2025/11/19 23:37:52	Gathering tables
+2025/11/19 23:37:52	Gathering primary keys
+2025/11/19 23:37:52	Gathering unique constraints
+2025/11/19 23:37:52	Gathering foreign keys
+2025/11/19 23:37:52	Gathering default constraints
+2025/11/19 23:37:52	Gathering check constraints
+2025/11/19 23:37:52	Gathering views
+2025/11/19 23:37:52	Gathering encrypted views
+2025/11/19 23:37:52	Gathering indexes
+2025/11/19 23:37:52	Gathering statistics
+2025/11/19 23:37:52	Gathering full-text index stoplists
+2025/11/19 23:37:52	Gathering search property lists
+2025/11/19 23:37:52	Gathering search properties
+2025/11/19 23:37:52	Gathering full-text indexes
+2025/11/19 23:37:52	Gathering column store indexes
+2025/11/19 23:37:52	Gathering spatial indexes
+2025/11/19 23:37:52	Gathering XML indexes
+2025/11/19 23:37:52	Gathering Selective XML indexes
+2025/11/19 23:37:52	Gathering encrypted triggers
+2025/11/19 23:37:52	Gathering triggers
+2025/11/19 23:37:52	Gathering encrypted and clr ddl triggers
+2025/11/19 23:37:52	Gathering ddl triggers
+2025/11/19 23:37:52	Creating edge constraints
+2025/11/19 23:37:52	Gathering synonyms
+2025/11/19 23:37:52	Gathering defaults
+2025/11/19 23:37:52	Gathering data constraint uddt bindings
+2025/11/19 23:37:52	Gathering rules
+2025/11/19 23:37:52	Gathering data constraint uddt bindings
+2025/11/19 23:37:52	Gathering message types
+2025/11/19 23:37:52	Gathering queues
+2025/11/19 23:37:52	Gathering contracts
+2025/11/19 23:37:52	Gathering services
+2025/11/19 23:37:52	Gathering event notifications
+2025/11/19 23:37:52	Gathering remote service bindings
+2025/11/19 23:37:52	Gathering broker priorities
+2025/11/19 23:37:52	Gathering signatures
+2025/11/19 23:37:52	Gathering data compression options
+2025/11/19 23:37:52	Gathering sequence types
+2025/11/19 23:37:52	Gathering security policies
+2025/11/19 23:37:52	Gather column encryption keys
+2025/11/19 23:37:52	Gathering column master keys
+2025/11/19 23:37:52	Gathering external data sources
+2025/11/19 23:37:52	Gathering external file formats
+2025/11/19 23:37:52	Gathering external tables
+2025/11/19 23:37:52	Gathering extended properties
+2025/11/19 23:37:52	Gathering assemblies
+2025/11/19 23:37:53	Gathering credentials
+2025/11/19 23:37:53	Gathering logins
+2025/11/19 23:37:53	Gathering server audits
+2025/11/19 23:37:53	Scanning project for duplicate elements
+2025/11/19 23:37:53	Finished duplicate element processing
+2025/11/19 23:37:54	Finished importing database.
+2025/11/19 23:37:54	A summary of the import was saved to the following location: C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.Database\Import Schema Logs\MAM.Database_20251119093740.log
+2025/11/19 23:37:54	Click Finish to continue...

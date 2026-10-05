@@ -2,8 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy
 import { HttpErrorResponse } from '@angular/common/http';
 import { PageEvent } from '@angular/material/paginator';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, from, of } from 'rxjs';
-import { concatMap, finalize, first, map, tap, toArray } from 'rxjs/operators';
+import { Observable, TimeoutError, defer, from, of } from 'rxjs';
+import { concatMap, finalize, first, map, tap, timeout, toArray } from 'rxjs/operators';
 import { Facility } from 'src/app/models/facility.model';
 import { FacilityService } from 'src/app/services/facility/facility.service';
 import { User } from 'src/app/models/user.model';
@@ -200,20 +200,41 @@ export class AddassetregisterComponent implements OnInit {
     this.loading = true;
     this.loadError = false;
     this.errorMsg = '';
-    this.facilityService.getFacilityById(this.selectedAsset.facilityId, this.selectedAsset.facilityType)
-      .pipe(first())
+    defer(() => this.facilityService.getFacilityById(
+      this.selectedAsset.facilityId,
+      this.selectedAsset.facilityType
+    ))
+      .pipe(
+        first(),
+        timeout(30000),
+        finalize(() => {
+          this.loading = false;
+        })
+      )
       .subscribe({
         next: facility => {
-          this.loading = false;
+          if (!facility || typeof facility !== 'object') {
+            this.loadError = true;
+            this.errorMsg = 'The server returned incomplete asset details.';
+            this.toastService.showError(this.errorMsg);
+            return;
+          }
           this.loadError = false;
-          this.facility = facility;
-          this.initFacility();
-          this.getFiles(facility.fileReference);
+          try {
+            this.facility = facility;
+            this.initFacility();
+            this.getFiles(facility.fileReference);
+          } catch {
+            this.loadError = true;
+            this.errorMsg = 'Asset details could not be displayed. Please try again.';
+            this.toastService.showError(this.errorMsg);
+          }
         },
-        error: () => {
-          this.loading = false;
+        error: error => {
           this.loadError = true;
-          this.errorMsg = 'Unable to load the asset. Please try again.';
+          this.errorMsg = error instanceof TimeoutError
+            ? 'Loading asset details timed out. Please try again.'
+            : 'Unable to load the asset. Please try again.';
           this.toastService.showError(this.errorMsg);
         }
       });

@@ -335,7 +335,6 @@ C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\Mpumalan
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.API\obj\Debug\netcoreapp3.0\MAM.API.pdb
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.API\obj\Debug\netcoreapp3.0\MAM.API.genruntimeconfig.cache
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.API\obj\Debug\netcoreapp3.0\MAM.API.GeneratedMSBuildEditorConfig.editorconfig
-C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.API\bin\Debug\netcoreapp3.0\MAM.API.StaticWebAssets.xml
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.API\bin\Debug\netcoreapp3.0\Microsoft.AspNetCore.Razor.Language.dll
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.API\bin\Debug\netcoreapp3.0\Microsoft.CodeAnalysis.dll
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.API\bin\Debug\netcoreapp3.0\Microsoft.CodeAnalysis.CSharp.dll

@@ -1,0 +1,126 @@
+﻿using System.Collections.Generic;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using Xunit;
+using MAM.BusinessLayer.Models;
+using MAM.API.Services;
+
+namespace MAM.API.Tests.Controllers
+{
+    public class ProjectControllerTests : IClassFixture<WebApplicationFactory<Program>>
+    {
+        private readonly WebApplicationFactory<Program> _factory;
+
+        public ProjectControllerTests(WebApplicationFactory<Program> factory)
+        {
+            _factory = factory.WithWebHostBuilder(builder =>
+            {
+                builder.UseEnvironment("Test");
+                builder.ConfigureAppConfiguration((context, conf) =>
+                {
+                    var dict = new System.Collections.Generic.Dictionary<string, string?>
+                    {
+                        ["AppSettings:Secret"] = "test-secret-should-be-long-enough-to-meet-requirements-123456",
+                        ["AppSettings:JwtIssuer"] = "MobileCentric",
+                        ["AppSettings:JwtAudience"] = "MobileCentricAPI",
+                        ["AppSettings:ConnectionString"] = "Server=(local);Database=Test;Trusted_Connection=True;",
+                        ["AppSettings:WebAppURL"] = "https://localhost/",
+                        ["AppSettings:UploadsFolder"] = "Uploads",
+                        ["AppSettings:EmailUserName"] = "test",
+                        ["AppSettings:EmailPassword"] = "test",
+                        ["AppSettings:EmailHost"] = "smtp.test",
+                        ["AppSettings:FromEmailAddress"] = "test@test.local"
+                    };
+                    conf.AddInMemoryCollection(dict);
+                });
+
+                builder.ConfigureTestServices(services =>
+                {
+                    // Replace IProjectService with fake
+                    services.AddScoped<IProjectService, FakeProjectService>();
+                    // Provide a minimal IFacilityService since controller requires it
+                    services.AddScoped<IFacilityService, FakeFacilityService>();
+                });
+            });
+        }
+
+        [Fact]
+        public async Task GetProjects_WithoutToken_Returns401()
+        {
+            var client = _factory.CreateClient();
+            var res = await client.GetAsync("/api/project/getprojects");
+            Assert.Equal(System.Net.HttpStatusCode.Unauthorized, res.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetProjects_WithValidToken_ReturnsOkAndData()
+        {
+            // build token
+            var config = _factory.Services.GetRequiredService<IConfiguration>();
+            var secret = config["AppSettings:Secret"]!;
+            var issuer = config["AppSettings:JwtIssuer"]!;
+            var audience = config["AppSettings:JwtAudience"]!;
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Issuer = issuer,
+                Audience = audience,
+                Subject = new System.Security.Claims.ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "1") }),
+                Expires = System.DateTime.UtcNow.AddMinutes(30),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenString);
+
+            var res = await client.GetAsync("/api/project/getprojects");
+            res.EnsureSuccessStatusCode();
+            var projects = await res.Content.ReadFromJsonAsync<List<Project>>();
+            Assert.NotNull(projects);
+            Assert.Single(projects);
+            Assert.Equal("Test Project", projects[0].Name);
+        }
+
+        // fakes
+        private class FakeProjectService : IProjectService
+        {
+            public int AddProject(Project project) => 1;
+            public bool DeleteProject(Project project) => true;
+            public List<Project> GetProjects() => new List<Project> { new Project { Id = 1, Name = "Test Project", CreatedDate = System.DateTime.UtcNow } };
+            public Project UpdateProject(Project project) => project;
+        }
+
+        private class FakeFacilityService : IFacilityService
+        {
+            public List<DashboardWedge> GetDashboardWedges() => new List<DashboardWedge>();
+            public List<FacilityType> GetFacilityZonings() => new List<FacilityType>();
+            public List<FacilitySummaryChart> GetFacilitySummaries() => new List<FacilitySummaryChart>();
+            public List<MapCoordinate> GetMapCoordinates() => new List<MapCoordinate>();
+            public List<Facility> GetAllFacilities() => new List<Facility>();
+            public List<Facility> GetProjectFacilities() => new List<Facility>();
+            public List<Facility> GetAssetRegisterFacilities() => new List<Facility>();
+            public List<Facility> GetProperties(string userDepartment) => new List<Facility>();
+            public Facility GetFacilityById(int id, MAM.BusinessLayer.Models.Enums.FacilityTypes facilityType) => new Facility();
+            public Facility SaveFacility(string step, Facility facility) => facility;
+            public bool UpdateFacility(string step, Facility facility) => true;
+            public bool DeleteFacility(int id) => true;
+            public List<Facility> GetBuildings() => new List<Facility> { new Facility { Id = 1, Name = "Test Facility" } };
+            public List<string> GetTowns() => new List<string>();
+            public List<Facility> GetBuildingsByTown(string town) => new List<Facility>();
+        }
+    }
+}

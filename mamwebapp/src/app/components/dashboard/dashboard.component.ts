@@ -1,15 +1,10 @@
 import { Component, OnInit, TemplateRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { first } from 'rxjs/operators';
-import { User } from '../../models/user.model';
-import { UserService } from '../../services/user/user.service';
+import { TimeoutError } from 'rxjs';
+import { finalize, first, timeout } from 'rxjs/operators';
 import { FacilityService } from '../../services/facility/facility.service';
-import { AuthenticationService } from '../../services/authentication.service';
-//import { FacilityZoning } from 'src/app/models/Facility-zoning';
 import { FacilityType } from 'src/app/models/facility-type.model';
 import { DashboardWedge } from 'src/app/models/dashboard-wedge.model';
-import { facilitySummaryChart } from 'src/app/models/facility-summary-chart.model';
-import { trigger, state, style, transition, animate } from '@angular/animations';
 import { ToastService } from 'src/app/services/toast.service';
 import { mapConfig } from 'src/app/shared/map/map-config';
 import { MapMarkerData, validCoordinates } from 'src/app/shared/map/map-marker.model';
@@ -20,27 +15,8 @@ import { MapCoordinate } from 'src/app/models/map-oordinate.model';
   standalone: false,
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  animations: [
-    trigger('animation', [
-      state('visible', style({
-        transform: 'translateX(0)',
-        opacity: 1
-      })),
-      transition('void => *', [
-        style({ transform: 'translateX(50%)', opacity: 0 }),
-        animate('300ms ease-out')
-      ]),
-      transition('* => void', [
-        animate(('250ms ease-in'), style({
-          height: 0,
-          opacity: 0,
-          transform: 'translateX(50%)'
-        }))
-      ])
-    ])
-  ],
-  styleUrls: ['./dashboard.component.css']
-  , changeDetection: ChangeDetectionStrategy.Eager
+  styleUrls: ['./dashboard.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class DashboardComponent implements OnInit {
   @ViewChild('assetDialog') assetDialog: TemplateRef<{
@@ -48,95 +24,28 @@ export class DashboardComponent implements OnInit {
   }>;
   loadingZonings = true;
   loadingWedges = true;
-  loadingFacilitySummaries = true;
   zoningsLoadError = '';
   wedgesLoadError = '';
   mapLoadError = '';
-  zonings: Array<FacilityType> = [];
   facilityType: FacilityType;
-  wedges: Array<DashboardWedge> = [];
-  currentUser: User;
-  userFromApi: User;
-  zoningColumns = ['name', 'signedOff', 'total'];
-  data: any;
-  nonResidentialBuildings: any;
-  dwellings: any;
-  land: any;
-  barChartdata: any;
-  lineChartdata: any;
-  numberofProperties: any;
-  signedoffProperties: any;
-  facilitySummaries: Array<facilitySummaryChart> = [];
+  readonly zoningColumns = ['name', 'signedOff', 'total'];
+  nonResidentialBuildings?: DashboardWedge;
+  dwellings?: DashboardWedge;
+  land?: DashboardWedge;
   zoom = mapConfig.defaultZoom;
   dialogHeader = ''
   markers: MapMarkerData[] = [];
   center: [number, number] = mapConfig.defaultCenter;
 
   constructor(
-    private userService: UserService,
     private facilityService: FacilityService,
-    private authenticationService: AuthenticationService,
     private dialog: MatDialog,
-    private toastService: ToastService) {
-    this.currentUser = this.authenticationService.currentUserValue;
-  }
+    private toastService: ToastService) { }
 
   ngOnInit() {
-
-    this.addMarker();
-
+    this.loadMapLocations();
     this.loadZonings();
-
-    this.facilityService.getFacilitySummaries().pipe(first()).subscribe(facilitySummaries => {
-      this.loadingFacilitySummaries = false;
-      this.facilitySummaries = Array.isArray(facilitySummaries) ? facilitySummaries : [];
-      const summaries = this.facilitySummaries[1]?.facilitySummaries;
-      if (!Array.isArray(summaries) || summaries.length < 3) {
-        this.toastService.showError('Facility summaries could not be loaded because the server returned incomplete data.');
-        return;
-      }
-      this.lineChartdata = {
-        labels: ['Opening Balance', 'Additions', 'PPeaIn', 'PPeaOut', 'Disposals', 'Closing Balance'],
-        datasets: [
-          {
-            label: summaries[0].facilityType,
-            backgroundColor: '#ed3c76',
-            borderColor: '#1E88E5',
-            data: [summaries[0].openingBalance, summaries[0].additions, summaries[0].ppeaIn,
-              summaries[0].ppeaOut, summaries[0].disposals, summaries[0].closingBalance]
-
-          },
-          {
-            label: summaries[1].facilityType,
-            data: [summaries[1].openingBalance, summaries[1].additions, summaries[1].ppeaIn,
-              summaries[1].ppeaOut, summaries[1].disposals, summaries[1].closingBalance],
-            fill: false,
-            backgroundColor: '#42A5F5',
-            borderColor: '#7CB342',
-          },
-          {
-            label: summaries[2].facilityType,
-            data: [summaries[2].openingBalance, summaries[2].additions, summaries[2].ppeaIn,
-              summaries[2].ppeaOut, summaries[2].disposals, summaries[2].closingBalance],
-            fill: false,
-            backgroundColor: '#599597',
-            borderColor: '#599597'
-          }
-        ]
-      };
-    }, error => {
-      this.loadingFacilitySummaries = false;
-      this.toastService.showError(this.toastService.getApiErrorMessage(error));
-    });
-
-    this.facilityService.getDashboardWedges().pipe(first()).subscribe(wedges => {
-      this.loadingWedges = false;
-      this.setDashboardWedges(wedges);
-    }, error => {
-      this.loadingWedges = false;
-      this.wedgesLoadError = this.toastService.getApiErrorMessage(error);
-      this.toastService.showError(this.wedgesLoadError);
-    });
+    this.loadWedges();
   }
 
   loadWedges(): void {
@@ -155,13 +64,32 @@ export class DashboardComponent implements OnInit {
   loadZonings(): void {
     this.loadingZonings = true;
     this.zoningsLoadError = '';
-    this.facilityService.getFacilityZonings().pipe(first()).subscribe(zonings => {
-      this.loadingZonings = false;
-      this.zonings = Array.isArray(zonings) ? zonings : [];
-      this.facilityType = this.zonings[0];
+    this.facilityService.getFacilityZonings().pipe(
+      first(),
+      timeout(30000),
+      finalize(() => {
+        this.loadingZonings = false;
+      })
+    ).subscribe(zonings => {
+      if (!Array.isArray(zonings)) {
+        this.facilityType = undefined;
+        this.zoningsLoadError = 'Zoning information could not be loaded because the server returned invalid data.';
+        return;
+      }
+      const facilityType = zonings[0];
+      if (!facilityType || !Array.isArray(facilityType.facilityZonings)) {
+        this.facilityType = undefined;
+        return;
+      }
+      this.facilityType = {
+        ...facilityType,
+        facilityZonings: facilityType.facilityZonings.filter(zoning =>
+          typeof zoning?.name === 'string' && zoning.name.trim().length > 0)
+      };
     }, error => {
-      this.loadingZonings = false;
-      this.zoningsLoadError = this.toastService.getApiErrorMessage(error);
+      this.zoningsLoadError = error instanceof TimeoutError
+        ? 'Zoning information is taking too long to load.'
+        : this.toastService.getApiErrorMessage(error);
       this.toastService.showError(this.zoningsLoadError);
     });
   }
@@ -171,19 +99,14 @@ export class DashboardComponent implements OnInit {
       this.setWedgesLoadError('Dashboard totals could not be loaded because the server returned invalid data.');
       return;
     }
-    this.wedges = wedges;
-    this.nonResidentialBuildings = this.wedges.find(w => w?.name === 'Non Residential Buildings');
-    this.dwellings = this.wedges.find(w => w?.name === 'Dwellings');
-    this.land = this.wedges.find(w => w?.name === 'Land');
-    this.signedoffProperties = this.wedges.find(w => w?.name === 'Signed off properties');
-    this.numberofProperties = this.wedges.find(w => w?.name === 'Number of properties');
+    this.nonResidentialBuildings = wedges.find(w => w?.name === 'Non Residential Buildings');
+    this.dwellings = wedges.find(w => w?.name === 'Dwellings');
+    this.land = wedges.find(w => w?.name === 'Land');
 
     const requiredWedges = [
       this.nonResidentialBuildings,
       this.dwellings,
-      this.land,
-      this.signedoffProperties,
-      this.numberofProperties
+      this.land
     ];
     if (requiredWedges.some(wedge => !wedge || !Number.isFinite(Number(wedge.total)))) {
       this.setWedgesLoadError('Dashboard totals could not be loaded because the server returned incomplete data.');
@@ -209,7 +132,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  addMarker() {
+  private loadMapLocations(): void {
     this.facilityService.getMapCoordinates().pipe(first()).subscribe(mapCoordinates => {
       if (!Array.isArray(mapCoordinates)) {
         this.mapLoadError = 'Map locations could not be loaded.';
@@ -240,6 +163,6 @@ export class DashboardComponent implements OnInit {
   retryMapLocations(): void {
     this.mapLoadError = '';
     this.markers = [];
-    this.addMarker();
+    this.loadMapLocations();
   }
 }
