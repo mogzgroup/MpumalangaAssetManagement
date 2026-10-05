@@ -25,14 +25,10 @@
     font-weight: lighter;
 }
 
-.ui-tabview-panels {
-    background-color: transparent !important;    
-}
-
 .grid {
     display: grid;
     gap: 1rem;
-    grid-auto-flow: column;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     margin: 0 0 1rem 0;
   }
   
@@ -55,5 +51,248 @@
     border: 3px solid green;
   }
 
- 
+.assetregister-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 
+.assetregister-filter {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.assetregister-filter mat-form-field {
+    width: min(100%, 360px);
+}
+
+.assetregister-filter mat-icon {
+    margin-right: 0.5rem;
+}
+
+.asset-dialog,
+.asset-condition-dialog {
+    display: flex;
+    flex-direction: column;
+    width: min(100%, 1400px);
+    max-height: calc(100dvh - 24px);
+    min-height: 0;
+}
+
+.asset-condition-dialog {
+    width: min(75vw, 720px);
+}
+
+.asset-dialog mat-card-content,
+.asset-condition-dialog mat-card-content {
+    display: flex;
+    min-height: 0;
+    flex: 1 1 auto;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.asset-dialog mat-card-content > app-addassetregister {
+    display: flex;
+    min-height: 0;
+    flex: 1 1 auto;
+    flex-direction: column;
+}
+
+.asset-dialog mat-card-header {
+    align-items: center;
+    justify-content: space-between;
+}
+
+.asset-dialog mat-card-actions {
+    flex: 0 0 auto;
+}
+
+.asset-dialog-spacer {
+    flex: 1;
+}
+
+.asset-confirmation {
+    width: min(90vw, 400px);
+}
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+:host {
+    display: flex;
+    height: 100%;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 0.875rem;
+}
+
+.assetregister-title {
+    margin: 0 0 0.5rem;
+    color: #183b2c;
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.assetregister-breadcrumb {
+    flex: 0 0 auto;
+    margin-bottom: 0.2rem;
+}
+
+.grid {
+    flex: 0 0 auto;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.grid mat-card-content {
+    display: grid;
+    min-height: 82px;
+    align-content: center;
+    gap: 0.3rem;
+    padding: 0.75rem;
+    color: #687970;
+    font-size: 0.82rem;
+    text-align: center;
+}
+
+.number-count {
+    color: #17633f;
+    font-size: 1.55rem;
+    line-height: 1.1;
+}
+
+.assetregister-toolbar {
+    display: flex;
+    min-height: 0;
+    flex: 1 1 auto;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.assetregister-controls {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+}
+
+.assetregister-filter {
+    flex: 0 1 360px;
+}
+
+.assetregister-filter mat-form-field {
+    width: 100%;
+}
+
+.assetregister-table {
+    width: 100%;
+    min-width: 760px;
+}
+
+.assetregister-table .mat-mdc-header-cell {
+    font-family: inherit;
+    font-size: 0.78rem;
+    letter-spacing: 0.025em;
+}
+
+.assetregister-table .mat-mdc-cell {
+    font-family: inherit;
+    font-size: 0.875rem;
+    line-height: 1.45;
+}
+
+.asset-actions-cell {
+    width: 76px;
+    text-align: center;
+}
+
+.asset-table-state-cell {
+    height: 112px;
+    text-align: center;
+}
+
+.asset-table-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 72px;
+    color: #687970;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.asset-confirmation mat-card-actions button[mat-raised-button] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.asset-confirmation mat-spinner {
+    --mdc-circular-progress-active-indicator-color: currentColor;
+}
+
+@media (max-width: 600px) {
+    .assetregister-title {
+        font-size: 1.25rem;
+    }
+
+    .asset-table-state {
+        flex-wrap: wrap;
+        padding: 0.75rem;
+    }
+
+    .asset-dialog,
+    .asset-condition-dialog {
+        width: 100%;
+        max-height: calc(100dvh - 24px);
+    }
+}
+
+.assetregister-table-scroll {
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: auto;
+}
+
+.assetregister-table-scroll .mat-mdc-header-row {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #f1f6f3;
+}
+
+.assetregister-table-scroll .mat-mdc-header-cell,
+.assetregister-table-scroll .mat-mdc-cell {
+    padding: 0.65rem 0.85rem;
+    border-bottom-color: #e8efea;
+}
+
+.assetregister-table-scroll .mat-mdc-header-cell {
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .assetregister-controls {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .assetregister-filter {
+        flex: auto;
+    }
+}

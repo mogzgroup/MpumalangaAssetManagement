@@ -13,11 +13,11 @@ export class FinancialsComponent implements OnInit {
   constructor(private router: Router) { }
   classes: any[];
 
-    vagons: any[];
+    vagons: any[] = [];
     
-    seats: any[];
+    seats: any[] = [];
 
-    seatInformation: any;
+    seatInformation: any = { class: null, wagon: null, seat: null };
 
     ngOnInit() { 
 
@@ -58,4 +58,3 @@ export class FinancialsComponent implements OnInit {
     }
 
 }
-

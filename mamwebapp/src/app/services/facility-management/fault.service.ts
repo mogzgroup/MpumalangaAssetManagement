@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Fault } from 'src/app/models/fault.model';
 import { environment } from 'src/environments/environment';
+import { cachedGet } from '../../helpers/http-cache';
 
 @Injectable({
     providedIn: 'root'
@@ -12,7 +13,7 @@ export class FaultService {
     constructor(private http: HttpClient) { }
 
     getFaults(): Observable<Array<Fault>> {
-        return this.http.get<Array<Fault>>(`${environment.apiUrl}/api/fault/getfaults`);
+        return cachedGet<Array<Fault>>(this.http, `${environment.apiUrl}/api/fault/getfaults`);
     }
 
     addFault(fault: Fault) {
@@ -28,7 +29,7 @@ export class FaultService {
     }
 
     getFaultReferenceNo(referenceNo: string) {
-        return this.http.get<Fault>(`${environment.apiUrl}/api/fault/getfaultbyreferenceno/${referenceNo}`);
+        return cachedGet<Fault>(this.http, `${environment.apiUrl}/api/fault/getfaultbyreferenceno/${referenceNo}`);
     }
 
     uploadFiles(files: any, fileName: string) {
@@ -53,4 +54,3 @@ export class FaultService {
         return this.http.get<any[]>(`${environment.apiUrl}/api/fault/getFiles/` + fileReference);
       }
 }
-

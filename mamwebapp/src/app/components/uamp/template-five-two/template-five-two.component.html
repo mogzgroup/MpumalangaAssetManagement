@@ -1,195 +1,160 @@
-<div class="mt-5">
-    <p-card>
-        <ng-template pTemplate="subtitle">
-            Operation Plan: Maintenance requirements (i.e Repairs)
-        </ng-template>
-        <ng-template pTemplate="content">
-            <p-table styleClass="p-datatable-striped" [value]="operationPlans" [responsive]="true" [paginator]="true"
-                [rows]="5" [showCurrentPageReport]="true" responsiveLayout="scroll" [rowsPerPageOptions]="[5,10,15]">
-                <ng-template pTemplate="caption">
-                    <div class="p-d-flex right p-jc-between text-right">
-                        <button mat-button pTooltip="Add Operation Plan" type="button" (click)="displayDialog = true; dialogHeader = 'Add Operation Plan'"><span class="pi pi-plus"></span>Add Operation Plan</button>
-                    </div>
-                </ng-template>
-                <ng-template pTemplate="header">
+<mat-card class="mt-5">
+    <mat-card-subtitle>Operation Plan: Maintenance requirements (i.e. repairs)</mat-card-subtitle>
+    <mat-card-content>
+        <div class="table-actions">
+            <button mat-raised-button color="primary" matTooltip="Add Operation Plan"
+                (click)="openAddDialog()">
+                <mat-icon>add</mat-icon>Add Operation Plan
+            </button>
+        </div>
+        <div class="table-container">
+            <table class="maintenance-table">
+                <thead>
                     <tr>
                         <th>District</th>
                         <th>Town</th>
                         <th>Local Municipality</th>
                         <th>Asset Description</th>
                         <th>Repair Description</th>
-                        <th style="width: 200px;">YEAR <br> <small>in which initial request was submitted</small></th>
-                        <th style="width: 200px;">Priority/ Service Ranking</th>
-                        <th>Cash Flow <br><small>(MTEF YR 1)</small></th>
-                        <th>Cash Flow <br><small>(MTEF YR 2)</small></th>
-                        <th>Cash Flow <br><small>(MTEF YR 3)</small></th>
-                        <th>Cash Flow <br><small>(MTEF YR 4)</small></th>
-                        <th>Cash Flow <br><small>(MTEF YR 5)</small></th>
+                        <th>Year <small>in which initial request was submitted</small></th>
+                        <th>Priority/ Service Ranking</th>
+                        <th>Cash Flow <small>(MTEF Year 1)</small></th>
+                        <th>Cash Flow <small>(MTEF Year 2)</small></th>
+                        <th>Cash Flow <small>(MTEF Year 3)</small></th>
+                        <th>Cash Flow <small>(MTEF Year 4)</small></th>
+                        <th>Cash Flow <small>(MTEF Year 5)</small></th>
                         <th>Total Amount Required</th>
                     </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-operationPlan let-rowIndex="rowIndex">
-                    <tr>
-                        <td>{{operationPlan.districtRegion}}</td>
-                        <td>{{operationPlan.town}}</td>
-                        <td>{{operationPlan.localAuthority}}</td>
-                        <td>{{operationPlan.assetDescription}}</td>
-                        <td><input [(ngModel)]="operationPlan.repairDescription" [ngModelOptions]="{standalone: true}"
-                                autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget"></td>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let operationPlan of pagedOperationPlans">
+                        <td>{{ operationPlan.districtRegion }}</td>
+                        <td>{{ operationPlan.town }}</td>
+                        <td>{{ operationPlan.localAuthority }}</td>
+                        <td>{{ operationPlan.assetDescription }}</td>
                         <td>
-                            <p-dropdown class="ui-inputtext ui-widget" placeholder="Please select"
-                                [(ngModel)]="operationPlan.initialNeedYearObj" [ngModelOptions]="{standalone: true}"
-                                (onChange)="onInitialNeedYearChange(operationPlan, $event)" [options]="initialNeedYears"
-                                optionLabel="name"></p-dropdown>
+                            <input matInput [(ngModel)]="operationPlan.repairDescription"
+                                [ngModelOptions]="{standalone: true}" aria-label="Repair description">
                         </td>
                         <td>
-                            <p-dropdown class="ui-inputtext ui-widget"
-                                [(ngModel)]="operationPlan.prioityServiceReankingObj"
-                                [ngModelOptions]="{standalone: true}"
-                                (onChange)="onPrioityServiceReankingChange(operationPlan, $event)"
-                                placeholder="Please select" inputId="prioityServiceReanking" [options]="prioities"
-                                optionLabel="name"></p-dropdown>
+                            <mat-select [(ngModel)]="operationPlan.initialNeedYearObj" [ngModelOptions]="{standalone: true}"
+                                placeholder="Please select" (selectionChange)="onInitialNeedYearChange(operationPlan, $event)"
+                                aria-label="Initial request year">
+                                <mat-option *ngFor="let year of initialNeedYears" [value]="year">{{ year.name }}</mat-option>
+                            </mat-select>
                         </td>
                         <td>
-                            <p-inputNumber class="ui-inputtext ui-widget" [(ngModel)]="operationPlan.cashFlowYear1"
-                                [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA">
-                            </p-inputNumber>
+                            <mat-select [(ngModel)]="operationPlan.priorityServiceRankingObj"
+                                [ngModelOptions]="{standalone: true}" placeholder="Please select"
+                                (selectionChange)="onPrioityServiceReankingChange(operationPlan, $event)"
+                                aria-label="Priority service ranking">
+                                <mat-option *ngFor="let priority of prioities" [value]="priority">{{ priority.name }}</mat-option>
+                            </mat-select>
                         </td>
-                        <td>
-                            <p-inputNumber class="ui-inputtext ui-widget" [(ngModel)]="operationPlan.cashFlowYear2"
-                                [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA">
-                            </p-inputNumber>
-                        </td>
-                        <td>
-                            <p-inputNumber class="ui-inputtext ui-widget" [(ngModel)]="operationPlan.cashFlowYear3"
-                                [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA">
-                            </p-inputNumber>
-                        </td>
-                        <td>
-                            <p-inputNumber class="ui-inputtext ui-widget" [(ngModel)]="operationPlan.cashFlowYear4"
-                                [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA">
-                            </p-inputNumber>
-                        </td>
-                        <td>
-                            <p-inputNumber class="ui-inputtext ui-widget" [(ngModel)]="operationPlan.cashFlowYear5"
-                                [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA">
-                            </p-inputNumber>
-                        </td>
-                        <td>{{calculateDbTotalAmountRequired(operationPlan) | currency:'ZAR':'R'}}</td>
-
+                        <td><input matInput type="number" min="0" step="0.01" [(ngModel)]="operationPlan.cashFlowYear1"
+                            [ngModelOptions]="{standalone: true}" aria-label="MTEF year 1 cash flow"></td>
+                        <td><input matInput type="number" min="0" step="0.01" [(ngModel)]="operationPlan.cashFlowYear2"
+                            [ngModelOptions]="{standalone: true}" aria-label="MTEF year 2 cash flow"></td>
+                        <td><input matInput type="number" min="0" step="0.01" [(ngModel)]="operationPlan.cashFlowYear3"
+                            [ngModelOptions]="{standalone: true}" aria-label="MTEF year 3 cash flow"></td>
+                        <td><input matInput type="number" min="0" step="0.01" [(ngModel)]="operationPlan.cashFlowYear4"
+                            [ngModelOptions]="{standalone: true}" aria-label="MTEF year 4 cash flow"></td>
+                        <td><input matInput type="number" min="0" step="0.01" [(ngModel)]="operationPlan.cashFlowYear5"
+                            [ngModelOptions]="{standalone: true}" aria-label="MTEF year 5 cash flow"></td>
+                        <td>{{ calculateDbTotalAmountRequired(operationPlan) | currency:'ZAR':'R' }}</td>
                     </tr>
-                </ng-template>
-            </p-table>
-        </ng-template>
-    </p-card>
-</div>
-
-<div *ngIf="displayDialog" class="dialogBackgroud"></div>
-<p-dialog header="{{dialogHeader}}" [(visible)]="displayDialog" [style]="{width: '80vw'}">
-    <p-body>
-        <form [formGroup]="newOperationPlanForm">
-            <div class="formgrid grid">
-                <div class="field grid col-3">
-                    <label for="districtRegion">District/ Region</label>
-                    <p-dropdown (onChange)="setLocalMunicipalities($event)" [style]="{'width':'318px'}"
-                        class="ui-inputtext ui-widget" placeholder="Please select" inputId="districtRegion"
-                        [options]="regions" formControlName="districtRegion" optionLabel="name"></p-dropdown>
-                </div>
-                <div class="field grid col-3">
-                    <label for="localMunicipality">Local Municipality</label>
-                    <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" placeholder="Please select"
-                        inputId="localMunicipality" [options]="localMunicipalities" formControlName="localMunicipality"
-                        optionLabel="name"></p-dropdown>
-                </div>
-                <div class="field grid col-3">
-                    <label for="priorityServiceRanking">Priority/ Service Ranking</label>
-                    <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" placeholder="Please select"
-                        inputId="priorityServiceRanking" [options]="prioities" formControlName="priorityServiceRanking"
-                        optionLabel="name"></p-dropdown>
-                </div>
-                <div class="field grid col-3 pr-4">
-                    <label for="initialNeedYear">Year <small> in which initial request was submitted</small></label>
-                    <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" placeholder="Please select"
-                        [ngModelOptions]="{standalone: true}" formControlName="initialNeedYear"
-                        [options]="initialNeedYears" optionLabel="name"></p-dropdown>
-                </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field grid col-3">
-                    <label for="assetDescription">Asset Description</label>
-                    <input formControlName="assetDescription" autocomplete="off" type="text" pInputText
-                        class="ui-inputtext ui-widget">
-                </div>
-                <div class="field grid col-3 pr-3">
-                    <label for="town">Town</label>
-                    <input formControlName="town" autocomplete="off" type="text" pInputText
-                        class="ui-inputtext ui-widget">
-                </div>
-                <div class="field grid col-3">
-                    <label for="repairDescription">Repair Description</label>
-                    <input formControlName="repairDescription" autocomplete="off" type="text" pInputText
-                        class="ui-inputtext ui-widget">
-                </div>
-                <div class="field grid col-3">
-                    <label for="cashFlowYear1">Cash Flow <small>(MTEF Year 1)</small></label>
-                    <p-inputNumber (keydown)="calculateTotalAmountRequired()" formControlName="cashFlowYear1"
-                        mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
-                </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field grid col-3">
-                    <label for="cashFlowYear2">Cash Flow <small>(MTEF Year 2)</small></label>
-                    <p-inputNumber (keydown)="calculateTotalAmountRequired()" formControlName="cashFlowYear2"
-                        mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
-                </div>
-                <div class="field grid col-3">
-                    <label for="cashFlowYear3">Cash Flow <small>(MTEF Year 3)</small></label>
-                    <p-inputNumber (keydown)="calculateTotalAmountRequired()" formControlName="cashFlowYear3"
-                        mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
-                </div>
-                <div class="field grid col-3">
-                    <label for="cashFlowYear4">Cash Flow <small>(MTEF Year 4)</small></label>
-                    <p-inputNumber (keydown)="calculateTotalAmountRequired()" formControlName="cashFlowYear4"
-                        mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
-                </div>
-                <div class="field grid col-3">
-                    <label for="cashFlowYear5">Cash Flow <small>(MTEF Year 5)</small></label>
-                    <p-inputNumber (keydown)="calculateTotalAmountRequired()" formControlName="cashFlowYear5"
-                        mode="currency" currency="ZAR" locale="en-ZA" class="ui-inputtext ui-widget"></p-inputNumber>
-                </div>
-
-            </div>
-            <div class="formgrid grid">
-                <div class="field grid col-3">
-                    <label for="totalAmountRequired">Total Amount Required</label>
-                    <p-inputNumber disabled="true" formControlName="totalAmountRequired" mode="currency"
-                        class="ui-inputtext ui-widget" currency="ZAR" locale="en-ZA"></p-inputNumber>
-                </div>
-                <div class="field grid col-3">
-
-                </div>
-                <div class="field grid col-3"></div>
-
-            </div>
-        </form>
-    </p-body>
-    <p-footer>
-        <div class="p-grid p-nogutter p-justify-between">
-            <button mat-button [style]="{'float':'left'}" mat-button (click)="displayDialog = false" >Cancel</button>
-            <button mat-button *ngIf="!isEdit" [style]="{'float':'right'}" (click)="addOperationPlan()" >Add</button>
-            <button mat-button *ngIf="isEdit" [style]="{'float':'right'}" (click)="updateOperationPlan()" >Update</button>
+                </tbody>
+            </table>
         </div>
-    </p-footer>
-</p-dialog>
+        <mat-paginator [length]="operationPlans.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 15]"
+            (page)="pageChanged($event)" showFirstLastButtons></mat-paginator>
+    </mat-card-content>
+</mat-card>
+
+<ng-template #formDialog>
+    <mat-card class="operation-dialog">
+        <mat-card-header mat-dialog-title><mat-card-title>{{ dialogHeader }}</mat-card-title></mat-card-header>
+        <mat-card-content mat-dialog-content>
+            <form [formGroup]="newOperationPlanForm" class="operation-form">
+                <mat-form-field appearance="outline">
+                    <mat-label>District/ Region</mat-label>
+                    <mat-select formControlName="districtRegion" placeholder="Please select"
+                        (selectionChange)="setLocalMunicipalities($event)">
+                        <mat-option *ngFor="let region of regions" [value]="region">{{ region.name }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Local Municipality</mat-label>
+                    <mat-select formControlName="localMunicipality" placeholder="Please select">
+                        <mat-option *ngFor="let municipality of localMunicipalities" [value]="municipality">{{ municipality.name }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Priority/ Service Ranking</mat-label>
+                    <mat-select formControlName="priorityServiceRanking" placeholder="Please select">
+                        <mat-option *ngFor="let priority of prioities" [value]="priority">{{ priority.name }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Year in which initial request was submitted</mat-label>
+                    <mat-select formControlName="initialNeedYear" placeholder="Please select">
+                        <mat-option *ngFor="let year of initialNeedYears" [value]="year">{{ year.name }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Asset Description</mat-label>
+                    <input matInput formControlName="assetDescription">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Town</mat-label>
+                    <input matInput formControlName="town">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Repair Description</mat-label>
+                    <input matInput formControlName="repairDescription">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Cash Flow (MTEF Year 1)</mat-label>
+                    <input matInput type="number" min="0" step="0.01" formControlName="cashFlowYear1"
+                        (input)="calculateTotalAmountRequired()">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Cash Flow (MTEF Year 2)</mat-label>
+                    <input matInput type="number" min="0" step="0.01" formControlName="cashFlowYear2"
+                        (input)="calculateTotalAmountRequired()">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Cash Flow (MTEF Year 3)</mat-label>
+                    <input matInput type="number" min="0" step="0.01" formControlName="cashFlowYear3"
+                        (input)="calculateTotalAmountRequired()">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Cash Flow (MTEF Year 4)</mat-label>
+                    <input matInput type="number" min="0" step="0.01" formControlName="cashFlowYear4"
+                        (input)="calculateTotalAmountRequired()">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Cash Flow (MTEF Year 5)</mat-label>
+                    <input matInput type="number" min="0" step="0.01" formControlName="cashFlowYear5"
+                        (input)="calculateTotalAmountRequired()">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Total Amount Required</mat-label>
+                    <input matInput type="number" formControlName="totalAmountRequired" readonly>
+                </mat-form-field>
+            </form>
+        </mat-card-content>
+        <mat-card-actions mat-dialog-actions align="end">
+            <button mat-button (click)="closeFormDialog()">Cancel</button>
+            <button mat-raised-button color="primary" (click)="addOperationPlan()">Add</button>
+        </mat-card-actions>
+    </mat-card>
+</ng-template>
 
 <div class="uamp-footer">
-    <div class="p-grid p-nogutter p-justify-between">
-        <button mat-button (click)="back()"><span class="pi pi-angle-left"></span>Back</button>
-        
-        <button mat-button [style]="{'float':'right'}" (click)="save()" class="ml-1" >Save</button>
-        <button mat-button styleClass="btn-next" (click)="nextPage()" >Next</button>
+    <button mat-button (click)="back()"><mat-icon>chevron_left</mat-icon>Back</button>
+    <div>
+        <button mat-button (click)="save()" class="ml-1">Save</button>
+        <button mat-raised-button color="primary" (click)="nextPage()">Next</button>
     </div>
 </div>
-
-
-

@@ -1,22 +1,122 @@
-.text-error {
-	color: red;
-	font-size: 14px;
-    position: absolute;
-    margin-top: 14px;
+.camp-breadcrumb,
+.camp-actions {
+    display: flex;
+    align-items: center;
 }
 
-.ui-inputtext {
-    display: flex !important;
-    font-size: 14px;
-    color: #1b1c1e;
-    background: #f5f5f5;
-    padding: 0.429em;
-    border: 1px solid #E0E0E0;
-    -moz-transition: border-color 0.3s, box-shadow 0.3s;
-    -o-transition: border-color 0.3s, box-shadow 0.3s;
-    -webkit-transition: border-color 0.3s, box-shadow 0.3s;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+.camp-breadcrumb {
+    gap: 0.5rem;
+}
+
+.camp-actions {
+    justify-content: flex-end;
+    margin: 1rem 0;
+}
+
+.camp-messages {
+    margin: 1rem 0;
+}
+
+.camp-message {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid currentColor;
+    border-radius: 4px;
+}
+
+.camp-message.error {
+    color: #b3261e;
+}
+
+.camp-message span {
+    flex: 1;
+}
+
+.camp-view-dialog {
+    display: flex;
+    flex-direction: column;
+    width: min(80vw, 1100px);
+    max-height: 90vh;
+    min-height: 0;
+}
+
+.camp-editor-dialog {
+    display: flex;
+    flex-direction: column;
+    width: min(95vw, 1500px);
+    max-height: 95vh;
+    min-height: 0;
+}
+
+.camp-view-dialog mat-card-header,
+.camp-editor-dialog mat-card-header {
+    align-items: center;
+    justify-content: space-between;
+}
+
+.camp-view-dialog mat-card-content,
+.camp-editor-dialog mat-card-content {
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: auto;
+}
+
+.camp-view-dialog mat-card-actions,
+.camp-editor-dialog mat-card-actions {
+    flex: 0 0 auto;
+}
+
+.camp-actions-spacer {
+    flex: 1;
+}
+
+:host {
+    display: flex;
+    height: 100%;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.camp-breadcrumb,
+.camp-actions,
+.camp-messages {
+    flex: 0 0 auto;
+}
+
+.camp-breadcrumb {
+    margin-bottom: 0.3rem;
+}
+
+.camp-actions {
+    justify-content: flex-end;
+    margin: 0 0 0.75rem;
+}
+
+.camp-messages {
+    margin: 0.25rem 0 0.75rem;
+}
+
+.camp-table-scroll {
+    flex: 1 1 auto;
+}
+
+.camp-table-scroll table {
+    min-width: 700px;
+}
+
+.camp-table-state {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.camp-table-state mat-progress-bar {
+    margin: 0 auto 0.75rem;
+    max-width: 320px;
+}
+
+.camp-table-state button {
+    margin-left: 0.5rem;
 }

@@ -11,7 +11,7 @@ namespace MAM.API.Controllers
     [ApiController]
     public class UAMPController : Controller
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(UserController));
+        private static readonly ILog log = LogManager.GetLogger(typeof(UAMPController));
 
         private IUAMPService _uampService;       
 
@@ -25,15 +25,7 @@ namespace MAM.API.Controllers
         [Route("test")]
         public IActionResult Test()
         {
-            try
-            {
-                return Ok(true);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw ex;
-            }
+            return Ok(true);
         }
 
         [AllowAnonymous]
@@ -49,7 +41,7 @@ namespace MAM.API.Controllers
             catch (Exception ex)
             {
                 log.Error(ex);
-                throw ex;
+                throw;
             }
         }
 
@@ -103,10 +95,9 @@ namespace MAM.API.Controllers
                 return Ok(result);
             }
             catch (Exception ex)
-            
             {
                 log.Error(ex);
-                throw ex;
+                throw;
             }
         }
 
@@ -141,7 +132,7 @@ namespace MAM.API.Controllers
             catch (Exception ex)
             {
                 log.Error(ex);
-                throw ex;
+                throw;
             }
         }
 

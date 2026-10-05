@@ -1,122 +1,182 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { Component, OnInit, ChangeDetectionStrategy, ViewChild, AfterViewInit, TemplateRef } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { Project } from 'src/app/models/project.model';
 import { User } from 'src/app/models/user.model';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ProjectService } from 'src/app/services/facility-management/project.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   standalone: false,
   selector: 'app-project',
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService, ConfirmationService]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
-export class ProjectComponent implements OnInit {
+export class ProjectComponent implements OnInit, AfterViewInit {
 
-  public error = '';
   public dialogHeader = '';
   public project: Project;
   public isSuccessful: boolean = false;
   public loading: boolean = false;
+  public loadError = '';
+  public deletingProject = false;
   public projects: Array<any> = [];
-  public showdelete: boolean = false;
   public projectsInProgress: number = 0;
   public serviceRequestsLogged: number = 0;
   public completedRequests: number = 0;
   public awaitingSignOff: number = 0;
-  public errorMsg: string;
   public currentUser: User;
-  public showDialog: boolean;
+  @ViewChild('projectDialog') projectDialog: TemplateRef<unknown>;
+  @ViewChild('deleteProjectDialog') deleteProjectDialog: TemplateRef<unknown>;
+  private projectDialogRef: MatDialogRef<unknown> | null = null;
+  private deleteProjectDialogRef: MatDialogRef<unknown> | null = null;
   public cols = [
     { field: 'district', header: 'District' },
     { field: 'name', header: 'Name' },
     { field: 'managedBy', header: 'Managed By' },
     { field: 'status', header: 'Status' }
   ];
-  buttonItems: MenuItem[];
+  displayedColumns = this.cols.map(col => col.field).concat('actions');
+  dataSource = new MatTableDataSource<any>([]);
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
-  public items: any = [{ icon: 'pi pi-home', url: 'dashboard' },
-  { label: 'Facility Management' }
-  ];
 
-
-  constructor(private authenticationService: AuthenticationService, private projectService: ProjectService, private messageService: MessageService) { }
+  constructor(
+    private authenticationService: AuthenticationService,
+    private projectService: ProjectService,
+    private toastService: ToastService,
+    private dialog: MatDialog
+  ) { }
 
   ngOnInit() {
     this.authenticationService.currentUser.pipe().subscribe(x => {
       this.currentUser = x;
     });
 
-    this.buttonItems = [
-      {
-        label: 'View', icon: 'pi pi-eye', command: () =>
-          this.viewProject()
-      },
-      { separator: true },
-      {
-        label: 'Print', icon: 'pi pi-print', command: () =>
-          this.printProject()
-      },
-      { separator: true },
-      {
-        label: 'Update', icon: 'pi pi-pencil', command: () =>
-          this.updateProject()
-      },
-      { separator: true },
-      {
-        label: 'Delete', icon: 'pi pi-trash', command: () =>
-          this.confirmDeleteProject()
-      }];
+    this.loadProjects();
+  }
+
+  loadProjects() {
+    if (this.loading) {
+      return;
+    }
+    this.loading = true;
+    this.loadError = '';
     this.projectService.getProjects().subscribe(projects => {
-      if (projects.length > 0) {
+      this.loading = false;
+      if (!Array.isArray(projects)) {
         this.projects = [];
-        projects.forEach(project => {
-           // project.managedBy = project.employeeName !== '' ? project.employeeName + ' - ' + project.employeeNumber
-           //   : project.businessName + ' - ' + project.businessRegNumber,
-          this.projects.push(project);
-        });
-
-        this.isSuccessful = true;
+        this.dataSource.data = [];
+        this.loadError = 'Unable to load projects. Please try again.';
+        this.toastService.showError(this.loadError);
+        return;
       }
+      this.projects = projects;
+      this.dataSource.data = this.projects;
+      this.isSuccessful = true;
     },
-      (error) => {
+      error => {
+        this.loading = false;
+        this.projects = [];
+        this.dataSource.data = [];
         this.isSuccessful = false;
+        this.loadError = 'Unable to load projects. Please try again.';
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
+  }
 
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  applyFilter(value: string) {
+    this.dataSource.filter = value.trim().toLowerCase();
+    this.dataSource.paginator?.firstPage();
   }
 
   confirmDeleteProject() {
-    this.showdelete = true;
+    this.deleteProjectDialogRef = this.dialog.open(this.deleteProjectDialog, {
+      width: 'min(92vw, 440px)'
+    });
+    const dialogRef = this.deleteProjectDialogRef;
+    dialogRef.afterClosed().subscribe(() => {
+      if (this.deleteProjectDialogRef === dialogRef) {
+        this.deleteProjectDialogRef = null;
+      }
+    });
   }
 
-  showToast(summary: string, detail: string, severity: string) {
-    this.messageService.add({ severity, summary, detail });
+  closeDeleteProjectDialog() {
+    if (!this.deletingProject) {
+      this.deleteProjectDialogRef?.close();
+    }
   }
 
   deleteProject() {
+    if (this.deletingProject || !this.project) {
+      return;
+    }
+    this.deletingProject = true;
+    if (this.deleteProjectDialogRef) {
+      this.deleteProjectDialogRef.disableClose = true;
+    }
     this.projectService.deleteProject(this.project).subscribe(isDeleted => {
       if (isDeleted) {
-        this.showToast('Delete project', 'Project has been deleted successfully.', 'success');
-        this.showdelete = false;
+        this.toastService.showSuccess('Project deleted successfully.');
+        this.deleteProjectDialogRef?.close();
         const index = this.projects.indexOf(this.project);
         this.projects.splice(index, 1);
+        this.dataSource.data = this.projects;
+      } else if (this.deleteProjectDialogRef) {
+        this.deleteProjectDialogRef.disableClose = false;
       }
+      this.deletingProject = false;
     },
-      (error) => {
-        this.messageService.add({
-          severity: 'error', summary: 'Error Occurred',
-          detail: 'An error occurred while processing your request. please try again!'
-        });
-        this.showdelete = false;
+      () => {
+        this.deletingProject = false;
+        if (this.deleteProjectDialogRef) {
+          this.deleteProjectDialogRef.disableClose = false;
+        }
+        this.toastService.showError('Unable to delete this project. Please try again.');
       });
   }
 
-  updateProject() { }
+  updateProject() {
+    this.dialogHeader = 'Edit Project';
+    this.openProjectDialog();
+  }
 
   viewProject() {
-    this.showDialog = true;
+    this.dialogHeader = 'View Project';
+    this.openProjectDialog();
+  }
+
+  openNewProjectDialog() {
+    this.addProject();
+    this.dialogHeader = 'New Project';
+    this.openProjectDialog();
+  }
+
+  private openProjectDialog() {
+    this.projectDialogRef = this.dialog.open(this.projectDialog, {
+      width: 'min(92vw, 1100px)',
+      maxWidth: 'calc(100vw - 24px)',
+      maxHeight: 'calc(100dvh - 24px)',
+      panelClass: 'project-management-dialog'
+    });
+    this.projectDialogRef.afterClosed().subscribe(() => {
+      this.projectDialogRef = null;
+    });
+  }
+
+  closeProjectDialog() {
+    this.projectDialogRef?.close();
   }
 
   printProject() { }
@@ -166,7 +226,20 @@ export class ProjectComponent implements OnInit {
     this.project = project;
   }
 
-  addUpdateAsset(event: any) { }
+  addUpdateAsset(project: Project) {
+    if (!project) {
+      return;
+    }
+    this.project = project;
+    const existingIndex = this.projects.findIndex(item => item.id === project.id);
+    if (existingIndex >= 0) {
+      this.projects[existingIndex] = project;
+    } else {
+      this.projects.push(project);
+    }
+    this.dataSource.data = [...this.projects];
+    this.projectDialogRef?.close();
+  }
 
 
 }

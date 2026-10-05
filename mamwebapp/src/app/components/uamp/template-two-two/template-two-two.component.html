@@ -1,373 +1,246 @@
-<div class="stepsdemo-content mt-5">
-    <p-card>
-        <ng-template pTemplate="subtitle">
-            Annexure B: Leased assets occupied by/ allocated to schedule of current leased accommodation
-        </ng-template>
-        <ng-template pTemplate="content">
-            <div class="ui-g ui-fluid">
-                <p-table styleClass="p-datatable-striped" responsiveLayout="stack" [value]="properties"
-                    [responsive]="true" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
-                    responsiveLayout="scroll" [rowsPerPageOptions]="[5,10,15]">
-                    <ng-template pTemplate="caption">
-                        <div class="p-d-flex right p-jc-between text-right">
-                            <button mat-button pTooltip="Add Property" type="button" (click)="displayDialog = true; dialogHeader = 'Add Property'"><span class="pi pi-plus"></span>Add Property</button>
-                        </div>
-                    </ng-template>
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th style="width: 120px;">Serial No.</th>
-                            <th style="width: 120px;">User Dept Code</th>
-                            <th style="width: 120px;">File Reference No.</th>
-                            <th style="width: 200px;">District</th>
-                            <th>Town</th>
-                            <th style="width: 200px;">Local Municipality</th>
-                            <th>Asset Description</th>
-                            <th>Old Street Address</th>
-                            <th>Current Street Address</th>
-                            <th>Property Description</th>
-                            <th style="width: 130px;">Asset Type</th>
-                            <th style="width: 100px;">No. OF Parking Bays Allocated</th>
-                            <th style="width: 100px;">Lettable Space<br> <small>(M²) 0000.00</small></th>
-                            <th style="width: 120px;">Extent of Land (HA) <br> <small>(M²) 0000.00</small></th>
-                            <th>Rental PM</th>
-                            <th>Rental PA</th>
-                            <th>Operational Cost</th>
-                            <th>Lease Start Date</th>
-                            <th>Lease End Date</th>
-                            <th>Rental Rate/M2</th>
-                            <th style="width: 200px;">Required Performance Standard</th>
-                            <th style="width: 200px;">Accessibility</th>
-                            <th style="width: 200px;">Condition Rating</th>
-                            <th style="width: 200px;">Suitability Index</th>
-                            <th style="width: 200px;"> Operating Performance Index</th>
-                            <th style="width: 200px;">Functional Performance Index</th>
-                            <th>Lease Term</th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-property let-rowIndex="rowIndex">
-                        <tr>
-                            <td>{{property.serialNo}}</td>
-                            <td>{{property.userDepartmentCode}}</td>
-                            <td>{{property.fileReferenceNo}}</td>
-                            <td>
-                                <p-dropdown (onChange)="setLocalMunicipalities($event, property)" class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
-                                    placeholder="Please select" [ngModelOptions]="{standalone: true}"
-                                    [options]="regions" [(ngModel)]="property.districtObj" optionLabel="name">
-                                </p-dropdown>
-                            </td>
-                            <td>{{property.town}}</td>
-                            <td>
-                                <p-dropdown (onChange)="localMunicipalitiesChanged($event, property)" class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
-                                    placeholder="Please select" [ngModelOptions]="{standalone: true}"
-                                    [options]="localMunicipalities" [(ngModel)]="property.localMunicipalityObj"
-                                    optionLabel="name">
-                                </p-dropdown>
-                            </td>
-                            <td>{{property.assetDescription}}</td>
-                            <td>{{property.currentStreetAddress}}</td>
-                            <td>{{property.currentStreetAddress}}</td>
-                            <td>{{property.propertyDescription}}</td>
-                            <td>{{property.assetType}}</td>
-                            <td>
-                                <p-inputNumber [inputStyle]="{'width':'70px'}" [(ngModel)]="property.noofParkingBays"
-                                    class="ui-inputtext ui-widget" [ngModelOptions]="{standalone: true}">
-                                </p-inputNumber>
-                            </td>
-                            <td>
-                                <p-inputNumber [inputStyle]="{'width':'68px'}" [(ngModel)]="property.lettableSpace"
-                                    class="ui-inputtext ui-widget" [ngModelOptions]="{standalone: true}" mode="decimal">
-                                </p-inputNumber>
-                            </td>
-                            <td>{{property.extentofLand}}</td>
-                            <td>
-                                <p-inputNumber [inputStyle]="{'width':'120px'}" [(ngModel)]="property.rentalPM"
-                                    class="ui-inputtext ui-widget" [ngModelOptions]="{standalone: true}" mode="currency"
-                                    currency="ZAR" locale="en-ZA"></p-inputNumber>
-
-                            </td>
-                            <td>
-                                <p-inputNumber [inputStyle]="{'width':'120px'}" [(ngModel)]="property.rentalPA"
-                                    [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA"
-                                    class="ui-inputtext ui-widget"></p-inputNumber>
-
-                            </td>
-                            <td>
-                                <p-inputNumber [inputStyle]="{'width':'120px'}" [(ngModel)]="property.operationalCosts"
-                                    [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA"
-                                    class="ui-inputtext ui-widget"></p-inputNumber>
-
-                            </td>
-                            <td>
-                                <p-calendar [(ngModel)]="property.leaseStartDate" class="ui-inputtext ui-widget"
-                                    [ngModelOptions]="{standalone: true}" dateFormat="dd/mm/yy" showOtherMonths="true"
-                                    showButtonBar="true"></p-calendar>
-
-                            </td>
-                            <td>
-                                <p-calendar [(ngModel)]="property.leaseEndDate" class="ui-inputtext ui-widget"
-                                    [ngModelOptions]="{standalone: true}" dateFormat="dd/mm/yy" showOtherMonths="true"
-                                    showButtonBar="true"></p-calendar>
-                            </td>
-                            <td>
-                                <p-inputNumber [inputStyle]="{'width':'120px'}" [(ngModel)]="property.rentalRate"
-                                    [ngModelOptions]="{standalone: true}" mode="currency" currency="ZAR" locale="en-ZA"
-                                    class="ui-inputtext ui-widget"></p-inputNumber>
-                            </td>
-                            <td>
-                                <p-dropdown class="ui-inputtext ui-widget" [style]="{'width':'180px'}"
-                                    placeholder="Please select" [(ngModel)]="property.requiredPerformanceStandardObj"
+<mat-card class="mt-5 uamp-property-card leased-properties">
+    <mat-card-subtitle class="property-section-title">Leased assets currently occupied or allocated to users</mat-card-subtitle>
+    <mat-card-content>
+        <div class="table-actions">
+            <button mat-raised-button color="primary" matTooltip="Add Property" type="button"
+                (click)="openAddDialog()">
+                <mat-icon>add</mat-icon>Add Property
+            </button>
+        </div>
+        <div class="table-container">
+            <table class="property-table">
+                <thead>
+                    <tr>
+                        <th>Serial No.</th><th>User Dept Code</th><th>File Reference No.</th><th>District</th>
+                        <th>Town</th><th>Local Municipality</th><th>Asset Description</th><th>Old Street Address</th>
+                        <th>Current Street Address</th><th>Property Description</th><th>Asset Type</th>
+                        <th>No. of Parking Bays Allocated</th><th>Lettable Space (M²)</th><th>Extent of Land (HA)</th>
+                        <th>Rental PM</th><th>Rental PA</th><th>Operational Cost</th><th>Lease Start Date</th>
+                        <th>Lease End Date</th><th>Rental Rate/M²</th><th>Required Performance Standard</th>
+                        <th>Accessibility</th><th>Condition Rating</th><th>Suitability Index</th>
+                        <th>Operating Performance Index</th><th>Functional Performance Index</th><th>Lease Term</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let property of pagedProperties">
+                        <td>{{ property.serialNo }}</td>
+                        <td>{{ property.userDepartmentCode }}</td>
+                        <td>{{ property.fileReferenceNo }}</td>
+                        <td>
+                            <mat-form-field appearance="outline">
+                                <mat-select [(ngModel)]="property.districtObj" [ngModelOptions]="{standalone: true}"
+                                    (selectionChange)="setLocalMunicipalities($event, property)" aria-label="District">
+                                    <mat-option *ngFor="let region of regions" [value]="region">{{ region.name }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td>{{ property.town }}</td>
+                        <td>
+                            <mat-form-field appearance="outline">
+                                <mat-select [(ngModel)]="property.localMunicipalityObj" [ngModelOptions]="{standalone: true}"
+                                    (selectionChange)="localMunicipalitiesChanged($event, property)" aria-label="Local Municipality">
+                                    <mat-option *ngFor="let municipality of localMunicipalities" [value]="municipality">
+                                        {{ municipality.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td>{{ property.assetDescription }}</td>
+                        <td>{{ property.oldStreetAddress }}</td>
+                        <td>{{ property.currentStreetAddress }}</td>
+                        <td>{{ property.propertyDescription }}</td>
+                        <td>{{ property.assetType }}</td>
+                        <td><input matInput type="number" [(ngModel)]="property.noofParkingBays"
+                            [ngModelOptions]="{standalone: true}" aria-label="Parking bays allocated"></td>
+                        <td><input matInput type="number" [(ngModel)]="property.lettableSpace"
+                            [ngModelOptions]="{standalone: true}" aria-label="Lettable space"></td>
+                        <td>{{ property.extentofLand }}</td>
+                        <td><input matInput type="number" [(ngModel)]="property.rentalPM"
+                            [ngModelOptions]="{standalone: true}" aria-label="Rental per month"></td>
+                        <td><input matInput type="number" [(ngModel)]="property.rentalPA"
+                            [ngModelOptions]="{standalone: true}" aria-label="Rental per annum"></td>
+                        <td><input matInput type="number" [(ngModel)]="property.operationalCosts"
+                            [ngModelOptions]="{standalone: true}" aria-label="Operational cost"></td>
+                        <td><input matInput [matDatepicker]="leaseStartPicker" [(ngModel)]="property.leaseStartDate"
+                            [ngModelOptions]="{standalone: true}" aria-label="Lease start date">
+                            <mat-datepicker-toggle matIconSuffix [for]="leaseStartPicker"></mat-datepicker-toggle>
+                            <mat-datepicker #leaseStartPicker></mat-datepicker>
+                        </td>
+                        <td><input matInput [matDatepicker]="leaseEndPicker" [(ngModel)]="property.leaseEndDate"
+                            [ngModelOptions]="{standalone: true}" aria-label="Lease end date">
+                            <mat-datepicker-toggle matIconSuffix [for]="leaseEndPicker"></mat-datepicker-toggle>
+                            <mat-datepicker #leaseEndPicker></mat-datepicker>
+                        </td>
+                        <td><input matInput type="number" [(ngModel)]="property.rentalRate"
+                            [ngModelOptions]="{standalone: true}" aria-label="Rental rate"></td>
+                        <td>
+                            <mat-form-field appearance="outline">
+                                <mat-select [(ngModel)]="property.requiredPerformanceStandardObj"
                                     [ngModelOptions]="{standalone: true}"
-                                    (onChange)="onRequiredPerformanceStandardChange(property, $event)"
-                                    [options]="requiredPerformanceStandards" optionLabel="name"></p-dropdown>
-                                
-                            </td>
-                            <td>
-                                <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
-                                    placeholder="Please select" [ngModelOptions]="{standalone: true}"
-                                    [options]="accessibilities" [(ngModel)]="property.accessibilityObj"
-                                    optionLabel="name">
-                                </p-dropdown>
-                                
-                            </td>
-                            <td>
-                                <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
-                                    [(ngModel)]="property.conditionRatingObj"
-                                    (onChange)="conditionRatingCahnged(property, $event)" inputId="conditionRating"
-                                    [options]="conditionRatings" placeholder="Please select"
-                                    [ngModelOptions]="{standalone: true}" optionLabel="name"></p-dropdown>
-                                
-                            </td>
-                            <td>
-                                <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
-                                    placeholder="Please select" [(ngModel)]="property.suitabilityIndexObj"
+                                    (selectionChange)="onRequiredPerformanceStandardChange(property, $event)"
+                                    aria-label="Required Performance Standard">
+                                    <mat-option *ngFor="let item of requiredPerformanceStandards" [value]="item">{{ item.name }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-form-field appearance="outline">
+                                <mat-select [(ngModel)]="property.accessibilityObj" [ngModelOptions]="{standalone: true}"
+                                    aria-label="Accessibility">
+                                    <mat-option *ngFor="let item of accessibilities" [value]="item">{{ item.name }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-form-field appearance="outline">
+                                <mat-select [(ngModel)]="property.conditionRatingObj" [ngModelOptions]="{standalone: true}"
+                                    (selectionChange)="conditionRatingCahnged(property, $event)" aria-label="Condition Rating">
+                                    <mat-option *ngFor="let item of conditionRatings" [value]="item">{{ item.name }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-form-field appearance="outline">
+                                <mat-select [(ngModel)]="property.suitabilityIndexObj" [ngModelOptions]="{standalone: true}"
+                                    (selectionChange)="onSuitabilityIndexChange(property, $event)" aria-label="Suitability Index">
+                                    <mat-option *ngFor="let item of suitabilityIndexs" [value]="item">{{ item.name }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-form-field appearance="outline">
+                                <mat-select [(ngModel)]="property.operatingPerformanceIndexObj"
                                     [ngModelOptions]="{standalone: true}"
-                                    (onChange)="onSuitabilityIndexChange(property, $event)"
-                                    [options]="suitabilityIndexs" optionLabel="name"></p-dropdown>
-                                
-                            </td>
-                            <td>
-                                <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
-                                    placeholder="Please select" [(ngModel)]="property.operatingPerformanceIndexObj"
+                                    (selectionChange)="onOperatingPerformanceIndexChange(property, $event)"
+                                    aria-label="Operating Performance Index">
+                                    <mat-option *ngFor="let item of operatingPerformanceIndexs" [value]="item">{{ item.name }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-form-field appearance="outline">
+                                <mat-select [(ngModel)]="property.functionalPerformanceIndexObj"
                                     [ngModelOptions]="{standalone: true}"
-                                    (onChange)="onOperatingPerformanceIndexChange(property, $event)"
-                                    [options]="operatingPerformanceIndexs" optionLabel="name"></p-dropdown>
-                                
-                            </td>
-                            <td>
-                                <p-dropdown class="ui-inputtext ui-widget w-140" [style]="{'width':'180px'}"
-                                    placeholder="Please select" [(ngModel)]="property.functionalPerformanceIndexObj"
-                                    [ngModelOptions]="{standalone: true}"
-                                    (onChange)="onFunctionalPerformanceChange(property, $event)"
-                                    [options]="functionalPerformanceIndexs" optionLabel="name"></p-dropdown>
-                                
-                            </td>
-                            <td>
-                                <input [(ngModel)]="property.leaseTerm" style="width: 130px;"
-                                    [ngModelOptions]="{standalone: true}" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    (selectionChange)="onFunctionalPerformanceChange(property, $event)"
+                                    aria-label="Functional Performance Index">
+                                    <mat-option *ngFor="let item of functionalPerformanceIndexs" [value]="item">{{ item.name }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td><input matInput [(ngModel)]="property.leaseTerm" [ngModelOptions]="{standalone: true}"
+                            aria-label="Lease term"></td>
+                    </tr>
+                    <tr *ngIf="pagedProperties.length === 0">
+                        <td colspan="27" class="property-empty-state">No data found</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <mat-paginator [length]="properties.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 15]"
+            (page)="pageChanged($event)" showFirstLastButtons></mat-paginator>
+    </mat-card-content>
+</mat-card>
 
-                            </td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </div>
-        </ng-template>
-
-    </p-card>
-</div>
-
-<div *ngIf="displayDialog" class="dialogBackgroud"></div>
-<p-dialog header="{{dialogHeader}}" [(visible)]="displayDialog" [style]="{width: '80vw'}">
-    <p-body>
-        <div class="p-fluid p-grid p-formgrid">
-            <form [formGroup]="propertyForm">
-                <div class="formgrid grid">
-                    <div class="field grid col-3">
-                        <label for="region">District/ Region</label>
-                        <p-dropdown (onChange)="setLocalMunicipalities($event)" [style]="{'width':'318px'}"
-                            class="ui-inputtext ui-widget" placeholder="Please select" inputId="district"
-                            [options]="regions" formControlName="district" optionLabel="name">
-                        </p-dropdown>
-                    </div>
-                    <div class="field grid col-3">
-                        <label for="localMunicipality">Local Municipality</label>
-                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget"
-                            placeholder="Please select" inputId="localMunicipality" [options]="localMunicipalities"
-                            formControlName="localMunicipality" optionLabel="name"></p-dropdown>
-                    </div>
-                    <div class="field grid col-3">
-                        <label for="assetType">Asset Type</label>
-                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" inputId="type"
-                            [disabled]="isViewOnly" [options]="types" placeholder="Please select"
-                            formControlName="assetType" optionLabel="name"></p-dropdown>
-                    </div>
-                    <div class="field grid col-3">
-                        <label for="town">Required Performance Standard</label>
-                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" inputId="type"
-                            [disabled]="isViewOnly" [options]="requiredPerformanceStandards" placeholder="Please select"
-                            formControlName="requiredPerformanceStandard" optionLabel="name">
-                        </p-dropdown>
-                    </div>
-                </div>
-
-                <div class="formgrid grid">
-                    <div class="field grid col-3 pr-4">
-                        <label for="propertyDescription">Property Description</label>
-                        <input formControlName="propertyDescription" autocomplete="off" type="text" pInputText
-                            class="ui-inputtext ui-widget">
-                    </div>
-                    <div class="field grid col-3 pr-4">
-                        <label for="assetDescription">Asset Description</label>
-                        <input formControlName="assetDescription" autocomplete="off" type="text" pInputText
-                            class="ui-inputtext ui-widget">
-                    </div>
-                    <div class="field grid col-3 pr-4">
-                        <label for="oldStreetAddress">Old Street Address</label>
-                        <input formControlName="oldStreetAddress" autocomplete="off" type="text" pInputText
-                            class="ui-inputtext ui-widget">
-                    </div>
-                    <div class="field grid col-3 pr-4">
-                        <label for="currentStreetAddress">Current Street Address</label>
-                        <input formControlName="currentStreetAddress" autocomplete="off" type="text" pInputText
-                            class="ui-inputtext ui-widget">
-                    </div>
-                </div>
-                <div class="formgrid grid">
-                    <div class="field grid col-3 pr-4">
-                        <label for="town">Town</label>
-                        <input formControlName="town" autocomplete="off" type="text" pInputText
-                            class="ui-inputtext ui-widget">
-                    </div>
-                    <div class="field grid col-3">
-                        <label for="extentofLand">Extent of Land</label>
-                        <p-inputNumber [inputStyle]="{'width':'19.8rem'}" class="ui-inputtext ui-widget"
-                            [disabled]="isViewOnly" formControlName="extentofLand" mode="currency" currency="ZAR"
-                            locale="en-ZA">
-                        </p-inputNumber>
-                    </div>
-                    <div class="field grid col-3">
-                        <label for="noofParkingBaysAllocated">Number of Packing Bays Allocated</label>
-                        <p-inputNumber [inputStyle]="{'width':'19.8rem'}" class="ui-inputtext ui-widget"
-                            [disabled]="isViewOnly" formControlName="noofParkingBaysAllocated" mode="currency"
-                            currency="ZAR" locale="en-ZA">
-                        </p-inputNumber>
-                    </div>
-                    <div class="field grid col-3 pr-4">
-                        <label for="suitabilityIndex">Suitability Index</label>
-                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" inputId="type"
-                            [disabled]="isViewOnly" [options]="suitabilityIndexs" placeholder="Please select"
-                            formControlName="suitabilityIndex" optionLabel="name"></p-dropdown>
-                    </div>
-                </div>
-                <div class="formgrid grid">
-                    <div class="field grid col-3 pr-4">
-                        <label for="leaseStartDate">Lease Start Date</label>
-                        <p-calendar class="ui-inputtext ui-widget w-full" [disabled]="isViewOnly"
-                            formControlName="leaseStartDate" dateFormat="dd/mm/yy" showOtherMonths="true"
-                            showButtonBar="true">
-                        </p-calendar>
-                    </div>
-                    <div class="field grid col-3 pr-4">
-                        <label for="leaseEndDate">Lease End Date</label>
-                        <p-calendar class="ui-inputtext ui-widget w-full" [disabled]="isViewOnly"
-                            formControlName="leaseEndDate" dateFormat="dd/mm/yy" showOtherMonths="true"
-                            showButtonBar="true"></p-calendar>
-                    </div>
-                    <div class="field grid col-3 ">
-                        <label for="accessibility">Accessibility</label>
-                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" inputId="type"
-                            [disabled]="isViewOnly" [options]="accessibilities" placeholder="Please select"
-                            formControlName="accessibility" optionLabel="name"></p-dropdown>
-                    </div>
-                    <div class="field grid col-3">
-                        <label for="conditionRating">Condition Rating</label>
-                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" inputId="type"
-                            [disabled]="isViewOnly" [options]="conditionRatings" placeholder="Please select"
-                            formControlName="conditionRating" optionLabel="name"></p-dropdown>
-                    </div>
-                </div>
-                <div class="formgrid grid">
-                    <div class="field grid col-3">
-                        <label for="town">Lettable Space</label>
-                        <p-inputNumber [inputStyle]="{'width':'19.8rem'}" class="ui-inputtext ui-widget"
-                            [disabled]="isViewOnly" formControlName="lettableSpace" mode="currency" currency="ZAR"
-                            locale="en-ZA">
-                        </p-inputNumber>
-                        <small>(M²) 0000.00</small>
-                    </div>
-                    <div class="field grid col-3">
-                        <label for="rentalRate">Rental Rate/M2</label>
-                        <p-inputNumber [inputStyle]="{'width':'19.8rem'}" class="ui-inputtext ui-widget"
-                            [disabled]="isViewOnly" formControlName="rentalRate" mode="currency" currency="ZAR"
-                            locale="en-ZA">
-                        </p-inputNumber>
-                        <small>(HA) 0000.0000</small>
-                    </div>
-                    <div class="field grid col-3 pr-4">
-                        <label for="functionalPerformanceIndex">Functional Performance Index </label>
-                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" inputId="type"
-                            [disabled]="isViewOnly" [options]="functionalPerformanceIndexs" placeholder="Please select"
-                            formControlName="functionalPerformanceIndex" optionLabel="name">
-                        </p-dropdown>
-                        <small>According to formula</small>
-                    </div>
-                    <div class="field grid col-3 pr-4">
-                        <label for="operatingPerformanceIndex">Operating Performance Index</label>
-                        <p-dropdown [style]="{'width':'318px'}" class="ui-inputtext ui-widget" inputId="type"
-                            [disabled]="isViewOnly" [options]="operatingPerformanceIndexs" placeholder="Please select"
-                            formControlName="operatingPerformanceIndex" optionLabel="name">
-                        </p-dropdown>
-                    </div>
-
-                </div>
-                <div class="formgrid grid">
-                    <div class="field grid col-3 pr-4">
-                        <label for="leaseTerm">Lease Term</label>
-                        <input formControlName="leaseTerm" autocomplete="off" type="text" pInputText
-                            class="ui-inputtext ui-widget">
-                    </div>
-                    <div class="field grid col-3">
-                        <label for="rentalPM">Rental PM</label>
-                        <p-inputNumber [inputStyle]="{'width':'19.8rem'}" class="ui-inputtext ui-widget"
-                            [disabled]="isViewOnly" formControlName="rentalPM" mode="currency" currency="ZAR"
-                            locale="en-ZA">
-                        </p-inputNumber>
-                    </div>
-                    <div class="field grid col-3">
-                        <label for="rentalPA">Rental PA</label>
-                        <p-inputNumber [inputStyle]="{'width':'19.8rem'}" class="ui-inputtext ui-widget"
-                            [disabled]="isViewOnly" formControlName="rentalPA" mode="currency" currency="ZAR"
-                            locale="en-ZA">
-                        </p-inputNumber>
-                    </div>
-                    <div class="field grid col-3">
-                        <label for="operationalCosts">Operational Costs</label>
-                        <p-inputNumber [inputStyle]="{'width':'100%'}" class="ui-inputtext ui-widget"
-                            [disabled]="isViewOnly" formControlName="operationalCosts" mode="currency" currency="ZAR"
-                            locale="en-ZA">
-                        </p-inputNumber>
-                    </div>
-                </div>               
+<ng-template #formDialog>
+    <mat-card class="property-dialog">
+        <mat-card-header mat-dialog-title><mat-card-title>{{ dialogHeader }}</mat-card-title></mat-card-header>
+        <mat-card-content mat-dialog-content>
+            <form [formGroup]="propertyForm" class="property-form">
+                <mat-form-field appearance="outline">
+                    <mat-label>District / Region</mat-label>
+                    <mat-select formControlName="district" (selectionChange)="setLocalMunicipalities($event)" required>
+                        <mat-option *ngFor="let region of regions" [value]="region">{{ region.name }}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="p.district.hasError('required') && (submitted || p.district.touched)">District is required.</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Local Municipality</mat-label>
+                    <mat-select formControlName="localMunicipality" required>
+                        <mat-option *ngFor="let municipality of localMunicipalities" [value]="municipality">{{ municipality.name }}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="p.localMunicipality.hasError('required') && (submitted || p.localMunicipality.touched)">Local municipality is required.</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Asset Type</mat-label>
+                    <mat-select formControlName="assetType" required>
+                        <mat-option *ngFor="let item of types" [value]="item">{{ item.name }}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="p.assetType.hasError('required') && (submitted || p.assetType.touched)">Asset type is required.</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Required Performance Standard</mat-label>
+                    <mat-select formControlName="requiredPerformanceStandard" required>
+                        <mat-option *ngFor="let item of requiredPerformanceStandards" [value]="item">{{ item.name }}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="p.requiredPerformanceStandard.hasError('required') && (submitted || p.requiredPerformanceStandard.touched)">This field is required.</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Property Description</mat-label><input matInput formControlName="propertyDescription" required>
+                    <mat-error *ngIf="p.propertyDescription.hasError('required') && (submitted || p.propertyDescription.touched)">Property description is required.</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Asset Description</mat-label><input matInput formControlName="assetDescription" required>
+                    <mat-error *ngIf="p.assetDescription.hasError('required') && (submitted || p.assetDescription.touched)">Asset description is required.</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Old Street Address</mat-label><input matInput formControlName="oldStreetAddress"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Current Street Address</mat-label><input matInput formControlName="currentStreetAddress"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Town</mat-label><input matInput formControlName="town" required>
+                    <mat-error *ngIf="p.town.hasError('required') && (submitted || p.town.touched)">Town is required.</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Extent of Land</mat-label><input matInput type="number" formControlName="extentofLand"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Parking Bays Allocated</mat-label><input matInput type="number" formControlName="noofParkingBaysAllocated"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Suitability Index</mat-label>
+                    <mat-select formControlName="suitabilityIndex"><mat-option *ngFor="let item of suitabilityIndexs" [value]="item">{{ item.name }}</mat-option></mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Lease Start Date</mat-label>
+                    <input matInput [matDatepicker]="formLeaseStartPicker" formControlName="leaseStartDate" required>
+                    <mat-datepicker-toggle matIconSuffix [for]="formLeaseStartPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #formLeaseStartPicker></mat-datepicker>
+                    <mat-error *ngIf="p.leaseStartDate.hasError('required') && (submitted || p.leaseStartDate.touched)">Lease start date is required.</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Lease End Date</mat-label>
+                    <input matInput [matDatepicker]="formLeaseEndPicker" formControlName="leaseEndDate" required>
+                    <mat-datepicker-toggle matIconSuffix [for]="formLeaseEndPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #formLeaseEndPicker></mat-datepicker>
+                    <mat-error *ngIf="p.leaseEndDate.hasError('required') && (submitted || p.leaseEndDate.touched)">Lease end date is required.</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Accessibility</mat-label>
+                    <mat-select formControlName="accessibility"><mat-option *ngFor="let item of accessibilities" [value]="item">{{ item.name }}</mat-option></mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Condition Rating</mat-label>
+                    <mat-select formControlName="conditionRating"><mat-option *ngFor="let item of conditionRatings" [value]="item">{{ item.name }}</mat-option></mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Lettable Space</mat-label><input matInput type="number" formControlName="lettableSpace"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Rental Rate / M²</mat-label><input matInput type="number" formControlName="rentalRate"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Functional Performance Index</mat-label>
+                    <mat-select formControlName="functionalPerformanceIndex"><mat-option *ngFor="let item of functionalPerformanceIndexs" [value]="item">{{ item.name }}</mat-option></mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Operating Performance Index</mat-label>
+                    <mat-select formControlName="operatingPerformanceIndex"><mat-option *ngFor="let item of operatingPerformanceIndexs" [value]="item">{{ item.name }}</mat-option></mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Lease Term</mat-label><input matInput formControlName="leaseTerm"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Rental PM</mat-label><input matInput type="number" formControlName="rentalPM"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Rental PA</mat-label><input matInput type="number" formControlName="rentalPA"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Operational Costs</mat-label><input matInput type="number" formControlName="operationalCosts"></mat-form-field>
             </form>
-        </div>
-    </p-body>
-    <p-footer>
-        <div class="p-grid p-nogutter p-justify-between">
-            <button mat-button [style]="{'float':'left'}" mat-button (click)="displayDialog = false" >Cancel</button>
-            <button mat-button *ngIf="!isEdit" [style]="{'float':'right'}" (click)="addProperty()" >Add</button>
-            <button mat-button *ngIf="isEdit" [style]="{'float':'right'}" (click)="onUpdate()" >Update</button>
-        </div>
-    </p-footer>
-</p-dialog>
+        </mat-card-content>
+        <mat-card-actions mat-dialog-actions align="end">
+            <button mat-button type="button" (click)="closeFormDialog()" [disabled]="isSavingProperty">Cancel</button>
+            <button mat-raised-button color="primary" type="button" *ngIf="!isEdit" (click)="addProperty()"
+                [disabled]="propertyForm.invalid || isSavingProperty">
+                <mat-spinner *ngIf="isSavingProperty" diameter="18"></mat-spinner>
+                {{ isSavingProperty ? 'Adding...' : 'Add' }}
+            </button>
+            <button mat-raised-button color="primary" type="button" *ngIf="isEdit" (click)="onUpdate()"
+                [disabled]="propertyForm.invalid || isSavingProperty">Update</button>
+        </mat-card-actions>
+    </mat-card>
+</ng-template>
 
 <div class="uamp-footer">
-    <div class="p-grid p-nogutter p-justify-between">
-        <button mat-button (click)="back()"><span class="pi pi-angle-left"></span>Back</button>
-        
-        <button mat-button [style]="{'float':'right'}" (click)="save()" class="ml-1" >Save</button>
-        <button mat-button styleClass="btn-next" (click)="nextPage()" >Next</button>
+    <button mat-button (click)="back()"><mat-icon>chevron_left</mat-icon>Back</button>
+    <div>
+        <button mat-button (click)="save()" class="ml-1">Save</button>
+        <button mat-raised-button color="primary" (click)="nextPage()">Next</button>
     </div>
 </div>
-
-
-

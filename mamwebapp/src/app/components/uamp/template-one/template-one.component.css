@@ -29,8 +29,28 @@ header{
     margin: -8px -15px 0px -15px;
 }
 
-.ui-inputtext {
-  width: 90% !important;
+.field {
+  min-width: 280px;
 }
 
+.programme-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+table {
+  width: 100%;
+}
+
+.uamp-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.uamp-footer-spacer {
+  flex: 1;
+}
 

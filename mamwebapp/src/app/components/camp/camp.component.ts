@@ -1,52 +1,51 @@
-import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Camp } from 'src/app/models/camp.model';
 import { User } from 'src/app/models/user.model';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CampService } from 'src/app/services/camp/camp.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   standalone: false,
   selector: 'app-camp',
   templateUrl: './camp.component.html',
   styleUrls: ['./camp.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService, ConfirmationService]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class CampComponent implements OnInit {
-  loading:boolean = false;
+  private readonly department = 'Public works, roads & transport';
+  loading: boolean = false;
+  loadError = '';
   currentUser: User;
   camp: Camp;
-  items = [
-    { icon: 'pi pi-home',url: 'dashboard' },
-    { label: 'CAMP' }];
   generatingCamp: boolean = false;
   showDialog: boolean = false;
   showCAMP: boolean = false;
   camps: Array<Camp> = [];
   value: number = 0;
   activeIndex: number = 0;
-  buttonItems: any[] = [];
+  displayedColumns = ['fileReference', 'department', 'createdDate', 'creator', 'status', 'actions'];
   templeteTwoPointTwo: any = { properties: [] };
   properties: any[] = [];
-  erMsgs: any[] = [];
-  error: string = '';
   mode: string = 'Edit';
+  @ViewChild('campViewDialog') campViewDialog: TemplateRef<unknown>;
+  @ViewChild('campEditorDialog') campEditorDialog: TemplateRef<unknown>;
+  private campViewDialogRef: MatDialogRef<unknown> | null = null;
+  private campEditorDialogRef: MatDialogRef<unknown> | null = null;
 
-  constructor(private confirmationService: ConfirmationService,
-    private messageService: MessageService,
-    private changeDetectionRef: ChangeDetectorRef,public campService: CampService, 
-    private authenticationService: AuthenticationService) {
-      this.buttonItems = [
-        { label: 'View', icon: 'pi pi-eye', command: () => this.viewCamp() }
-      ];
-    }
+  constructor(
+    private toastService: ToastService,
+    public campService: CampService,
+    private authenticationService: AuthenticationService,
+    private dialog: MatDialog
+  ) { }
 
     ngOnInit() {
       this.authenticationService.currentUser.pipe().subscribe(x => {
         this.currentUser = x;
       });
-      this.getCamps("Public works, roads & transport");
+      this.getCamps(this.department);
     }
 
     
@@ -55,31 +54,61 @@ export class CampComponent implements OnInit {
       (response) => {
         this.camp = response;
         this.generatingCamp = false;
+        if (this.campViewDialogRef) {
+          this.campViewDialogRef.disableClose = false;
+        }
       },
-      (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get CAMP details' });
+      () => {
+        this.toastService.showError('Unable to load CAMP details. Please try again.');
         this.generatingCamp = false;
+        if (this.campViewDialogRef) {
+          this.campViewDialogRef.disableClose = false;
+        }
       }
     );
   }
 
   getCamps(department: string) {
+    if (this.loading) {
+      return;
+    }
+
+    this.loading = true;
+    this.loadError = '';
     this.campService.getCamps(department).subscribe(
       (response) => {
-        this.camps = response;
         this.loading = false;
+        if (!Array.isArray(response)) {
+          this.camps = [];
+          this.loadError = 'Unable to load CAMP records. Please try again.';
+          this.toastService.showError(this.loadError);
+          return;
+        }
+        this.camps = response;
       },
-      (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get CAMP details' });
-        this.generatingCamp = false;
+      () => {
+        this.camps = [];
+        this.loading = false;
+        this.loadError = 'Unable to load CAMP records. Please try again.';
+        this.toastService.showError(this.loadError);
       }
     );
+  }
+
+  retryGetCamps() {
+    this.getCamps(this.department);
   }
 
   viewCamp() {
     this.showDialog = true;
     this.generatingCamp = true;
     this.value = 10;
+    this.campViewDialogRef = this.dialog.open(this.campViewDialog);
+    this.campViewDialogRef.disableClose = true;
+    this.campViewDialogRef.afterClosed().subscribe(() => {
+      this.showDialog = false;
+      this.campViewDialogRef = null;
+    });
     this.getCampDetails(this.camp.id);
   }
 
@@ -87,6 +116,12 @@ export class CampComponent implements OnInit {
     this.showCAMP = true;
     this.generatingCamp = true;
     this.activeIndex = 0;
+    this.campEditorDialogRef = this.dialog.open(this.campEditorDialog);
+    this.campEditorDialogRef.afterClosed().subscribe(() => {
+      this.showCAMP = false;
+      this.generatingCamp = false;
+      this.campEditorDialogRef = null;
+    });
   }
 
   selectCamp(camp: Camp) {
@@ -108,16 +143,20 @@ export class CampComponent implements OnInit {
   }
 
   cancel() {
-    this.showCAMP = false;
-    this.generatingCamp = false;
+    this.campEditorDialogRef?.close();
   }
 
   onSave() {
-    this.showCAMP = false;
+    this.campEditorDialogRef?.close();
   }
 
   onSubmit() {
-    this.showCAMP = false;
+    this.campEditorDialogRef?.close();
+  }
+
+  closeViewDialog() {
+    if (!this.generatingCamp) {
+      this.campViewDialogRef?.close();
+    }
   }
 }
-

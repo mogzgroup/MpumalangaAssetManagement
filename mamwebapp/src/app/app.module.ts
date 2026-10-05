@@ -6,16 +6,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GoogleMapsModule } from '@angular/google-maps'
 import { CurrencyPipe, DatePipe} from '@angular/common';
 import { AutocompleteComponent } from './google-places.component';
-// for HttpClient import:
-import { LoadingBarHttpClientModule } from '@ngx-loading-bar/http-client';
-
 import { JwtInterceptor } from '../app/helpers/jwt.interceptor';
 import { ErrorInterceptor } from '../app/helpers/error.interceptor';
+import { HttpCacheInterceptor } from './helpers/http-cache.interceptor';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FooterComponent } from './common/footer/footer.component';
 import { SidemenuComponent } from './common/sidemenu/sidemenu.component';
 import { HeaderComponent } from './common/header/header.component';
+import { ToastContainerComponent } from './common/toast-container/toast-container.component';
 import { LoginComponent } from './common/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { UserComponent } from './components/user/user.component';
@@ -37,57 +36,11 @@ import { TemplateSevenComponent } from './components/uamp/template-seven/templat
 import { TemplateSixComponent } from './components/uamp/template-six/template-six.component';
 import { ReportFaultComponent } from './components/facilitymanagement/reportfault/report.fault.component'
 import { AddMunicipalUtilityServicesComponent } from './components/uamp/template-two-one/add-municipal-utility-services/add-municipal-utility-services';
-import { NgxPrintModule } from 'ngx-print';
-import { DynamicDialogModule } from 'primeng/dynamicdialog';
-import { PanelModule } from 'primeng/panel';
-import { ConfirmationService } from 'primeng/api';
-
-//primeng
-import { InputMaskModule } from 'primeng/inputmask';
-import { MenuModule } from 'primeng/menu';
-import { TimelineModule } from 'primeng/timeline';
-import { SidebarModule } from 'primeng/sidebar';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { ScrollPanelModule } from 'primeng/scrollpanel';
-import { PopoverModule } from 'primeng/popover';
-import { DialogModule } from 'primeng/dialog';
-import { ButtonModule } from 'primeng/button';
-import { ToastModule } from 'primeng/toast';
-import { TableModule } from 'primeng/table';
-import { BreadcrumbModule } from 'primeng/breadcrumb';
-import { CheckboxModule } from 'primeng/checkbox';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { TooltipModule } from 'primeng/tooltip';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { ChartModule } from 'primeng/chart';
-import { CardModule } from 'primeng/card';
-import { MessageModule} from 'primeng/message';
-import { StepsModule } from 'primeng/steps';
-import { TabsModule } from 'primeng/tabs';
-import { SelectModule } from 'primeng/select';
-import { FieldsetModule } from 'primeng/fieldset';
-import { FileUploadModule } from 'primeng/fileupload';
-import { TextareaModule}  from 'primeng/textarea';
-import { InputNumberModule}  from 'primeng/inputnumber';
 import { AddassetregisterComponent } from './components/assetregister/addassetregister/addassetregister.component';
 import { FinancialsComponent } from './components/assetregister/addassetregister/financials/financials.component';
 import { ImprovementsComponent } from './components/assetregister/addassetregister/improvements/improvements.component';
 import { LandComponent } from './components/assetregister/addassetregister/land/land.component';
-import { DatePickerModule } from 'primeng/datepicker';
-import { SplitButtonModule } from 'primeng/splitbutton';
 import { PrintAssetComponent } from './components/assetregister/print-asset/print-asset.component';
-import { SelectButtonModule } from 'primeng/selectbutton';
-import { FilterService } from 'primeng/api';
-import { PrimeNG } from 'primeng/config';
-import { PasswordModule } from 'primeng/password';
-import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { DividerModule } from 'primeng/divider';
-import { ToggleButtonModule } from 'primeng/togglebutton';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { SliderModule} from 'primeng/slider';
-import { ContextMenuModule} from 'primeng/contextmenu';
-import { ProgressBarModule} from 'primeng/progressbar';
-import { InputTextModule} from 'primeng/inputtext';
 import { UampDetailsComponent } from './components/uamp/uamp-details/uamp-details.component';
 import { ConditionAssessmentComponent } from './components/assetregister/conditionassessment/condition-assessment.component';
 import { LeaseManagementComponent } from './components/leasemanagement/lease-management.component';
@@ -102,13 +55,14 @@ import { ViewServiceRequestComponent } from './components/facilitymanagement/ser
 import { AddFaultComponent } from './components/facilitymanagement/reportfault/addfault/add.fault.component';
 import { TrackTicketComponent } from './components/facilitymanagement/reportfault/trackticket/track.ticket.component';
 import { GapAnalysisComponent } from './components/uamp/gap-analysis/gap-analysis.component';
+import { PrintSectionDirective } from './common/print-section/print-section.directive';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -125,7 +79,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -139,6 +92,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     TemplateOneComponent,
     FooterComponent,
     HeaderComponent,
+    ToastContainerComponent,
     LoginComponent,
     DashboardComponent,
     UserComponent,
@@ -178,7 +132,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     ViewServiceRequestComponent,
     ReportFaultComponent,
     AddFaultComponent,
-    TrackTicketComponent
+    TrackTicketComponent,
+    PrintSectionDirective
   ],
   imports: [
     BrowserModule,
@@ -205,7 +160,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatSidenavModule,
     MatSlideToggleModule,
     MatSliderModule,
-    MatSnackBarModule,
     MatSortModule,
     MatTableModule,
     MatTabsModule,
@@ -216,61 +170,30 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     AppRoutingModule,
     BrowserAnimationsModule,    
     HttpClientModule,
-    LoadingBarHttpClientModule,
-    MessageModule,
-    ButtonModule,
-    ScrollPanelModule,
-    PopoverModule,
-    DialogModule,
-    ToastModule,
-    MultiSelectModule,
-    TableModule,
-    MenuModule,
-    SidebarModule,
-    BreadcrumbModule,
-    CheckboxModule,
-    ConfirmDialogModule,
-    TooltipModule,
-    ChartModule,
     GoogleMapsModule,
-    StepsModule,
-    CardModule,
-    TabsModule,
-    SelectModule,
-    FieldsetModule,
-    DatePickerModule,
-    FileUploadModule,
-    SplitButtonModule,
-    TextareaModule,
-    NgxPrintModule,
-    InputNumberModule,
-    DynamicDialogModule,
-    PanelModule,
-    AutoCompleteModule,
-		SliderModule,
-		DialogModule,
-		MultiSelectModule,
-		ContextMenuModule,		
-    InputTextModule,
-    ProgressBarModule,
-    PasswordModule,
-    SelectButtonModule,
-    ToggleButtonModule,
-    ToggleSwitchModule,
-    TimelineModule,
-    DividerModule,
     //GooglePlaceModule,
-    RadioButtonModule,
-    InputMaskModule,
     //NgxQRCodeModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    CurrencyPipe, FilterService, PrimeNG, ConfirmationService,
+    { provide: HTTP_INTERCEPTORS, useClass: HttpCacheInterceptor, multi: true },
+    {
+      provide: MAT_DIALOG_DEFAULT_OPTIONS,
+      useValue: {
+        hasBackdrop: true,
+        backdropClass: 'app-dialog-backdrop',
+        width: 'min(1100px, calc(100vw - 24px))',
+        maxWidth: 'calc(100vw - 24px)',
+        maxHeight: 'calc(100dvh - 24px)',
+        autoFocus: 'first-tabbable',
+        restoreFocus: true,
+        disableClose: false
+      }
+    },
+    CurrencyPipe,
     AddMunicipalUtilityServicesComponent, DatePipe
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }
-

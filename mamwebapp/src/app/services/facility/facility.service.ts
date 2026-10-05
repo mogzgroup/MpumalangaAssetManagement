@@ -8,6 +8,7 @@ import { facilitySummaryChart } from 'src/app/models/facility-summary-chart.mode
 import { MapCoordinate } from 'src/app/models/map-oordinate.model';
 import { Facility } from 'src/app/models/facility.model';
 import { Observable } from 'rxjs';
+import { cachedGet } from '../../helpers/http-cache';
 
 @Injectable({
   providedIn: 'root'
@@ -20,31 +21,31 @@ export class FacilityService {
   constructor(private http: HttpClient) { }
   
   getFacilityZonings(): Observable<any[]> {
-    return this.http.get<FacilityType[]>(`${environment.apiUrl}/api/facility/getfacilityzonings`);
+    return cachedGet<FacilityType[]>(this.http, `${environment.apiUrl}/api/facility/getfacilityzonings`);
   }
 
   getDashboardWedges() {
-    return this.http.get<DashboardWedge[]>(`${environment.apiUrl}/api/facility/getdashboardwedges`);
+    return cachedGet<DashboardWedge[]>(this.http, `${environment.apiUrl}/api/facility/getdashboardwedges`);
   }
 
   getFacilitySummaries() {
-    return this.http.get<Array<facilitySummaryChart>>(`${environment.apiUrl}/api/facility/getfacilitysummaries`);
+    return cachedGet<Array<facilitySummaryChart>>(this.http, `${environment.apiUrl}/api/facility/getfacilitysummaries`);
   }
   
   getMapCoordinates() {
-    return this.http.get<Array<MapCoordinate>>(`${environment.apiUrl}/api/facility/getmapcoordinates`);
+    return cachedGet<Array<MapCoordinate>>(this.http, `${environment.apiUrl}/api/facility/getmapcoordinates`);
   } 
 
   getAllFacilities() {
-    return this.http.get<Array<Facility>>(`${environment.apiUrl}/api/facility/getallfacilities`);
+    return cachedGet<Array<Facility>>(this.http, `${environment.apiUrl}/api/facility/getallfacilities`);
   }
 
   getAssetRegisterfacilities() {
-    return this.http.get<Array<Facility>>(`${environment.apiUrl}/api/facility/getassetregisterfacilities`);
+    return cachedGet<Array<Facility>>(this.http, `${environment.apiUrl}/api/facility/getassetregisterfacilities`);
   }
 
   getFacilityById(id: number, facilityType) {
-    return this.http.get<Facility>(`${environment.apiUrl}/api/facility/getFacilityByCode/`+id+`/`+facilityType);
+    return cachedGet<Facility>(this.http, `${environment.apiUrl}/api/facility/getFacilityByCode/${id}/${facilityType}`);
   }
 
   deleteFacility(id : number) {
@@ -78,4 +79,3 @@ export class FacilityService {
   }
 
 }
-

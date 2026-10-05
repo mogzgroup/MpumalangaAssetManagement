@@ -11,6 +11,47 @@ header{
       margin: -8px -15px 0px -15px;
   }
 
-  .ui-inputtext {
-    width: 90% !important;
-  }
+.operation-plan-table {
+  overflow-x: auto;
+}
+
+.operation-plan-table table {
+  min-width: 1800px;
+  width: 100%;
+}
+
+.operation-plan-table mat-form-field {
+  width: 100%;
+  min-width: 130px;
+}
+
+.operation-plan-table th,
+.operation-plan-table td {
+  padding: 0.5rem;
+}
+
+.material-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.lease-confirmation {
+  width: min(90vw, 400px);
+}
+
+.uamp-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.uamp-footer-spacer {
+  flex: 1;
+}

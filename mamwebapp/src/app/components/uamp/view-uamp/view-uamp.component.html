@@ -1,64 +1,47 @@
 <div id="uampId">
-    <div class="ui-g-12 ui-md-12">
-        <div class="ui-g-4 ui-md-34">            
-            <strong> User Immovable Asset Management Plan</strong>
-        </div>
-        <div class="ui-g-4 ui-md-4">
-             Department: <strong>{{uamp.department}}</strong>
-        </div>
-        <div class="ui-g-4 ui-md-4">
-            <button printSectionId="uampId" [useExistingCss]="true" ngxPrint style="float: right;">Print</button>
-        </div>
+    <div class="uamp-summary-row">
+        <strong>User Immovable Asset Management Plan</strong>
+        <span>Department: <strong>{{uamp.department}}</strong></span>
+        <button mat-button printSectionId="uampId" [useExistingCss]="true" ngxPrint>
+            <mat-icon>print</mat-icon> Print
+        </button>
     </div>
   
-    <div class="ui-g-12 ui-md-12" style="margin-top: -25px;">
-        <div class="ui-g-4 ui-md-4">
-            File Reference: {{uamp.fileReference}}
-        </div>      
-        <div class="ui-g-4 ui-md-4">
-            Created Date: {{uamp.createdDate | date}}
-        </div>
-        <div class="ui-g-4 ui-md-4" >
-            <label style="float: right;">Status {{uamp.status}}</label> 
-        </div>
+    <div class="uamp-summary-row uamp-metadata">
+        <span>File Reference: {{uamp.fileReference}}</span>
+        <span>Created Date: {{uamp.createdDate | date}}</span>
+        <span>Status {{uamp.status}}</span>
     </div>
     <hr />
-    <p-panel header="Template 1: Programmes" [toggleable]="true">
-        <ng-template pTemplate="icons">
-            <button pButton class="p-panel-header-icon p-link" (click)="menu.toggle($event)">
-                <span class="pi pi-cog"></span>
-            </button>
-            <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu>
-        </ng-template>
-        <p-table [value]="uamp.templeteOne.programmes" styleClass="p-datatable-striped" [responsive]="true">
-            <ng-template pTemplate="header">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header><mat-panel-title>Template 1: Programmes</mat-panel-title></mat-expansion-panel-header>
+        <div class="uamp-table-container">
+        <table class="uamp-table">
+            <thead>
                 <tr>
                     <th>Corporate Objectives</th>
                     <th>Outcomes/ Planned Outputs</th>
                     <th>Optimal Supporting Accommodation Solution</th>
                     <th>Rationale for Chosen Solution</th>
                 </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-programme>
-                <tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let programme of uamp.templeteOne.programmes">
                     <td>{{programme.corporateObjective}}</td>
                     <td>{{programme.outcomes}}</td>
                     <td>{{programme.optimalSupportingAccommodationSolution}}</td>
                     <td>{{programme.rationaleChosenSolution}}</td>
                 </tr>
-            </ng-template>
-        </p-table>
-    </p-panel>
+            </tbody>
+        </table>
+        </div>
+    </mat-expansion-panel>
     <br>
-    <p-panel header="Template 2.1: STATE-OWNED ASSETS OCCUPIED BY/ ALLOCATED TO USERS AND FUNCTIONAL PERFORMANCE" [toggleable]="true">
-        <ng-template pTemplate="icons">
-            <button pButton class="p-panel-header-icon p-link" (click)="menu.toggle($event)">
-                <span class="pi pi-cog"></span>
-            </button>
-            <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu>
-        </ng-template>
-        <p-table [value]="uamp.templeteTwoPointOne.properties" styleClass="p-datatable-striped" [responsive]="true">
-            <ng-template pTemplate="header">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header><mat-panel-title>Template 2.1: STATE-OWNED ASSETS OCCUPIED BY/ ALLOCATED TO USERS AND FUNCTIONAL PERFORMANCE</mat-panel-title></mat-expansion-panel-header>
+        <div class="uamp-table-container">
+        <table class="uamp-table">
+            <thead>
                 <tr>
                     <th>File Reference No.</th>
                     <th>Districts</th>
@@ -83,9 +66,9 @@
                     <th>Functional Performance Index</th>
                     <th>Comments</th>
                 </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-property>
-                <tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let property of uamp.templeteTwoPointOne.properties">
                     <td>{{property.fileReferenceNo}}</td>
                     <td>{{property.districtRegion}}</td>
                     <td>{{property.town}}</td>
@@ -109,20 +92,16 @@
                     <td>{{property.functionalPerformanceIndex}}</td>
                     <td>{{property.comment}}</td>
                 </tr>
-            </ng-template>
-        </p-table>
-    </p-panel>
+            </tbody>
+        </table>
+        </div>
+    </mat-expansion-panel>
     <br>
-    <p-panel header="Template 2.2: LEASED ASSETS OCCUPIED BY/ ALLOCATED TO SCHEDULE OF CURRENT LEASED ACCOMMODATION"
-        [toggleable]="true">
-        <ng-template pTemplate="icons">
-            <button pButton class="p-panel-header-icon p-link" (click)="menu.toggle($event)">
-                <span class="pi pi-cog"></span>
-            </button>
-            <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu>
-        </ng-template>
-        <p-table [value]="uamp.templeteTwoPointTwo.properties" styleClass="p-datatable-striped" [responsive]="true">
-            <ng-template pTemplate="header">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header><mat-panel-title>Template 2.2: LEASED ASSETS OCCUPIED BY/ ALLOCATED TO SCHEDULE OF CURRENT LEASED ACCOMMODATION</mat-panel-title></mat-expansion-panel-header>
+        <div class="uamp-table-container">
+        <table class="uamp-table">
+            <thead>
                 <tr>
                     <th>Serial No.</th>
                     <th>User Dept Code</th>
@@ -145,9 +124,9 @@
                     <th>Lease End Date</th>
                     <th>Lease Term</th>
                 </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-property>
-                <tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let property of uamp.templeteTwoPointTwo.properties">
                     <td>{{property.serialNo}}</td>
                     <td>{{property.userDepartment}}</td>
                     <td>{{property.fileReference}}</td>
@@ -169,21 +148,16 @@
                     <td>{{property.leaseEndDate}}</td>
                     <td>{{property.leaseTerm}}</td>
                 </tr>
-            </ng-template>
-        </p-table>
-    </p-panel>
+            </tbody>
+        </table>
+        </div>
+    </mat-expansion-panel>
     <br>
-    <p-panel
-        header="Template 3: STRATEGIC NEEDS ASSESSMENT: CURRENT UTILISATION/NEEDS ASSESSMENT OF ACCOMMODATION OCCUPIED"
-        [toggleable]="true">
-        <ng-template pTemplate="icons">
-            <button pButton class="p-panel-header-icon p-link" (click)="menu.toggle($event)">
-                <span class="pi pi-cog"></span>
-            </button>
-            <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu>
-        </ng-template>
-        <p-table [value]="uamp.templeteThree.strategicAssessments" styleClass="p-datatable-striped" [responsive]="true">
-            <ng-template pTemplate="header">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header><mat-panel-title>Template 3: STRATEGIC NEEDS ASSESSMENT: CURRENT UTILISATION/NEEDS ASSESSMENT OF ACCOMMODATION OCCUPIED</mat-panel-title></mat-expansion-panel-header>
+        <div class="uamp-table-container">
+        <table class="uamp-table">
+            <thead>
                 <tr>
                     <th></th>
                     <th colspan="4" style="width: 25%;">Requirements in Terms of Approved Organogram</th>
@@ -205,9 +179,9 @@
                     <th>Surplus (+) or Shortage (-) of Accommodation(m²)</th>
                     <th>Percentage Utilised</th>
                 </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-strategicNeedsAssessment>
-                <tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let strategicNeedsAssessment of uamp.templeteThree.strategicAssessments">
                     <td>{{strategicNeedsAssessment.postDescriptionTitle}}</td>
                     <td>{{strategicNeedsAssessment.fbpLevel}}</td>
                     <td>{{strategicNeedsAssessment.fbpQuantity}}</td>
@@ -221,21 +195,17 @@
                     <td>{{strategicNeedsAssessment.surplusShortageAccommodation}}</td>
                     <td>{{strategicNeedsAssessment.percentageUtilised | number : '1.2-2'}}%</td>                    
                 </tr>
-            </ng-template>
-        </p-table>
-    </p-panel>
+            </tbody>
+        </table>
+        </div>
+    </mat-expansion-panel>
     
     <br>
-    <p-panel header="Template 4.1: ACQUISITION PLAN: NEW ACCOMMODATION REQUIREMENTS (CAPITAL PROJECTS)"
-        [toggleable]="true">
-        <ng-template pTemplate="icons">
-            <button pButton class="p-panel-header-icon p-link" (click)="menu.toggle($event)">
-                <span class="pi pi-cog"></span>
-            </button>
-            <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu>
-        </ng-template>
-        <p-table styleClass="p-datatable-striped" [value]="uamp.templeteFourPointOne.acquisitionPlans" [responsive]="true">
-            <ng-template pTemplate="header">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header><mat-panel-title>Template 4.1: ACQUISITION PLAN: NEW ACCOMMODATION REQUIREMENTS (CAPITAL PROJECTS)</mat-panel-title></mat-expansion-panel-header>
+        <div class="uamp-table-container">
+        <table class="uamp-table">
+            <thead>
                 <tr>
                     <th>District/ Region</th>
                     <th>Town</th>
@@ -250,9 +220,9 @@
                     <th>Cash Flow <small>(MTEF Year 2)</small></th>
                     <th>Cash Flow <small>(MTEF Year 3)</small></th>
                 </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-acquisitionPlan>
-                <tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let acquisitionPlan of uamp.templeteFourPointOne.acquisitionPlans">
                     <td>{{acquisitionPlan.districtRegion}}</td>
                     <td>{{acquisitionPlan.town}}</td>
                     <td>{{acquisitionPlan.serviceDescription}}</td>
@@ -266,21 +236,17 @@
                     <td>{{acquisitionPlan.cashFlowYear2 | currency:'ZAR':'R'}}</td>
                     <td>{{acquisitionPlan.cashFlowYear3 | currency:'ZAR':'R'}}</td>
                 </tr>
-            </ng-template>
-        </p-table>
-    </p-panel>
+            </tbody>
+        </table>
+        </div>
+    </mat-expansion-panel>
     
     <br>
-    <p-panel header="Template 4.2: ACQUISITION PLAN: NEW LEASED ACCOMMODATION REQUIREMENTS" [toggleable]="true">
-        <ng-template pTemplate="icons">
-            <button pButton class="p-panel-header-icon p-link" (click)="menu.toggle($event)">
-                <span class="pi pi-cog"></span>
-            </button>
-            <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu>
-        </ng-template>
-
-        <p-table styleClass="p-datatable-striped" [value]="uamp.templeteFourPointTwo.acquisitionPlans" [responsive]="true">
-            <ng-template pTemplate="header">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header><mat-panel-title>Template 4.2: ACQUISITION PLAN: NEW LEASED ACCOMMODATION REQUIREMENTS</mat-panel-title></mat-expansion-panel-header>
+        <div class="uamp-table-container">
+        <table class="uamp-table">
+            <thead>
                 <tr>
                     <th>District/ Region</th>
                     <th>Town</th>
@@ -295,9 +261,9 @@
                     <th>Cash Flow <small>(MTEF Year 3)</small></th>
                     <th>Cash Flow <small>(MTEF Year 4)</small></th>
                 </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-acquisitionPlan>
-                <tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let acquisitionPlan of uamp.templeteFourPointTwo.acquisitionPlans">
                     <td>{{acquisitionPlan.districtRegion}}</td>
                     <td>{{acquisitionPlan.town}}</td>
                     <td>{{acquisitionPlan.serviceDescription}}</td>
@@ -311,22 +277,17 @@
                     <td>{{acquisitionPlan.cashFlowYear3 | currency:'ZAR':'R'}}</td>
                     <td>{{acquisitionPlan.cashFlowYear4 | currency:'ZAR':'R'}}</td>
                 </tr>
-            </ng-template>
-        </p-table>
-    </p-panel>
+            </tbody>
+        </table>
+        </div>
+    </mat-expansion-panel>
 
     <br>
-    <p-panel
-        header="Template 5.1: OPERATIONS PLAN: ADDITIONS, REFURBISHMENT AND / OR RECONFIGURATION TO EXISTING BUILDINGS"
-        [toggleable]="true">
-        <ng-template pTemplate="icons">
-            <button pButton class="p-panel-header-icon p-link" (click)="menu.toggle($event)">
-                <span class="pi pi-cog"></span>
-            </button>
-            <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu>
-        </ng-template>
-        <p-table styleClass="p-datatable-striped" [value]="this.uamp.templeteFivePointOne.operationPlans" [responsive]="true">
-            <ng-template pTemplate="header">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header><mat-panel-title>Template 5.1: OPERATIONS PLAN: ADDITIONS, REFURBISHMENT AND / OR RECONFIGURATION TO EXISTING BUILDINGS</mat-panel-title></mat-expansion-panel-header>
+        <div class="uamp-table-container">
+        <table class="uamp-table">
+            <thead>
                 <tr>
                     <th>District/ Region</th>   
                     <th>Town</th>
@@ -341,9 +302,9 @@
                     <th>Cash Flow <small>(MTEF Year 4)</small></th>
                     <th>Cash Flow <small>(MTEF Year 5)</small></th>
                 </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-operationPlan>
-                <tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let operationPlan of uamp.templeteFivePointOne.operationPlans">
                     <td>{{operationPlan.districtRegion}}</td>
                     <td>{{operationPlan.town}}</td>
                     <td>{{operationPlan.serviceDescription}}</td>
@@ -357,20 +318,17 @@
                     <td>{{operationPlan.cashFlowYear4 | currency:'ZAR':'R'}}</td>
                     <td>{{operationPlan.cashFlowYear5 | currency:'ZAR':'R'}}</td>                   
                 </tr>
-            </ng-template>
-        </p-table>
-    </p-panel>
+            </tbody>
+        </table>
+        </div>
+    </mat-expansion-panel>
     <br>
 
-    <p-panel header="Template 5.2: OPERATIONS PLAN: MAINTENANCE REQUIREMENTS" [toggleable]="true">
-        <ng-template pTemplate="icons">
-            <button pButton class="p-panel-header-icon p-link" (click)="menu.toggle($event)">
-                <span class="pi pi-cog"></span>
-            </button>
-            <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu>
-        </ng-template>
-        <p-table styleClass="p-datatable-striped" [value]="uamp.templeteFivePointTwo.operationPlans" [responsive]="true">
-            <ng-template pTemplate="header">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header><mat-panel-title>Template 5.2: OPERATIONS PLAN: MAINTENANCE REQUIREMENTS</mat-panel-title></mat-expansion-panel-header>
+        <div class="uamp-table-container">
+        <table class="uamp-table">
+            <thead>
                 <tr>
                     <th>District</th>               
                     <th>Town</th>
@@ -386,9 +344,9 @@
                     <th>Cash Flow <br><small>(MTEF YR 4)</small></th>
                     <th>Cash Flow <br><small>(MTEF YR 5)</small></th>
                 </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-operationPlan let-rowIndex="rowIndex">
-                    <tr>
+            </thead>
+            <tbody>
+                    <tr *ngFor="let operationPlan of uamp.templeteFivePointTwo.operationPlans">
                         <td>{{operationPlan.districtRegion}}</td>
                         <td>{{operationPlan.town}}</td>
                         <td>{{operationPlan.localAuthority}}</td>
@@ -396,28 +354,24 @@
                         <td>{{operationPlan.repairDescription}}</td>
                         <td>{{operationPlan.initialNeedYear}}</td>
                         <td>{{operationPlan.prioityServiceReanking}}</td>
-                        <td>{{operationPlan.totalAmountRequired</td>
+                        <td>{{operationPlan.totalAmountRequired}}</td>
                         <td>{{operationPlan.cashFlowYear1}}</td>
                         <td>{{operationPlan.cashFlowYear2}}</td>
                         <td>{{operationPlan.cashFlowYear3}}</td>
                         <td>{{operationPlan.cashFlowYear4}}</td>
                         <td>{{operationPlan.cashFlowYear5}}</td>
                     </tr>
-            </ng-template>
-        </p-table>
-    </p-panel>
+            </tbody>
+        </table>
+        </div>
+    </mat-expansion-panel>
     <br>
 
-    <p-panel header="Template 5.3: OPERATIONS PLAN: ASSETS LEASED OUT / INVESTMENT PURPOSES ASSETS	"
-        [toggleable]="true">
-        <ng-template pTemplate="icons">
-            <button pButton class="p-panel-header-icon p-link" (click)="menu.toggle($event)">
-                <span class="pi pi-cog"></span>
-            </button>
-            <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu>
-        </ng-template>
-        <p-table styleClass="p-datatable-striped" [value]="uamp.templeteFivePointThree.operationPlans" [responsive]="true">
-            <ng-template pTemplate="header">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header><mat-panel-title>Template 5.3: OPERATIONS PLAN: ASSETS LEASED OUT / INVESTMENT PURPOSES ASSETS</mat-panel-title></mat-expansion-panel-header>
+        <div class="uamp-table-container">
+        <table class="uamp-table">
+            <thead>
                 <tr>
                     <th>District</th>               
                     <th>Town</th>
@@ -435,9 +389,9 @@
                     <th>Rental PM/PA</th>
                     <th>Comments</th>
                 </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-operationPlan let-rowIndex="rowIndex">
-                    <tr>
+            </thead>
+            <tbody>
+                    <tr *ngFor="let operationPlan of uamp.templeteFivePointThree.operationPlans">
                         <td>{{operationPlan.districtRegion}}</td>
                         <td>{{operationPlan.town}}</td>
                         <td>{{operationPlan.localAuthority}}</td>
@@ -454,22 +408,18 @@
                         <td>{{operationPlan.rentalPmPa}}</td>
                         <td>{{operationPlan.comment}}</td>
                     </tr>
-            </ng-template>
-        </p-table>
-    </p-panel>
+            </tbody>
+        </table>
+        </div>
+    </mat-expansion-panel>
 
     <!--surrenderPlans-->
     <br>
-    <p-panel header="Template 6: SURRENDER PLAN: ACCOMMODATION/LAND IDENTIFIED TO BE RELINQUISHED TO THE CUSTODIAN"
-        [toggleable]="true">
-        <ng-template pTemplate="icons">
-            <button pButton class="p-panel-header-icon p-link" (click)="menu.toggle($event)">
-                <span class="pi pi-cog"></span>
-            </button>
-            <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu>
-        </ng-template>
-        <p-table styleClass="p-datatable-striped" [value]="uamp.templeteSix.surrenderPlans" [responsive]="true">
-            <ng-template pTemplate="header">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header><mat-panel-title>Template 6: SURRENDER PLAN: ACCOMMODATION/LAND IDENTIFIED TO BE RELINQUISHED TO THE CUSTODIAN</mat-panel-title></mat-expansion-panel-header>
+        <div class="uamp-table-container">
+        <table class="uamp-table">
+            <thead>
                 <tr>
                     <th>District</th>
                     <th>Town</th>
@@ -483,9 +433,9 @@
                     <th>Date of Proposed Hand-Over</th>
                     <th>Contractual Obligations</th>
                 </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-surrenderPlan>
-                <tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let surrenderPlan of uamp.templeteSix.surrenderPlans">
                     <td>{{surrenderPlan.districtMunicipality}}</td>
                     <td>{{surrenderPlan.town}}</td>
                     <td>{{surrenderPlan.localAuthority}}</td>
@@ -498,20 +448,17 @@
                     <td>{{surrenderPlan.proposedHandOverDate}}</td>
                     <td>{{surrenderPlan.contractualObligations}}</td>
                 </tr>
-            </ng-template>
-        </p-table>
-    </p-panel>
+            </tbody>
+        </table>
+        </div>
+    </mat-expansion-panel>
 
     <br>
-    <p-panel header="Template 7: BUDGET FOR MTEF PERIOD" [toggleable]="true">
-        <ng-template pTemplate="icons">
-            <button pButton class="p-panel-header-icon p-link" (click)="menu.toggle($event)">
-                <span class="pi pi-cog"></span>
-            </button>
-            <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu>
-        </ng-template>
-        <p-table [value]="[{}]" styleClass="p-datatable-striped" [responsive]="true">
-            <ng-template pTemplate="header">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header><mat-panel-title>Template 7: BUDGET FOR MTEF PERIOD</mat-panel-title></mat-expansion-panel-header>
+        <div class="uamp-table-container">
+        <table class="uamp-table">
+            <thead>
                 <tr>
                     <th style="width: 230px;"></th>
                     <th colspan="3">MTEF YEAR 1</th>
@@ -538,8 +485,8 @@
                     <th>Required Budget</th>
                     <th>Shortfall</th>
                 </tr>
-            </ng-template>
-            <ng-template pTemplate="body">
+            </thead>
+            <tbody>
                 <tr>
                     <td colspan="16"><strong>Capital Projects</strong></td>
                     
@@ -813,9 +760,8 @@
                     <td style="background-color: lightgray;"></td>
                     <td>{{shorfallCapitalWorksAndRecurrentCosts(5) | number : '1.2-2'}} %</td>
                 </tr>
-            </ng-template>
-        </p-table>
-    </p-panel>
+            </tbody>
+        </table>
+        </div>
+    </mat-expansion-panel>
 </div>
-
-

@@ -1,6 +1,5 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
-import { MessageService, PrimeIcons } from 'primeng/api';
 import { first } from 'rxjs/operators';
 import { ConditionAssessment } from 'src/app/models/condition-assessment.model';
 import { Facility } from 'src/app/models/facility.model';
@@ -8,21 +7,22 @@ import { User } from 'src/app/models/user.model';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ConditionAssessmentService } from 'src/app/services/condition-assessment/condition-assessment.service';
 import { AssetregisterComponent } from '../assetregister.component';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   standalone: false,
   selector: 'app-condition-assessment',
   templateUrl: './condition-assessment.component.html',
   styleUrls: ['./condition-assessment.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class ConditionAssessmentComponent implements OnInit {
   @Input() selectedFacility: Facility;
   @Input() assetComponent: AssetregisterComponent;
   @Output("closeConditionAssessment") closeConditionAssessment = new EventEmitter<any>();
   @Output() stopSort= new EventEmitter<any>();
-  uploadedFiles: any[] = [];
+  uploadedFiles: File[] = [];
+  landFiles: { name: string; url: string; file: File }[] = [];
   ewwfCount: number = 0;
   edCount: number = 0;
   elements: any[] = [
@@ -126,10 +126,48 @@ export class ConditionAssessmentComponent implements OnInit {
   currentUser: User;
   stateOptions: any[];
   paymentOptions: any[];
+  performanceRatings = [
+    { value: 1, label: 'P1', description: 'Functions have ceased or accommodation is dormant; only minimal maintenance is required.' },
+    { value: 2, label: 'P2', description: 'Accommodation provides essential support only or has a limited remaining life.' },
+    { value: 3, label: 'P3', description: 'Functionally focused accommodation at utility level, such as a school.' },
+    { value: 4, label: 'P4', description: 'Business operations require good public presentation and a high-quality working environment.' },
+    { value: 5, label: 'P5', description: 'Highly sensitive or high-profile functions require the best possible accommodation condition.' }
+  ];
+  accessibilityRatings = [
+    { value: 1, label: 'A1', description: 'Location does not meet service delivery objectives and is not accessible to the public.' },
+    { value: 2, label: 'A2', description: 'Location limits service delivery and public or physical accessibility.' },
+    { value: 3, label: 'A3', description: 'Location partially supports service delivery and has limited accessibility.' },
+    { value: 4, label: 'A4', description: 'Location fully supports service delivery and is accessible to the public.' },
+    { value: 5, label: 'A5', description: 'Location and accommodation fully support service delivery and accessibility.' }
+  ];
+  conditionRatings = [
+    { value: 1, label: 'C1', description: 'Very poor condition.' },
+    { value: 2, label: 'C2', description: 'Poor condition.' },
+    { value: 3, label: 'C3', description: 'Fair condition.' },
+    { value: 4, label: 'C4', description: 'Good condition.' },
+    { value: 5, label: 'C5', description: 'Excellent condition.' }
+  ];
+  technicalRatingLabels = ['Very poor', 'Poor', 'Fair', 'Good', 'Excellent'];
+  accessibilityChecks: { label: string; key: string }[] = [
+    { label: 'Lifts compliant to use by disabled', key: 'pVvalue' },
+    { label: 'Parking for disabled', key: 'arValue' },
+    { label: 'Signage for disabled', key: 'sValue' },
+    { label: 'Toilet(s) for people with disabilities', key: 'tValue' },
+    { label: 'Escape wheelchair', key: 'ewValue' }
+  ];
+  safetyChecks: { label: string; key: string }[] = [
+    { label: 'Certificate of Compliance COC', key: 'cocValue' },
+    { label: 'Security lights', key: 'slValue' },
+    { label: 'Security fence or wall', key: 'sgwValue' },
+    { label: 'Fire detectors', key: 'fdValue' },
+    { label: 'Fire extinguishers', key: 'feValue' },
+    { label: 'Escape route', key: 'erValue' },
+    { label: 'Escape route indicators/signage', key: 'erisValue' },
+    { label: 'Burglar proofs (doors and windows)', key: 'bpValue' }
+  ];
   activeIndex: number = 0;
   items: any[] = [];
   mode: string = 'Edit';
-  landFiles: any[] = [];
   showdelete: boolean = false;
   lcValue: any;
   cbValue: any;
@@ -148,7 +186,7 @@ export class ConditionAssessmentComponent implements OnInit {
   slValue: any;
   sgwValue: any;
 
-  constructor(private authenticationService: AuthenticationService, public conditionAssessmentService: ConditionAssessmentService, private messageService: MessageService) {
+  constructor(private authenticationService: AuthenticationService, public conditionAssessmentService: ConditionAssessmentService, private toastService: ToastService) {
     this.stateOptions = [{label: 'Available', value: 'available'}, {label: 'Not Available', value: 'notAvailable'}];
 
     this.paymentOptions = [
@@ -221,23 +259,72 @@ export class ConditionAssessmentComponent implements OnInit {
       if (id >= 0) {
         conditionAssessment.id = id;
         this.conditionAssessments.push(conditionAssessment);
-        this.messageService.add({ severity: 'success', summary: 'Saving', detail: 'Condition assessment records are saved successful.' });
+        this.toastService.showSuccess('Condition assessment records were saved successfully.');
         this.closeConditionAssessment.emit({isChild: true});
       } else {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'An error occurred while saving!' });
+        this.toastService.showError('An error occurred while saving the condition assessment.');
       }
       this.isBusy = false;
     });
   }
 
-  onLandRemoveFile(evt: any){
-    var fileIndex = this.uploadedFiles.indexOf(evt.file)
-    this.uploadedFiles.slice(-1, fileIndex);
+  onLandRemoveFile(file: { file: File; url: string }) {
+    const index = this.uploadedFiles.indexOf(file.file);
+    if (index >= 0) {
+      this.uploadedFiles.splice(index, 1);
+    }
+    this.landFiles = this.landFiles.filter(item => item.file !== file.file);
+    URL.revokeObjectURL(file.url);
   }
 
-  onLandSelectFile(evt: any) {
-    let uploadedFile = evt[0];
-    this.uploadedFiles.push(uploadedFile);    
+  onLandSelectFile(files: FileList | File[]) {
+    Array.from(files).forEach(file => {
+      if (!this.uploadedFiles.includes(file)) {
+        this.uploadedFiles.push(file);
+        this.landFiles.push({ name: file.name, url: URL.createObjectURL(file), file });
+      }
+    });
+  }
+
+  getCheckValue(key: string): string | undefined {
+    switch (key) {
+      case 'pVvalue': return this.pVvalue;
+      case 'arValue': return this.arValue;
+      case 'sValue': return this.sValue;
+      case 'tValue': return this.tValue;
+      case 'ewValue': return this.ewValue;
+      case 'cocValue': return this.cocValue;
+      case 'slValue': return this.slValue;
+      case 'sgwValue': return this.sgwValue;
+      case 'fdValue': return this.fdValue;
+      case 'feValue': return this.feValue;
+      case 'erValue': return this.erValue;
+      case 'erisValue': return this.erisValue;
+      case 'bpValue': return this.bpValue;
+      default: return undefined;
+    }
+  }
+
+  setCheckValue(key: string, value: string) {
+    switch (key) {
+      case 'pVvalue': this.pVvalue = value; break;
+      case 'arValue': this.arValue = value; break;
+      case 'sValue': this.sValue = value; break;
+      case 'tValue': this.tValue = value; break;
+      case 'ewValue': this.ewValue = value; break;
+      case 'cocValue': this.cocValue = value; break;
+      case 'slValue': this.slValue = value; break;
+      case 'sgwValue': this.sgwValue = value; break;
+      case 'fdValue': this.fdValue = value; break;
+      case 'feValue': this.feValue = value; break;
+      case 'erValue': this.erValue = value; break;
+      case 'erisValue': this.erisValue = value; break;
+      case 'bpValue': this.bpValue = value; break;
+    }
+  }
+
+  ratingDisplayCount(rate: { key: number }): number {
+    return rate.key === 6 ? 9 : rate.key === 4 || rate.key === 5 ? 5 : 3;
   }
 
   setRate() {
@@ -304,4 +391,3 @@ export class ConditionAssessmentComponent implements OnInit {
     }
   }
 }
-

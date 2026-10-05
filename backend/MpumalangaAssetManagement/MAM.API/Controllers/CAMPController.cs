@@ -10,7 +10,7 @@ namespace MAM.API.Controllers
     [ApiController]
     public class CAMPController : Controller
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(UserController));
+        private static readonly ILog log = LogManager.GetLogger(typeof(CAMPController));
 
         private ICampService _campService;
 
@@ -32,7 +32,7 @@ namespace MAM.API.Controllers
             catch (Exception ex)
             {
                 log.Error(ex);
-                throw ex;
+                throw;
             }
         }
     }

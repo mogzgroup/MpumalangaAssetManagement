@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HiredProperty } from 'src/app/models/hired-property';
 import { environment } from 'src/environments/environment';
+import { cachedGet } from '../../helpers/http-cache';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class HiringRegisterService {
   constructor(private http: HttpClient) { }
 
   getHiredProperties(): Observable<any> {
-    return this.http.get<Array<HiredProperty>>(`${environment.apiUrl}/api/hiringregister/gethiredproperties`);
+    return cachedGet<Array<HiredProperty>>(this.http, `${environment.apiUrl}/api/hiringregister/gethiredproperties`);
   }
 
   addHiredProperty(hiredProperty: HiredProperty) {
@@ -26,4 +27,3 @@ export class HiringRegisterService {
     return this.http.post<boolean>(`${environment.apiUrl}/api/hiringregister/deletehiredproperty`, hiredProperty);
   }
 }
-

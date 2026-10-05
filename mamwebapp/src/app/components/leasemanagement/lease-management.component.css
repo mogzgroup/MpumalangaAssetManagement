@@ -1,0 +1,119 @@
+.lease-breadcrumb,
+.lease-table-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+:host {
+    display: flex;
+    height: 100%;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.lease-table-actions {
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    margin: 0.45rem 0 0.25rem;
+}
+
+.lease-table-actions mat-form-field {
+    width: min(100%, 360px);
+}
+
+.lease-table-actions button {
+    margin-bottom: 1.25rem;
+}
+
+.lease-table-actions mat-icon {
+    margin-right: 0.5rem;
+}
+
+.lease-map {
+    flex: 0 0 auto;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid #e1e9e4;
+    border-radius: 10px;
+}
+
+.lease-table-scroll {
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+.lease-table-scroll table {
+    min-width: 850px;
+}
+
+.lease-table-actions .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+}
+
+.lease-error {
+    color: #b3261e;
+}
+
+.status-indicator {
+    vertical-align: middle;
+}
+
+table {
+    width: 100%;
+}
+
+.lease-table-state {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.lease-table-state mat-progress-bar {
+    margin: 0 auto 0.75rem;
+    max-width: 320px;
+}
+
+.lease-table-state button {
+    margin-left: 0.5rem;
+}
+
+.lease-confirmation mat-spinner {
+    display: inline-block;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+}
+
+.leased-property-dialog {
+    display: flex;
+    flex-direction: column;
+    width: min(90vw, 1200px);
+    max-height: 90vh;
+    min-height: 0;
+}
+
+.lease-confirmation {
+    width: min(90vw, 400px);
+}
+
+.leased-property-dialog mat-card-content {
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: auto;
+}
+
+.leased-property-dialog mat-card-header {
+    align-items: center;
+    justify-content: space-between;
+}
+
+@media (max-width: 600px) {
+    .lease-table-actions {
+        align-items: stretch;
+        flex-wrap: wrap;
+    }
+
+    .lease-table-actions mat-form-field {
+        flex: 1 1 100%;
+    }
+}

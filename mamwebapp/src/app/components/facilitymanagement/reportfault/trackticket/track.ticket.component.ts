@@ -1,26 +1,20 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { RadioControlRegistry } from 'primeng/radiobutton';
 import { FaultService } from 'src/app/services/facility-management/fault.service';
-import { SharedService } from 'src/app/services/shared.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   standalone: false,
   selector: 'app-track-ticket',
   templateUrl: './track.ticket.component.html',
   styleUrls: ['./track.ticket.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService, ConfirmationService, RadioControlRegistry]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class TrackTicketComponent implements OnInit {
 
-  public error = '';
-  public errorMsg = '';
   public attachments: [];
   public submitted = false;
   public ticketisFound = false;
-  public ticketNotFound = false;
   public trackFaultForm: FormGroup;
   public referenceNumber = '';
   public status = '';
@@ -32,7 +26,11 @@ export class TrackTicketComponent implements OnInit {
     { code: 'contactNumber', name: 'Lynnville Township - Louws Creek Street 6, Aerorand, Middelburg, Mpumalanga' }
   ];
 
-  constructor(private faultService: FaultService, private formBuilder: FormBuilder, private messageService: MessageService)
+  constructor(
+    private faultService: FaultService,
+    private formBuilder: FormBuilder,
+    private toastService: ToastService
+  )
   {
   
   }
@@ -54,6 +52,7 @@ export class TrackTicketComponent implements OnInit {
   onSelectAttachment(files) { }
 
   onSearch() {
+    this.submitted = true;
     this.ticketisFound = false;
 
     if (this.trackFaultForm.valid) {
@@ -63,11 +62,11 @@ export class TrackTicketComponent implements OnInit {
           this.status = fault.status;
           this.ticketisFound = true;
         } else {
-          this.ticketNotFound = true;
+          this.toastService.showWarning('No fault was found with that reference number.');
         }
       },
-      (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get fault' });
+      error => {
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
         this.ticketisFound = false;
       });
     }
@@ -83,4 +82,3 @@ export class TrackTicketComponent implements OnInit {
     return result;
   }
 }
-

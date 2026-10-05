@@ -1,12 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { RadioControlRegistry } from 'primeng/radiobutton';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FaultService } from 'src/app/services/facility-management/fault.service';
 import { ProjectService } from 'src/app/services/facility-management/project.service';
-import { SharedService } from 'src/app/services/shared.service';
+import { ToastService } from 'src/app/services/toast.service';
 import { Fault } from '../../../../models/fault.model';
 
 @Component({
@@ -14,17 +11,20 @@ import { Fault } from '../../../../models/fault.model';
   selector: 'app-add-fault',
   templateUrl: './add.fault.component.html',
   styleUrls: ['./add.fault.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService, ConfirmationService, RadioControlRegistry]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class AddFaultComponent implements OnInit {
 
   public fault: Fault;
-  public attachments: any = [];
+  public attachments: File[] = [];
   public submitted = false;
   public isSuccessful = false;
+  public isSubmitting = false;
+  public isUploading = false;
+  public loadingTowns = false;
+  public loadingBuildings = false;
   public reportFaultForm: FormGroup;
-  public showTrackTicketDialog: boolean;
+  public showTrackTicketDialog = false;
   public referenceNumber = '';
   public properties: any = [];
   public towns: any = [];
@@ -32,10 +32,8 @@ export class AddFaultComponent implements OnInit {
   public filteredBuildings: any = [];
   public buildings: any = [];
   public enableBuilding: boolean = false;
-  public error: boolean = false;
-  public errorMsg: string = '';
-  public selectedTown: any;
-  public selectedBuilding: any;
+  @ViewChild('trackTicketDialog') trackTicketDialog: TemplateRef<unknown>;
+  private trackTicketDialogRef: MatDialogRef<unknown> | null = null;
 
   getReferenceNumber(length): string {
     let result = '';
@@ -47,8 +45,13 @@ export class AddFaultComponent implements OnInit {
     return result;
   }
 
-  constructor(private formBuilder: FormBuilder, private faultService: FaultService, private messageService: MessageService,
-    private projectService: ProjectService) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private faultService: FaultService,
+    private toastService: ToastService,
+    private projectService: ProjectService,
+    private dialog: MatDialog
+  ) {
       let now = new Date();
       const today = new Date(now.setHours(now.getHours() + 2));
       
@@ -77,17 +80,18 @@ export class AddFaultComponent implements OnInit {
   ngOnInit() {
     this.buildForm();
 
+    this.loadingTowns = true;
     this.projectService.getTowns().subscribe(towns => {
-      if (towns.length > 0) {
-        this.towns = [];
-        towns.forEach((element, index) => {
-          const option = { name: element, code: index, factor: index };
-          this.towns.push(option);
-        });
+      this.loadingTowns = false;
+      if (!Array.isArray(towns)) {
+        this.toastService.showError('Unable to load towns. Please try again.');
+        return;
       }
-    },
-      (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get fault' });
+      this.towns = towns.map((element, index) => ({ name: element, code: index, factor: index }));
+      this.filteredTowns = this.towns;
+    }, error => {
+        this.loadingTowns = false;
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
         this.isSuccessful = false;
       });
   }
@@ -96,114 +100,185 @@ export class AddFaultComponent implements OnInit {
 
   buildForm() {
     this.reportFaultForm = this.formBuilder.group({
-      townName: ['', Validators.required],
-      buildingName: ['', Validators.required],
+      townName: ['', [Validators.required, this.selectedOptionRequired]],
+      buildingName: ['', [Validators.required, this.selectedOptionRequired]],
       propertyDescription: ['', Validators.required],
       descriptionoftheIssue: ['', Validators.required],
       nameSurname: ['', Validators.required],
-      contactNumber: ['', [Validators.minLength(10), Validators.required]]
+      contactNumber: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(10), Validators.pattern(/^[0-9]+$/)]]
     });
   }
 
-  onRemoveAttachment(e) { }
+  private selectedOptionRequired(control: AbstractControl): ValidationErrors | null {
+    return control.value && typeof control.value === 'object' && control.value.code != null
+      ? null
+      : { selectionRequired: true };
+  }
 
-  onSelectAttachment(files) { }
+  displayOption(option: any): string {
+    return option?.name ?? '';
+  }
 
-  onBuildingChange(e) {
-    this.fault.facilityId = Number(e.code);
+  onRemoveAttachment(index: number) {
+    this.attachments.splice(index, 1);
+  }
+
+  onBuildingChange(building: any) {
+    this.fault.facilityId = Number(building.code);
   }
 
   onSubmit() {
     this.submitted = true;
     this.isSuccessful = false;
-    if (this.reportFaultForm.valid) {
+    if (this.isSubmitting || this.isUploading || !this.reportFaultForm) {
+      return;
+    }
+    this.reportFaultForm.markAllAsTouched();
+    if (this.reportFaultForm.invalid) {
+      return;
+    }
 
-      this.fault.incidentDescription = this.reportFaultForm.controls['descriptionoftheIssue'].value;
-      this.fault.propertyDescription = this.reportFaultForm.controls['propertyDescription'].value;
-      this.fault.contactNumber = this.reportFaultForm.controls['contactNumber'].value;
-      this.fault.contactName = this.reportFaultForm.controls['nameSurname'].value;
+    this.fault.incidentDescription = this.reportFaultForm.controls['descriptionoftheIssue'].value;
+    this.fault.propertyDescription = this.reportFaultForm.controls['propertyDescription'].value;
+    this.fault.contactNumber = this.reportFaultForm.controls['contactNumber'].value;
+    this.fault.contactName = this.reportFaultForm.controls['nameSurname'].value;
 
-      this.faultService.addFault(this.fault).pipe().subscribe(id => {
+    this.isSubmitting = true;
+    this.faultService.addFault(this.fault).pipe().subscribe(id => {
+      this.isSubmitting = false;
         if (id > 0) {
           this.fault.id = id;
+          this.isSuccessful = true;
+          this.toastService.showSuccess('Fault report submitted successfully. Your reference number is ' + this.fault.referenceNo + '.');
           if (this.attachments.length > 0) {
             this.uploadFiles();
           }
-          this.isSuccessful = true;
         } else {
+          this.toastService.showError('Unable to submit the fault report. Please try again.');
         }
-      },
-        error => {
+      }, error => {
+          this.isSubmitting = false;
           this.isSuccessful = false;
-        });
-    }
-  }
-
-  showToast(summary: string, detail: string, severity: string) {
-    this.messageService.add({ severity, summary, detail });
-  }
-
-  onChooseFile(evt: any) {
-    const uploadedFile = evt[0];
-    this.attachments.push(uploadedFile);
-  }
-
-  uploadFiles() {
-    this.faultService.uploadFiles(this.attachments, 'Fault' + this.fault.referenceNo + '_' + this.fault.id).pipe().subscribe(isUploaded => {
-      if (isUploaded) {
-
-      }
-    });
-  }
-
-  filterBuilding(event) {
-    let filtered: any[] = [];
-    let query = event.query;
-
-    for (let i = 0; i < this.buildings.length; i++) {
-      let country = this.buildings[i];
-      if (country.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-        filtered.push(country);
-      }
-    }
-    this.filteredBuildings = filtered;
-  }
-
-  filterTown(event) {
-    let filtered: any[] = [];
-    let query = event.query;
-
-    for (let i = 0; i < this.towns.length; i++) {
-      let town = this.towns[i];
-      if (town.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-        filtered.push(town);
-      }
-    }
-    this.filteredTowns = filtered;
-  }
-
-  onTownChange(event) {
-    this.enableBuilding = false;
-    const townName = event.name;
-    this.fault.town = townName;
-    this.projectService.getBuildingByTown(townName).subscribe(buildings => {
-      if (buildings.length > 0) {
-        this.buildings = [];
-        buildings.forEach((element, index) => {
-          const option =  {name: element.name + ' - ' + element.clientCode, code: element.id, factor: element.id };
-          this.buildings.push(option);
-        });
-        this.enableBuilding = true;
-      }
-    },
-      (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get fault' });
-        this.isSuccessful = false;
+          this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
   }
 
-  onDone(){
-    window.location.reload();
+  onChooseFile(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      this.attachments.push(...Array.from(input.files));
+      input.value = '';
+    }
+  }
+
+  uploadFiles() {
+    if (this.isUploading || this.attachments.length === 0) {
+      return;
+    }
+    this.isUploading = true;
+    this.faultService.uploadFiles(this.attachments, 'Fault' + this.fault.referenceNo + '_' + this.fault.id).subscribe(isUploaded => {
+      this.isUploading = false;
+      if (isUploaded) {
+        this.toastService.showSuccess('Attachments uploaded successfully.');
+      } else {
+        this.toastService.showWarning('Your fault was reported, but the attachments could not be uploaded.');
+      }
+      this.isSuccessful = true;
+    }, error => {
+      this.isUploading = false;
+      this.isSuccessful = true;
+      this.toastService.showWarning('Your fault was reported, but the attachments could not be uploaded. ' +
+        this.toastService.getApiErrorMessage(error));
+    });
+  }
+
+  filterBuilding(query: string) {
+    const normalizedQuery = (query ?? '').toLowerCase();
+    this.filteredBuildings = this.buildings.filter(building =>
+      building.name.toLowerCase().startsWith(normalizedQuery)
+    );
+  }
+
+  filterTown(query: string) {
+    const normalizedQuery = (query ?? '').toLowerCase();
+    this.filteredTowns = this.towns.filter(town =>
+      town.name.toLowerCase().startsWith(normalizedQuery)
+    );
+  }
+
+  onTownChange(town: any) {
+    this.enableBuilding = false;
+    const townName = town.name;
+    this.fault.town = townName;
+    this.reportFaultForm.controls['buildingName'].reset();
+    this.buildings = [];
+    this.filteredBuildings = [];
+      this.loadingBuildings = true;
+      this.projectService.getBuildingByTown(townName).subscribe(buildings => {
+        this.loadingBuildings = false;
+        if (!Array.isArray(buildings)) {
+          this.toastService.showError('Unable to load buildings for the selected town. Please try again.');
+          return;
+        }
+        buildings.forEach(element => {
+          const option = { name: element.name + ' - ' + element.clientCode, code: element.id, factor: element.id };
+          this.buildings.push(option);
+        });
+        this.filteredBuildings = this.buildings;
+        this.enableBuilding = this.buildings.length > 0;
+      }, error => {
+        this.loadingBuildings = false;
+        this.enableBuilding = false;
+        this.isSuccessful = false;
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
+      });
+  }
+
+  onDone() {
+      const now = new Date();
+      this.fault = {
+        ...this.fault,
+        id: 0,
+        facilityId: 1,
+        facilityName: null,
+        town: '',
+        propertyDescription: '',
+        incidentDescription: '',
+        contactName: '',
+        contactNumber: '',
+        createdDate: new Date(now.setHours(now.getHours() + 2)),
+        modifiedDate: null,
+        referenceNo: this.getReferenceNumber(7),
+        hasCompletionCertificate: false,
+        hasContractInvoice: false,
+        supplierId: null,
+        projectId: null,
+        faultNotes: [],
+        status: 'New',
+        isDeleted: false,
+      };
+      this.reportFaultForm.reset();
+      this.attachments = [];
+      this.buildings = [];
+      this.filteredBuildings = [];
+      this.enableBuilding = false;
+      this.isSuccessful = false;
+      this.submitted = false;
+  }
+
+  openTrackTicketDialog() {
+    this.showTrackTicketDialog = true;
+    if (this.trackTicketDialogRef) {
+      return;
+    }
+    this.trackTicketDialogRef = this.dialog.open(this.trackTicketDialog);
+    this.trackTicketDialogRef.afterClosed().subscribe(() => {
+      this.showTrackTicketDialog = false;
+      this.trackTicketDialogRef = null;
+    });
+  }
+
+  closeTrackTicketDialog() {
+    this.trackTicketDialogRef?.close();
   }
 }
-

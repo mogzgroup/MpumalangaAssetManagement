@@ -1,14 +1,14 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ViewChild, TemplateRef } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { first } from 'rxjs/operators';
 import { User } from '../../models/user.model';
 import { UserService } from '../../services/user/user.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthenticationService } from '../../services/authentication.service';
-import { FormControl } from '@angular/forms';
+import { AddUserComponent } from './add-user/add-user.component';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   standalone: false,
@@ -17,295 +17,250 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./user.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
 })
-export class UserComponent implements OnInit, AfterViewInit {
+export class UserComponent implements OnInit {
+  @ViewChild('resetPasswordDialog') resetPasswordDialog: TemplateRef<unknown>;
+  @ViewChild('deleteUserDialog') deleteUserDialog: TemplateRef<unknown>;
+
   loading = false;
-  isAdding = false;
-  showComfirmaDelete = false;
-  showResetPasswordComfirmation: boolean = false;
+  resettingPassword = false;
+  deleting = false;
   users: User[] = [];
-  clonedUsers: User[] = [];
-  displayedColumns: string[] = ['name', 'surname', 'email', 'createdDate', 'role', 'department', 'reset', 'actions'];
+  displayedColumns: string[] = ['name', 'surname', 'email', 'createdDate', 'role', 'department', 'actions'];
   dataSource = new MatTableDataSource<User>([]);
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-  addUserForm: FormGroup;
-  submitted = false;
+  @ViewChild(MatPaginator) set paginator(paginator: MatPaginator) {
+    if (paginator) {
+      this.dataSource.paginator = paginator;
+    }
+  }
+  @ViewChild(MatSort) set sort(sort: MatSort) {
+    if (sort) {
+      this.dataSource.sort = sort;
+    }
+  }
   error = '';
-  emailExsist: boolean = false;
-  currentUser: User;
   resetUser: User;
   selectedUser: User;
-  index: any;
-  showDialog: boolean = false;
-  showConfirmResetPassword: boolean = false;
   msgs: any[] = [];
-  newUserError: string = '';
-  errorMsg: string = 'error';
-  departments: any[] = [];
-  selectedRole: Number = 0;
-  header: string = 'Add User';
+  private confirmationDialogRef: MatDialogRef<unknown> | null = null;
 
-  constructor(private userService: UserService,
-    private formBuilder: FormBuilder,
-    private authenticationService: AuthenticationService,
-    private snackBar: MatSnackBar) { }
-  roles: any[];
+  constructor(
+    private userService: UserService,
+    private toastService: ToastService,
+    private dialog: MatDialog
+  ) { }
 
-  ngOnInit() {
-    this.showToast('Update User', 'User has been updated successful.');
-    this.authenticationService.currentUser.subscribe(x => {
-      this.currentUser = x;
-    });
+  ngOnInit(): void {
+    this.dataSource.filterPredicate = (user, filter) => [
+      user.name,
+      user.surname,
+      user.email,
+      user.role?.name,
+      user.department
+    ].some(value => String(value ?? '').toLowerCase().includes(filter));
+    this.dataSource.sortingDataAccessor = (user, property) => {
+      const values: Record<string, string | number> = {
+        name: user.name ?? '',
+        surname: user.surname ?? '',
+        email: user.email ?? '',
+        createdDate: user.createdDate ? new Date(user.createdDate).getTime() : 0,
+        role: user.role?.name ?? '',
+        department: user.department ?? ''
+      };
+      return values[property] ?? '';
+    };
+    this.loadUsers();
+  }
 
-    this.roles = [
-      { name: 'Viewer', code: 'V', factor: 1 },
-      { name: 'Administrator', code: 'SA', factor: 2 },
-      { name: 'Capturer', code: 'C', factor: 3 },
-      { name: 'Approver', code: 'A', factor: 5 },
-      { name: 'Verifier', code: 'DV', factor: 4 },
-      { name: 'Manager', code: 'M', factor: 6 },
-      { name: 'Department user', code: 'D', factor: 7 },
-
-    ];
-    this.departments = [
-      { name: 'Agriculture, rural development, land & environmental affairs', code: 'ARALEA', factor: 1 },
-      { name: 'Economic development & tourism', code: 'EDT', factor: 2 },
-      { name: 'Co-operative governance & traditional affairs', code: 'CGTA', factor: 3 },
-      { name: 'Community safety, security & liason', code: 'CSSL', factor: 4 },
-      { name: 'Culture, sport & recreation', code: 'CSR', factor: 5 },
-      { name: 'Education', code: 'E', factor: 6 },
-      { name: 'Provincial treasury', code: 'PT', factor: 7 },
-      { name: 'Health', code: 'H', factor: 8 },
-      { name: 'Human settlements', code: 'HS', factor: 9 },
-      { name: 'Social development', code: 'SD', factor: 10 },
-      { name: 'Public works, roads & transport', code: 'PWRT', factor: 11 },
-      { name: 'Finance', code: 'F', factor: 11 },
-    ];    
-
-    this.initUser();
-
+  private loadUsers(): void {
     this.loading = true;
-    this.userService.getAll().pipe(first()).subscribe(users => {
-      this.loading = false;
-      this.users = users;
-      this.clonedUsers = users;
-      this.dataSource.data = users;
+    this.error = '';
+    this.userService.getAll().pipe(first()).subscribe({
+      next: users => {
+        this.users = users ?? [];
+        this.dataSource.data = [...this.users];
+        this.loading = false;
+      },
+      error: (error: HttpErrorResponse) => {
+        this.users = [];
+        this.dataSource.data = [];
+        this.loading = false;
+        this.error = this.getErrorMessage(error);
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
+      }
     });
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  retryLoadUsers(): void {
+    if (!this.loading) {
+      this.loadUsers();
+    }
   }
 
-  applyFilter(value: string) {
-    this.dataSource.filter = value.trim().toLowerCase();
+  applyFilter(value: string): void {
+    this.dataSource.filter = (value ?? '').trim().toLowerCase();
     this.dataSource.paginator?.firstPage();
   }
 
-  initUser(){
-    this.addUserForm = this.formBuilder.group({
-      name: new FormControl('', Validators.compose([Validators.required])),
-      surname: new FormControl('', Validators.compose([Validators.required])),
-      email: new FormControl('', Validators.compose([Validators.required, Validators.email])),
-      role: new FormControl('', Validators.compose([Validators.required])),
-      department: new FormControl('')
+  openUserDialog(user?: User): void {
+    const dialogRef = this.dialog.open(AddUserComponent, {
+      width: 'min(92vw, 640px)',
+      maxWidth: 'calc(100vw - 24px)',
+      maxHeight: 'calc(100dvh - 24px)',
+      panelClass: 'user-management-dialog',
+      autoFocus: 'first-tabbable',
+      data: { user, users: [...this.users] }
+    });
+
+    dialogRef.afterClosed().subscribe(savedUser => {
+      if (!savedUser) {
+        return;
+      }
+      const existingIndex = this.users.findIndex(item => item.id === savedUser.id);
+      if (existingIndex >= 0) {
+        this.users[existingIndex] = savedUser;
+      } else {
+        this.users.push(savedUser);
+      }
+      this.dataSource.data = [...this.users];
     });
   }
 
-  addNewUser(){
-    this.addUserForm.reset();
-    this.initUser();
+  editUser(user: User): void {
+    this.openUserDialog(user);
   }
 
-  get f() { return this.addUserForm.controls; }
-
-  onRowEditSave(user: User) {
-    if (user.name === undefined || user.name === '') {
-      return;
-    }
-
-    if (user.surname === undefined || user.surname === '') {
-      return;
-    }
-
-    if (this.validEmail(user.email, user.id)) {
-      return;
-    }
-
-    this.userService.updateUser(user).pipe(first()).subscribe(isUpdated => {
-      if (isUpdated) {
-        this.showToast('Update User', 'User has been updated successful.');
-        this.loading = false;
-      } else {
-        this.showErrorToast('Update User', 'User has not been updated successful.');
-        this.loading = false;
-      }
-    });
-  }
-
-  validEmail(str: string, id: number) {
-    var email = str == undefined ? this.f.email.value : str;
-    if (id != undefined) {//for edit
-      if (str === undefined || str === '')
-        return false
-      else
-        return this.users.filter(u => u.email.toLowerCase() == email.toLowerCase() && u.id != id).length > 0;
-    } else { //for add      
-      return this.users.filter(u => u.email.toLowerCase() == email.toLowerCase()).length > 0 ? this.emailExsist = true : this.emailExsist = false;
-    }
-  }
-
-  onRowEditCancel() {
-    let user = this.selectedUser;
-    let index = this.index;
-    this.users[index] = this.clonedUsers[user.id];
-  }
-
-  showToast(summary: string, detail: string) {
-    this.snackBar.open(detail, summary, { duration: 5000 });
-  }
-  showErrorToast(summary: string, detail: string) {
-    this.snackBar.open(detail, summary, { duration: 7000, panelClass: ['mat-mdc-snack-bar-error'] });
-  }
-
-  setRole(role: any) {
-    this.selectedRole = role.factor;
-  }
-
-  onRowEditInit(e) { }
-
-  onSubmit() {
-    this.submitted = true;
-    this.isAdding = false;
-
-    // stop here if form is invalid
-    if (this.addUserForm.invalid) {
-      return;
-    }
-    var randomstring = Math.random().toString(36).slice(-8);
-
-    this.isAdding = true;
-    var user: User = {
-      id: undefined,
-      username: this.f.email.value,
-      password: randomstring,
-      name: this.f.name.value,
-      surname: this.f.surname.value,
-      roleId: this.addUserForm.controls["role"].value.factor,
-      role: this.addUserForm.controls["role"].value,
-      department: this.addUserForm.controls["department"].value != undefined ? this.addUserForm.controls["department"].value.name : null,
-      isActive: true,
-      email: this.f.email.value,
-      passwordIsChanged: false,
-      createdDate: new Date,
-      createdUserId: this.currentUser.id
-    }
-    if (this.header == 'Add User') {
-      this.addUser(user);
-    } else {
-      user.id = this.selectedUser.id;
-      this.editUser(user);
-    }
-  }
-
-  editUser(user: User) {
-    this.userService.updateUser(user).pipe().subscribe(newUser => {
-      if (newUser) {
-        this.users[this.index] = user;
-        this.dataSource.data = [...this.users];
-        this.showToast('Update User', 'User has been updated successful.');
-      } else {
-        this.showErrorToast('Update User', 'User has not been updated successfully.');
-      }
-      this.showDialog = false;
-      this.isAdding = false;
-    },
-      error => {
-        this.showErrorToast('Error Occurred', 'An error occurred while processing your request. Please try again.');
-        this.error = error;
-        this.isAdding = false;
-      });
-  }
-
-  addUser(user: User) {
-    this.userService.addUser(user).pipe().subscribe(newUser => {
-      if (newUser.id != 0) {
-        this.users.push(newUser);
-        this.dataSource.data = [...this.users];
-        this.showToast('Add User', 'User has been added successful');
-      } else {
-        this.showErrorToast('Add User', 'User was not added successfully.');
-      }
-      this.showDialog = false;
-      this.isAdding = false;
-    },
-      error => {
-        this.showErrorToast('Error Occurred', 'An error occurred while processing your request. Please try again.');
-        this.error = error;
-        this.isAdding = false;
-      });
-  }
-
-  resetPassword() {
-    var randomstring = Math.random().toString(36).slice(-8);
-    this.userService.resetPassword(this.resetUser.username, randomstring).pipe(first()).subscribe(isUpdated => {
-      if (isUpdated) {
-        this.showToast('Reset Password', 'Please check your email to reset your password');
-        this.loading = false;
-      } else {
-        this.showErrorToast('Reset Password', 'Failed to reset your password.');
-        this.loading = false;
-      }
-    }, error => {
-      this.showErrorToast('Error Occurred', 'An error occurred while processing your request. Please try again.');
-      this.loading = false;
-    });
-  }
-
-  deleteUser() {
-    this.userService.deleteUser(this.selectedUser).pipe(first()).subscribe(isDeleted => {
-      if (isDeleted) {
-        this.showToast('Delete User', 'User has been deleted successfully.');
-        this.users.splice(this.index, 1);
-        this.dataSource.data = [...this.users];
-      } else {
-        this.showErrorToast('Delete User', 'User was not deleted successfully.');
-      }
-      this.loading = false;
-    }, error => {
-      this.showErrorToast('Error Occurred', 'An error occurred while processing your request. Please try again.');
-    });
-  }
-
-  confirmResetPassword(user) {
+  confirmResetPassword(user: User): void {
     this.resetUser = user;
-    this.showResetPasswordComfirmation = true;
+    this.openConfirmation(this.resetPasswordDialog);
   }
 
-  confirmDelete() {
-    this.showComfirmaDelete = true;
+  confirmDelete(user: User = this.selectedUser): void {
+    this.selectedUser = user;
+    this.openConfirmation(this.deleteUserDialog);
   }
 
-  update() {
-    this.header = 'Edit User';
-    this.showDialog = true;
-    this.selectedRole = this.selectedUser.roleId;
-    let role = this.roles.filter(u => u.factor == this.selectedUser.roleId)[0];
-    let department = this.departments.filter(u => u.name == this.selectedUser.department)[0];
-    this.addUserForm = this.formBuilder.group({
-      name: new FormControl(this.selectedUser.name, Validators.compose([Validators.required])),
-      surname: new FormControl(this.selectedUser.surname, Validators.compose([Validators.required])),
-      email: new FormControl(this.selectedUser.email, Validators.compose([Validators.required, Validators.email])),
-      role: new FormControl(role, Validators.compose([Validators.required])),
-      department: new FormControl(department)
+  private openConfirmation(template: TemplateRef<unknown>): void {
+    this.confirmationDialogRef?.close();
+    const dialogRef = this.dialog.open(template, {
+      width: 'min(92vw, 440px)'
+    });
+    this.confirmationDialogRef = dialogRef;
+    dialogRef.afterClosed().subscribe(() => {
+      if (this.confirmationDialogRef === dialogRef) {
+        this.confirmationDialogRef = null;
+      }
     });
   }
 
-  selectUser(user: User, index: Number) {
+  closeConfirmation(): void {
+    if (!this.deleting && !this.resettingPassword) {
+      this.confirmationDialogRef?.close();
+    }
+  }
 
-    this.selectedUser = user;
-    this.index = index;
+  resetPassword(): void {
+    if (!this.resetUser) {
+      return;
+    }
+    const generatedPassword = Math.random().toString(36).slice(-8);
+    this.resettingPassword = true;
+    if (this.confirmationDialogRef) {
+      this.confirmationDialogRef.disableClose = true;
+    }
+    this.userService.resetPassword(this.resetUser.username, generatedPassword).pipe(first()).subscribe({
+      next: isUpdated => {
+        this.resettingPassword = false;
+        if (isUpdated) {
+          this.confirmationDialogRef?.close();
+          this.showToast('Please check your email to reset the password.');
+        } else {
+          if (this.confirmationDialogRef) {
+            this.confirmationDialogRef.disableClose = false;
+          }
+          this.showErrorToast('The password could not be reset. Please try again.');
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        this.resettingPassword = false;
+        if (this.confirmationDialogRef) {
+          this.confirmationDialogRef.disableClose = false;
+        }
+        this.showErrorToast(this.getErrorMessage(error));
+      }
+    });
+  }
+
+  deleteUser(): void {
+    if (!this.selectedUser || this.deleting) {
+      return;
+    }
+
+    this.deleting = true;
+    if (this.confirmationDialogRef) {
+      this.confirmationDialogRef.disableClose = true;
+    }
+    this.userService.deleteUser(this.selectedUser).pipe(first()).subscribe({
+      next: isDeleted => {
+        this.deleting = false;
+        if (!isDeleted) {
+          if (this.confirmationDialogRef) {
+            this.confirmationDialogRef.disableClose = false;
+          }
+          this.showErrorToast('The user was not deleted. Please try again.');
+          return;
+        }
+
+        const deletedId = this.selectedUser.id;
+        this.users = this.users.filter(user => user.id !== deletedId);
+        this.dataSource.data = [...this.users];
+        this.keepPaginatorOnValidPage();
+        this.confirmationDialogRef?.close();
+        this.showToast('User deleted successfully.');
+      },
+      error: (error: HttpErrorResponse) => {
+        this.deleting = false;
+        if (this.confirmationDialogRef) {
+          this.confirmationDialogRef.disableClose = false;
+        }
+        this.showErrorToast(this.getErrorMessage(error));
+      }
+    });
+  }
+
+  private keepPaginatorOnValidPage(): void {
+    const paginator = this.dataSource.paginator;
+    if (!paginator) {
+      return;
+    }
+    const lastPageIndex = Math.max(0, Math.ceil(this.dataSource.filteredData.length / paginator.pageSize) - 1);
+    paginator.pageIndex = Math.min(paginator.pageIndex, lastPageIndex);
+  }
+
+  showToast(message: string): void {
+    this.toastService.showSuccess(message);
+  }
+
+  showErrorToast(message: string): void {
+    this.toastService.showError(message);
+  }
+
+  private getErrorMessage(error: HttpErrorResponse): string {
+    switch (error.status) {
+      case 0:
+        return 'Unable to reach the server. Check your connection and try again.';
+      case 400:
+        return 'The request contains invalid details. Review the information and try again.';
+      case 401:
+      case 403:
+        return 'You are not authorized to manage users.';
+      case 404:
+        return 'The requested user could not be found.';
+      case 409:
+        return 'This operation conflicts with an existing user record.';
+      default:
+        return error.status >= 500
+          ? 'The server could not complete your request. Please try again later.'
+          : 'The request could not be completed. Please try again.';
+    }
   }
 }
-

@@ -1,6 +1,6 @@
-import { Component, ElementRef, OnInit, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { first } from 'rxjs/operators';
-import { MenuItem, MessageService } from 'primeng/api';
 import { User } from '../../models/user.model';
 import { UserService } from '../../services/user/user.service';
 import { FacilityService } from '../../services/facility/facility.service';
@@ -37,12 +37,12 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
     ])
   ],
   styleUrls: ['./dashboard.component.css']
-  , changeDetection: ChangeDetectionStrategy.Eager,
- providers: [MessageService]
+  , changeDetection: ChangeDetectionStrategy.Eager
 })
 export class DashboardComponent implements OnInit {
-  showDialog: boolean = false;
-  @Input() selectedAsset: any
+  @ViewChild('assetDialog') assetDialog: TemplateRef<{
+    $implicit: { header: string; asset: any };
+  }>;
   loadingZonings = true;
   loadingWedges = true;
   loadingFacilitySummaries = true;
@@ -51,9 +51,7 @@ export class DashboardComponent implements OnInit {
   wedges: Array<DashboardWedge> = [];
   currentUser: User;
   userFromApi: User;
-  items: MenuItem[];
-  home: MenuItem;
-  msgs: { severity: string; summary: string; detail: string }[] = [];
+  zoningColumns = ['name', 'signedOff', 'total'];
   data: any;
   nonResidentialBuildings: any;
   dwellings: any;
@@ -81,7 +79,8 @@ export class DashboardComponent implements OnInit {
   constructor(
     private userService: UserService,
     private facilityService: FacilityService,
-    private authenticationService: AuthenticationService) {
+    private authenticationService: AuthenticationService,
+    private dialog: MatDialog) {
     this.currentUser = this.authenticationService.currentUserValue;
   }
 
@@ -97,9 +96,6 @@ export class DashboardComponent implements OnInit {
     };
     this.addMarker();
     //})
-
-    this.items = [{ label: 'Welcome back to your dashboard' }];
-    this.home = { icon: 'pi pi-home' };
 
     this.facilityService.getFacilityZonings().pipe(first()).subscribe(zonings => {
       this.loadingZonings = false;
@@ -205,12 +201,15 @@ export class DashboardComponent implements OnInit {
 
   openInfo(marker) {
     this.dialogHeader = marker.data.description;
-    this.selectedAsset = {
-      mode : 'ViewTODO',
+    const selectedAsset = {
+      mode: 'ViewTODO',
       facilityId: marker.data.facilityId,
       facilityType: marker.data.facilityType
     };
-    this.showDialog = true;
+    this.dialog.open(this.assetDialog, {
+      width: '90vw',
+      data: { header: this.dialogHeader, asset: selectedAsset }
+    });
   }
 
   addMarker() {

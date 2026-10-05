@@ -21,6 +21,11 @@ export class AuthenticationService {
         return this.currentUserSubject.value;
     }
 
+    public get isAuthenticated(): boolean {
+        const user = this.currentUserValue;
+        return !!user && user.id > 0 && typeof user.token === 'string' && user.token.trim().length > 0;
+    }
+
     login(username: string, password: string) {
         const reqHeader = new HttpHeaders({ 'Content-Type': 'application/json', 'No-Auth': 'True' });
         return this.http.get<any>(`${environment.apiUrl}/api/user/login/${username}/${password}`, {headers: reqHeader})
@@ -38,8 +43,12 @@ export class AuthenticationService {
 
     logout() {
         // remove user from local storage to log user out
+        this.clearSession();
+        location.reload();
+    }
+
+    clearSession() {
         localStorage.removeItem('currentUser');
         this.currentUserSubject.next(null);
-        location.reload();
     }
 }

@@ -1,81 +1,111 @@
-<p-breadcrumb [model]="items" [home]="home"></p-breadcrumb>
-<br>
-<div class="p-fluid p-grid p-formgrid">
-    <form>
-        <div class="formgrid grid">
-            <div class="field grid col-10">
-                <div style="width:100%;height:400px">
-                    <google-map height="430px" width="100%" [zoom]="zoom" [center]="center" [options]="options">
-                        <map-marker (mapClick)="openInfo(marker)" *ngFor="let marker of markers"
-                            [position]="marker.position" [label]="marker.label" [title]="marker.title"
-                            [options]="marker.options">
-                        </map-marker>
-                        <map-info-window>{{ dialogHeader }}</map-info-window>
-                    </google-map>
-                </div>
-
-            </div>
-            <div class="field grid col-2">
-                <div class="db-card" style="color: #fff;">
-                    <h4>
-                        Non Residential Buildings
-                    </h4>
-                    <p *ngIf="!loadingWedges">
-                        {{nonResidentialBuildings.total}}
-                    </p>
-                </div>
-                <div class="db-card" style="margin-top: 150px;color: #fff;">
-                    <h3>
-                        Dwellings
-                    </h3>
-                    <p *ngIf="!loadingWedges">
-                        {{dwellings.total}}
-                    </p>
-                </div>
-                <div class="db-card" style="margin-top: 300px;color: #fff;">
-                    <h3>
-                        Land
-                    </h3>
-                    <p *ngIf="!loadingWedges">
-                        {{land.total}}
-                    </p>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
-<br>
-<br>
-<div class="ui-g-12 ui-lg-12">
-    <div class="ui-g-12 ui-lg-12" *ngIf="facilityType != undefined">
-        <p-table [value]="facilityType.facilityZonings">
-            <ng-template pTemplate="header">
-                <tr>
-                    <th>Zoning</th>
-                    <th>Signed Off</th>
-                    <th>Total</th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-product>
-                <tr>
-                    <td class="capitalize">{{product.name}}</td>
-                    <td>{{product.signedOff}}</td>
-                    <td>{{product.total}}</td>
-                </tr>
-            </ng-template>
-        </p-table>
+<section class="dashboard-heading">
+    <div>
+        <p class="dashboard-eyebrow">ASSET PORTFOLIO</p>
+        <h1>Dashboard</h1>
+        <p class="dashboard-intro">A clear overview of the province's immovable assets.</p>
     </div>
-</div>
+    <span class="dashboard-updated">
+        <mat-icon>insights</mat-icon>
+        Portfolio overview
+    </span>
+</section>
 
-<div *ngIf="showDialog" class="dialogBackgroud"></div>
-<p-dialog [(visible)]="showDialog" *ngIf="showDialog" [style]="{width: '90vw'}" [baseZIndex]="10000">
-    <p-header> {{ dialogHeader }} </p-header>
-    <app-addassetregister [selectedAsset]="selectedAsset" *ngIf="showDialog"></app-addassetregister>
-</p-dialog>
+<section class="dashboard-counts" aria-label="Asset totals">
+    <mat-card class="db-card">
+        <mat-card-content>
+            <span class="stat-icon buildings"><mat-icon>business</mat-icon></span>
+            <div class="stat-copy">
+                <span class="stat-label">Non-residential buildings</span>
+                <strong *ngIf="!loadingWedges">{{ nonResidentialBuildings?.total ?? 0 }}</strong>
+                <mat-progress-spinner *ngIf="loadingWedges" mode="indeterminate" diameter="24"></mat-progress-spinner>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <mat-card class="db-card">
+        <mat-card-content>
+            <span class="stat-icon dwellings"><mat-icon>home_work</mat-icon></span>
+            <div class="stat-copy">
+                <span class="stat-label">Dwellings</span>
+                <strong *ngIf="!loadingWedges">{{ dwellings?.total ?? 0 }}</strong>
+                <mat-progress-spinner *ngIf="loadingWedges" mode="indeterminate" diameter="24"></mat-progress-spinner>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <mat-card class="db-card">
+        <mat-card-content>
+            <span class="stat-icon land"><mat-icon>landscape</mat-icon></span>
+            <div class="stat-copy">
+                <span class="stat-label">Land</span>
+                <strong *ngIf="!loadingWedges">{{ land?.total ?? 0 }}</strong>
+                <mat-progress-spinner *ngIf="loadingWedges" mode="indeterminate" diameter="24"></mat-progress-spinner>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</section>
 
-<html>
+<section class="dashboard-content-grid">
+    <mat-card class="dashboard-panel map-panel">
+        <mat-card-header>
+            <div mat-card-avatar class="panel-avatar"><mat-icon>map</mat-icon></div>
+            <mat-card-title>Asset locations</mat-card-title>
+            <mat-card-subtitle>Registered properties across the province</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="dashboard-map">
+                <google-map class="dashboard-google-map" height="100%" width="100%"
+                    [zoom]="zoom" [center]="center" [options]="options">
+                    <map-marker (mapClick)="openInfo(marker)" *ngFor="let marker of markers"
+                        [position]="marker.position" [label]="marker.label" [title]="marker.title"
+                        [options]="marker.options">
+                    </map-marker>
+                    <map-info-window>{{ dialogHeader }}</map-info-window>
+                </google-map>
+            </div>
+        </mat-card-content>
+    </mat-card>
 
-<head>
-</head>
+    <mat-card class="dashboard-panel zoning-panel">
+        <mat-card-header>
+            <div mat-card-avatar class="panel-avatar"><mat-icon>pie_chart</mat-icon></div>
+            <mat-card-title>Portfolio by zoning</mat-card-title>
+            <mat-card-subtitle>Signed-off and total assets</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="table-scroll" *ngIf="facilityType?.facilityZonings?.length">
+                <table mat-table [dataSource]="facilityType.facilityZonings">
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef>Zoning</th>
+                        <td mat-cell *matCellDef="let zoning" class="capitalize">{{ zoning.name }}</td>
+                    </ng-container>
 
+                    <ng-container matColumnDef="signedOff">
+                        <th mat-header-cell *matHeaderCellDef>Signed off</th>
+                        <td mat-cell *matCellDef="let zoning">{{ zoning.signedOff }}</td>
+                    </ng-container>
 
+                    <ng-container matColumnDef="total">
+                        <th mat-header-cell *matHeaderCellDef>Total</th>
+                        <td mat-cell *matCellDef="let zoning">{{ zoning.total }}</td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="zoningColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: zoningColumns"></tr>
+                </table>
+            </div>
+            <div class="zoning-empty" *ngIf="!loadingZonings && !facilityType?.facilityZonings?.length">
+                No zoning information is currently available.
+            </div>
+            <div class="zoning-loading" *ngIf="loadingZonings">
+                <mat-progress-spinner mode="indeterminate" diameter="28"></mat-progress-spinner>
+                <span>Loading zoning information...</span>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</section>
+
+<ng-template #assetDialog let-data>
+    <h2 mat-dialog-title>{{ data.header }}</h2>
+    <mat-dialog-content>
+        <app-addassetregister [selectedAsset]="data.asset"></app-addassetregister>
+    </mat-dialog-content>
+</ng-template>

@@ -1,37 +1,104 @@
-header{
-    font-size: larger;
-    font-weight: normal;
-    padding: 15px;
-  }
-  
-  .header{
-    background-color: #9FA7AF;
-      border: 1px solid #007ad9;
-      color: white;
-      margin: -8px -15px 0px -15px;
+.table-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.table-container {
+  overflow: auto;
+}
+
+.assessment-table {
+  border-collapse: collapse;
+  min-width: 1300px;
+  width: 100%;
+}
+
+.assessment-table th,
+.assessment-table td {
+  border: 1px solid #d5d5d5;
+  padding: 0.5rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.assessment-table th {
+  background: #f4f4f4;
+  white-space: normal;
+}
+
+.district-row td {
+  background: #e8edf2;
+  font-weight: 700;
+  text-align: left;
+}
+
+.red {
+  color: #b3261e;
+}
+
+.textColor {
+  color: #333;
+}
+
+.dialog-backdrop {
+  align-items: center;
+  background: rgb(0 0 0 / 45%);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  overflow: auto;
+  padding: 1rem;
+  position: fixed;
+  z-index: 1000;
+}
+
+.assessment-dialog {
+  max-height: 90vh;
+  max-width: 1000px;
+  overflow: auto;
+  width: 90vw;
+}
+
+.confirmation-dialog {
+  max-width: 480px;
+  width: 90vw;
+}
+
+.assessment-form {
+  display: grid;
+  gap: 0 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding-top: 1rem;
+}
+
+.requirements-group {
+  border: 1px solid #ddd;
+  display: grid;
+  gap: 0.5rem;
+  grid-column: span 1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 1rem;
+}
+
+.requirements-group h3 {
+  font-size: 1rem;
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.uamp-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+@media (max-width: 700px) {
+  .assessment-form {
+    grid-template-columns: 1fr;
   }
 
-  th{
-    overflow-wrap: break-word;
-    width: 150px;
+  .requirements-group {
+    grid-template-columns: 1fr;
   }
-
-  td{
-    overflow-wrap: break-word;
-  }
-
-  th small{
-    font-weight: normal;
-  }
-
-  .red{
-    color: red;
-  }
-
-  .textColor{
-    color: #333333;
-  }
-
-  .inputtext{
-    border: 1px solid #a6a6a6 !important;
-  }
+}

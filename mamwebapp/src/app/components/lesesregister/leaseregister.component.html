@@ -1,10 +1,8 @@
-<p-tabView>
-    <p-tabPanel header="Letting">
-       <app-lease-management></app-lease-management>
-    </p-tabPanel>
-    <p-tabPanel header="Hiring">
+<mat-tab-group class="lease-register-tabs">
+    <mat-tab label="Letting">
+        <app-lease-management></app-lease-management>
+    </mat-tab>
+    <mat-tab label="Hiring">
         <app-hiring></app-hiring>
-    </p-tabPanel>
-</p-tabView>
-
-
+    </mat-tab>
+</mat-tab-group>

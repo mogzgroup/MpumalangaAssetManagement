@@ -12,6 +12,13 @@ import { GapAnalysis } from '../../../models/gap-analysis.model';
 export class GapAnalysisComponent implements OnInit {
   
   gapAnalyses: GapAnalysis[] = [];
+  displayedColumns = [
+    'programme',
+    'optimalAssets',
+    'gapOptimalAssetsUtilisedAssets',
+    'quantifiedNeedStatement',
+    'priority'
+  ];
 
   constructor() { 
     this.gapAnalyses.push(new GapAnalysis());
@@ -25,4 +32,3 @@ export class GapAnalysisComponent implements OnInit {
   }
 
 }
-

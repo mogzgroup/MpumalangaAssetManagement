@@ -1,14 +1,43 @@
-<p-toast [style]="{marginTop: '90px'}" position="top-right"></p-toast>
-<p-tabView [(activeIndex)]="activeIndex">
-    <p-tabPanel header="Land" style="background-color: var(--surface-b);
-    color: var(--text-color);">
-        <form [formGroup]="landForm" *ngIf="!loading" (ngSubmit)="onLandFormSubmit()">
-            <div class="p-fluid p-grid p-formgrid" id="printLand"
-                style="overflow-y: auto; overflow-x: hidden; height: 500px;width: 100%">
-                <div class="ui-g-12 ui-md-12" *ngIf="mode != 'View'">
-                    <p-fileUpload [showUploadButton]="false" [showCancelButton]="false"
-                        (onRemove)="onLandRemoveFile($event)" multiple="multiple"
-                        (onSelect)="onLandSelectFile($event.files)"></p-fileUpload>
+<div *ngIf="loading" class="asset-editor-state" role="status">
+    <mat-spinner diameter="28" aria-hidden="true"></mat-spinner>
+    <span>Loading asset details...</span>
+</div>
+<button *ngIf="loadError" mat-stroked-button type="button" (click)="loadSelectedFacility()">
+    <mat-icon>refresh</mat-icon> Retry loading asset
+</button>
+<button *ngIf="pendingFinalAsset && errorMsg && !loadError && !loading" mat-stroked-button
+    type="button" [disabled]="savingLand" (click)="retryPendingUploads()">
+    <mat-spinner *ngIf="savingLand" diameter="16" aria-label="Retrying upload"></mat-spinner>
+    <mat-icon *ngIf="!savingLand">refresh</mat-icon> Retry upload
+</button>
+<div *ngIf="filesLoading" class="asset-editor-state" role="status">
+    <mat-spinner diameter="20" aria-hidden="true"></mat-spinner>
+    <span>Loading supporting documents...</span>
+</div>
+<button *ngIf="filesError" mat-stroked-button type="button" [disabled]="filesLoading"
+    (click)="getFiles(facility?.fileReference)">
+    <mat-icon>refresh</mat-icon> Retry loading supporting documents
+</button>
+<div *ngIf="fileSelectionError" class="asset-file-selection-error" role="status">
+    <mat-icon aria-hidden="true">info_outline</mat-icon>
+    <span>{{fileSelectionError}}</span>
+</div>
+<div *ngIf="uploadingFiles" class="asset-upload-progress" role="status">
+    <mat-progress-bar mode="indeterminate" aria-label="Uploading supporting documents"></mat-progress-bar>
+    <span>Uploading supporting documents...</span>
+</div>
+
+<mat-tab-group class="asset-editor-tabs" [(selectedIndex)]="activeIndex">
+    <mat-tab label="Land">
+        <form [formGroup]="landForm" *ngIf="!loading && !loadError" (ngSubmit)="onLandFormSubmit()">
+            <div class="asset-form-grid asset-form-content" id="printLand">
+                <div class="asset-full-width" *ngIf="mode != 'View'">
+                    <label>Supporting files <input type="file" multiple [disabled]="isViewOnly || uploadingFiles || savingLand"
+                        (change)="onLandSelectFile($any($event.target).files)"></label>
+                    <ul *ngFor="let file of uploadedLandFiles; let i = index" style="list-style-type:none;">
+                        <li>{{ file.name }} <button mat-icon-button type="button" aria-label="Remove file" [disabled]="isViewOnly || uploadingFiles || savingLand"
+                            (click)="onLandRemoveFile(file)"><mat-icon>close</mat-icon></button></li>
+                    </ul>
                     <div>
                         <ul *ngFor="let file of landFiles; let i = index" style="list-style-type:none;">
                             <li>
@@ -17,85 +46,94 @@
                         </ul>
                     </div>
                 </div>
-                <p-fieldset legend="General" [toggleable]="true" styleClass="mt-2">
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                <mat-expansion-panel class="mt-2" expanded>
+                    <mat-expansion-panel-header><mat-panel-title>Asset Details</mat-panel-title></mat-expansion-panel-header>
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="fileReference">File Reference Number</label>
                                 <input [(ngModel)]="facility.fileReference" [ngModelOptions]="{standalone: true}"
-                                    [disabled]="isViewOnly" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    [disabled]="isViewOnly" autocomplete="off" type="text" matInput
+                                    class="asset-input">
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
-                                <label for="clientCode">Property Code</label>
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
+                                <label for="clientCode">Property Code <span class="required-marker" aria-hidden="true">*</span></label>
                                 <input formControlName="clientCode" autocomplete="off"
-                                    [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
-                                <div *ngIf="submitted && f.clientCode.errors" class="text-error"><br>
-                                    <div *ngIf="l.propertyCode.errors.required">This field is required.</div>
+                                    [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" type="text" matInput
+                                    class="asset-input">
+                                <div *ngIf="submitted && l.clientCode.errors" class="text-error"><br>
+                                    <div *ngIf="l.clientCode.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
-                                <label for="facilityName">Facility Name</label>
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
+                                <label for="facilityName">Facility Name <span class="required-marker" aria-hidden="true">*</span></label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="facilityName" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
-                                <div *ngIf="submitted && f.facilityName.errors" class="text-error"><br>
+                                    formControlName="facilityName" autocomplete="off" type="text" matInput
+                                    class="asset-input">
+                                <div *ngIf="submitted && l.facilityName.errors" class="text-error"><br>
                                     <div *ngIf="l.facilityName.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
-                                <label for="facilityType">Type</label>
-                                <p-dropdown appendTo="body" class="ui-inputtext ui-widget" inputId="facilityType"
-                                    [style]="{'width':'570px'}" (onChange)="setFacilityType($event)"
-                                    [disabled]="isViewOnly" [options]="facilityTypes" placeholder="Please Select"
-                                    formControlName="facilityType" optionLabel="name">
-                                </p-dropdown>
-                                <div *ngIf="submitted && f.facilityType.errors" class="text-error"><br>
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
+                                <label for="facilityType">Type <span class="required-marker" aria-hidden="true">*</span></label>
+                                <mat-form-field appearance="outline">
+                                    <mat-select inputId="facilityType" (selectionChange)="setFacilityType($event)"
+                                        [disabled]="isViewOnly" formControlName="facilityType" placeholder="Please Select">
+                                        <mat-option *ngFor="let item of facilityTypes" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <div *ngIf="submitted && l.facilityType.errors" class="text-error"><br>
                                     <div *ngIf="l.facilityType.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
                     </div>
-                    <div class="formgrid grid">
+                    <div class="asset-form-grid">
                         
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="type">Asset Type</label>
-                                <p-dropdown class="ui-inputtext ui-widget" inputId="type" [disabled]="isViewOnly"
-                                    [style]="{'width':'570px'}" [options]="types" placeholder="Please Select"
-                                    (onChange)="setType($event)" formControlName="type" optionLabel="name"></p-dropdown>
+                                <mat-form-field appearance="outline">
+                                    <mat-select inputId="type" [disabled]="isViewOnly" placeholder="Please Select"
+                                        (selectionChange)="setType($event)" formControlName="type">
+                                        <mat-option *ngFor="let item of types" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
 
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="class">Asset Class</label>
-                                <p-dropdown class="ui-inputtext ui-widget" inputId="class" [disabled]="isViewOnly"
-                                    [style]="{'width':'570px'}" [options]="classes" placeholder="Please Select"
-                                    formControlName="class" (onChange)="setClass($event)" optionLabel="name">
-                                </p-dropdown>
+                                <mat-form-field appearance="outline">
+                                    <mat-select inputId="class" [disabled]="isViewOnly" placeholder="Please Select"
+                                        formControlName="class" (selectionChange)="setClass($event)">
+                                        <mat-option *ngFor="let item of classes" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.class.errors" class="text-error"><br>
                                     <div *ngIf="l.class.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="userDepartment">User Department</label>
-                                <p-multiSelect class="ui-inputtext ui-widget" (click)="onOptionClick($event)"
-                                    styleClass="multi-select" [disabled]="isViewOnly" [style]="{'width':'570px'}"
-                                    placeholder="Please Select" inputId="userDepartment" [options]="userDepartments"
-                                    formControlName="userDepartment" optionLabel="name"></p-multiSelect>
+                                <mat-form-field appearance="outline">
+                                    <mat-select multiple [disabled]="isViewOnly" placeholder="Please Select"
+                                        formControlName="userDepartment">
+                                        <mat-option *ngFor="let item of userDepartments" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && l.userDepartment.errors" class="text-error">
                                     <br>
                                     <div *ngIf="l.userDepartment.errors.required">This field is required.</div>
@@ -103,138 +141,147 @@
                             </span>
                         </div>
                     </div>
-                </p-fieldset>
+                </mat-expansion-panel>
 
-                <p-fieldset legend="Geographical Location" [toggleable]="true" styleClass="mt-2">
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                <mat-expansion-panel class="mt-2" expanded>
+                    <mat-expansion-panel-header><mat-panel-title>Geographical Location</mat-panel-title></mat-expansion-panel-header>
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">Province</label>
-                                <p-dropdown class="ui-inputtext ui-widget" [disabled]="isViewOnly" inputId="province"
-                                    [style]="{'width':'570px'}" [(ngModel)]="province" [options]="provinces"
-                                    formControlName="province" (onChange)="setProvince($event)" optionLabel="name">
-                                </p-dropdown>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" [(ngModel)]="province"
+                                        formControlName="province" (selectionChange)="setProvince($event)">
+                                        <mat-option *ngFor="let item of provinces" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">District Municipality</label>
-                                <p-dropdown class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                    [style]="{'width':'570px'}" inputId="districtMunicipality"
-                                    [options]="districtMunicipalities" placeholder="Please Select"
-                                    formControlName="districtMunicipality" (onChange)="setDistrictMunicipality($event)"
-                                    optionLabel="name"></p-dropdown>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" placeholder="Please Select"
+                                        formControlName="districtMunicipality" (selectionChange)="setDistrictMunicipality($event)">
+                                        <mat-option *ngFor="let item of districtMunicipalities" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">Magisterial District</label>
-                                <p-dropdown class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                    [style]="{'width':'570px'}" inputId="magisterialDistrict"
-                                    [options]="magisterialDistricts" placeholder="Please Select"
-                                    formControlName="magisterialDistrict" (onChange)="setMagisterialDistrict($event)"
-                                    optionLabel="name"></p-dropdown>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" placeholder="Please Select"
+                                        formControlName="magisterialDistrict" (selectionChange)="setMagisterialDistrict($event)">
+                                        <mat-option *ngFor="let item of magisterialDistricts" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">Local Authority</label>
-                                <p-dropdown class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                    inputId="localAuthority" [options]="localAuthorities" placeholder="Please Select"
-                                    [style]="{'width':'570px'}" formControlName="localAuthority"
-                                    (onChange)="setLocalAuthorities($event)" optionLabel="name"></p-dropdown>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" placeholder="Please Select"
+                                        formControlName="localAuthority" (selectionChange)="setLocalAuthorities($event)">
+                                        <mat-option *ngFor="let item of localAuthorities" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
                     </div>
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">Region</label>
-                                <p-dropdown class="ui-inputtext ui-widget" [disabled]="isViewOnly" inputId="region"
-                                    [style]="{'width':'570px'}" [options]="regions" formControlName="region"
-                                    placeholder="Please Select" (onChange)="setProvince($event)" optionLabel="name">
-                                </p-dropdown>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" formControlName="region"
+                                        placeholder="Please Select" (selectionChange)="setProvince($event)">
+                                        <mat-option *ngFor="let item of regions" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">Town</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="town" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="town" autocomplete="off" type="text" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">Suburb</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="suburb" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="suburb" autocomplete="off" type="text" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">Street Name </label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="streetName" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="streetName" autocomplete="off" type="text" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
                     </div>
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">Street Number</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="streetNumber" autocomplete="off" type="number" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="streetNumber" autocomplete="off" type="number" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">GPS Coordinates Longitude</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
                                     formControlName="longitude" ng-pattern="/^[-+]?[0-9]{1,7}(\.[0-9]+)?$/"
-                                    autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget">
+                                    autocomplete="off" type="text" matInput class="asset-input">
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">GPS Coordinates Latitude</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
                                     formControlName="latitude" autocomplete="off"
-                                    ng-pattern="/^[-+]?[0-9]{1,7}(\.[0-9]+)?$/" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    ng-pattern="/^[-+]?[0-9]{1,7}(\.[0-9]+)?$/" type="text" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
@@ -242,143 +289,148 @@
                         </div>
                     </div>
 
-                </p-fieldset>
+                </mat-expansion-panel>
 
-                <p-fieldset legend="Property Description" [toggleable]="true" styleClass="mt-2">
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                <mat-expansion-panel class="mt-2" expanded>
+                    <mat-expansion-panel-header><mat-panel-title>Property Description</mat-panel-title></mat-expansion-panel-header>
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">Registration Division</label>
-                                <p-dropdown class="ui-inputtext ui-widget" [ngClass]="{'disabled': isViewOnly}"
-                                    [readonly]="isViewOnly" [style]="{'width':'570px'}" inputId="registrationDivision"
-                                    [options]="registrationDivisions" placeholder="Please Select"
-                                    formControlName="registrationDivision" optionLabel="name"></p-dropdown>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" formControlName="registrationDivision" placeholder="Please Select">
+                                        <mat-option *ngFor="let item of registrationDivisions" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.registrationDivision.errors" class="text-error"><br>
                                     <div *ngIf="l.registrationDivision.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">Township Name</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="townshipName" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="townshipName" autocomplete="off" type="text" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.townshipName.errors" class="text-error"><br>
                                     <div *ngIf="l.townshipName.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">Land Parcel</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="landParcel" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="landParcel" autocomplete="off" type="text" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">Land Portion</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="landPortion" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="landPortion" autocomplete="off" type="text" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
                     </div>
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="oldDescription">Old Description</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="oldDescription" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="oldDescription" autocomplete="off" type="text" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">Land Remainder</label>
-                                <p-dropdown class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                    inputId="landRemainder" [style]="{'width':'570px'}" [options]="landRemainders"
-                                    formControlName="landRemainder" (onChange)="setProvince($event)" optionLabel="name"
-                                    placeholder="Please Select">
-                                </p-dropdown>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" formControlName="landRemainder"
+                                        (selectionChange)="setProvince($event)" placeholder="Please Select">
+                                        <mat-option *ngFor="let item of landRemainders" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="float-input">Farm Name</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="farmName" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="farmName" autocomplete="off" type="text" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="survey">Survey</label>
-                                <p-dropdown class="ui-inputtext ui-widget" inputId="survey" [disabled]="isViewOnly"
-                                    [style]="{'width':'570px'}" [options]="surveys" placeholder="Please Select"
-                                    formControlName="survey" optionLabel="name">
-                                </p-dropdown>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" formControlName="survey" placeholder="Please Select">
+                                        <mat-option *ngFor="let item of surveys" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.survey.errors" class="text-error"><br>
                                     <div *ngIf="l.survey.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
                     </div>
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="extent">Extent (Size of Land) (HA)</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="extent" autocomplete="off" type="number" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="extent" autocomplete="off" type="number" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="LPICode">LPI Code </label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="LPICode" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="LPICode" autocomplete="off" type="text" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="howAcquired">How Acquired</label>
-                                <p-dropdown class="ui-inputtext ui-widget" [disabled]="isViewOnly" inputId="howAcquired"
-                                    [options]="howAcquireds" [(ngModel)]="howAcquired" formControlName="acquired"
-                                    [style]="{'width':'570px'}" (onChange)="setHowAcquired($event)" optionLabel="name"
-                                    placeholder="Please Select">
-                                </p-dropdown>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" [(ngModel)]="howAcquired" formControlName="acquired"
+                                        (selectionChange)="setHowAcquired($event)" placeholder="Please Select">
+                                        <mat-option *ngFor="let item of howAcquireds" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <a class="link" (click)="goToLink('../../../../assets/documents/empty.pdf')">SG diagram</a>
 
                                 
@@ -386,29 +438,30 @@
                         </div>                        
                     </div>
 
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left" *ngIf="howAcquired.name === 'Other'">
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field" *ngIf="howAcquired.name === 'Other'">
                                 <label for="acquiredOther">How Acquired: Other</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="acquiredOther" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="acquiredOther" autocomplete="off" type="text" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.howAcquired.errors" class="text-error"><br>
                                     <div *ngIf="l.howAcquired.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
                     </div>
-                </p-fieldset>
+                </mat-expansion-panel>
 
-                <p-fieldset legend="Land Use & Management Details" [toggleable]="true" styleClass="mt-2">
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                <mat-expansion-panel class="mt-2" expanded>
+                    <mat-expansion-panel-header><mat-panel-title>Land Use &amp; Management Details</mat-panel-title></mat-expansion-panel-header>
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="titleDeedNumber">Title Deed Number</label>
                                 <input (blur) = 'validateTitleDeed($event)' style="text-transform: capitalize;"  maxlength="10" [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="titleDeedNumber"  autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="titleDeedNumber"  autocomplete="off" type="text" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.titleDeedNumber.errors" class="text-error">
                                     <br>
                                     <div *ngIf="l.titleDeedNumber.errors.required">This field is required.</div>
@@ -416,35 +469,41 @@
                                 <div style="top: 55px;" class="text-error" *ngIf="titleDeedIsInvalid">Invalid title deed . Format e.g T0000/0000</div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="class">Registration Date</label>
-                                <p-calendar appendTo="body" [ngClass]="{'disabled': isViewOnly}" class="ui-inputtext ui-widget"
-                                    [disabled]="isViewOnly" [maxDate]="today" formControlName="registrationDate"
-                                    dateFormat="dd/mm/yy" showOtherMonths="true" showButtonBar="true"></p-calendar>
+                                <mat-form-field appearance="outline">
+                                    <input matInput [matDatepicker]="registrationDatePicker" [max]="today"
+                                        [disabled]="isViewOnly" formControlName="registrationDate">
+                                    <mat-datepicker-toggle matIconSuffix [for]="registrationDatePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #registrationDatePicker></mat-datepicker>
+                                </mat-form-field>
                                 <div *ngIf="submitted&& f.fileReferenceNumber.errors" class="text-error"><br>
                                     <div *ngIf="l.fileReferenceNumber.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="registeredOwner">Registered Owner</label>
                                 <input formControlName="registeredOwner" [ngClass]="{'disabled': isViewOnly}"
-                                    [readonly]="isViewOnly" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    [readonly]="isViewOnly" autocomplete="off" type="text" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.registeredOwner.errors" class="text-error">
                                     <br>
                                     <div *ngIf="l.registeredOwner.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="vestingDate">Vesting Date</label>
-                                <p-calendar appendTo="body" [ngClass]="{'disabled': isViewOnly}" class="ui-inputtext ui-widget"
-                                    [disabled]="isViewOnly" formControlName="vestingDate" dateFormat="dd/mm/yy"
-                                    showOtherMonths="true" showButtonBar="true"></p-calendar>
+                                <mat-form-field appearance="outline">
+                                    <input matInput [matDatepicker]="vestingDatePicker" [disabled]="isViewOnly"
+                                        formControlName="vestingDate">
+                                    <mat-datepicker-toggle matIconSuffix [for]="vestingDatePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #vestingDatePicker></mat-datepicker>
+                                </mat-form-field>
                                 <div *ngIf="submitted && l.vestingDate.errors" class="text-error"><br>
                                     <div *ngIf="l.vestingDate.errors.required">This field is required.</div>
                                 </div>
@@ -452,50 +511,53 @@
                         </div>
                     </div>
 
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="deedsOffice">Deeds Office</label>
-                                <p-dropdown class="ui-inputtext ui-widget" [disabled]="isViewOnly" inputId="deedsOffice"
-                                    [style]="{'width':'570px'}" [options]="deedsOffices" placeholder="Please Select"
-                                    formControlName="deedsOffice" (onChange)="setDeedsOffice($event)"
-                                    optionLabel="name"></p-dropdown>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" formControlName="deedsOffice"
+                                        (selectionChange)="setDeedsOffice($event)" placeholder="Please Select">
+                                        <mat-option *ngFor="let item of deedsOffices" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.deedsOffices.errors" class="text-error"><br>
                                     <div *ngIf="l.deedsOffices.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
 
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="ownershipCategory">Ownership Category</label>
-                                <p-dropdown class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                    inputId="ownershipCategory" [options]="ownershipCategories"
-                                    [style]="{'width':'570px'}" formControlName="ownershipCategory" optionLabel="name"
-                                    placeholder="Please Select">
-                                </p-dropdown>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" formControlName="ownershipCategory"
+                                        placeholder="Please Select">
+                                        <mat-option *ngFor="let item of ownershipCategories" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.ownershipCategory.errors" class="text-error"><br>
                                     <div *ngIf="l.ownershipCategory.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="stateOwnedPercentage">State Owned Percentage</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="stateOwnedPercentage" autocomplete="off" type="number" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="stateOwnedPercentage" autocomplete="off" type="number" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.stateOwnedPercentage.errors" class="text-error"><br>
                                     <div *ngIf="l.stateOwnedPercentage.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="landUse">Land Use %</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="landUse" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="landUse" autocomplete="off" type="text" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.landUse.errors" class="text-error"><br>
                                     <div *ngIf="l.landUse.errors.required">This field is required.</div>
                                 </div>
@@ -503,68 +565,75 @@
                         </div>
                     </div>
 
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="zoning">Zoning</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="zoning" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget">
+                                    formControlName="zoning" autocomplete="off" type="text" matInput
+                                    class="asset-input">
                                 <div *ngIf="submitted && f.zoning.errors" class="text-error"><br>
                                     <div *ngIf="l.zoning.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <label for="incomeLeaseStatus">Income Lease Status</label>
-                                <p-dropdown class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                    [style]="{'width':'570px'}" inputId="incomeLeaseStatus"
-                                    [options]="incomeLeaseStatuses" formControlName="incomeLeaseStatus"
-                                    optionLabel="name">
-                                </p-dropdown>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" formControlName="incomeLeaseStatus">
+                                        <mat-option *ngFor="let item of incomeLeaseStatuses" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.incomeLeaseStatus.errors" class="text-error"><br>
                                     <div *ngIf="l.incomeLeaseStatus.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">                               
-                               
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                             </span>
                         </div>
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding">
                                 <a class="link" style="right: unset;" (click)="navigate('leaseRegister')">View leased properties</a>
                                 <a class="link" (click)="goToLink('../../../../assets/documents/empty.pdf')">Conditions of title</a>
                                 
                             </span>
                         </div>
                     </div>
-                </p-fieldset>
+                </mat-expansion-panel>
                 
             </div>
-            <p-footer>
-                <button style="float: left; margin-top: 15px;" type="button" icon="pi pi-times"
-                    (click)="showDialog=false" label="Cancel" class="ui-button-secondary"></button>
-                <button style="float: right; margin-top: 15px" type="button" (click)="activeIndex = 1"
-                    icon="pi pi-angle-right" label="Next"></button>
-                <button style="float: right; margin-top: 15px; margin-right: 5px;" type="button" printSectionId="printLand" [useExistingCss]="true" ngxPrint
-                    icon="pi pi-print" label="Print"></button>                    
+            <div class="form-actions">
+                <button mat-button style="float: left; margin-top: 15px;" type="button"
+                    (click)="showDialog=false"><mat-icon>close</mat-icon> Cancel</button>
+                <button mat-raised-button color="primary" style="float: right; margin-top: 15px" type="button"
+                    (click)="activeIndex = 1">Next <mat-icon>arrow_forward</mat-icon></button>
+                <button mat-button style="float: right; margin-top: 15px; margin-right: 5px;" type="button"
+                    printSectionId="printLand" [useExistingCss]="true" ngxPrint>
+                    <mat-icon>print</mat-icon> Print
+                </button>
                 <button *ngIf="mode != 'View' && (currentUser.roleId == 3 || currentUser.roleId == 2)"
-                    style="float: right; margin-top: 15px;margin-right: 10px" type="submit" icon="pi pi-check"
-                    label="Save"></button>
-            </p-footer>
+                    mat-raised-button color="primary" style="float: right; margin-top: 15px;margin-right: 10px"
+                    type="submit" [disabled]="savingLand || landForm.invalid">
+                    <mat-spinner *ngIf="savingLand" diameter="18" aria-label="Saving asset"></mat-spinner>
+                    <mat-icon *ngIf="!savingLand">check</mat-icon> {{savingLand ? 'Saving...' : 'Save'}}
+                </button>
+            </div>
         </form>
-    </p-tabPanel>
+    </mat-tab>
 
-    <p-tabPanel header="Improvement" *ngIf="facility.type != 'Land'">
-        <form [formGroup]="improvementForm" *ngIf="!loading" (ngSubmit)="onImprovementFormSubmit()">
-            <div class="ui-g ui-fluid" id="printImprovement">
-                <div class="ui-g-12 ui-md-12">
-                    <p-fileUpload #iFiles [showUploadButton]="false" [showCancelButton]="false"
-                        (onRemove)="onImprovementRemoveFile($event)" (onSelect)="onImprovementSelectFile($event.files)"
-                        name="myfile[]" multiple="multiple"></p-fileUpload>
+    <mat-tab label="Improvement" *ngIf="facility.type != 'Land'">
+        <form [formGroup]="improvementForm" *ngIf="!loading && !loadError" (ngSubmit)="onImprovementFormSubmit()">
+            <div class="asset-form-grid asset-form-content" id="printImprovement">
+                <div class="asset-full-width">
+                    <label>Supporting files <input type="file" multiple [disabled]="isViewOnly || uploadingFiles || savingLand"
+                        (change)="onImprovementSelectFile($any($event.target).files)"></label>
+                    <ul *ngFor="let file of uploadedImprovementFiles; let i = index" style="list-style-type:none;">
+                        <li>{{ file.name }} <button mat-icon-button type="button" aria-label="Remove file" [disabled]="isViewOnly || uploadingFiles || savingLand"
+                            (click)="onImprovementRemoveFile(file)"><mat-icon>close</mat-icon></button></li>
+                    </ul>
                     <div>
                         <ul *ngFor="let file of improvementFiles; let i = index" style="list-style-type:none;">
                             <li>
@@ -573,54 +642,55 @@
                         </ul>
                     </div>
                 </div>
-                <p-fieldset legend="General" [toggleable]="true">
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1 w-full">
-                                <label for="deedsOffice">Building Name</label>
+                <mat-expansion-panel expanded>
+                    <mat-expansion-panel-header><mat-panel-title>Improvement Details</mat-panel-title></mat-expansion-panel-header>
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
+                                <label for="deedsOffice">Building Name <span class="required-marker" aria-hidden="true">*</span></label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="buildingName" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget w-full"
-                                    [ngClass]="{ 'is-invalid': submitted && I.name.errors }">
+                                    formControlName="buildingName" autocomplete="off" type="text" matInput
+                                    class="asset-input asset-full-width"
+                                    [ngClass]="{ 'is-invalid': submitted && I.buildingName.errors }">
                                 <div *ngIf="submitted && I.buildingName.errors" class="text-error"><br>
                                     <div *ngIf="I.buildingName.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
 
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1 w-full">
-                                <label for="type">Size (m2)</label>
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
+                                <label for="type">Size (m2) <span class="required-marker" aria-hidden="true">*</span></label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="size" autocomplete="off" type="number" pInputText
-                                    class="ui-inputtext ui-widget w-full"
-                                    [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                                    formControlName="size" autocomplete="off" type="number" matInput
+                                    class="asset-input asset-full-width"
+                                    [ngClass]="{ 'is-invalid': submitted && I.size.errors }">
                                 <div *ngIf="submitted && I.size.errors" class="text-error"><br>
                                     <div *ngIf="I.size.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
 
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1 w-full">
-                                <label for="extentofBuilding">Extent of Building (m2)</label>
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
+                                <label for="extentofBuilding">Extent of Building (m2) <span class="required-marker" aria-hidden="true">*</span></label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="extentofBuilding" autocomplete="off" type="number" pInputText
-                                    class="ui-inputtext ui-widget w-full"
-                                    [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                                    formControlName="extentofBuilding" autocomplete="off" type="number" matInput
+                                    class="asset-input asset-full-width"
+                                    [ngClass]="{ 'is-invalid': submitted && I.extentofBuilding.errors }">
                                 <div *ngIf="submitted && I.extentofBuilding.errors" class="text-error"><br>
                                     <div *ngIf="I.extentofBuilding.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
 
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1 w-full">
-                                <label for="siteCoverag">Site Coverage %</label>
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
+                                <label for="siteCoverag">Site Coverage % <span class="required-marker" aria-hidden="true">*</span></label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="siteCoverag" autocomplete="off" type="number" pInputText
-                                    class="ui-inputtext ui-widget w-full"
-                                    [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                                    formControlName="siteCoverag" autocomplete="off" type="number" matInput
+                                    class="asset-input asset-full-width"
+                                    [ngClass]="{ 'is-invalid': submitted && I.siteCoverag.errors }">
                                 <div *ngIf="submitted && I.siteCoverag.errors" class="text-error"><br>
                                     <div *ngIf="I.siteCoverag.errors.required">This field is required.</div>
                                 </div>
@@ -628,57 +698,61 @@
                         </div>
                     </div>
 
-                    <div class="formgrid grid">
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1 w-full">
-                                <label for="class">Potential Use</label>
-                                <p-dropdown class="ui-inputtext ui-widget w-full" [disabled]="isViewOnly"
-                                    inputId="potentialUse" [style]="{'width':'570px'}" [options]="potentialUseList"
-                                    placeholder="Please Select" formControlName="potentialUse"
-                                    (onChange)="setClass($event)" optionLabel="name">
-                                </p-dropdown>
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
+                                <label for="class">Potential Use <span class="required-marker" aria-hidden="true">*</span></label>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" formControlName="potentialUse"
+                                        placeholder="Please Select" (selectionChange)="setClass($event)">
+                                        <mat-option *ngFor="let item of potentialUseList" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && I.potentialUse.errors" class="text-error"><br>
                                     <div *ngIf="I.potentialUse.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
 
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1 w-full">
-                                <label for="class">Type</label>
-                                <p-dropdown class="ui-inputtext ui-widget w-full" [disabled]="isViewOnly" inputId="type"
-                                    [style]="{'width':'570px'}" [options]="typeOfImprovements" formControlName="type"
-                                    (onChange)="setClass($event)" optionLabel="name" placeholder="Please Select">
-                                </p-dropdown>
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
+                                <label for="class">Type <span class="required-marker" aria-hidden="true">*</span></label>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" formControlName="type"
+                                        (selectionChange)="setClass($event)" placeholder="Please Select">
+                                        <mat-option *ngFor="let item of typeOfImprovements" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && I.type.errors" class="text-error"><br>
                                     <div *ngIf="I.type.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
 
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1 w-full">
-                                <label for="class">Condition Rating</label>
-                                <p-dropdown class="ui-inputtext ui-widget w-full" [disabled]="isViewOnly"
-                                    inputId="conditionRating" [style]="{'width':'570px'}" [options]="conditionRatings"
-                                    formControlName="conditionRating" (onChange)="setConditionRating($event)"
-                                    placeholder="Please Select" optionLabel="name">
-                                </p-dropdown>
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
+                                <label for="class">Condition Rating <span class="required-marker" aria-hidden="true">*</span></label>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" formControlName="conditionRating"
+                                        (selectionChange)="setConditionRating($event)" placeholder="Please Select">
+                                        <mat-option *ngFor="let item of conditionRatings" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && I.conditionRating.errors" class="text-error"><br>
                                     <div *ngIf="I.conditionRating.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
 
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1 w-full">
-                                <label for="class">Functional Performance Rating</label>
-                                <p-dropdown class="ui-inputtext ui-widget w-full" [disabled]="isViewOnly"
-                                    [style]="{'width':'570px'}" inputId="functionalPerformanceRating"
-                                    [options]="functionalPerformanceRatings"
-                                    formControlName="functionalPerformanceRating" (onChange)="setClass($event)"
-                                    placeholder="Please Select" optionLabel="name">
-                                </p-dropdown>
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
+                                <label for="class">Functional Performance Rating <span class="required-marker" aria-hidden="true">*</span></label>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" formControlName="functionalPerformanceRating"
+                                        (selectionChange)="setClass($event)" placeholder="Please Select">
+                                        <mat-option *ngFor="let item of functionalPerformanceRatings" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && I.functionalPerformanceRating.errors" class="text-error"><br>
                                     <div *ngIf="I.functionalPerformanceRating.errors.required">This field is required.
                                     </div>
@@ -688,121 +762,142 @@
 
                     </div>
 
-                    <div class="formgrid grid">
+                    <div class="asset-form-grid">
 
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1 w-full">
-                                <label for="levelofUtilization">Level of Utilization %</label>
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
+                                <label for="levelofUtilization">Level of Utilization % <span class="required-marker" aria-hidden="true">*</span></label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="levelofUtilization" autocomplete="off" type="number" pInputText
-                                    class="ui-inputtext ui-widget w-full"
-                                    [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                                    formControlName="levelofUtilization" autocomplete="off" type="number" matInput
+                                    class="asset-input asset-full-width"
+                                    [ngClass]="{ 'is-invalid': submitted && I.levelofUtilization.errors }">
                                 <div *ngIf="submitted && I.levelofUtilization.errors" class="text-error"><br>
                                     <div *ngIf="I.levelofUtilization.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
 
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1 w-full">
-                                <label for="type">Usable area(m2)</label>
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
+                                <label for="type">Usable area(m2) <span class="required-marker" aria-hidden="true">*</span></label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="usableArea" autocomplete="off" type="number" pInputText
-                                    class="ui-inputtext ui-widget w-full"
-                                    [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                                    formControlName="usableArea" autocomplete="off" type="number" matInput
+                                    class="asset-input asset-full-width"
+                                    [ngClass]="{ 'is-invalid': submitted && I.usableArea.errors }">
                                 <div *ngIf="submitted && I.usableArea.errors" class="text-error"><br>
                                     <div *ngIf="I.usableArea.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
 
-                        <div class="field grid col-3">
-                            <span class="p-input-icon-left p-1 w-full">
-                                <label for="type">Comments</label>
+                        <div class="asset-form-field asset-col-3">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
+                                <label for="type">Comments <span class="required-marker" aria-hidden="true">*</span></label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="comment" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget w-full"
-                                    [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                                    formControlName="comment" autocomplete="off" type="text" matInput
+                                    class="asset-input asset-full-width"
+                                    [ngClass]="{ 'is-invalid': submitted && I.comment.errors }">
                                 <div *ngIf="submitted && I.comment.errors" class="text-error"><br>
                                     <div *ngIf="I.comment.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
 
-                        <div class="field grid p-1 pl-2 col-3" style="float: right;">
-                            <button *ngIf="mode != 'View'" (click)="AddImprovement()" pRipple type="button"
-                                icon="pi pi-plus" iconPos="left" class="p-button-rounded btn-add" label="Add"></button>
+                        <div class="asset-form-field asset-col-3" style="float: right;">
+                            <button *ngIf="mode != 'View'" mat-raised-button color="primary"
+                                (click)="AddImprovement()" type="button" class="btn-add">
+                                <mat-icon>add</mat-icon> Add
+                            </button>
                         </div>
                     </div>
 
-                    <div class="formgrid grid">
-                        <p-table #dt [columns]="improvementCols" [paginator]="true" [rows]="5" selectionMode="single"
-                            rowExpandMode="single" [value]="improvements" dataKey="id" editMode="row"
-                            styleClass="p-datatable-striped">
-                            <ng-template pTemplate="caption">
-                                <div style="text-align: right">
-                                    <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
-                                    <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly" type="text"
-                                        pInputText size="50" placeholder="Global Filter" class="ui-inputtext ui-widget"
-                                        (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
-                                </div>
-                            </ng-template>
-                            <ng-template pTemplate="header">
-                                <tr>
-                                    <th *ngFor="let col of improvementCols">
-                                        {{col.header}}
-                                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort"
-                                            ariaLabelDesc="Activate to sort in descending order"
-                                            ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
-                                    </th>
-                                    <th style="width:10em">Actions</th>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
-                                <tr [pEditableRow]="rowData">
-                                    <td *ngFor="let col of improvementCols">
-                                        {{rowData[col.field]}}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <p-splitButton label="More" *ngIf="mode != 'View'" [model]="buttonItems"
-                                            (onDropdownClick)="selectImprovement(rowData)"
-                                            mat-button>
-                                        </p-splitButton>
-                                    </td>
-                                </tr>
-
-                            </ng-template>
-                        </p-table>
+                    <div class="asset-form-grid">
+                        <div class="table-toolbar">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Filter improvements</mat-label>
+                                <input matInput [readonly]="isViewOnly"
+                                    (input)="filterImprovements($any($event.target).value)">
+                                <mat-icon matSuffix>search</mat-icon>
+                            </mat-form-field>
+                        </div>
+                        <div class="table-container">
+                            <table class="material-data-table">
+                                <thead>
+                                    <tr>
+                                        <th *ngFor="let col of improvementCols">
+                                            <button mat-button type="button" (click)="sortImprovements(col.field)">
+                                                {{ col.header }}
+                                                <mat-icon *ngIf="improvementSortField === col.field">
+                                                    {{ improvementSortAscending ? 'arrow_upward' : 'arrow_downward' }}
+                                                </mat-icon>
+                                            </button>
+                                        </th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let rowData of pagedImprovements">
+                                        <td *ngFor="let col of improvementCols">
+                                            {{ improvementValue(rowData, col.field) }}
+                                        </td>
+                                        <td>
+                                            <button *ngIf="mode !== 'View'" mat-button type="button"
+                                                [matMenuTriggerFor]="improvementMenu"
+                                                (click)="selectImprovement(rowData)">More</button>
+                                            <mat-menu #improvementMenu="matMenu">
+                                                <button mat-menu-item type="button" (click)="editImprovement()">
+                                                    <mat-icon>edit</mat-icon><span>Update</span>
+                                                </button>
+                                                <button mat-menu-item type="button" (click)="confirmDelete()">
+                                                    <mat-icon>delete</mat-icon><span>Delete</span>
+                                                </button>
+                                            </mat-menu>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="!pagedImprovements.length">
+                                        <td [attr.colspan]="improvementCols.length + 1">No improvements found.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <mat-paginator [length]="improvementCount" [pageIndex]="improvementPageIndex"
+                            [pageSize]="improvementPageSize" [pageSizeOptions]="[5, 10, 25]"
+                            (page)="pageImprovements($event)"></mat-paginator>
                     </div>
-                </p-fieldset>
+                </mat-expansion-panel>
             </div>
 
-            <p-footer>
-                <div style="text-align: center;" *ngIf="errorMsg != ''">
-
-                </div>
+            <div class="form-actions">
                 <div>
-                    <button style="float: left; margin-top: 15px;" type="button" icon="pi pi-angle-left"
-                        (click)="activeIndex = 0" label="Back" class="ui-button-secondary"></button>
-                    <button style="float: right; margin-top: 15px" type="button" icon="pi pi-angle-right"
-                        label="Next" (click)="activeIndex = 2"></button>
-                    <button style="float: right; margin-top: 15px; margin-right: 5px;" type="button" printSectionId="printImprovement" [useExistingCss]="true" ngxPrint
-                        icon="pi pi-print" label="Print"></button>  
+                    <button mat-button style="float: left; margin-top: 15px;" type="button"
+                        (click)="activeIndex = 0"><mat-icon>arrow_back</mat-icon> Back</button>
+                    <button mat-raised-button color="primary" style="float: right; margin-top: 15px" type="button"
+                        (click)="activeIndex = 2">Next <mat-icon>arrow_forward</mat-icon></button>
+                    <button mat-button style="float: right; margin-top: 15px; margin-right: 5px;" type="button"
+                        printSectionId="printImprovement" [useExistingCss]="true" ngxPrint>
+                        <mat-icon>print</mat-icon> Print
+                    </button>
                     <button *ngIf="mode != 'View' && (currentUser.roleId == 3 || currentUser.roleId == 2)"
-                        style="float: right; margin-top: 15px;margin-right: 10px" type="submit"
-                        icon="pi pi-check" label="Save"></button>
+                        mat-raised-button color="primary" style="float: right; margin-top: 15px;margin-right: 10px"
+                        type="submit" [disabled]="savingLand">
+                        <mat-spinner *ngIf="savingLand" diameter="18" aria-label="Saving asset"></mat-spinner>
+                        <mat-icon *ngIf="!savingLand">check</mat-icon> {{savingLand ? 'Saving...' : 'Save'}}
+                    </button>
                 </div>
-            </p-footer>
+            </div>
         </form>
-    </p-tabPanel>
+    </mat-tab>
 
-    <p-tabPanel header="Finance">
-        <form [formGroup]="financialForm" *ngIf="!loading" (ngSubmit)="onFinancialFormSubmit()">
-            <div id="printFinance" class="ui-g ui-fluid" style="overflow-y: auto; overflow-x: hidden; height: 500px;width: 100%">
-                <div class="ui-g-12 ui-md-12">
-                    <p-fileUpload #fFiles [showUploadButton]="false" [showCancelButton]="false"
-                        (onRemove)="onFinanceRemoveFile($event)" (onSelect)="onFinanceSelectFile($event.files)"
-                        name="myfile[]" url="./upload.php" multiple="multiple"></p-fileUpload>
+    <mat-tab label="Finance">
+        <form [formGroup]="financialForm" *ngIf="!loading && !loadError" (ngSubmit)="onFinancialFormSubmit()">
+            <div id="printFinance" class="asset-form-grid asset-form-content">
+                <div class="asset-full-width">
+                    <label>Supporting files <input type="file" multiple [disabled]="isViewOnly || uploadingFiles || savingLand"
+                        (change)="onFinanceSelectFile($any($event.target).files)"></label>
+                    <ul *ngFor="let file of uploadedFinanceFiles; let i = index" style="list-style-type:none;">
+                        <li>{{ file.name }} <button mat-icon-button type="button" aria-label="Remove file" [disabled]="isViewOnly || uploadingFiles || savingLand"
+                            (click)="onFinanceRemoveFile(file)"><mat-icon>close</mat-icon></button></li>
+                    </ul>
                     <div>
                         <ul *ngFor="let file of financeFiles; let i = index" style="list-style-type:none;">
                             <li>
@@ -811,63 +906,69 @@
                         </ul>
                     </div>
                 </div>
-                <p-fieldset legend="General" [toggleable]="true">
-                    <div class="formgrid grid">
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                <mat-expansion-panel expanded>
+                    <mat-expansion-panel-header><mat-panel-title>Financial Details</mat-panel-title></mat-expansion-panel-header>
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="landUseClass">Land Use Class</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="landUseClass" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget w-full">
+                                    formControlName="landUseClass" autocomplete="off" type="text" matInput
+                                    class="asset-input asset-full-width">
                                 <div *ngIf="submitted && f.landUseClass.errors" class="text-error"><br>
                                     <div *ngIf="f.landUseClass.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="class">Nature of Asset</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="natureofAsset" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget w-full">
+                                    formControlName="natureofAsset" autocomplete="off" type="text" matInput
+                                    class="asset-input asset-full-width">
                                 <div *ngIf="submitted && f.natureofAsset.errors" class="text-error"><br>
                                     <div *ngIf="f.natureofAsset.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="afs">AFS</label>
-                                <p-dropdown class="ui-inputtext ui-widget w-full" inputId="afs" [disabled]="isViewOnly"
-                                    [style]="{'width':'570px'}" [options]="aFSs" placeholder="Please Select"
-                                    formControlName="afs" optionLabel="name">
-                                </p-dropdown>
+                                <mat-form-field appearance="outline">
+                                    <mat-select [disabled]="isViewOnly" formControlName="afs" placeholder="Please Select">
+                                        <mat-option *ngFor="let item of aFSs" [value]="item">{{ item.name }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.afs.errors" class="text-error"><br>
                                     <div *ngIf="f.afs.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
                     </div>
-                </p-fieldset>
-                <p-fieldset legend="Valuations" [toggleable]="true">
-                    <div class="formgrid grid">
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                </mat-expansion-panel>
+                <mat-expansion-panel expanded>
+                    <mat-expansion-panel-header><mat-panel-title>Valuations</mat-panel-title></mat-expansion-panel-header>
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="municipalValuation">Municipal Valuations</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="municipalValuation" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget w-full">
+                                    formControlName="municipalValuation" autocomplete="off" type="text" matInput
+                                    class="asset-input asset-full-width">
                                 <div *ngIf="submitted && f.municipalValuation.errors" class="text-error"><br>
                                     <div *ngIf="f.municipalValuation.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="municipalValuationDate">Date of Municipal Valuation</label>
-                                <p-calendar appendTo="body" [ngClass]="{'disabled': isViewOnly}" class="ui-inputtext ui-widget"
-                                    [disabled]="isViewOnly" formControlName="municipalValuationDate"
-                                    dateFormat="dd/mm/yy" showOtherMonths="true" showButtonBar="true"></p-calendar>
+                                <mat-form-field appearance="outline">
+                                    <input matInput [matDatepicker]="municipalValuationDatePicker" [disabled]="isViewOnly"
+                                        formControlName="municipalValuationDate">
+                                    <mat-datepicker-toggle matIconSuffix [for]="municipalValuationDatePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #municipalValuationDatePicker></mat-datepicker>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.municipalValuationDate.errors" class="text-error"><br>
                                     <div *ngIf="f.municipalValuationDate.errors.required">This field is required.</div>
                                 </div>
@@ -875,35 +976,38 @@
                         </div>
                     </div>
 
-                    <div class="formgrid grid">
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="class">Non Municipal Valuation</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="nonMunicipalValuation" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget w-full">
+                                    formControlName="nonMunicipalValuation" autocomplete="off" type="text" matInput
+                                    class="asset-input asset-full-width">
                                 <div *ngIf="submitted && f.nonMunicipalValuation.errors" class="text-error"><br>
                                     <div *ngIf="f.nonMunicipalValuation.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="value">Fair Value</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="value" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget w-full">
+                                    formControlName="value" autocomplete="off" type="text" matInput
+                                    class="asset-input asset-full-width">
                                 <div *ngIf="submitted && f.value.errors" class="text-error"><br>
                                     <div *ngIf="f.value.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="nonMunicipalValuationDate">Date of Non Municipal Valuation</label>
-                                <p-calendar appendTo="body" [ngClass]="{'disabled': isViewOnly}" class="ui-inputtext ui-widget"
-                                    [disabled]="isViewOnly" formControlName="nonMunicipalValuationDate"
-                                    dateFormat="dd/mm/yy" showOtherMonths="true" showButtonBar="true"></p-calendar>
+                                <mat-form-field appearance="outline">
+                                    <input matInput [matDatepicker]="nonMunicipalValuationDatePicker" [disabled]="isViewOnly"
+                                        formControlName="nonMunicipalValuationDate">
+                                    <mat-datepicker-toggle matIconSuffix [for]="nonMunicipalValuationDatePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #nonMunicipalValuationDatePicker></mat-datepicker>
+                                </mat-form-field>
                                 <div *ngIf="submitted && f.nonMunicipalValuationDate.errors" class="text-error"><br>
                                     <div *ngIf="f.nonMunicipalValuationDate.errors.required">This field is required.
                                     </div>
@@ -913,38 +1017,38 @@
 
                     </div>
 
-                    <div class="formgrid grid">
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="accountNoForService">Account no for Services</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="accountNoForService" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget w-full"
-                                    [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                                    formControlName="accountNoForService" autocomplete="off" type="text" matInput
+                                    class="asset-input asset-full-width"
+                                    [ngClass]="{ 'is-invalid': submitted && f.accountNoForService.errors }">
                                 <div *ngIf="submitted && f.accountNoForService.errors" class="text-error"><br>
                                     <div *ngIf="f.accountNoForService.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="personInstitutionResposible">Institution responsible for account</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
                                     formControlName="personInstitutionResposible" autocomplete="off" type="text"
-                                    pInputText class="ui-inputtext ui-widget w-full"
-                                    [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                                    matInput class="asset-input asset-full-width"
+                                    [ngClass]="{ 'is-invalid': submitted && f.personInstitutionResposible.errors }">
                                 <div *ngIf="submitted && f.personInstitutionResposible.errors" class="text-error"><br>
                                     <div *ngIf="f.personInstitutionResposible.errors.required">This field is required.
                                     </div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="propetyRatesAccount">Property Rates Account No</label>
                                 <input [ngClass]="{'disabled': isViewOnly}" [readonly]="isViewOnly"
-                                    formControlName="propetyRatesAccount" autocomplete="off" type="text" pInputText
-                                    class="ui-inputtext ui-widget w-full">
+                                    formControlName="propetyRatesAccount" autocomplete="off" type="text" matInput
+                                    class="asset-input asset-full-width">
                                 <div *ngIf="submitted && f.propetyRatesAccount.errors" class="text-error"><br>
                                     <div *ngIf="f.propetyRatesAccount.errors.required">This field is required.</div>
                                 </div>
@@ -952,72 +1056,61 @@
                         </div>
                     </div>
 
-                </p-fieldset>
-                <p-fieldset legend="Secondary Information Note" [toggleable]="true">
-                    <div class="formgrid grid">
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                </mat-expansion-panel>
+                <mat-expansion-panel expanded>
+                    <mat-expansion-panel-header><mat-panel-title>Secondary Information Note</mat-panel-title></mat-expansion-panel-header>
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="openingBalance">Opening Balance</label>
-                                <p-inputNumber class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                    formControlName="openingBalance" mode="currency" currency="ZAR" locale="en-ZA">
-                                </p-inputNumber>
+                                <input matInput type="number" [disabled]="isViewOnly" formControlName="openingBalance">
                                 <div *ngIf="submitted && f.openingBalance.errors" class="text-error"><br>
                                     <div *ngIf="f.openingBalance.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="additionCash">Additions Cash</label>
-                                <p-inputNumber class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                    formControlName="additionCash" mode="currency" currency="ZAR" locale="en-ZA">
-                                </p-inputNumber>
+                                <input matInput type="number" [disabled]="isViewOnly" formControlName="additionCash">
                                 <div *ngIf="submitted && f.additionCash.errors" class="text-error"><br>
                                     <div *ngIf="f.additionCash.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="additionNonCash">Additions Non Cash</label>
-                                <p-inputNumber class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                    formControlName="additionNonCash" mode="currency" currency="ZAR" locale="en-ZA">
-                                </p-inputNumber>
+                                <input matInput type="number" [disabled]="isViewOnly" formControlName="additionNonCash">
                                 <div *ngIf="submitted && f.additionNonCash.errors" class="text-error"><br>
                                     <div *ngIf="f.additionNonCash.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
                     </div>
-                    <div class="formgrid grid">
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                    <div class="asset-form-grid">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="class">Additions</label>
-                                <p-inputNumber class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                    formControlName="addition" mode="currency" currency="ZAR" locale="en-ZA">
-                                </p-inputNumber>
+                                <input matInput type="number" [disabled]="isViewOnly" formControlName="addition">
                                 <div *ngIf="submitted && f.addition.errors" class="text-error"><br>
                                     <div *ngIf="f.addition.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="disposal">Disposal</label>
-                                <p-inputNumber class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                    formControlName="disposal" mode="currency" currency="ZAR" locale="en-ZA">
-                                </p-inputNumber>
+                                <input matInput type="number" [disabled]="isViewOnly" formControlName="disposal">
                                 <div *ngIf="submitted && f.disposal.errors" class="text-error"><br>
                                     <div *ngIf="f.disposal.errors.required">This field is required.</div>
                                 </div>
                             </span>
                         </div>
-                        <div class="field grid col-4">
-                            <span class="p-input-icon-left p-1 w-full">
+                        <div class="asset-form-field asset-col-4">
+                            <span class="asset-input-field asset-field-padding asset-full-width">
                                 <label for="closingBalance">Closing Balance</label>
-                                <p-inputNumber class="ui-inputtext ui-widget" [disabled]="isViewOnly"
-                                    formControlName="closingBalance" mode="currency" currency="ZAR" locale="en-ZA">
-                                </p-inputNumber>
+                                <input matInput type="number" [disabled]="isViewOnly" formControlName="closingBalance">
                                 <div *ngIf="submitted && f.closingBalance.errors" class="text-error"><br>
                                     <div *ngIf="f.closingBalance.errors.required">This field is required.</div>
                                 </div>
@@ -1025,29 +1118,38 @@
                         </div>
                     </div>
 
-                </p-fieldset>
+                </mat-expansion-panel>
             </div>
-            <p-footer>
-                <button style="float: left; margin-top: 15px;" type="button" icon="pi pi-angle-left"
-                    (click)="activeIndex = 1" label="Back" class="ui-button-secondary"></button>
+            <div class="form-actions">
+                <button mat-button style="float: left; margin-top: 15px;" type="button"
+                    (click)="activeIndex = 1"><mat-icon>arrow_back</mat-icon> Back</button>
                 <button *ngIf="mode != 'View' && (currentUser.roleId == 3 || currentUser.roleId == 2)"
-                    style="float: right; margin-top: 15px" type="button" (click)="onSubmit()"
-                    icon="pi pi-angle-right" label="Submit" (click)="activeIndex = 2"></button>
+                    mat-raised-button color="primary" style="float: right; margin-top: 15px" type="button"
+                    [disabled]="savingLand" (click)="onSubmit(); activeIndex = 2">
+                    <mat-spinner *ngIf="savingLand" diameter="18" aria-label="Saving asset"></mat-spinner>
+                    <mat-icon *ngIf="!savingLand">arrow_forward</mat-icon> {{savingLand ? 'Saving...' : 'Submit'}}
+                </button>
                 <button *ngIf="mode != 'View' && currentUser.roleId == 4" style="float: right; margin-top: 15px"
-                    type="button" (click)="onSubmit()" icon="pi pi-angle-right" label="Sign Off"
-                    (click)="activeIndex = 2"></button>
-                <button style="float: right; margin-top: 15px; margin-right: 5px;" type="button" printSectionId="printFinance" [useExistingCss]="true" ngxPrint
-                    icon="pi pi-print" label="Print"></button>  
+                    mat-raised-button color="primary" type="button" [disabled]="savingLand"
+                    (click)="onSubmit(); activeIndex = 2">
+                    <mat-spinner *ngIf="savingLand" diameter="18" aria-label="Saving asset"></mat-spinner>
+                    <mat-icon *ngIf="!savingLand">arrow_forward</mat-icon> {{savingLand ? 'Saving...' : 'Sign off'}}
+                </button>
+                <button mat-button style="float: right; margin-top: 15px; margin-right: 5px;" type="button"
+                    printSectionId="printFinance" [useExistingCss]="true" ngxPrint>
+                    <mat-icon>print</mat-icon> Print
+                </button>
                 <button *ngIf="mode != 'View' && currentUser.roleId == 5" style="float: right; margin-top: 15px"
-                    type="button" (click)="onSubmit()" icon="pi pi-angle-right" label="Approve"
-                    (click)="activeIndex = 2"></button>
-            </p-footer>
+                    mat-raised-button color="primary" type="button" [disabled]="savingLand"
+                    (click)="onSubmit(); activeIndex = 2">
+                    <mat-spinner *ngIf="savingLand" diameter="18" aria-label="Saving asset"></mat-spinner>
+                    <mat-icon *ngIf="!savingLand">arrow_forward</mat-icon> {{savingLand ? 'Saving...' : 'Approve'}}
+                </button>
+            </div>
         </form>
-    </p-tabPanel>
+    </mat-tab>
 
-    <p-tabPanel header="Vesting">
+    <mat-tab label="Vesting">
 
-    </p-tabPanel>
-</p-tabView>
-
-
+    </mat-tab>
+</mat-tab-group>

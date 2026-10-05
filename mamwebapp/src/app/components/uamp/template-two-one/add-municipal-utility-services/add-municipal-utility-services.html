@@ -1,57 +1,54 @@
-<div class="ui-g ui-fluid">
-    <form [formGroup]="municipalUtilityServiceForm" style="width: 100%;">
-        <div class="formgrid grid">
-            <div class="field grid col-6">
-                <span class="p-input-icon-left p-1 w-full">
-                    <label for="name">Name</label>
-                    <p-dropdown inputId="name" [style]="{'width':'274px'}" [options]="names" class="ui-inputtext ui-widget mt-2" formControlName="name" placeholder="Please select" optionLabel="name"></p-dropdown>       
-                </span>
-            </div>
-            <div class="field grid col-3">
-                <span class="p-input-icon-left p-1 w-full ">
-                    <label for="cost">Cost</label>
-                    <p-inputNumber  [inputStyle]="{'width':'120px'}" formControlName="cost" mode="currency" class="ui-inputtext ui-widget p-1 w-full" currency="ZAR" locale="en-ZA"></p-inputNumber>
-                </span>
-            </div>
-            <div class="field grid col-3" style="float: right;">
-                <button style="height:fit-content; width: fit-content;float: right;margin-left: 35%;margin-top: 32px;" (click)="addMunicipalUtilityService()" pRipple type="button" icon="pi pi-plus" iconPos="left" class="p-button-rounded btn-add" label="Add"></button>
-            </div>
-        </div>
+<h2 mat-dialog-title>Municipal Utility Services</h2>
+<mat-dialog-content>
+    <form [formGroup]="municipalUtilityServiceForm" class="service-form">
+        <mat-form-field appearance="outline">
+            <mat-label>Name</mat-label>
+            <mat-select formControlName="name" placeholder="Please select">
+                <mat-option *ngFor="let option of names" [value]="option">{{ option.name }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="municipalUtilityServiceForm.controls['name'].hasError('required')">Name is required</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Cost (ZAR)</mat-label>
+            <input matInput type="number" min="0" step="0.01" formControlName="cost">
+            <mat-error *ngIf="municipalUtilityServiceForm.controls['cost'].hasError('required')">Cost is required</mat-error>
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="button" (click)="addMunicipalUtilityService()">
+            <mat-icon>add</mat-icon>Add
+        </button>
     </form>
 
-    <p-table styleClass="p-datatable-striped" [value]="municipalUtilityServices" [responsive]="true">
-        <ng-template pTemplate="header">
-            <tr>
-                <th>Name</th>   
-                <th style="width: 30%;">Cost</th>
-                <th style="width: 10%;"></th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-municipalUtilityService let-index="rowIndex">
-            <tr>
-                <td>{{municipalUtilityService.name}}</td>
-                <td>{{municipalUtilityService.cost | currency:'ZAR':'R'}}</td>
-                <td style="text-align: center;" *ngIf="municipalUtilityServices.length > 0">
-                    <button mat-icon-button type="button" (click)="deleteMunicipalUtilityService(index)" aria-label="Delete"><mat-icon>delete</mat-icon></button>
-                </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="footer">
-            <tr>      
-                <td></td>          
-                <td style="float: left;">Total: {{sum() | currency:'ZAR':'R'}}</td>
-                <td></td>
-            </tr>
-        </ng-template>
-    </p-table>
-</div>
-<p-footer>
-    <div>
-        <button style="float: left; margin-top: 15px;" type="button" 
-        (click)="cancel()" label="Cancel" class="ui-button-secondary"></button>
-        <button style="float: right; margin-top: 15px" type="button" (click)="onSubmit()"
-         label="Submit"></button>
+    <div class="service-table-container">
+        <table class="service-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Cost</th>
+                    <th aria-label="Actions"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let service of municipalUtilityServices; let index = index">
+                    <td>{{ service.name }}</td>
+                    <td>{{ service.cost | currency:'ZAR':'R' }}</td>
+                    <td>
+                        <button mat-icon-button type="button" (click)="deleteMunicipalUtilityService(index)" aria-label="Delete service">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td>Total: {{ sum() | currency:'ZAR':'R' }}</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
     </div>
-</p-footer>
-
-
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()">Cancel</button>
+    <button mat-raised-button color="primary" type="button" (click)="onSubmit()">Submit</button>
+</mat-dialog-actions>

@@ -24,18 +24,77 @@
   border: 3px solid green;
 }
 
-.ui-tabview-panels {
-  padding: 0em 1em !important;
-}
-
 .card{
   text-align: center;
   margin-bottom: 40px;
 }
 
-.ui-messages {
-  width: 102.7%;
-  margin-top: 10px;
-  margin-left: -22px;
-  }
+:host {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+}
 
+.uamp-breadcrumb,
+.uamp-start,
+.grid {
+  flex: 0 0 auto;
+}
+
+.uamp-breadcrumb {
+  margin-bottom: 0.2rem;
+}
+
+.uamp-start {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.65rem;
+}
+
+.grid {
+  grid-template-columns: repeat(2, minmax(0, 220px));
+  gap: 0.75rem;
+  margin: 0 0 0.75rem;
+}
+
+.grid mat-card-content {
+  display: grid;
+  min-height: 74px;
+  align-content: center;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  color: #687970;
+  font-size: 0.82rem;
+}
+
+.number-count {
+  color: #17633f;
+  font-size: 1.55rem;
+}
+
+.uamp-table-scroll {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.uamp-table-scroll table {
+  min-width: 760px;
+}
+
+.uamp-table-state {
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.uamp-table-state mat-progress-bar {
+  margin: 0 auto 0.75rem;
+  max-width: 320px;
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

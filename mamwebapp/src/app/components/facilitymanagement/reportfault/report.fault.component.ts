@@ -1,23 +1,15 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
-import { RadioButtonModule, RadioControlRegistry } from 'primeng/radiobutton';
-import { Project } from 'src/app/models/project.model';
-import { User } from 'src/app/models/user.model';
-import { AuthenticationService } from 'src/app/services/authentication.service';
-import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
   standalone: false,
   selector: 'app-report-fault',
   templateUrl: './report.fault.component.html',
   styleUrls: ['./report.fault.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService, ConfirmationService, RadioControlRegistry]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
-export class ReportFaultComponent implements OnInit {
-  public error = '';
-  public errorMsg = '';
+export class ReportFaultComponent implements OnInit, AfterViewInit {
   public showDialog = false;
   public submitted = false;
   public isSuccessful = false;
@@ -28,13 +20,23 @@ export class ReportFaultComponent implements OnInit {
   public title = 'app';
   public elementType = 'url';
   public value = 'Techiediaries';
+  @ViewChild('reportFaultDialog') reportFaultDialog: TemplateRef<unknown>;
+  @ViewChild('trackTicketDialog') trackTicketDialog: TemplateRef<unknown>;
+  @ViewChild('reportFaultChoiceDialog') reportFaultChoiceDialog: TemplateRef<unknown>;
+  private reportFaultDialogRef: MatDialogRef<unknown> | null = null;
+  private trackTicketDialogRef: MatDialogRef<unknown> | null = null;
+  private reportFaultChoiceDialogRef: MatDialogRef<unknown> | null = null;
 
-  constructor(private authenticationService: AuthenticationService, private formBuilder: FormBuilder, private sharedService: SharedService)
-  {
-  }
+  constructor(private formBuilder: FormBuilder, private dialog: MatDialog) {}
 
   ngOnInit() {
     this.buildForm();
+  }
+
+  ngAfterViewInit() {
+    if (this.showReportFaultDialog) {
+      this.openReportFaultDialog();
+    }
   }
 
   get f() { return this.reportFaultForm.controls; }
@@ -70,5 +72,62 @@ export class ReportFaultComponent implements OnInit {
     }
     return result;
   }
-}
 
+  openReportFaultDialog() {
+    this.showReportFaultDialog = true;
+    if (this.reportFaultDialogRef) {
+      return;
+    }
+    this.reportFaultDialogRef = this.dialog.open(this.reportFaultDialog);
+    this.reportFaultDialogRef.afterClosed().subscribe(() => {
+      this.showReportFaultDialog = false;
+      this.reportFaultDialogRef = null;
+    });
+  }
+
+  closeReportFaultDialog() {
+    this.reportFaultDialogRef?.close();
+  }
+
+  openTrackTicketDialog() {
+    this.showTrackTicketDialog = true;
+    if (this.trackTicketDialogRef) {
+      return;
+    }
+    this.trackTicketDialogRef = this.dialog.open(this.trackTicketDialog);
+    this.trackTicketDialogRef.afterClosed().subscribe(() => {
+      this.showTrackTicketDialog = false;
+      this.trackTicketDialogRef = null;
+    });
+  }
+
+  closeTrackTicketDialog() {
+    this.trackTicketDialogRef?.close();
+  }
+
+  openReportFaultChoiceDialog() {
+    this.showDialog = true;
+    if (this.reportFaultChoiceDialogRef) {
+      return;
+    }
+    this.reportFaultChoiceDialogRef = this.dialog.open(this.reportFaultChoiceDialog);
+    this.reportFaultChoiceDialogRef.afterClosed().subscribe(() => {
+      this.showDialog = false;
+      this.reportFaultChoiceDialogRef = null;
+    });
+  }
+
+  reportFaultFromChoice() {
+    this.reportFaultChoiceDialogRef?.close();
+    this.openReportFaultDialog();
+  }
+
+  trackTicketFromChoice() {
+    this.reportFaultChoiceDialogRef?.close();
+    this.openTrackTicketDialog();
+  }
+
+  closeReportFaultChoiceDialog() {
+    this.reportFaultChoiceDialogRef?.close();
+  }
+}

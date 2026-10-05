@@ -1,7 +1,8 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { MessageService } from 'primeng/api';
-import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
-import { Facility } from 'src/app/models/facility.model';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { ToastService } from 'src/app/services/toast.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { UampService } from 'src/app/services/uamp/uamp.service';
 import { OperationPlan } from 'src/app/models/operation-plan.model';
 import { UAMP } from 'src/app/models/uamp.model';
@@ -14,8 +15,7 @@ import { first } from 'rxjs/operators';
   selector: 'app-template-five-two',
   templateUrl: './template-five-two.component.html',
   styleUrls: ['./template-five-two.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class TemplateFiveTwoComponent implements OnInit {
   operationPlans: Array<OperationPlan> = [];
@@ -31,8 +31,19 @@ export class TemplateFiveTwoComponent implements OnInit {
   isEdit: boolean = false;
   mode: string = 'Edit';
   isLoading: boolean = false;
+  pageIndex = 0;
+  pageSize = 5;
+  pagedOperationPlans: Array<OperationPlan> = [];
 
-  constructor(private router: Router, private sharedService: SharedService, private uampService: UampService, private formBuilder: FormBuilder, private messageService: MessageService) {
+  @ViewChild('formDialog') private formDialogTemplate: TemplateRef<unknown>;
+  openAddDialog() {
+    this.dialogHeader = 'Add Operation Plan';
+    this.isEdit = false;
+    this.resetForm();
+    this.openFormDialog();
+  }
+
+  constructor(private router: Router, private sharedService: SharedService, private uampService: UampService, private formBuilder: FormBuilder, private toastService: ToastService, private dialog: MatDialog) {
     this.uampService.uampChange.subscribe((value) => {
       if (value) {
         this.uamp = value;
@@ -44,6 +55,7 @@ export class TemplateFiveTwoComponent implements OnInit {
         element.priorityServiceRankingObj = this.prioities.filter(p => p.name == element.priorityServiceRanking)[0];
         this.operationPlans.push(element);
       });
+      this.updatePagedOperationPlans();
     });
   }
 
@@ -78,13 +90,14 @@ export class TemplateFiveTwoComponent implements OnInit {
       this.router.navigate(['uamp']);
 
     this.operationPlans = this.uamp.templeteFivePointTwo.operationPlans;
+    this.updatePagedOperationPlans();
   }
 
   onPrioityServiceReankingChange(operationPlan: OperationPlan, e) {
-    operationPlan.priorityServiceRanking = e.value.name;
+    operationPlan.priorityServiceRanking = (e.value ?? e).name;
   }
   onInitialNeedYearChange(operationPlan: OperationPlan, e) {
-    operationPlan.initialNeedYear = Number(e.value.name);
+    operationPlan.initialNeedYear = Number((e.value ?? e).name);
   }
 
   calculateDbTotalAmountRequired(operationPlan: OperationPlan) {
@@ -180,7 +193,7 @@ export class TemplateFiveTwoComponent implements OnInit {
     }
     this.uampService.assignUamp(this.uamp);
     this.resetForm();
-    this.displayDialog = false;
+    this.closeFormDialog();
   }
 
   resetForm() {
@@ -201,7 +214,7 @@ export class TemplateFiveTwoComponent implements OnInit {
         this.router.navigate(['uampDetails/uampTemp53']);
       },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get template data' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
         this.isLoading = false;
       }
     );
@@ -216,16 +229,46 @@ export class TemplateFiveTwoComponent implements OnInit {
     this.uampService.saveUamp(this.uamp).pipe(first()).subscribe(uamp => {
       this.uamp = uamp;
       this.uampService.assignUamp(uamp);
-      this.messageService.add({ severity: 'success', summary: 'Save UAMP', detail: 'UAMP has been saved successful.' });
+      this.toastService.showSuccess('UAMP has been saved successfully.');
       this.cancel();
     },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to save UAMP' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
+  }
+
+  pageChanged(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updatePagedOperationPlans();
+  }
+
+  private updatePagedOperationPlans() {
+    const start = this.pageIndex * this.pageSize;
+    this.pagedOperationPlans = this.operationPlans.slice(start, start + this.pageSize);
   }
 
   cancel() {
     this.router.navigate(['uamp']);
   }
-}
+  private formDialogRef: MatDialogRef<unknown> | null = null;
 
+  private openFormDialog() {
+    this.displayDialog = true;
+    const dialogRef = this.dialog.open(this.formDialogTemplate, { maxWidth: '95vw' });
+    this.formDialogRef = dialogRef;
+    dialogRef.afterClosed().subscribe(() => {
+      if (this.formDialogRef === dialogRef) {
+        this.formDialogRef = null;
+        this.displayDialog = false;
+      }
+    });
+  }
+
+  closeFormDialog() {
+    this.formDialogRef?.close();
+    this.formDialogRef = null;
+    this.displayDialog = false;
+  }
+
+}

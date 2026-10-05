@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ProjectSupplier } from 'src/app/models/project-supplier';
 import { Supplier } from 'src/app/models/supplier';
 import { environment } from 'src/environments/environment';
+import { cachedGet } from '../../helpers/http-cache';
 
 @Injectable({
     providedIn: 'root'
@@ -13,7 +14,7 @@ export class SupplierService {
     constructor(private http: HttpClient) { }
 
     getSuppliers(): Observable<Array<Supplier>> {
-        return this.http.get<Array<Supplier>>(`${environment.apiUrl}/api/supplier/getsuppliers`);
+        return cachedGet<Array<Supplier>>(this.http, `${environment.apiUrl}/api/supplier/getsuppliers`);
     }
 
     linkProjectSuppliers(suppliers: Array<ProjectSupplier>) {
@@ -31,4 +32,3 @@ export class SupplierService {
         return this.http.post<boolean>(`${environment.apiUrl}/api/supplier/deletesupplier`, supplier);
     }
 }
-

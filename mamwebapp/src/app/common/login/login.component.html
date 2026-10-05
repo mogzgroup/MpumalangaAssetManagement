@@ -1,10 +1,10 @@
 <div class="login-body">
     <div class="mobile-banner">
-        <img src="../../../assets/images/logo.png" alt="prestige-layout">
+        <img src="../../../assets/images/logo.png" alt="Mpumalanga Asset Management">
     </div>
     <div class="login-panel">
         <div class="logo">
-            <img src="../../../assets/images/logo.png" alt="prestige-layout">
+            <img src="../../../assets/images/logo.png" alt="Mpumalanga Asset Management">
         </div>
     </div>
     <div class="login-card">
@@ -24,9 +24,10 @@
                     <mat-form-field appearance="outline" class="w-full">
                         <mat-label>Password</mat-label>
                         <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" autocomplete="current-password">
-                        <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword"
+                        <button mat-button matSuffix type="button" class="password-visibility"
+                            (click)="hidePassword = !hidePassword"
                             [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'">
-                            <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                            {{ hidePassword ? 'Show' : 'Hide' }}
                         </button>
                         <mat-error *ngIf="submitted && f.password.errors?.required">Password is required.</mat-error>
                     </mat-form-field>
@@ -34,13 +35,12 @@
                 <div class="forgetpassword-container">
                     <button mat-button type="button" (click)="openForgotPasswordDialog()" class="forget-password">Forgot Password?</button>
                 </div>
-                <div>
-                    <button mat-flat-button color="primary" class="w-full" type="submit" [disabled]="loading">
+                <div class="login-submit-container">
+                    <button mat-flat-button color="primary" class="login-submit" type="submit" [disabled]="loading">
                         <mat-spinner *ngIf="loading" diameter="18" aria-label="Signing in"></mat-spinner>
                         <span *ngIf="!loading">Sign In</span>
                     </button>
                 </div>
-                <div *ngIf="error" class="alert alert-danger mt-3 mb-0 text-error text-center">{{error}}</div>
             </form>
         </div>
     </div>
@@ -50,12 +50,11 @@
     <h2 mat-dialog-title>Forgot Password</h2>
     <form [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordSubmit()">
         <mat-dialog-content>
-            <mat-form-field appearance="outline" class="w-full">
+            <mat-form-field appearance="outline" class="dialog-field">
                 <mat-label>Username</mat-label>
                 <input matInput formControlName="username" autocomplete="username" required>
                 <mat-error *ngIf="forgotPasswordSubmitted && ff.username.errors?.required">This field is required.</mat-error>
             </mat-form-field>
-            <p *ngIf="forgotPasswordError" class="text-error" role="alert">{{forgotPasswordError}}</p>
         </mat-dialog-content>
         <mat-dialog-actions align="end">
             <button mat-button type="button" mat-dialog-close>Cancel</button>
@@ -63,5 +62,3 @@
         </mat-dialog-actions>
     </form>
 </ng-template>
-
-

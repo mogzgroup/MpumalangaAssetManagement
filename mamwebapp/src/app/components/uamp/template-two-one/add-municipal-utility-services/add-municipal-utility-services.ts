@@ -1,10 +1,7 @@
 import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormControl, FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { UampService } from 'src/app/services/uamp/uamp.service';
-import { MenuItem } from 'primeng/api';
-import { Valuation } from 'src/app/models/facility.model';
-import { FacilityService } from 'src/app/services/facility/facility.service';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Inject } from '@angular/core';
 
 @Component({
   standalone: false,
@@ -21,12 +18,16 @@ export class AddMunicipalUtilityServicesComponent implements OnInit {
   total: number = 0;
   names: any[];
 
-  constructor(public dialogRef: DynamicDialogRef, public config: DynamicDialogConfig, private formBuilder: FormBuilder) {
+  constructor(
+    public dialogRef: MatDialogRef<AddMunicipalUtilityServicesComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { property: any },
+    private formBuilder: FormBuilder
+  ) {
     this.municipalUtilityServiceForm = this.formBuilder.group({
         name: [undefined, Validators.required],
         cost: [undefined, Validators.required],        
       });     
-      this.property = config.data.property;
+      this.property = data.property;
   }
 
   ngOnInit() {
@@ -81,10 +82,10 @@ export class AddMunicipalUtilityServicesComponent implements OnInit {
 
   cancel(){
     this.resetForm();
+    this.dialogRef.close();
   }
 
   cancal(){
     this.cancel();
   }
 }
-

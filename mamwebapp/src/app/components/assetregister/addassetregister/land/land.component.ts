@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 })
 export class LandComponent implements OnInit {
 
-  personalInformation: any;
+  personalInformation: any = { firstname: '', lastname: '', age: null };
 
     submitted: boolean = false;
 
@@ -30,4 +30,3 @@ export class LandComponent implements OnInit {
     }
 
 }
-

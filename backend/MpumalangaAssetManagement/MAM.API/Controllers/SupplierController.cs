@@ -24,7 +24,6 @@ namespace MAM.API.Controllers
         public SupplierController(ISupplierService supplierService)
         {
             _supplierService = supplierService;
-            SetLog4NetConfiguration();
         }
 
         [HttpPost]

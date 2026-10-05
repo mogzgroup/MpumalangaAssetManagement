@@ -1,30 +1,36 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { PageEvent } from '@angular/material/paginator';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MenuItem, MessageService } from 'primeng/api';
-import { Subscription, Observable } from 'rxjs';
-import { first } from 'rxjs/internal/operators/first';
+import { Observable, from, of } from 'rxjs';
+import { concatMap, finalize, first, map, tap, toArray } from 'rxjs/operators';
 import { Facility } from 'src/app/models/facility.model';
 import { FacilityService } from 'src/app/services/facility/facility.service';
-import { ConfirmationService } from 'primeng/api';
 import { User } from 'src/app/models/user.model';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { Router } from '@angular/router';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   standalone: false,
   selector: 'app-addassetregister',
   templateUrl: './addassetregister.component.html',
   styleUrls: ['./addassetregister.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService, ConfirmationService]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 
 export class AddassetregisterComponent implements OnInit {
   @Output() newAsset = new EventEmitter<any>();
   @Input() selectedAsset: any;
-  steps: MenuItem[];
   improvements = [];
+  pagedImprovements: any[] = [];
+  improvementFilter = '';
+  improvementCount = 0;
+  improvementPageIndex = 0;
+  improvementPageSize = 5;
+  improvementSortField = '';
+  improvementSortAscending = true;
   uploadedImprovementFiles: any[] = [];
   uploadedFinanceFiles: any[] = [];
   uploadedLandFiles: any[] = [];
@@ -40,11 +46,13 @@ export class AddassetregisterComponent implements OnInit {
     class: '',
     type: ''
   };
-  error = '';
   today = new Date();
-  subscription: Subscription;
-  activeItem: MenuItem;
   loading = true;
+  loadError = false;
+  filesLoading = false;
+  filesError = false;
+  uploadingFiles = false;
+  fileSelectionError = '';
   incomeLeaseStatuses: any[];
   showHiredPropertyLink:boolean = false;
   facilityTypes: any[];
@@ -65,7 +73,6 @@ export class AddassetregisterComponent implements OnInit {
   improvementFiles: any[] = [];
   lfiles: any[] = [];
   financeFiles: any[] = [];
-  buttonItems: MenuItem[];
   submitted = false;
   localAuthorities: any[];
   registrationDivisions: any[];
@@ -93,6 +100,7 @@ export class AddassetregisterComponent implements OnInit {
   province: { name: 'Mpumalanga', code: 'MP', factor: 6 };
   registrationDivision: { name: 'Mpumalanga', code: 'M', factor: 4 };
   savingLand: boolean = false;
+  private pendingFinalAsset: Facility | null = null;
   improvementCols = [
     { field: 'buildingName', header: 'Building Name' },
     { field: 'type', header: 'Type' },
@@ -110,28 +118,21 @@ export class AddassetregisterComponent implements OnInit {
 
   formattedAmount;
  amount;
-  constructor(private router: Router,private sharedService: SharedService, private authenticationService: AuthenticationService, private confirmationService: ConfirmationService, public facilityService: FacilityService, private formBuilder: FormBuilder, private messageService: MessageService) { }
+  constructor(private router: Router,private sharedService: SharedService, private authenticationService: AuthenticationService, public facilityService: FacilityService, private formBuilder: FormBuilder, private toastService: ToastService) { }
 
   ngOnInit() {
+    this.currentUser = this.authenticationService.currentUserValue;
     this.buildForm();
-    this.authenticationService.currentUser.pipe().subscribe(x => {
-      this.currentUser = x;
-    });
 
     if (this.selectedAsset.facilityId != undefined) {      
       this.mode = this.selectedAsset.mode;      
       if (this.mode == "Edit" || this.mode == "View") {
         this.loading = false;
         this.facility = this.selectedAsset.facility;
-        this.getFiles(this.selectedAsset.facility.fileReference);
         this.initFacility();
+        this.getFiles(this.facility.fileReference);
       } else {
-        this.facilityService.getFacilityById(this.selectedAsset.facilityId, this.selectedAsset.facilityType).pipe(first()).subscribe(facility => {
-          this.loading = false;
-          this.getFiles(facility.fileReference);
-          this.facility = facility;
-          this.initFacility();
-        });
+        this.loadSelectedFacility();
       }
 
     } else {
@@ -141,11 +142,11 @@ export class AddassetregisterComponent implements OnInit {
         fileReference: undefined,
         type: undefined,
         clientCode: 'T0IS00000000000700020',
-        userId: this.currentUser.id,
+        userId: this.currentUser?.id,
         status: "New",
-        capturerId: this.currentUser.id,
+        capturerId: this.currentUser?.id,
         createdDate: new Date(),
-        modifierId: this.currentUser.id,
+        modifierId: this.currentUser?.id,
         modifiedDate: new Date(),
         land: {
           id: 0,
@@ -173,21 +174,50 @@ export class AddassetregisterComponent implements OnInit {
         },
         improvements: []
       }
-      this.buildForm();
       this.mode = this.selectedAsset.mode;
       this.loading = false;
     }   
-    if(this.currentUser.roleId == 1 || this.currentUser.roleId == 5 || this.currentUser.roleId == 4)
+    if([1, 4, 5].includes(this.currentUser?.roleId))
     {
-        this.mode == 'View';
-    }else{
-      this.isViewOnly = this.mode == 'View' ? true :  false;
+        this.mode = 'View';
     }
+    this.isViewOnly = this.mode === 'View';
   }
 
   get l() { return this.landForm.controls; }
   get f() { return this.financialForm.controls; }
   get I() { return this.improvementForm.controls; }
+
+  private findOption<T extends { name: string }>(options: T[] | null | undefined, value: unknown): T | undefined {
+    if (!Array.isArray(options) || typeof value !== 'string' || !value.trim()) {
+      return undefined;
+    }
+    const normalizedValue = value.trim().toLocaleLowerCase();
+    return options.find(option => option.name?.trim().toLocaleLowerCase() === normalizedValue);
+  }
+
+  loadSelectedFacility(): void {
+    this.loading = true;
+    this.loadError = false;
+    this.errorMsg = '';
+    this.facilityService.getFacilityById(this.selectedAsset.facilityId, this.selectedAsset.facilityType)
+      .pipe(first())
+      .subscribe({
+        next: facility => {
+          this.loading = false;
+          this.loadError = false;
+          this.facility = facility;
+          this.initFacility();
+          this.getFiles(facility.fileReference);
+        },
+        error: () => {
+          this.loading = false;
+          this.loadError = true;
+          this.errorMsg = 'Unable to load the asset. Please try again.';
+          this.toastService.showError(this.errorMsg);
+        }
+      });
+  }
 
   setLocalAuthorities(e) { }
 
@@ -313,110 +343,205 @@ export class AddassetregisterComponent implements OnInit {
   }
 
   onFinancialFormSubmit() {
-    //this.financeIsSubmitted = true;
-    //if (this.financialForm.valid) {
-      this.assignFacility(false, true, false);
-      this.facility.status = 'Saved';
-      this.facilityService.saveFacility(this.facility, "finance").pipe(first()).subscribe(isSaved => {
-        if (isSaved) {
-          this.savingLand = false;
-          if(this.uploadedLandFiles.length > 0)
-          this.uploadLandFiles();
-        if(this.uploadedFinanceFiles.length > 0)
-          this.uploadFinanceFiles();
-        if(this.uploadedImprovementFiles.length > 0)
-          this.uploadImprovementFiles();
-          this.messageService.add({ severity: 'success', summary: 'Saving', detail: 'Financial records are saved successful.' });
-        }
-        else {
-          this.savingLand = false;
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'An error occurred while saving!' });
-        }
-      });
-    //}
+    if (this.savingLand || this.isViewOnly) {
+      return;
+    }
+    this.financeIsSubmitted = true;
+    this.submitted = true;
+    this.financialForm.markAllAsTouched();
+    if (this.financialForm.invalid) {
+      this.errorMsg = 'Please correct the financial information before saving.';
+      return;
+    }
+    this.saveAssetStep('finance', false, true, false, 'Financial information saved successfully.');
   }
 
   onImprovementFormSubmit() {
-    //this.improvementIsSubmitted = true;
-    //if (this.landForm.valid) {
-      this.assignFacility(false, false, true);
-      this.facility.status = 'Saved';
-      this.facilityService.saveFacility(this.facility, "improvement").pipe(first()).subscribe(isSaved => {
-        if (isSaved) {
-          if(this.uploadedLandFiles.length > 0)
-            this.uploadLandFiles();
-          if(this.uploadedFinanceFiles.length > 0)
-            this.uploadFinanceFiles();
-          if(this.uploadedImprovementFiles.length > 0)
-            this.uploadImprovementFiles();
-          this.savingLand = false;
-          this.messageService.add({ severity: 'success', summary: 'Saving', detail: 'Improvement records are saved successful.' });
-        }
-        else {
-          this.savingLand = false;
-          this.messageService.add({ severity: 'error', summary: 'Error Occurred', detail: 'An error occurred while processing your request. please try again!' });
-        }
-      });
-   // }
+    if (this.savingLand || this.isViewOnly) {
+      return;
+    }
+    this.improvementIsSubmitted = true;
+    this.submitted = true;
+    this.improvementForm.markAllAsTouched();
+    if (this.improvementForm.invalid) {
+      this.errorMsg = 'Please complete the required improvement information before saving.';
+      return;
+    }
+    this.saveAssetStep('improvement', false, false, true, 'Improvement information saved successfully.');
   }
 
 
 
   onLandFormSubmit() {
-    //this.landIsSubmitted = true;
-    //if (this.landForm.valid) {    
-      this.assignFacility(true, false, false);
-      this.facility.status = 'Saved';
-      this.facilityService.saveFacility(this.facility, "land").pipe(first()).subscribe(facility => {
-        if (facility) {
-          this.savingLand = false;
-          if(this.uploadedLandFiles.length > 0)
-            this.uploadLandFiles();
-          if(this.uploadedFinanceFiles.length > 0)
-            this.uploadFinanceFiles();
-          if(this.uploadedImprovementFiles.length > 0)
-            this.uploadImprovementFiles();
-          this.facility = facility;
-          this.messageService.add({ severity: 'success', summary: 'Saving', detail: 'Land records are saved successful.' });
-        }
-        else {
-          this.savingLand = false;
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'An error occurred while saving!' });
-        }
-      });
-
-   // }
+    if (this.savingLand || this.isViewOnly) {
+      return;
+    }
+    this.landIsSubmitted = true;
+    this.submitted = true;
+    this.landForm.markAllAsTouched();
+    if (this.landForm.invalid) {
+      this.errorMsg = 'Please complete the required asset details before saving.';
+      return;
+    }
+    this.saveAssetStep('land', true, false, false, 'Asset details saved successfully.');
   }
 
   onSubmit() {
-    this.errorMsg = '';
-    this.isSubmitted = true;
-    if (this.landForm.invalid && this.improvementForm.invalid && this.financialForm.invalid) {
-      this.errorMsg = "Please capture all required information"
+    if (this.savingLand || this.isViewOnly) {
       return;
     }
-    this.assignFacility(true, true, true);
-    this.facility.status = 'SignedOff';
-    this.facility.modifierId = this.currentUser.id;
-    this.facility.modifiedDate = new Date();
-    this.facilityService.saveFacility(this.facility, "facility").pipe(first()).subscribe(isSaved => {
-      if (isSaved) {
-        if(this.uploadedLandFiles.length > 0)
-        this.uploadLandFiles();
-      if(this.uploadedFinanceFiles.length > 0)
-        this.uploadFinanceFiles();
-      if(this.uploadedImprovementFiles.length > 0)
-        this.uploadImprovementFiles();
-        this.newAsset.emit({ mode: "Add", data: this.facility, response: "isAddedSuccessful" });
-        this.savingLand = false;
-        this.messageService.add({ severity: 'warn', summary: 'Deleted', detail: 'Asset is added successful.' });
+    if (this.pendingFinalAsset) {
+      this.retryPendingUploads();
+      return;
+    }
+    this.errorMsg = '';
+    this.isSubmitted = true;
+    this.submitted = true;
+    const improvementNeedsValidation = this.facility?.type !== 'Land' && this.improvementForm.dirty;
+    this.landForm.markAllAsTouched();
+    this.financialForm.markAllAsTouched();
+    if (this.landForm.invalid || this.financialForm.invalid || (improvementNeedsValidation && this.improvementForm.invalid)) {
+      this.errorMsg = 'Please complete the required asset information before submitting.';
+      if (improvementNeedsValidation) {
+        this.improvementForm.markAllAsTouched();
       }
-      else {
+      return;
+    }
+    this.saveAssetStep(
+      'facility',
+      true,
+      true,
+      true,
+      this.mode === 'Add' ? 'Asset added successfully.' : 'Asset updated successfully.',
+      true
+    );
+  }
+
+  private saveAssetStep(
+    step: string,
+    includeLand: boolean,
+    includeFinance: boolean,
+    includeImprovements: boolean,
+    successMessage: string,
+    isFinalSubmit = false
+  ): void {
+    this.savingLand = true;
+    this.errorMsg = '';
+    this.assignFacility(includeLand, includeFinance, includeImprovements);
+    this.facility.status = isFinalSubmit ? 'SignedOff' : 'Saved';
+    if (isFinalSubmit) {
+      this.facility.modifierId = this.currentUser?.id;
+      this.facility.modifiedDate = new Date();
+    }
+
+    this.facilityService.saveFacility(this.facility, step).pipe(first()).subscribe({
+      next: response => {
+        if (!response) {
+          this.savingLand = false;
+          this.errorMsg = isFinalSubmit && this.mode === 'Edit'
+            ? 'The asset could not be updated. Please try again.'
+            : 'Unable to save the asset. Please check the information and try again.';
+          this.toastService.showError(this.errorMsg);
+          return;
+        }
+
+        const savedFacility = typeof response === 'object' ? response : this.facility;
+        this.facility = savedFacility;
+        if (isFinalSubmit) {
+          this.pendingFinalAsset = savedFacility;
+        }
+        this.uploadPendingFiles().pipe(first()).subscribe({
+          next: () => {
+            this.savingLand = false;
+            if (isFinalSubmit) {
+              this.finishFinalSubmit(savedFacility);
+            } else {
+              this.showToast('Saved', successMessage);
+            }
+          },
+          error: () => {
+            this.savingLand = false;
+            this.handleUploadError();
+          }
+        });
+      },
+      error: (error: HttpErrorResponse) => this.handleSaveError(error)
+    });
+  }
+
+  retryPendingUploads(): void {
+    if (this.savingLand || !this.pendingFinalAsset) {
+      return;
+    }
+    this.savingLand = true;
+    this.errorMsg = '';
+    this.uploadPendingFiles().pipe(first()).subscribe({
+      next: () => {
         this.savingLand = false;
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'An error occurred while adding an asset.' });
+        this.finishFinalSubmit(this.pendingFinalAsset);
+      },
+      error: () => {
+        this.savingLand = false;
+        this.handleUploadError();
       }
     });
+  }
 
+  private finishFinalSubmit(savedFacility: Facility): void {
+    this.pendingFinalAsset = null;
+    const response = this.mode === 'Add' ? 'isAddedSuccessful' : 'isUpdatedSuccessful';
+    this.newAsset.emit({ mode: this.mode, data: savedFacility, response });
+    this.showToast('Saved', this.mode === 'Add' ? 'Asset added successfully.' : 'Asset updated successfully.');
+  }
+
+  private uploadPendingFiles(): Observable<void> {
+    const uploads = [
+      { files: this.uploadedLandFiles, folder: `Land${this.facility.fileReference}` },
+      { files: this.uploadedImprovementFiles, folder: `Improvement${this.facility.fileReference}` },
+      { files: this.uploadedFinanceFiles, folder: `Finance${this.facility.fileReference}` }
+    ].filter(upload => upload.files.length > 0);
+    if (!uploads.length) {
+      return of(undefined);
+    }
+
+    this.uploadingFiles = true;
+    return from(uploads).pipe(
+      concatMap(upload => this.facilityService.uploadFiles(upload.files, upload.folder).pipe(
+        tap(() => upload.files.splice(0, upload.files.length)),
+        map(() => undefined)
+      )),
+      toArray(),
+      map(() => undefined),
+      finalize(() => this.uploadingFiles = false)
+    );
+  }
+
+  private handleUploadError(): void {
+    this.uploadingFiles = false;
+    this.errorMsg = 'The asset was saved, but its supporting files could not be uploaded. Retry the save to finish uploading.';
+    this.showToast('Upload error', this.errorMsg);
+  }
+
+  private handleSaveError(error: HttpErrorResponse): void {
+    this.savingLand = false;
+    if (error.status === 401) {
+      this.errorMsg = 'Your session has expired. Sign in and try again.';
+    } else if (error.status === 403) {
+      this.errorMsg = 'You are not authorized to save this asset.';
+    } else if (error.status === 404) {
+      this.errorMsg = 'The asset could not be found. Refresh the asset list and try again.';
+    } else if (error.status === 409) {
+      this.errorMsg = 'This asset conflicts with an existing record. Review the asset details and try again.';
+    } else if (error.status === 400) {
+      this.errorMsg = 'Some asset details are invalid. Review the information and try again.';
+    } else if (error.status === 0) {
+      this.errorMsg = 'Unable to reach the server. Check your connection and try again.';
+    } else if (error.status >= 500) {
+      this.errorMsg = 'The server could not save the asset. Please try again later.';
+    } else {
+      this.errorMsg = 'Unable to save the asset. Please try again.';
+    }
+    this.showToast('Error', this.errorMsg);
   }
   isArray(obj){
     return !!obj && obj.constructor === Array;
@@ -555,8 +680,8 @@ export class AddassetregisterComponent implements OnInit {
   buildForm() {
     this.landForm = this.formBuilder.group({
       survey:[''],
-      facilityType:[''],
-      clientCode:[''],
+      facilityType:['', Validators.required],
+      clientCode:['', Validators.required],
       deedsOffice: [''],
       class: [''],     
       //vestedType: [''],
@@ -565,7 +690,7 @@ export class AddassetregisterComponent implements OnInit {
       town: [''],
       suburb: [''],
       streetName: [''],
-      streetNumber: [''],
+      streetNumber: ['', Validators.min(0)],
       districtMunicipality: [''],
       region: [''],
       localAuthority: [''],
@@ -579,7 +704,7 @@ export class AddassetregisterComponent implements OnInit {
       landRemainder: [''],
       farmName: [''],
       SGDiagramNumber: [''],
-      extent: [''],
+      extent: ['', Validators.min(0)],
       LPICode: [''],
       acquired: [''],
       acquiredOther: [''],
@@ -589,11 +714,11 @@ export class AddassetregisterComponent implements OnInit {
       vestingDate: [''],
       //conditionsOfTitle: [''],
       ownershipCategory: [''],
-      stateOwnedPercentage: [''],
+      stateOwnedPercentage: ['', Validators.min(0)],
       landUse: [''],
       zoning: [''],
       userDepartment: [''],
-      facilityName: [''],
+      facilityName: ['', Validators.required],
       incomeLeaseStatus: [''],
       vat: [''],
       leaseNumber: [''],
@@ -616,13 +741,13 @@ export class AddassetregisterComponent implements OnInit {
     this.improvementForm = this.formBuilder.group({
       buildingName: ['', Validators.required],
       type: ['', Validators.required],
-      size: ['', [Validators.required]],
+      size: ['', [Validators.required, Validators.min(0)]],
       potentialUse: ['', [Validators.required]],
-      siteCoverag: ['', [Validators.required]],
+      siteCoverag: ['', [Validators.required, Validators.min(0)]],
       levelofUtilization: ['', [Validators.required]],
-      extentofBuilding: ['', [Validators.required]],
+      extentofBuilding: ['', [Validators.required, Validators.min(0)]],
       conditionRating: ['', [Validators.required]],
-      usableArea: ['', [Validators.required]],
+      usableArea: ['', [Validators.required, Validators.min(0)]],
       functionalPerformanceRating: ['', [Validators.required]],
       comment: ['', [Validators.required]],
     });
@@ -646,23 +771,6 @@ export class AddassetregisterComponent implements OnInit {
       personInstitutionResposible: [''],
     });
 
-    this.buttonItems = [     
-      {
-        label: 'Update', icon: 'pi pi-pencil', command: () =>
-          this.editImprovement()
-      },
-      { separator: true },
-      {
-        label: 'Delete', icon: 'pi pi-trash', command: () =>
-          this.confirmDelete()
-      }
-    ];
-    this.steps = [
-      { label: 'Land', icon: 'pi pi-fw pi-globe' },
-      { label: 'Finane', icon: 'pi pi-fw pi-money-bill' },
-      { label: 'Impronements', icon: 'pi pi-fw pi-home' }
-    ];
-
     this.potentialUseList = [
       { name: 'Agriculture', code: 'A', factor: 1 },
       { name: 'Alternative Payments-Sliding Scales', code: 'AP', factor: 3 },
@@ -680,8 +788,6 @@ export class AddassetregisterComponent implements OnInit {
       { name: 'House', code: 'HH', factor: 2 },
       { name: 'Farm', code: 'F', factor: 3 }
       ];
-
-    this.activeItem = this.steps[0];
 
     this.userDepartments = this.sharedService.getDepartments();
     this.registrationDivisions = [
@@ -824,13 +930,18 @@ export class AddassetregisterComponent implements OnInit {
   }
 
   showToast(summary: string, detail: string) {
-    this.messageService.add({ severity: 'success', summary: summary, detail: detail });
+    if (summary === 'Saved') {
+      this.toastService.showSuccess(detail);
+      return;
+    }
+    this.toastService.showError(detail);
   }
 
   onOptionClick(e, f?){}
 
   initFacility() {
-    this.improvements = this.facility.improvements;
+    this.improvements = this.facility.improvements || [];
+    this.updatePagedImprovements();
     if (this.facility.land == undefined) {
       this.facility.land = { id: 0 }
     }
@@ -838,7 +949,7 @@ export class AddassetregisterComponent implements OnInit {
       this.facility.land.geographicalLocation = { id: 0 }
     }
 
-    if (this.facility.land.geographicalLocation == undefined) {
+    if (this.facility.land.propertyDescription == undefined) {
       this.facility.land.propertyDescription = { id: 0 }
     }
 
@@ -859,42 +970,45 @@ export class AddassetregisterComponent implements OnInit {
       this.facility.finance.valuation = { id: 0 }
     }
 
-    let deedsOffice = this.deedsOffices.filter(d => d.name.toLowerCase().trim() == (this.facility.land.deedsOffice != undefined ? this.facility.land.deedsOffice.toLowerCase().trim() : this.facility.land.deedsOffice))[0];
-    let type = this.types.filter(d => d.name.toLowerCase().trim() == (this.facility.land.type != undefined ? this.facility.land.type.toLowerCase().trim() : this.facility.land.type))[0];
-    let assetClass = this.classes.filter(d => d.name.toLowerCase().trim() == (this.facility.land.class != undefined ? this.facility.land.class.toLowerCase().trim() : this.facility.land.class))[0];
-    let province = this.provinces.filter(d => d.name.toLowerCase().trim() == (this.facility.land.geographicalLocation.province != undefined ? this.facility.land.geographicalLocation.province.toLowerCase().trim() : this.facility.land.geographicalLocation.province))[0];
-    let districtMunicipality = this.districtMunicipalities.filter(d => d.name.toLowerCase().trim() == (this.facility.land.geographicalLocation.districtMunicipality != undefined ? this.facility.land.geographicalLocation.districtMunicipality.toLowerCase().trim() : this.facility.land.geographicalLocation.districtMunicipality))[0];
-
-    let afs = this.aFSs.filter(d => d.name.trim() == (this.facility.afs != undefined ? this.facility.afs.trim() : this.facility.afs))[0];
+    const deedsOffice = this.findOption(this.deedsOffices, this.facility.land.deedsOffice);
+    const type = this.findOption(this.types, this.facility.land.type);
+    const assetClass = this.findOption(this.classes, this.facility.land.class);
+    const province = this.findOption(this.provinces, this.facility.land.geographicalLocation.province);
+    const districtMunicipality = this.findOption(this.districtMunicipalities, this.facility.land.geographicalLocation.districtMunicipality);
+    const afs = this.findOption(this.aFSs, this.facility.afs);
     //let vestedType = this.vestedTypes.filter(d => d.name.toLowerCase().trim() == (this.facility.vestedType != undefined ? this.facility.vestedType.toLowerCase().trim() : this.facility.vestedType))[0];
-    let facilityType = this.facilityTypes.filter(d => d.name.toLowerCase().trim() == (this.facility.type != undefined ? this.facility.type.toLowerCase().trim() : this.facility.type))[0];
-
-    let region = this.regions.filter(d => d.name.toLowerCase().trim() == (this.facility.land.region != undefined ? this.facility.land.region.toLowerCase().trim() : this.facility.land.region))[0];
-    let registrationDivision = this.registrationDivisions.filter(d => d.name.toLowerCase().trim() == (this.facility.land.propertyDescription.registrationDivision != undefined ? this.facility.land.propertyDescription.registrationDivision.toLowerCase().trim() : this.facility.land.propertyDescription.registrationDivision))[0];
-    let landRemainder = this.landRemainders.filter(d => d.name == (this.facility.land.propertyDescription.landRemainder == false ? 'No' : 'Yes'))[0];
-    let acquired = this.howAcquireds.filter(d => d.name.toLowerCase().trim() == (this.facility.land.propertyDescription.acquired != undefined ? this.facility.land.propertyDescription.acquired.toLowerCase().trim() : this.facility.land.propertyDescription.acquired))[0];
-    let ownershipCategory = this.ownershipCategories.filter(d => d.name.toLowerCase().trim() == (this.facility.land.landUseManagementDetail.ownershipCategory != undefined ? this.facility.land.landUseManagementDetail.ownershipCategory.toLowerCase().trim() : this.facility.land.landUseManagementDetail.ownershipCategory))[0];
-    let userDepartment = this.userDepartments.filter(d => d.name.toLowerCase().trim() == (this.facility.land.landUseManagementDetail.userDepartment != undefined ? this.facility.land.landUseManagementDetail.userDepartment.toLowerCase().trim() : this.facility.land.landUseManagementDetail.userDepartment));
-    let incomeLeaseStatus = this.incomeLeaseStatuses.filter(d => d.name.toLowerCase().trim() == (this.facility.land.landUseManagementDetail.incomeLeaseStatus != undefined ? this.facility.land.landUseManagementDetail.incomeLeaseStatus.toLowerCase().trim() : this.facility.land.landUseManagementDetail.incomeLeaseStatus))[0];
-    let natureOfLease = this.natureOfLeases.filter(d => d.name.toLowerCase().trim() == (this.facility.land.leaseStatus.natureOfLease != undefined ? this.facility.land.leaseStatus.natureOfLease.toLowerCase().trim() : this.facility.land.leaseStatus.natureOfLease))[0];
-    let vat = this.vats.filter(d => d.name == this.facility.land.leaseStatus.vat)[0];
+    const facilityType = this.findOption(this.facilityTypes, this.facility.type);
+    const region = this.findOption(this.regions, this.facility.land.region);
+    const registrationDivision = this.findOption(this.registrationDivisions, this.facility.land.propertyDescription.registrationDivision);
+    const landRemainder = this.landRemainders.find(item =>
+      item.name === (this.facility.land.propertyDescription.landRemainder === false ? 'No' : 'Yes')
+    );
+    const acquired = this.findOption(this.howAcquireds, this.facility.land.propertyDescription.acquired);
+    const ownershipCategory = this.findOption(this.ownershipCategories, this.facility.land.landUseManagementDetail.ownershipCategory);
+    const departments = String(this.facility.land.landUseManagementDetail.userDepartment ?? '')
+      .split(',')
+      .map(name => this.findOption(this.userDepartments, name.trim()))
+      .filter(Boolean);
+    const incomeLeaseStatus = this.findOption(this.incomeLeaseStatuses, this.facility.land.landUseManagementDetail.incomeLeaseStatus);
+    const natureOfLease = this.findOption(this.natureOfLeases, this.facility.land.leaseStatus.natureOfLease);
+    const vat = this.vats.find(item => item.name === this.facility.land.leaseStatus.vat);
     let _districtMunicipality = {
       value: districtMunicipality
     };
     this.setDistrictMunicipality(_districtMunicipality);
-    let localAuthority = this.localAuthorities.filter(d => d.name.toLowerCase().trim() == (_districtMunicipality.value != undefined ? this.facility.land.geographicalLocation.localAuthority.toLowerCase().trim()  : this.facility.land.geographicalLocation.localAuthority))[0];
+    const localAuthority = this.findOption(this.localAuthorities, this.facility.land.geographicalLocation.localAuthority);
     
-    let magisterialDistrict = this.magisterialDistricts.filter(d => d.name.toLowerCase().trim() == (_districtMunicipality.value != undefined ? this.facility.land.geographicalLocation.magisterialDistrict.toLowerCase().trim()  : this.facility.land.geographicalLocation.magisterialDistrict))[0];
+    const magisterialDistrict = this.findOption(this.magisterialDistricts, this.facility.land.geographicalLocation.magisterialDistrict);
 
-    let survey = this.surveys.filter(d => d.name.toLowerCase().trim() == (this.facility.survey != undefined ? this.facility.survey.toLowerCase().trim() : this.facility.survey))[0];
+    let survey = this.findOption(this.surveys, this.facility.survey);
     
     if(this.facility.land.propertyDescription.sgDiagramNumber){
       survey = this.surveys[0];
     }
     this.landForm = this.formBuilder.group({
       survey:[survey],
-      facilityType:[facilityType],
-      clientCode:[this.facility.clientCode],
+      facilityType:[facilityType, Validators.required],
+      clientCode:[this.facility.clientCode, Validators.required],
       deedsOffice: [deedsOffice],
       class: [assetClass],
       afs: [afs],
@@ -904,7 +1018,7 @@ export class AddassetregisterComponent implements OnInit {
       town: [this.facility.land.geographicalLocation.town],
       suburb: [this.facility.land.geographicalLocation.suburb],
       streetName: [this.facility.land.geographicalLocation.streetName],
-      streetNumber: [this.facility.land.geographicalLocation.streetNumber],
+      streetNumber: [this.facility.land.geographicalLocation.streetNumber, Validators.min(0)],
       districtMunicipality: [districtMunicipality],
       region: [region],
       localAuthority: [localAuthority],
@@ -919,7 +1033,7 @@ export class AddassetregisterComponent implements OnInit {
       landRemainder: [landRemainder],
       farmName: [this.facility.land.propertyDescription.farmName],
       SGDiagramNumber: [this.facility.land.propertyDescription.sgDiagramNumber],
-      extent: [this.facility.land.propertyDescription.extent],
+      extent: [this.facility.land.propertyDescription.extent, Validators.min(0)],
       LPICode: [this.facility.land.propertyDescription.lPICode],
       acquired: [acquired],
       acquiredOther: [this.facility.land.propertyDescription.acquiredOther],
@@ -929,11 +1043,11 @@ export class AddassetregisterComponent implements OnInit {
       vestingDate: [this.facility.land.landUseManagementDetail.vestingDate != undefined ? new Date(this.facility.land.landUseManagementDetail.vestingDate) : new Date()],
       //conditionsOfTitle: [this.facility.land.landUseManagementDetail.conditionsOfTitle],
       ownershipCategory: [ownershipCategory],
-      stateOwnedPercentage: [this.facility.land.landUseManagementDetail.stateOwnedPercentage],
+      stateOwnedPercentage: [this.facility.land.landUseManagementDetail.stateOwnedPercentage, Validators.min(0)],
       landUse: [this.facility.land.landUseManagementDetail.landUse],
       zoning: [this.facility.land.landUseManagementDetail.zoning],
-      userDepartment: [userDepartment],
-      facilityName: [this.facility.land.landUseManagementDetail.facilityName],
+      userDepartment: [departments],
+      facilityName: [this.facility.land.landUseManagementDetail.facilityName, Validators.required],
       incomeLeaseStatus: [incomeLeaseStatus],
       leaseNumber: [this.facility.land.leaseStatus.leaseNumber],
       otherCharges: [this.facility.land.leaseStatus.otherCharges],
@@ -955,13 +1069,13 @@ export class AddassetregisterComponent implements OnInit {
     this.improvementForm = this.formBuilder.group({
       buildingName: ['', Validators.required],
       type: ['', Validators.required],
-      size: ['', [Validators.required]],
+      size: ['', [Validators.required, Validators.min(0)]],
       potentialUse: ['', [Validators.required]],
-      siteCoverag: ['', [Validators.required]],
+      siteCoverag: ['', [Validators.required, Validators.min(0)]],
       levelofUtilization: ['', [Validators.required]],
-      extentofBuilding: ['', [Validators.required]],
+      extentofBuilding: ['', [Validators.required, Validators.min(0)]],
       conditionRating: ['', [Validators.required]],
-      usableArea: ['', [Validators.required]],
+      usableArea: ['', [Validators.required, Validators.min(0)]],
       functionalPerformanceRating: ['', [Validators.required]],
       comment: ['', [Validators.required]],
     });
@@ -991,24 +1105,79 @@ export class AddassetregisterComponent implements OnInit {
   }
 
   confirmDelete() {
-    this.improvements.splice(this.selectedImprovement);
+    const index = this.improvements.indexOf(this.selectedImprovement);
+    if (index >= 0) {
+      this.improvements.splice(index, 1);
+      this.updatePagedImprovements();
+    }
+  }
+
+  improvementValue(row: any, field: string): string {
+    return String(row[field] ?? '');
+  }
+
+  updatePagedImprovements() {
+    const filter = this.improvementFilter.trim().toLowerCase();
+    let rows = this.improvements.filter(row =>
+      !filter || this.improvementCols.some(column =>
+        this.improvementValue(row, column.field).toLowerCase().includes(filter)
+      )
+    );
+    if (this.improvementSortField) {
+      const field = this.improvementSortField;
+      rows = rows.sort((left, right) => {
+        const result = this.improvementValue(left, field).localeCompare(
+          this.improvementValue(right, field),
+          undefined,
+          { numeric: true, sensitivity: 'base' }
+        );
+        return this.improvementSortAscending ? result : -result;
+      });
+    }
+    this.improvementCount = rows.length;
+    const lastPage = Math.max(0, Math.ceil(rows.length / this.improvementPageSize) - 1);
+    this.improvementPageIndex = Math.min(this.improvementPageIndex, lastPage);
+    const start = this.improvementPageIndex * this.improvementPageSize;
+    this.pagedImprovements = rows.slice(start, start + this.improvementPageSize);
+  }
+
+  filterImprovements(value: string) {
+    this.improvementFilter = value;
+    this.improvementPageIndex = 0;
+    this.updatePagedImprovements();
+  }
+
+  sortImprovements(field: string) {
+    if (this.improvementSortField === field) {
+      this.improvementSortAscending = !this.improvementSortAscending;
+    } else {
+      this.improvementSortField = field;
+      this.improvementSortAscending = true;
+    }
+    this.updatePagedImprovements();
+  }
+
+  pageImprovements(event: PageEvent) {
+    this.improvementPageIndex = event.pageIndex;
+    this.improvementPageSize = event.pageSize;
+    this.updatePagedImprovements();
   }
 
   editImprovement() {
     this.improvementForm = this.formBuilder.group({
       buildingName: [this.selectedImprovement.buildingName, Validators.required],
       typeOfImprovement: [this.selectedImprovement.typeOfImprovement, Validators.required],
-      sizeofImprovement: [this.selectedImprovement.sizeofImprovement, [Validators.required]],
+      sizeofImprovement: [this.selectedImprovement.sizeofImprovement, [Validators.required, Validators.min(0)]],
       potentialUse: [this.selectedImprovement.potentialUse, [Validators.required]],
       town: [this.selectedImprovement.town, [Validators.required]],
       suburb: [this.selectedImprovement.suburb, [Validators.required]],
       streetName: [this.selectedImprovement.streetName, [Validators.required]],
-      streetNumber: [this.selectedImprovement.streetNumber, [Validators.required]],
-      siteCoverag: [this.selectedImprovement.siteCoverag, [Validators.required]],
+      streetNumber: [this.selectedImprovement.streetNumber, [Validators.required, Validators.min(0)]],
+      siteCoverag: [this.selectedImprovement.siteCoverag, [Validators.required, Validators.min(0)]],
       functionalPerformanceRating: [this.selectedImprovement.functionalPerformanceRating, [Validators.required]],
-      extentofBuilding: [this.selectedImprovement.extentofBuilding, [Validators.required]],
+      extentofBuilding: [this.selectedImprovement.extentofBuilding, [Validators.required, Validators.min(0)]],
       conditionRating: [this.selectedImprovement.conditionRating, [Validators.required]],
-      usableArea: [this.selectedImprovement.usableArea, [Validators.required]],
+      usableArea: [this.selectedImprovement.usableArea, [Validators.required, Validators.min(0)]],
       comment: [this.selectedImprovement.comment, [Validators.required]],
     });
   }
@@ -1055,6 +1224,7 @@ export class AddassetregisterComponent implements OnInit {
         comment: this.improvementForm.controls["comment"].value,
       };
       this.improvements.push(improvement);
+      this.updatePagedImprovements();
    // }
   }
 
@@ -1068,49 +1238,45 @@ export class AddassetregisterComponent implements OnInit {
     return result;
   }
 
-  onLandSelectFile(evt: any) {
-    let uploadedFile = evt[0];
-    this.uploadedLandFiles.push(uploadedFile);    
+  onLandSelectFile(files: FileList | File[]) {
+    this.addSelectedFiles(this.uploadedLandFiles, files);
   }
 
-  onFinanceSelectFile(evt: any) {
-    let uploadedFile = evt[0];
-    this.uploadedFinanceFiles.push(uploadedFile);    
+  onFinanceSelectFile(files: FileList | File[]) {
+    this.addSelectedFiles(this.uploadedFinanceFiles, files);
   }
 
-  onImprovementSelectFile(evt: any) {
-    let uploadedFile = evt[0];
-    this.uploadedImprovementFiles.push(uploadedFile);    
+  onImprovementSelectFile(files: FileList | File[]) {
+    this.addSelectedFiles(this.uploadedImprovementFiles, files);
   }
 
-  onLandRemoveFile(evt: any){
-    var fileIndex = this.uploadedLandFiles.indexOf(evt.file)
-    this.uploadedLandFiles.slice(-1, fileIndex);
+  private addSelectedFiles(target: File[], selection: FileList | File[] | null): void {
+    this.fileSelectionError = '';
+    const selected = Array.from(selection ?? []);
+    const additions = selected.filter(file => !target.some(existing =>
+      existing.name === file.name &&
+      existing.size === file.size &&
+      existing.lastModified === file.lastModified
+    ));
+    if (additions.length !== selected.length) {
+      this.fileSelectionError = 'Duplicate files were skipped.';
+    }
+    target.push(...additions);
   }
 
-  onFinanceRemoveFile(evt: any){
-    var fileIndex = this.uploadedFinanceFiles.indexOf(evt.file)
-    this.uploadedFinanceFiles.slice(-1, fileIndex);
+  onLandRemoveFile(file: File) {
+    const fileIndex = this.uploadedLandFiles.indexOf(file);
+    if (fileIndex >= 0) this.uploadedLandFiles.splice(fileIndex, 1);
   }
 
-  onImprovementRemoveFile(evt: any){
-    var fileIndex = this.uploadedImprovementFiles.indexOf(evt.file)
-    this.uploadedImprovementFiles.slice(-1, fileIndex);
+  onFinanceRemoveFile(file: File) {
+    const fileIndex = this.uploadedFinanceFiles.indexOf(file);
+    if (fileIndex >= 0) this.uploadedFinanceFiles.splice(fileIndex, 1);
   }
 
-  uploadLandFiles(){    
-    this.facilityService.uploadFiles(this.uploadedLandFiles, 'Land'+ this.facility.fileReference).pipe(first()).subscribe(uploaded => {    
-    });
-  }
-
-  uploadImprovementFiles(){    
-    this.facilityService.uploadFiles(this.uploadedImprovementFiles, 'Improvement'+ this.facility.fileReference).pipe(first()).subscribe(uploaded => {    
-    });
-  }
-
-  uploadFinanceFiles(){    
-    this.facilityService.uploadFiles(this.uploadedFinanceFiles, 'Finance'+ this.facility.fileReference).pipe(first()).subscribe(uploaded => {    
-    });
+  onImprovementRemoveFile(file: File) {
+    const fileIndex = this.uploadedImprovementFiles.indexOf(file);
+    if (fileIndex >= 0) this.uploadedImprovementFiles.splice(fileIndex, 1);
   }
 
   setFacilityType(e){
@@ -1122,29 +1288,44 @@ export class AddassetregisterComponent implements OnInit {
   }
 
   getFiles(fileReference:string){    
-    this.facilityService.getFiles(fileReference).pipe(first()).subscribe(files => {
-     
-      for (let i = 0; i < files.length ; i++) {
-        if(files[i].toString().includes('Land'))
-        {
-          let name = files[i].split('\\').pop();
-          let url = "https://amethysthemisphere.dedicated.co.za:81/Uploads/Facilities/"+ name;
-          this.landFiles.push({url: url, name: 'Land'+fileReference+'_'+i});
-        } 
-        if(files[i].toString().includes('Finance'))
-        {
-          let name = files[i].split('\\').pop();
-          let url = "https://amethysthemisphere.dedicated.co.za:81/Uploads/Facilities/"+ name;
-          this.financeFiles.push({url: url, name: 'Finance'+fileReference+'_'+i});
-        } 
-        if(files[i].toString().includes('Improvement'))
-        {
-          let name = files[i].split('\\').pop();
-          let url = "https://amethysthemisphere.dedicated.co.za:81/Uploads/Facilities/"+ name;
-          this.improvementFiles.push({url: url, name: 'Improvement'+fileReference+'_'+i});
-        }       
-      };
+    if (!fileReference) {
       this.filesAreLoaded = true;
+      this.filesLoading = false;
+      return;
+    }
+    this.filesLoading = true;
+    this.filesError = false;
+    this.facilityService.getFiles(fileReference).pipe(first()).subscribe({
+      next: files => {
+        this.landFiles = [];
+        this.financeFiles = [];
+        this.improvementFiles = [];
+        (files ?? []).forEach((filePath, index) => {
+          const path = String(filePath);
+          const name = path.split(/[\\/]/).pop();
+          if (!name) {
+            return;
+          }
+          const file = { url: `/Uploads/Facilities/${encodeURIComponent(name)}`, name };
+          if (path.includes('Land')) {
+            this.landFiles.push({ ...file, name: `Land${fileReference}_${index}` });
+          }
+          if (path.includes('Finance')) {
+            this.financeFiles.push({ ...file, name: `Finance${fileReference}_${index}` });
+          }
+          if (path.includes('Improvement')) {
+            this.improvementFiles.push({ ...file, name: `Improvement${fileReference}_${index}` });
+          }
+        });
+        this.filesLoading = false;
+        this.filesAreLoaded = true;
+      },
+      error: () => {
+        this.filesLoading = false;
+        this.filesError = true;
+        this.filesAreLoaded = false;
+        this.toastService.showError('Unable to load supporting documents. Please try again.');
+      }
     });
   }
 

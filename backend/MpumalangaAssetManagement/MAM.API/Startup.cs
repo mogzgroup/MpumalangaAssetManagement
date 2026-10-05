@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Hosting;
 using System;
 using System.IO;
 using System.Text;
@@ -12,8 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-
+using Microsoft.OpenApi;
 namespace MAM.API
 {
     public class Startup
@@ -34,7 +34,7 @@ namespace MAM.API
             // Swagger
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "My API",
                     Version = "v1",
@@ -91,12 +91,28 @@ namespace MAM.API
             });
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            // Configure logging (load log4net once at startup)
+            try
+            {
+                Controllers.BaseController.SetLog4NetConfiguration();
+            }
+            catch
+            {
+                // Swallow to avoid impacting startup; BaseController handles internal errors as well.
+            }
+
+            // Global exception handler should be first to catch exceptions from subsequent middlewares
+            app.UseExceptionHandling();
+
+            // Log incoming requests (method, path, user, small masked body)
+            app.UseRequestLogging();
 
             app.UseRouting();
 

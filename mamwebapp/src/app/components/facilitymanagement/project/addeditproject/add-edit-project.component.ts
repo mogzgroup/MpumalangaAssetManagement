@@ -1,7 +1,5 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
-import { RadioControlRegistry } from 'primeng/radiobutton';
+import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectSupplier } from 'src/app/models/project-supplier';
 import { Project } from 'src/app/models/project.model';
 import { Supplier } from 'src/app/models/supplier';
@@ -10,32 +8,32 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ProjectService } from 'src/app/services/facility-management/project.service';
 import { SupplierService } from 'src/app/services/facility-management/supplier.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   standalone: false,
   selector: 'app-add-edit-project',
   templateUrl: './add-edit-project.component.html',
   styleUrls: ['./add-edit-project.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService, ConfirmationService, RadioControlRegistry]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class AddEditProjectComponent implements OnInit {
 
   @Input() project: Project;
+  @Input() isViewOnly = false;
+  @Output() newAsset = new EventEmitter<Project>();
   public isSuccessful = false;
   public projectForm: FormGroup;
   public submitted = false;
-  public isViewOnly = false;
   public mode = 'Edit';
-  public error = '';
   public showAssets = false;
   public showAll = false;
 
   val: string;
   val6: string;
   public isManagedByExternalCompany = false;
-  public hasParentChecked: false;
-  public financeChecked: false;
+  public hasParentChecked = false;
+  public financeChecked = false;
   public loading = false;
 
   public managedByForm: FormGroup;
@@ -49,7 +47,6 @@ export class AddEditProjectComponent implements OnInit {
   public serviceRequestsLogged = 0;
   public completedRequests = 0;
   public awaitingSignOff = 0;
-  public errorMsg: string;
   public currentUser: User;
   public showDialog: boolean;
   public districts: any[] = [];
@@ -59,13 +56,13 @@ export class AddEditProjectComponent implements OnInit {
   public activeIndex = 0;
   public managedBylist: any[] = [];
   public selectedSupplierIndex = 0;
+  public supplierFilter = '';
   public projectSupplier: any =  {
     companyName: '',
     companyNumber: '',
     contactName: '',
     contactNumber: '',
   };
-  buttonItems: MenuItem[];
   public supplierCols = [
     { field: 'companyName', header: 'Company Name' },
     { field: 'companyNumber', header: 'Company Number' },
@@ -75,18 +72,11 @@ export class AddEditProjectComponent implements OnInit {
 
   constructor(private authenticationService: AuthenticationService, private formBuilder: FormBuilder,
               private supplierService: SupplierService, private sharedService: SharedService,
-              private projectService: ProjectService, private messageService: MessageService) {
+              private projectService: ProjectService, private toastService: ToastService) {
   }
 
   ngOnInit() {
-
-    this.buttonItems = [
-      {
-        label: 'Delete', icon: 'pi pi-trash', command: () =>
-          this.deleteSupplier()
-      }
-    ];
-
+    this.mode = this.isViewOnly ? 'View' : 'Edit';
     this.authenticationService.currentUser.pipe().subscribe(x => {
       this.currentUser = x;
     });
@@ -106,8 +96,8 @@ export class AddEditProjectComponent implements OnInit {
         });
       }
     },
-    (error) => {
-      this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get fault' });
+    error => {
+      this.toastService.showError(this.toastService.getApiErrorMessage(error));
       this.isSuccessful = false;
     });
 
@@ -122,8 +112,8 @@ export class AddEditProjectComponent implements OnInit {
         this.SetPropertyDropdown();
       }
     },
-    (error) => {
-      this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get fault' });
+    error => {
+      this.toastService.showError(this.toastService.getApiErrorMessage(error));
       this.isSuccessful = false;
     });
 
@@ -139,6 +129,19 @@ export class AddEditProjectComponent implements OnInit {
   get f() { return this.projectForm ? this.projectForm.controls : {}; }
   get s() { return this.projectForm ? this.projectForm.controls : {}; }
   get m() { return this.managedByForm ? this.managedByForm.controls : {}; }
+  get filteredProjectSuppliers() {
+    const suppliers = this.project?.projectSuppliers ?? [];
+    const filter = this.supplierFilter.trim().toLowerCase();
+    if (!filter) {
+      return suppliers;
+    }
+
+    return suppliers.filter(supplier =>
+      this.supplierCols.some(column =>
+        String(supplier[column.field] ?? '').toLowerCase().includes(filter)
+      )
+    );
+  }
 
   SetPropertyDropdown() {
     const property = this.properties.filter(d => Number(d.code) === this.project.propertyId)[0];
@@ -148,25 +151,28 @@ export class AddEditProjectComponent implements OnInit {
   buildForm() {
     if (this.project.id > 0) {
       const district = this.districts.filter(d => d.name === this.project.district)[0];
+      this.financeChecked = this.project.hasFinancials;
+      this.hasParentChecked = this.project.hasParentProject;
 
       this.projectForm = this.formBuilder.group({
-        district: [district],
-        property: [''],
-        name: [this.project.name],
+          district: [district, Validators.required],
+          property: ['', Validators.required],
+          name: [this.project.name, Validators.required],
         hasParentProject: [this.project.hasParentProject],
         hasProjectFinance: [this.project.hasFinancials],
         duration: [this.project.plannedDuration],
-        amount: [this.project.amount],
-        account: [this.project.account],
-        startDate: [new Date(this.project.startDate)],
-        scope: [this.project.scopeofWork],
-        completionDate: [new Date(this.project.practicalCompletionDate)]
+        amount: [this.project.amount, Validators.min(0)],
+        account: [this.project.account, Validators.min(0)],
+        startDate: [new Date(this.project.startDate), Validators.required],
+        scope: [this.project.scopeofWork, Validators.required],
+        completionDate: [new Date(this.project.practicalCompletionDate), Validators.required]
       });
   
       const managedByEmployee = this.managedBylist.filter(m => m.name === this.project.managedBy)[0];
+      this.isManagedByExternalCompany = managedByEmployee?.factor === 2;
       this.managedByForm = this.formBuilder.group({
-        managedBy: [managedByEmployee],
-        name: [this.project.managedBy === 'Employee' ?  this.project.employeeName : this.project.businessName],
+        managedBy: [managedByEmployee, Validators.required],
+        name: [this.project.managedBy === 'Employee' ?  this.project.employeeName : this.project.businessName, Validators.required],
         employeeCompanyNumber: [this.project.managedBy === 'Employee' ?  this.project.employeeNumber : this.project.businessRegNumber],
         contactName: [this.project.contactName],
         contactNumber: [this.project.contactNumber],
@@ -181,23 +187,23 @@ export class AddEditProjectComponent implements OnInit {
       });
     } else {
     this.projectForm = this.formBuilder.group({
-      district: [''],
-      property: [''],
-      name: [''],
+      district: ['', Validators.required],
+      property: ['', Validators.required],
+      name: ['', Validators.required],
       hasParentProject: [''],
       hasProjectFinance: [''],
       duration: [''],
-      amount: [''],
-      account: [''],
-      startDate: [''],
-      scope: [''],
-      completionDate: ['']
+      amount: ['', Validators.min(0)],
+      account: ['', Validators.min(0)],
+      startDate: ['', Validators.required],
+      scope: ['', Validators.required],
+      completionDate: ['', Validators.required]
     });
 
     const managedByEmployee = this.managedBylist[0];
     this.managedByForm = this.formBuilder.group({
-      managedBy: [managedByEmployee],
-      name: [''],
+      managedBy: [managedByEmployee, Validators.required],
+      name: ['', Validators.required],
       employeeCompanyNumber: [''],
       contactName: [''],
       contactNumber: [''],
@@ -214,42 +220,50 @@ export class AddEditProjectComponent implements OnInit {
   }
 
   saveDetails() {
-    switch (this.activeIndex) {
-      case this.activeIndex = 0:
-        if (this.projectForm.valid) {
-          this.assignProject();
-          if (this.project.id > 0) {
-            this.updateProject();
-          } else {
-            this.addProject();
-          }
-        }
-        break;
-      case this.activeIndex = 1:
-          if (this.managedByForm.valid) {
-            this.assignManager();
-            this.updateProject();
-          }
-          break;
+    if (this.loading || this.isViewOnly) {
+      return;
+    }
+    this.submitted = true;
+    if (this.activeIndex === 0) {
+      this.projectForm.markAllAsTouched();
+      if (this.projectForm.invalid) {
+        return;
+      }
+      this.assignProject();
+      if (this.project.id > 0) {
+        this.updateProject();
+      } else {
+        this.addProject();
+      }
+    } else if (this.activeIndex === 1) {
+      this.managedByForm.markAllAsTouched();
+      if (this.managedByForm.invalid) {
+        return;
+      }
+      this.assignManager();
+      this.updateProject();
     }
   }
   confirmDeleteProject() { }
 
   updateProject() {
+    if (this.loading) {
+      return;
+    }
+    this.loading = true;
     this.projectService.updateProject(this.project).pipe().subscribe(isUpdated => {
+      this.loading = false;
       if (isUpdated) {
-        this.showToast('Add project', 'Your data is saved successfully.', 'success');
+        this.toastService.showSuccess('Project saved successfully.');
         this.isSuccessful = true;
         this.activeIndex = this.activeIndex + 1;
       } else {
-        this.showToast('Add project', 'Your data is not saved successfully.', 'error');
+        this.toastService.showError('Unable to save the project. Please try again.');
       }
     },
       error => {
-        this.messageService.add({
-          severity: 'error', summary: 'Error Occurred',
-          detail: 'An error occurred while processing your request. please try again!'
-        });
+        this.loading = false;
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
         this.isSuccessful = false;
       });
    }
@@ -259,47 +273,54 @@ export class AddEditProjectComponent implements OnInit {
   printProject() { }
 
   onSaveSuppliers() {
-    if (this.project.projectSuppliers.length > 0) {
-      this.AddProjectSuppliers();
+    if (this.loading || this.isViewOnly) {
+      return;
     }
+    this.AddProjectSuppliers();
   }
 
   AddProjectSuppliers() {
+    if (this.loading) {
+      return;
+    }
+    this.loading = true;
     this.projectService.updateProject(this.project).pipe().subscribe(project => {
+      this.loading = false;
       if (project) {
-        this.showToast('Add project', 'Your project details has been saved successfully.', 'success');
+        this.toastService.showSuccess('Project details saved successfully.');
         this.isSuccessful = true;
-        this.activeIndex = this.activeIndex + 1;
         this.project = project;
+        this.newAsset.emit(project);
       } else {
-        this.showToast('Add project', 'Your project details has not been saved successfully.', 'error');
+        this.toastService.showError('Unable to save project details. Please try again.');
       }
     },
       error => {
-        this.messageService.add({
-          severity: 'error', summary: 'Error Occurred',
-          detail: 'An error occurred while processing your request. please try again!'
-        });
+        this.loading = false;
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
         this.isSuccessful = false;
       });
   }
 
   addProject() {
+    if (this.loading) {
+      return;
+    }
+    this.loading = true;
     this.projectService.addProject(this.project).pipe().subscribe(id => {
+      this.loading = false;
       if (id > 0) {
         this.project.id = id;
-        this.showToast('Add project', 'Your project details has been saved successfully.', 'success');
+        this.toastService.showSuccess('Project created successfully.');
         this.isSuccessful = true;
         this.activeIndex = this.activeIndex + 1;
       } else {
-        this.showToast('Add project', 'Your project details has not been saved successfully.', 'error');
+        this.toastService.showError('Unable to create the project. Please try again.');
       }
     },
       error => {
-        this.messageService.add({
-          severity: 'error', summary: 'Error Occurred',
-          detail: 'An error occurred while processing your request. please try again!'
-        });
+        this.loading = false;
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
         this.isSuccessful = false;
       });
   }
@@ -336,11 +357,11 @@ export class AddEditProjectComponent implements OnInit {
   }
 
   onDistrictChange(e: any) {
-    this.project.district = e.value.name;
+    this.project.district = (e.value ?? e).name;
   }
 
   onPropertyChange(e: any) {
-    this.project.propertyId = Number(e.value.code);
+    this.project.propertyId = Number((e.value ?? e).code);
   }
 
   onProperty(e: any) {
@@ -355,20 +376,24 @@ export class AddEditProjectComponent implements OnInit {
   hasProjectFinanceChange(e) {
     this.financeChecked = e.checked;
     this.project.hasFinancials = e.checked;
+    const amountControl = this.projectForm.controls['amount'];
+    amountControl.setValidators(e.checked ? [Validators.required, Validators.min(0)] : [Validators.min(0)]);
+    amountControl.updateValueAndValidity();
   }
 
   onManagedByChange(e) {
-    if (e.value.factor === 2) {
+    const value = e.value ?? e;
+    if (value.factor === 2) {
       this.isManagedByExternalCompany = true;
     } else {
       this.isManagedByExternalCompany = false;      
     }
     this.managedByForm.controls['employeeCompanyNumber'].setValue('');
-    this.project.managedBy = e.value.name;
+    this.project.managedBy = value.name;
   }
 
   onSupplierChange(e){
-    this.projectSupplier = e.value;
+    this.projectSupplier = e.value ?? e;
   }
 
   onAddSupplier() {
@@ -390,8 +415,4 @@ export class AddEditProjectComponent implements OnInit {
     this.project.projectSuppliers.splice(index, 1);
   }
 
-  showToast(summary: string, detail: string, severity: string) {
-    this.messageService.add({ severity, summary, detail });
-  }
 }
-

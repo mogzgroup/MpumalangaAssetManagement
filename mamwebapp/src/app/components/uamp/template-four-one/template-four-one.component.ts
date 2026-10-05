@@ -1,8 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { ToastService } from 'src/app/services/toast.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 import { UampService } from 'src/app/services/uamp/uamp.service';
-import { MenuItem, MessageService } from 'primeng/api';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { FacilityService } from 'src/app/services/facility/facility.service';
 import { AcquisitionPlan } from 'src/app/models/acquisition-plan.model';
 import { first } from 'rxjs/operators';
 import { UAMP } from 'src/app/models/uamp.model';
@@ -14,8 +15,7 @@ import { SharedService } from 'src/app/services/shared.service';
   selector: 'app-template-four-one',
   templateUrl: './template-four-one.component.html',
   styleUrls: ['./template-four-one.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class TemplateFourOneComponent implements OnInit {
   scheduleCurrentUtilisation: any[] = [];
@@ -27,7 +27,6 @@ export class TemplateFourOneComponent implements OnInit {
   localMunicipalities: any[];
   acquisitionTypes: any[];
   acquisitionPlans: Array<AcquisitionPlan> = [];
-  buttonItems: MenuItem[];
   uamp: UAMP;
   showComfirmationDelete: boolean = false;
   selectedAcquisitionPlan: AcquisitionPlan;
@@ -36,12 +35,25 @@ export class TemplateFourOneComponent implements OnInit {
   dialogHeader: string = '';
   mode: string = 'Edit';
   isLoading: boolean = false;
+  pageIndex = 0;
+  pageSize = 5;
+  pagedAcquisitionPlans: Array<AcquisitionPlan> = [];
 
-  constructor(private sharedService: SharedService, private router: Router, public uampService: UampService, private formBuilder: FormBuilder, private messageService: MessageService) {
+  @ViewChild('formDialog') private formDialogTemplate: TemplateRef<unknown>;
+  @ViewChild('deleteConfirmationDialog') private deleteConfirmationTemplate: TemplateRef<unknown>;
+  openAddDialog() {
+    this.dialogHeader = 'Add Acquisition Plan';
+    this.isEdit = false;
+    this.resetForm();
+    this.openFormDialog();
+  }
+
+  constructor(private sharedService: SharedService, private router: Router, public uampService: UampService, private formBuilder: FormBuilder, private toastService: ToastService, private dialog: MatDialog) {
     this.uampService.uampChange.subscribe((value) => {
       if (value) {
         this.uamp = value;
         this.acquisitionPlans = this.uamp.templeteFourPointOne.acquisitionPlans;
+        this.updatePagedAcquisitionPlans();
       }
     });
     this.acquisitionPlanForm = this.formBuilder.group({
@@ -64,17 +76,6 @@ export class TemplateFourOneComponent implements OnInit {
 
   ngOnInit() {
     this.assginData();
-    this.buttonItems = [
-      {
-        label: 'Update', icon: 'pi pi-pencil', command: () =>
-          this.update()
-      },
-      { separator: true },
-      {
-        label: 'Delete', icon: 'pi pi-trash', command: () =>
-          this.confirmDelete()
-      }
-    ];
     this.regions = this.sharedService.getRegions();
 
     this.initialNeedYears = this.sharedService.getInitialNeedYears();
@@ -90,6 +91,7 @@ export class TemplateFourOneComponent implements OnInit {
       this.router.navigate(['uamp']);
 
     this.acquisitionPlans = this.uamp.templeteFourPointOne.acquisitionPlans;
+    this.updatePagedAcquisitionPlans();
   }
 
   update() {
@@ -115,6 +117,8 @@ export class TemplateFourOneComponent implements OnInit {
       cashFlowYear5: [this.selectedAcquisitionPlan.cashFlowYear5],
     });
     this.isEdit = true;
+    this.dialogHeader = 'Update Acquisition Plan';
+    this.openFormDialog();
   }
 
   onUpdate() {
@@ -144,10 +148,12 @@ export class TemplateFourOneComponent implements OnInit {
     this.isEdit = false;
     this.uampService.assignUamp(this.uamp);
     this.resetForm();
+    this.closeFormDialog();
   }
 
   confirmDelete() {
     this.showComfirmationDelete = true;
+    this.openConfirmationDialog(this.deleteConfirmationTemplate);
   }
 
   selectAcquisitionPlan(acquisitionPlan: AcquisitionPlan) {
@@ -162,17 +168,24 @@ export class TemplateFourOneComponent implements OnInit {
     if (this.selectedAcquisitionPlan.id == 0) {
       var index = this.acquisitionPlans.indexOf(this.selectedAcquisitionPlan);
       this.acquisitionPlans.splice(index, 1);
+      this.updatePagedAcquisitionPlans();
+      this.closeDeleteConfirmation();
     } else {
+      this.setDeleteInProgress(true);
       this.uampService.deleteAcquisitionPlan(this.selectedAcquisitionPlan).pipe(first()).subscribe(isDeleted => {
         if (isDeleted) {
-          this.messageService.add({ severity: 'warn', summary: 'Delete Acquisition Plan', detail: 'Acquisition plan has been deleted successful.' });
+          this.toastService.showSuccess('Acquisition plan has been deleted successfully.');
           var index = this.acquisitionPlans.indexOf(this.selectedAcquisitionPlan);
           this.acquisitionPlans.splice(index, 1);
+          this.updatePagedAcquisitionPlans();
+          this.closeDeleteConfirmation();
         } else {
-          this.messageService.add({ severity: 'error', summary: 'Delete Acquisition Plan', detail: 'Acquisition plan is not deleted successful.' });
+          this.setDeleteInProgress(false);
+          this.toastService.showError('Unable to delete the acquisition plan. Please try again.');
         }
       }, error => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occurred', detail: 'An error occurred while processing your request. please try again!' });
+        this.setDeleteInProgress(false);
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
     }
   }
@@ -208,6 +221,7 @@ export class TemplateFourOneComponent implements OnInit {
       reqiured: 'false'
     };
     this.acquisitionPlans.push(acquisitionPlan);
+    this.updatePagedAcquisitionPlans();
     if (this.uamp.templeteFourPointOne != null) {
       this.uamp.templeteFourPointOne.acquisitionPlans = this.acquisitionPlans
     } else {
@@ -218,7 +232,7 @@ export class TemplateFourOneComponent implements OnInit {
     }
     this.uampService.assignUamp(this.uamp);
     this.resetForm();
-    this.displayDialog = false;
+    this.closeFormDialog();
   }
 
   resetForm() {
@@ -271,10 +285,9 @@ export class TemplateFourOneComponent implements OnInit {
   }
 
   setLocalMunicipalities(e) {
-    if (e != undefined) {
-      if (e.value != undefined) {
-        this.localMunicipalities = this.sharedService.getLocalMunicipalities(e.value.factor);
-      }
+    const region = e?.value ?? e;
+    if (region) {
+      this.localMunicipalities = this.sharedService.getLocalMunicipalities(region.factor);
     }
   }
 
@@ -292,7 +305,7 @@ export class TemplateFourOneComponent implements OnInit {
         this.router.navigate(['uampDetails/uampTemp42']);
       },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get template data' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
         this.isLoading = false;
       }
     );
@@ -307,16 +320,72 @@ export class TemplateFourOneComponent implements OnInit {
     this.uampService.saveUamp(this.uamp).pipe(first()).subscribe(uamp => {
       this.uamp = uamp;
       this.uampService.assignUamp(uamp);
-      this.messageService.add({ severity: 'success', summary: 'Save UAMP', detail: 'UAMP has been saved successful.' });
+      this.toastService.showSuccess('UAMP has been saved successfully.');
       this.cancel();
     },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to save UAMP' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
+  }
+
+  pageChanged(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updatePagedAcquisitionPlans();
+  }
+
+  private updatePagedAcquisitionPlans() {
+    const start = this.pageIndex * this.pageSize;
+    this.pagedAcquisitionPlans = this.acquisitionPlans.slice(start, start + this.pageSize);
   }
 
   cancel() {
     this.router.navigate(['uamp']);
   }
-}
+  private formDialogRef: MatDialogRef<unknown> | null = null;
+  private confirmationDialogRef: MatDialogRef<unknown> | null = null;
 
+  private openFormDialog() {
+    this.displayDialog = true;
+    const dialogRef = this.dialog.open(this.formDialogTemplate, { maxWidth: '95vw' });
+    this.formDialogRef = dialogRef;
+    dialogRef.afterClosed().subscribe(() => {
+      if (this.formDialogRef === dialogRef) {
+        this.formDialogRef = null;
+        this.displayDialog = false;
+      }
+    });
+  }
+
+  closeFormDialog() {
+    this.formDialogRef?.close();
+    this.formDialogRef = null;
+    this.displayDialog = false;
+  }
+
+  private openConfirmationDialog(template: TemplateRef<unknown>) {
+    const dialogRef = this.dialog.open(template, { width: '460px', maxWidth: '95vw' });
+    this.confirmationDialogRef = dialogRef;
+    dialogRef.afterClosed().subscribe(() => {
+      if (this.confirmationDialogRef === dialogRef) {
+        this.confirmationDialogRef = null;
+        if (template === this.deleteConfirmationTemplate) {
+          this.showComfirmationDelete = false;
+        }
+      }
+    });
+  }
+
+  closeDeleteConfirmation() {
+    this.confirmationDialogRef?.close();
+    this.confirmationDialogRef = null;
+    this.showComfirmationDelete = false;
+  }
+
+  private setDeleteInProgress(inProgress: boolean) {
+    if (this.confirmationDialogRef) {
+      this.confirmationDialogRef.disableClose = inProgress;
+    }
+  }
+
+}

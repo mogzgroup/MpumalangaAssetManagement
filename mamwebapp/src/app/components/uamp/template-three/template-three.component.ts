@@ -1,12 +1,11 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { ToastService } from 'src/app/services/toast.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 import { UampService } from 'src/app/services/uamp/uamp.service';
-import { Facility } from 'src/app/models/facility.model';
-import { MenuItem, MessageService } from 'primeng/api';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { FacilityService } from 'src/app/services/facility/facility.service';
 import { UAMP } from 'src/app/models/uamp.model';
 import { StrategicAssessment } from 'src/app/models/strategic-assessment.model';
-import { StrategicNeedsAssessment } from 'src/app/models/strategic-needs-assessment';
 import { first } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
@@ -15,16 +14,15 @@ import { Router } from '@angular/router';
   selector: 'app-template-three',
   templateUrl: './template-three.component.html',
   styleUrls: ['./template-three.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class TemplateThreeComponent implements OnInit {
   showFields: boolean = false;
-  rowGroupMetadata: any;
   strategicAssessments: Array<StrategicAssessment> = [];
-  @Input() properties: Facility[];
+  pagedStrategicAssessments: Array<StrategicAssessment> = [];
+  pageIndex = 0;
+  pageSize = 5;
   assessmentStrategicForm: FormGroup;
-  buttonItems: MenuItem[];
   uamp: UAMP;
   showComfirmationDelete: boolean = false;
   isEdit: boolean = false;
@@ -34,7 +32,16 @@ export class TemplateThreeComponent implements OnInit {
   mode: string = 'Edit';
   isLoading: boolean = false;
 
-  constructor(private router: Router, public uampService: UampService, private formBuilder: FormBuilder, private messageService: MessageService) {
+  @ViewChild('formDialog') private formDialogTemplate: TemplateRef<unknown>;
+  @ViewChild('deleteConfirmationDialog') private deleteConfirmationTemplate: TemplateRef<unknown>;
+  openAddDialog() {
+    this.dialogHeader = 'Add Strategic Assessment';
+    this.isEdit = false;
+    this.resetForm();
+    this.openFormDialog();
+  }
+
+  constructor(private router: Router, public uampService: UampService, private formBuilder: FormBuilder, private toastService: ToastService, private dialog: MatDialog) {
     
     this.uampService.uampChange.subscribe((value) => {
       if(value)
@@ -43,6 +50,7 @@ export class TemplateThreeComponent implements OnInit {
       }    
       
       this.strategicAssessments = this.uamp.templeteThree.strategicAssessments;
+      this.updatePagedStrategicAssessments();
   });
   }
 
@@ -60,17 +68,6 @@ export class TemplateThreeComponent implements OnInit {
       aoQuantity: [''],
       aoNorm: [''],
     });
-    this.buttonItems = [
-      {
-        label: 'Update', icon: 'pi pi-pencil', command: () =>
-          this.update()
-      },
-      { separator: true },
-      {
-        label: 'Delete', icon: 'pi pi-trash', command: () =>
-          this.confirmDelete()
-      }
-    ];
   }
 
   assginData(){
@@ -79,7 +76,7 @@ export class TemplateThreeComponent implements OnInit {
       this.router.navigate(['uamp']);
       
     this.strategicAssessments = this.uamp.templeteThree.strategicAssessments;
-    this.onSort();
+    this.updatePagedStrategicAssessments();
   } 
 
   onUpdate() {
@@ -108,6 +105,7 @@ export class TemplateThreeComponent implements OnInit {
     this.isEdit = false;
     this.uampService.assignUamp(this.uamp);
     this.resetForm();
+    this.closeFormDialog();
   }
 
   onBlurDistrict(){
@@ -130,31 +128,47 @@ export class TemplateThreeComponent implements OnInit {
       aoNorm: [this.selectedStrategicAssessment.aoNorm],
     });
     this.isEdit = true;
+    this.dialogHeader = 'Update Strategic Assessment';
+    this.openFormDialog();
   }
 
   confirmDelete() {
     this.showComfirmationDelete = true;
+    this.openConfirmationDialog(this.deleteConfirmationTemplate);
   }
 
   selectStrategicNeedsAssessment(strategicNeedsAssessment: StrategicAssessment){
     this.selectedStrategicAssessment = strategicNeedsAssessment;
   }
 
+  setDeleteInProgress(inProgress: boolean) {
+    if (this.confirmationDialogRef) {
+      this.confirmationDialogRef.disableClose = inProgress;
+    }
+  }
+
   deleteStrategicAssessment(){
     if(this.selectedStrategicAssessment.id == 0){
       var index = this.strategicAssessments.indexOf(this.selectedStrategicAssessment);    
       this.strategicAssessments.splice(index, 1);
+      this.updatePagedStrategicAssessments();
+      this.closeDeleteConfirmation();
     }else{
+      this.setDeleteInProgress(true);
       this.uampService.deleteStrategicAssessment(this.selectedStrategicAssessment).pipe(first()).subscribe(isDeleted => {
         if (isDeleted) {
-          this.messageService.add({ severity: 'warn', summary: 'Delete Strategic Assessment', detail: 'Strategic Assessment has been deleted successful.' });   
+          this.toastService.showSuccess('Strategic assessment has been deleted successfully.');
           var index = this.strategicAssessments.indexOf(this.selectedStrategicAssessment);    
           this.strategicAssessments.splice(index, 1);
+          this.updatePagedStrategicAssessments();
+          this.closeDeleteConfirmation();
         } else {
-          this.messageService.add({ severity: 'error', summary: 'Delete Strategic Assessment', detail: 'Strategic Assessment is not deleted successful.' });
+          this.setDeleteInProgress(false);
+          this.toastService.showError('Unable to delete the strategic assessment. Please try again.');
         }
       }, error => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occurred', detail: 'An error occurred while processing your request. please try again!' });
+        this.setDeleteInProgress(false);
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
     }    
   }
@@ -189,6 +203,7 @@ export class TemplateThreeComponent implements OnInit {
       aoRequirement: aoRequirement,
     };
     this.strategicAssessments.push(strategicAssessment);
+    this.updatePagedStrategicAssessments();
     if(this.uamp.templeteThree != null)
     {
       this.uamp.templeteThree.strategicAssessments = this.strategicAssessments
@@ -201,11 +216,11 @@ export class TemplateThreeComponent implements OnInit {
     this.uampService.assignUamp(this.uamp);
     this.resetForm();
     this.onSort();
-    this.displayDialog = false;
+    this.closeFormDialog();
   }
 
   cancel(){
-    this.displayDialog = false;
+    this.closeFormDialog();
   }
 
   resetForm() {
@@ -213,28 +228,24 @@ export class TemplateThreeComponent implements OnInit {
   }
 
   onSort() {
-    this.updateRowGroupMetaData();
+    this.updatePagedStrategicAssessments();
   }
 
-  updateRowGroupMetaData() {
-    this.rowGroupMetadata = {};
-    if (this.strategicAssessments) {
-        for (let i = 0; i < this.strategicAssessments.length; i++) {
-            let rowData = this.strategicAssessments[i];
-            let district = rowData.district;
-            if (i == 0) {
-                this.rowGroupMetadata[district] = { index: 0, size: 1 };
-            }
-            else {
-                let previousRowData = this.strategicAssessments[i - 1];
-                let previousRowGroup = previousRowData.district;
-                if (district === previousRowGroup)
-                    this.rowGroupMetadata[district].size++;
-                else
-                    this.rowGroupMetadata[district] = { index: i, size: 1 };
-            }
-        }
-    }
+  pageChanged(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updatePagedStrategicAssessments();
+  }
+
+  isDistrictGroupStart(assessment: StrategicAssessment, rowIndex: number): boolean {
+    const assessmentIndex = this.pageIndex * this.pageSize + rowIndex;
+    return assessmentIndex === 0 ||
+      this.strategicAssessments[assessmentIndex - 1]?.district !== assessment.district;
+  }
+
+  private updatePagedStrategicAssessments() {
+    const start = this.pageIndex * this.pageSize;
+    this.pagedStrategicAssessments = this.strategicAssessments.slice(start, start + this.pageSize);
   }
 
   nextPage(){
@@ -251,7 +262,7 @@ export class TemplateThreeComponent implements OnInit {
         this.router.navigate(['uampDetails/uampTemp41']);
       },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get template data' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
         this.isLoading = false;
       }
     );
@@ -266,16 +277,55 @@ export class TemplateThreeComponent implements OnInit {
     this.uampService.saveUamp(this.uamp).pipe(first()).subscribe(uamp => {
       this.uamp = uamp;
       this.uampService.assignUamp(uamp);
-      this.messageService.add({ severity: 'success', summary: 'Save UAMP', detail: 'UAMP has been saved successful.' });
+      this.toastService.showSuccess('UAMP has been saved successfully.');
       this.cancelSave();
     },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to save UAMP' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
   }
 
   cancelSave() {
     this.router.navigate(['uamp']);
   }
-}
+  private formDialogRef: MatDialogRef<unknown> | null = null;
+  private confirmationDialogRef: MatDialogRef<unknown> | null = null;
 
+  private openFormDialog() {
+    this.displayDialog = true;
+    const dialogRef = this.dialog.open(this.formDialogTemplate, { maxWidth: '95vw' });
+    this.formDialogRef = dialogRef;
+    dialogRef.afterClosed().subscribe(() => {
+      if (this.formDialogRef === dialogRef) {
+        this.formDialogRef = null;
+        this.displayDialog = false;
+      }
+    });
+  }
+
+  closeFormDialog() {
+    this.formDialogRef?.close();
+    this.formDialogRef = null;
+    this.displayDialog = false;
+  }
+
+  private openConfirmationDialog(template: TemplateRef<unknown>) {
+    const dialogRef = this.dialog.open(template, { width: '460px', maxWidth: '95vw' });
+    this.confirmationDialogRef = dialogRef;
+    dialogRef.afterClosed().subscribe(() => {
+      if (this.confirmationDialogRef === dialogRef) {
+        this.confirmationDialogRef = null;
+        if (template === this.deleteConfirmationTemplate) {
+          this.showComfirmationDelete = false;
+        }
+      }
+    });
+  }
+
+  closeDeleteConfirmation() {
+    this.confirmationDialogRef?.close();
+    this.confirmationDialogRef = null;
+    this.showComfirmationDelete = false;
+  }
+
+}

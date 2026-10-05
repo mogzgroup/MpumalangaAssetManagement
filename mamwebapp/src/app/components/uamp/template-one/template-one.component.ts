@@ -1,5 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { MenuItem, MessageService } from 'primeng/api';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, TemplateRef, AfterViewInit } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { ToastService } from 'src/app/services/toast.service';
 import { first } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UAMP } from '../../../models/uamp.model'
@@ -13,11 +16,15 @@ import { Router } from '@angular/router';
   selector: 'app-template-one',
   templateUrl: './template-one.component.html',
   styleUrls: ['./template-one.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
-export class TemplateOneComponent implements OnInit {
+export class TemplateOneComponent implements OnInit, AfterViewInit {
   programmes: Programme[] = [];
+  dataSource = new MatTableDataSource<Programme>([]);
+  displayedColumns = ['corporateObjective', 'outcomes', 'solution', 'rationale', 'actions'];
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild('programmeDialog') programmeDialog: TemplateRef<unknown>;
+  private programmeDialogRef: MatDialogRef<unknown>;
   selectedProgramme: Programme;
   userDepartment: string = "Public works, roads & transport";
   optimalSupportingAccommodation: OptimalSupportingAccommodation = {
@@ -27,10 +34,8 @@ export class TemplateOneComponent implements OnInit {
   };
   programmeForm: FormGroup;
   submitted: boolean = false;
-  buttonItems: MenuItem[];
   showComfirmationDelete = false;
   isEdit = false;
-  displayDialog: boolean = false;
   dialogHeader: string = '';
   uamp: UAMP = { templeteOne: { id: 0, optimalSupportingAccommodation: this.optimalSupportingAccommodation, programmes: [] } };
   @Output() updatedUamp = new EventEmitter();
@@ -48,28 +53,24 @@ export class TemplateOneComponent implements OnInit {
     return this.programmeForm ? this.programmeForm.controls : {};
   }
 
-  constructor(private router: Router, private formBuilder: FormBuilder, private messageService: MessageService, private uampService: UampService) {
+  constructor(
+    private router: Router,
+    private formBuilder: FormBuilder,
+    private toastService: ToastService,
+    private uampService: UampService,
+    private dialog: MatDialog
+  ) {
     this.uampService.uampChange.subscribe((value) => {
       if (value) {
         this.uamp = value;
         this.programmes = this.uamp.templeteOne.programmes;
+        this.dataSource.data = this.programmes;
       }
     });
   }
 
   ngOnInit() {
     this.assginData();
-    this.buttonItems = [
-      {
-        label: 'Update', icon: 'pi pi-pencil', command: () =>
-          this.update()
-      },
-      { separator: true },
-      {
-        label: 'Delete', icon: 'pi pi-trash', command: () =>
-          this.confirmDelete()
-      }
-    ];
 
     this.programmeForm = this.formBuilder.group({
       corporateObjective: [''],
@@ -82,6 +83,11 @@ export class TemplateOneComponent implements OnInit {
     this.optimalSupportingAccommodation.supportingAccommodation = this.uamp.templeteOne.optimalSupportingAccommodation.supportingAccommodation;
 
     this.programmes = this.uamp.templeteOne.programmes;
+    this.dataSource.data = this.programmes;
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
   }
 
   assginData() {
@@ -102,7 +108,7 @@ export class TemplateOneComponent implements OnInit {
         this.router.navigate(['uampDetails/uampTemp21']);
       },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get template data' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
         this.isLoading = false;
       }
     );
@@ -116,6 +122,8 @@ export class TemplateOneComponent implements OnInit {
       rationaleChosenSolution: [this.selectedProgramme.rationaleChosenSolution],
     });
     this.isEdit = true;
+    this.dialogHeader = 'Update Programme';
+    this.openProgrammeDialog();
   }
 
   onUpdate() {
@@ -130,9 +138,11 @@ export class TemplateOneComponent implements OnInit {
 
     var index = this.programmes.indexOf(this.selectedProgramme);
     this.programmes[index] = programme;
+    this.dataSource.data = this.programmes;
     this.isEdit = false;
     this.updatedUamp.emit(this.uamp);
     this.resetForm();
+    this.closeProgrammeDialog();
   }
 
   updateUamp() {
@@ -150,14 +160,14 @@ export class TemplateOneComponent implements OnInit {
     } else {
       this.uampService.deleteProgramme(this.selectedProgramme).pipe(first()).subscribe(isDeleted => {
         if (isDeleted) {
-          this.messageService.add({ severity: 'warn', summary: 'Delete Programme', detail: 'Programme has been deleted successful.' });
+          this.toastService.showSuccess('Programme has been deleted successfully.');
           var index = this.programmes.indexOf(this.selectedProgramme);
           this.programmes.splice(index, 1);
         } else {
-          this.messageService.add({ severity: 'error', summary: 'Delete Programme', detail: 'Programme is not deleted successful.' });
+          this.toastService.showError('Unable to delete the programme. Please try again.');
         }
       }, error => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occurred', detail: 'An error occurred while processing your request. please try again!' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
     }
   }
@@ -173,9 +183,10 @@ export class TemplateOneComponent implements OnInit {
       rationaleChosenSolution: this.programmeForm.controls["rationaleChosenSolution"].value,
     };
     this.programmes.push(programme);
+    this.dataSource.data = this.programmes;
     this.updatedUamp.emit(this.uamp);
     this.resetForm();
-    this.displayDialog = false;
+    this.closeProgrammeDialog();
   }
 
   resetForm() {
@@ -191,8 +202,21 @@ export class TemplateOneComponent implements OnInit {
   }
 
   openAddProgremme() {
-    this.displayDialog = true;
-    this.dialogHeader = 'Add Programme'
+    this.isEdit = false;
+    this.dialogHeader = 'Add Programme';
+    this.programmeForm.reset();
+    this.openProgrammeDialog();
+  }
+
+  private openProgrammeDialog() {
+    this.programmeDialogRef = this.dialog.open(this.programmeDialog, {
+      width: 'min(900px, 90vw)',
+      data: { header: this.dialogHeader }
+    });
+  }
+
+  closeProgrammeDialog() {
+    this.programmeDialogRef?.close();
   }
 
   cancel() {
@@ -204,12 +228,11 @@ export class TemplateOneComponent implements OnInit {
     this.uampService.saveUamp(this.uamp).pipe(first()).subscribe(uamp => {
       this.uamp = uamp;
       this.uampService.assignUamp(uamp);
-      this.messageService.add({ severity: 'success', summary: 'Save UAMP', detail: 'UAMP has been saved successful.' });
+      this.toastService.showSuccess('UAMP has been saved successfully.');
       this.cancel();
     },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to save UAMP' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
   }
 }
-

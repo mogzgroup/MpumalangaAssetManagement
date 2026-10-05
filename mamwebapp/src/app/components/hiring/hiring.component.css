@@ -1,9 +1,219 @@
-input{
-    width: 100%;
+.hiring-breadcrumb {
+  align-items: center;
+  display: flex;
+  gap: 0.25rem;
 }
 
-.w-full{
-    width: 100%;
+.hiring-breadcrumb > mat-icon {
+  color: #757575;
 }
 
+.hiring-error {
+  color: #b00020;
+}
 
+:host {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.hiring-breadcrumb,
+.hiring-error,
+.map-section {
+  flex: 0 0 auto;
+}
+
+.hiring-error h5 {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.map-section {
+  margin-bottom: 0.5rem;
+}
+
+.map-section google-map {
+  display: block;
+  height: clamp(110px, 18vh, 155px);
+  overflow: hidden;
+  border: 1px solid #e1e9e4;
+  border-radius: 10px;
+}
+
+.hiring-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+.hiring-table-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.hiring-table-actions mat-form-field {
+  flex: 1 1 250px;
+  max-width: 400px;
+}
+
+.hiring-table-scroll {
+  flex: 1 1 auto;
+}
+
+.hiring-table-card {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.hiring-table-card mat-card-content {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.hiring-table {
+  border-collapse: collapse;
+  min-width: 900px;
+  width: 100%;
+}
+
+.hiring-table th,
+.hiring-table td {
+  border-bottom: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.hiring-table th {
+  background: #f5f5f5;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.hiring-table th button {
+  font-weight: 600;
+}
+
+.hiring-table .status-column {
+  width: 100px;
+}
+
+.status-indicator {
+  vertical-align: middle;
+}
+
+.empty-state {
+  padding: 1.5rem !important;
+  text-align: center !important;
+}
+
+.empty-state mat-progress-bar {
+  margin: 0 auto 0.75rem;
+  max-width: 320px;
+}
+
+.empty-state button {
+  margin-left: 0.5rem;
+}
+
+.confirmation-dialog mat-spinner,
+.hiring-dialog mat-card-actions mat-spinner {
+  display: inline-block;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.dialog-backdrop {
+  align-items: center;
+  background: rgb(0 0 0 / 32%);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 2rem 1rem;
+  position: fixed;
+  z-index: 1200;
+}
+
+.hiring-dialog,
+.confirmation-dialog {
+  max-height: calc(100vh - 2rem);
+  width: min(100%, 1100px);
+}
+
+.hiring-dialog {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.hiring-dialog mat-card-header,
+.hiring-dialog mat-card-actions {
+  flex: 0 0 auto;
+}
+
+.hiring-dialog mat-card-content {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.confirmation-dialog {
+  max-width: 450px;
+  width: 100%;
+}
+
+.hiring-form {
+  display: grid;
+  gap: 0.5rem 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 1rem 0;
+}
+
+.hiring-form mat-form-field {
+  width: 100%;
+}
+
+.document-upload {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.document-list {
+  list-style: none;
+  padding: 0;
+}
+
+.document-list li {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+}
+
+@media (max-width: 750px) {
+  .hiring-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 500px) {
+  .hiring-form {
+    grid-template-columns: 1fr;
+  }
+}

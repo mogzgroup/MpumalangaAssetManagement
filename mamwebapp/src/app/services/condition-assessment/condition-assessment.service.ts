@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ConditionAssessment } from 'src/app/models/condition-assessment.model';
 import { Facility } from 'src/app/models/facility.model';
 import { environment } from 'src/environments/environment';
+import { cachedGet } from '../../helpers/http-cache';
 
 @Injectable({
   providedIn: 'root'
@@ -16,11 +17,10 @@ export class ConditionAssessmentService {
       constructor(private http: HttpClient) { }
 
       getConditionAssessments(facilityId: number): Observable<any>{
-        return this.http.get<Array<ConditionAssessment>>(`${environment.apiUrl}/api/conditionassessment/getconditionassessments/${facilityId}`);
+        return cachedGet<Array<ConditionAssessment>>(this.http, `${environment.apiUrl}/api/conditionassessment/getconditionassessments/${facilityId}`);
       }
     
       saveConditionAssessment(ConditionAssessment: ConditionAssessment){
         return this.http.post<number>(`${environment.apiUrl}/api/conditionassessment/saveconditionassessment`,ConditionAssessment);
       }
 }
-

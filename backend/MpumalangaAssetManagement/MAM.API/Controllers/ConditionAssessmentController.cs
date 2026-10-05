@@ -18,7 +18,7 @@ namespace MAM.API.Controllers
         public ConditionAssessmentController(IConditionAssessmentService conditionAssessmentService)
         {
             _conditionAssessmentService = conditionAssessmentService;
-            SetLog4NetConfiguration();
+            // log4net configured at application startup
         }
 
         [HttpGet]
@@ -33,7 +33,7 @@ namespace MAM.API.Controllers
             catch (Exception ex)
             {
                 log.Info("Error");
-                throw ex;
+                throw;
             }
         }
 
@@ -49,7 +49,7 @@ namespace MAM.API.Controllers
             catch (Exception ex)
             {
                 log.Info("Error");
-                throw ex;
+                throw;
             }
         }
 
@@ -65,7 +65,7 @@ namespace MAM.API.Controllers
             catch (Exception ex)
             {
                 log.Info("Error");
-                throw ex;
+                throw;
             }
         }
     }

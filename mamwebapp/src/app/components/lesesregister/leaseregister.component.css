@@ -7,3 +7,28 @@
     transition-timing-function: ease;
     line-height: 1;
 }
+
+:host {
+    display: flex;
+    height: 100%;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.lease-register-tabs {
+    display: flex;
+    min-height: 0;
+    flex: 1 1 auto;
+    flex-direction: column;
+}
+
+:host ::ng-deep .lease-register-tabs .mat-mdc-tab-body-wrapper {
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+:host ::ng-deep .lease-register-tabs .mat-mdc-tab-body-content {
+    height: 100%;
+    overflow: hidden;
+}

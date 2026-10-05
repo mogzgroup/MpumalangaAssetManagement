@@ -1,7 +1,15 @@
-<p-card class="mt-5">
-    <p-toast></p-toast>
-    <p-steps [model]="templates" [readonly]="true" [activeIndexChange]="activeIndex"></p-steps>
-</p-card>
-<router-outlet></router-outlet>
-
-
+<mat-card class="mt-5">
+    <mat-card-content>
+        <nav mat-tab-nav-bar [tabPanel]="templatePanel" aria-label="UAMP templates">
+            <a mat-tab-link *ngFor="let template of templates"
+                [routerLink]="template.routerLink"
+                routerLinkActive #routeActive="routerLinkActive"
+                [active]="routeActive.isActive">
+                {{ template.label }}
+            </a>
+        </nav>
+        <mat-tab-nav-panel #templatePanel>
+            <router-outlet></router-outlet>
+        </mat-tab-nav-panel>
+    </mat-card-content>
+</mat-card>

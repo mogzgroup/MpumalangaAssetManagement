@@ -1,6 +1,8 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { NavigationStart, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { filter } from 'rxjs/operators';
 import { AuthenticationService } from '../app/services/authentication.service';
 import { User } from '../app/models/user.model';
 import { Role } from '../app/models/role.model';
@@ -16,18 +18,28 @@ import { OnInit } from '@angular/core';
 export class AppComponent implements OnInit {
   currentUser: User;
   loggedIn: boolean = false;
+  navigationExpanded = true;
 
-  constructor(//private primengConfig: PrimeNGConfig,
+  setNavigationExpanded(expanded: boolean) {
+    this.navigationExpanded = expanded;
+  }
+
+  get isLoginRoute(): boolean {
+    return this.router.url.split('?')[0] === '/login';
+  }
+
+  constructor(
     private router: Router,
     private location: Location,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private dialog: MatDialog
   ) {
+    this.router.events.pipe(filter(event => event instanceof NavigationStart)).subscribe(() => {
+      this.dialog.closeAll();
+    });
     this.authenticationService.currentUser.pipe().subscribe(x => {
       this.currentUser = x;
-      this.loggedIn = this.currentUser == null ? false : true;
-      if (this.currentUser != null)  {
-        this.loggedIn = this.currentUser.id === 0 ? false : true;
-      }
+      this.loggedIn = this.authenticationService.isAuthenticated;
       const currentPath  = this.location.path();
 
       if (currentPath === '/reportfault') {
@@ -63,4 +75,3 @@ export class AppComponent implements OnInit {
       return false;
   }
 }
-

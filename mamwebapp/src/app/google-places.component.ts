@@ -5,11 +5,10 @@ import { Component, ViewChild, EventEmitter, Output, OnInit, AfterViewInit, Inpu
     selector: 'AutocompleteComponent',
     changeDetection: ChangeDetectionStrategy.Eager,
     template: `
-      <input class="input"
-        type="text"
-        [(ngModel)]="autocompleteInput"
-        #addresstext style="padding: 12px 20px; border: 1px solid #ccc; width: 400px"
-        >
+  <input class="input"
+    type="text"
+    #addresstext style="padding: 12px 20px; border: 1px solid #ccc; width: 400px"
+    >
     `,
 })
 export class AutocompleteComponent implements OnInit, AfterViewInit {
@@ -17,7 +16,6 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
     @Output() setAddress: EventEmitter<any> = new EventEmitter();
     @ViewChild('addresstext') addresstext: any;
 
-    autocompleteInput: string;
     queryWait: boolean;
 
     constructor() {
@@ -47,4 +45,3 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
     }
 
 }
-

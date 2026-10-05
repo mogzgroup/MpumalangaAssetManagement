@@ -1,5 +1,7 @@
-import { NumberSymbol } from '@angular/common';
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { ToastService } from 'src/app/services/toast.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 import { FormArray, FormControl, Validators } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { FormGroup } from '@angular/forms';
@@ -12,7 +14,6 @@ import { SharedService } from 'src/app/services/shared.service';
 import { User } from 'src/app/models/user.model';
 import { Router } from '@angular/router';
 import { first } from 'rxjs/operators';
-import { MessageService } from 'primeng/api';
 
 @Component({
   standalone: false,
@@ -20,11 +21,12 @@ import { MessageService } from 'primeng/api';
   templateUrl: './template-two-two.component.html',
   styleUrls: ['./template-two-two.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService]
 })
 export class TemplateTwoTwoComponent implements OnInit {
   properties: Property[] = [];
-  test: Number[];
+  pagedProperties: Property[] = [];
+  pageIndex = 0;
+  pageSize = 5;
   stateOwnedFacilities: Facility[];
   leasedFacilities: Facility[];
   stateOwnedFacilitiesExtentTotal = 0;
@@ -45,31 +47,43 @@ export class TemplateTwoTwoComponent implements OnInit {
   displayDialog: boolean = false;
   dialogHeader: string = '';
   isLoading: boolean = false;
+  isSavingProperty = false;
   isViewOnly: boolean = false;
   isEdit: boolean = false;
 
-  constructor(private messageService: MessageService, private router: Router, private uampService: UampService, private sharedService: SharedService, private formBuilder: FormBuilder, private authenticationService: AuthenticationService) {
+  @ViewChild('formDialog') private formDialogTemplate: TemplateRef<unknown>;
+  openAddDialog() {
+    this.dialogHeader = 'Add Property';
+    this.isEdit = false;
+    this.openFormDialog();
+  }
+
+  constructor(private toastService: ToastService, private router: Router, private uampService: UampService, private sharedService: SharedService, private formBuilder: FormBuilder, private authenticationService: AuthenticationService, private dialog: MatDialog) {
     this.uampService.uampChange.subscribe((value) => {
       if (value) {
         this.properties = [];
         this.uamp = value;
-        this.properties = [];
-        this.uamp.templeteTwoPointTwo.properties.forEach(element => {
+        const templateProperties = this.uamp.templeteTwoPointTwo?.properties ?? [];
+        templateProperties.forEach(element => {
 
           element.leaseStartDate = element.leaseStartDate != null ? new Date(element.leaseStartDate) : undefined;
           element.leaseEndDate = element.leaseEndDate != null ? new Date(element.leaseEndDate) : undefined;
           this.properties.push(element);
         })
+        this.updatePagedProperties();
       }
     })
   }
 
   assginData() {
     this.uamp = this.uampService.uamp;
-    if (!this.uamp)
+    if (!this.uamp) {
       this.router.navigate(['uamp']);
+      return;
+    }
 
-    this.properties = this.uamp.templeteTwoPointTwo.properties;
+    this.properties = this.uamp.templeteTwoPointTwo?.properties ?? [];
+    this.updatePagedProperties();
     this.properties.forEach(element => {
       if(element.districtRegion){
         this.localMunicipalities = this.sharedService.getLocalMunicipalitiesByName(element.districtRegion);
@@ -85,35 +99,35 @@ export class TemplateTwoTwoComponent implements OnInit {
     this.propertyForm = this.formBuilder.group({
       fileReferenceNo: [''],
       serialNo: [''],
-      district: [''],
-      town: [''],
-      localMunicipality: [''],
+      district: ['', Validators.required],
+      town: ['', Validators.required],
+      localMunicipality: ['', Validators.required],
       localAuthority: [''],
-      assetDescription: [''],
+      assetDescription: ['', Validators.required],
       oldStreetAddress: [''],
       currentStreetAddress: [''],
-      propertyDescription: [''],
-      assetType: [''],
-      noofParkingBays: [''],
-      noofParkingBaysAllocated: [''],
-      usableAllocatedSpace: [''],
-      lettableSpace: [''],
-      extentofLand: [''],
-      rentalPM: [''],
-      rentalPA: [''],
-      rentalRate: [''],
+      propertyDescription: ['', Validators.required],
+      assetType: ['', Validators.required],
+      noofParkingBays: ['', Validators.min(0)],
+      noofParkingBaysAllocated: ['', Validators.min(0)],
+      usableAllocatedSpace: ['', Validators.min(0)],
+      lettableSpace: ['', Validators.min(0)],
+      extentofLand: ['', Validators.min(0)],
+      rentalPM: ['', Validators.min(0)],
+      rentalPA: ['', Validators.min(0)],
+      rentalRate: ['', Validators.min(0)],
       municipalUtilityServices: [''],
       MunicipalUtilityServiceTotal: [''],
       propertyRatesTaxes: [''],
-      operationalCosts: [''],
-      requiredPerformanceStandard: [''],
-      accessibility: [''],
-      conditionRating: [''],
-      suitabilityIndex: [''],
-      operatingPerformanceIndex: [''],
-      functionalPerformanceIndex: [''],
-      leaseStartDate: [''],
-      leaseEndDate: [''],
+      operationalCosts: ['', Validators.min(0)],
+      requiredPerformanceStandard: ['', Validators.required],
+      accessibility: ['', Validators.required],
+      conditionRating: ['', Validators.required],
+      suitabilityIndex: ['', Validators.required],
+      operatingPerformanceIndex: ['', Validators.required],
+      functionalPerformanceIndex: ['', Validators.required],
+      leaseStartDate: ['', Validators.required],
+      leaseEndDate: ['', Validators.required],
       leaseTerm: [''],
       comment: ['']
     });
@@ -138,6 +152,17 @@ export class TemplateTwoTwoComponent implements OnInit {
   }
 
   get p() { return this.propertyForm.controls; }
+
+  pageChanged(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updatePagedProperties();
+  }
+
+  private updatePagedProperties() {
+    const start = this.pageIndex * this.pageSize;
+    this.pagedProperties = this.properties.slice(start, start + this.pageSize);
+  }
 
   setLocalMunicipalities(e, property?: Property) {
     if (e != undefined) {
@@ -179,6 +204,19 @@ export class TemplateTwoTwoComponent implements OnInit {
   }
 
   addProperty() {
+    if (this.isSavingProperty || !this.propertyForm) {
+      return;
+    }
+    this.submitted = true;
+    this.propertyForm.markAllAsTouched();
+    if (this.propertyForm.invalid) {
+      return;
+    }
+    if (!this.currentUser || !this.uamp) {
+      this.toastService.showError('Unable to add the property because the UAMP session is unavailable.');
+      return;
+    }
+    this.isSavingProperty = true;
     const property: Property = {
       id: 0,
       userImmovableAssetManagementPlanId: this.uampService.uamp.id,
@@ -188,7 +226,7 @@ export class TemplateTwoTwoComponent implements OnInit {
       district: this.propertyForm.controls["district"].value.name,
       districtRegion: this.propertyForm.controls["district"].value.name,
       town: this.propertyForm.controls["town"].value,
-      localMunicipality: this.propertyForm.controls["localMunicipality"].value.name,
+      localMunicipality: this.propertyForm.controls["localMunicipality"].value?.name ?? '',
       assetDescription: this.propertyForm.controls["assetDescription"].value,
       oldStreetAddress: this.propertyForm.controls["oldStreetAddress"].value,
       currentStreetAddress: this.propertyForm.controls["currentStreetAddress"].value,
@@ -201,12 +239,12 @@ export class TemplateTwoTwoComponent implements OnInit {
       rentalPM: this.propertyForm.controls["rentalPM"].value,
       rentalPA: this.propertyForm.controls["rentalPA"].value,
       operationalCosts: this.propertyForm.controls["operationalCosts"].value,
-      requiredPerformanceStandard: this.propertyForm.controls["requiredPerformanceStandard"].value.name,
-      accessibility: this.propertyForm.controls["accessibility"].value.name,
-      conditionRating: this.propertyForm.controls["conditionRating"].value.name,
-      suitabilityIndex: this.propertyForm.controls["suitabilityIndex"].value.name,
-      operatingPerformanceIndex: this.propertyForm.controls["operatingPerformanceIndex"].value.name,
-      functionalPerformanceIndex: this.propertyForm.controls["functionalPerformanceIndex"].value.name,
+      requiredPerformanceStandard: this.propertyForm.controls["requiredPerformanceStandard"].value?.name ?? '',
+      accessibility: this.propertyForm.controls["accessibility"].value?.name ?? '',
+      conditionRating: this.propertyForm.controls["conditionRating"].value?.name ?? '',
+      suitabilityIndex: this.propertyForm.controls["suitabilityIndex"].value?.name ?? '',
+      operatingPerformanceIndex: this.propertyForm.controls["operatingPerformanceIndex"].value?.name ?? '',
+      functionalPerformanceIndex: this.propertyForm.controls["functionalPerformanceIndex"].value?.name ?? '',
       leaseStartDate: this.propertyForm.controls["leaseStartDate"].value,
       leaseEndDate: this.propertyForm.controls["leaseEndDate"].value,
       leaseTerm: this.propertyForm.controls["leaseTerm"].value,
@@ -221,6 +259,7 @@ export class TemplateTwoTwoComponent implements OnInit {
     }
 
     this.properties.push(property);
+    this.updatePagedProperties();
 
     if (this.uamp.templeteTwoPointTwo != null) {
       this.uamp.templeteTwoPointTwo.properties = this.properties
@@ -232,7 +271,10 @@ export class TemplateTwoTwoComponent implements OnInit {
     }
     this.uampService.assignUamp(this.uamp);
     this.resetForm();
-    this.displayDialog = false;
+    this.closeFormDialog();
+    this.isSavingProperty = false;
+    this.submitted = false;
+    this.toastService.showInfo('Property added to this UAMP. Save the UAMP to persist your changes.');
   }
 
   resetForm() {
@@ -253,7 +295,7 @@ export class TemplateTwoTwoComponent implements OnInit {
         this.router.navigate(['uampDetails/uampTemp3']);
       },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get template data' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
         this.isLoading = false;
       }
     );
@@ -277,11 +319,11 @@ export class TemplateTwoTwoComponent implements OnInit {
     this.uampService.saveUamp(this.uamp).pipe(first()).subscribe(uamp => {
       this.uamp = uamp;
       this.uampService.assignUamp(uamp);
-      this.messageService.add({ severity: 'success', summary: 'Save UAMP', detail: 'UAMP has been saved successful.' });
+      this.toastService.showSuccess('UAMP has been saved successfully.');
       this.cancel();
     },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to save UAMP' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
   }
 
@@ -292,5 +334,24 @@ export class TemplateTwoTwoComponent implements OnInit {
   conditionRatingCahnged(property: Property, e) {
     property.conditionRating = e.value.factor;
   }
-}
+  private formDialogRef: MatDialogRef<unknown> | null = null;
 
+  private openFormDialog() {
+    this.displayDialog = true;
+    const dialogRef = this.dialog.open(this.formDialogTemplate, { maxWidth: '95vw' });
+    this.formDialogRef = dialogRef;
+    dialogRef.afterClosed().subscribe(() => {
+      if (this.formDialogRef === dialogRef) {
+        this.formDialogRef = null;
+        this.displayDialog = false;
+      }
+    });
+  }
+
+  closeFormDialog() {
+    this.formDialogRef?.close();
+    this.formDialogRef = null;
+    this.displayDialog = false;
+  }
+
+}

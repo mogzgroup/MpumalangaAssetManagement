@@ -1,53 +1,45 @@
-<p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
-<div style="text-align: -webkit-center;width: 100%;">
+<ng-template #reportFaultDialog>
+    <mat-card class="report-dialog report-dialog-wide">
+        <mat-card-header class="report-dialog-header">
+            <img class="logo-img" src="../../../assets/images/logo.png" alt="Mpumalanga logo">
+            <mat-card-title>Mpumalanga Facilities Management</mat-card-title>
+            <button mat-icon-button type="button" aria-label="Close report fault form" (click)="closeReportFaultDialog()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-card-header>
+        <mat-card-content>
+            <app-add-fault></app-add-fault>
+        </mat-card-content>
+    </mat-card>
+</ng-template>
 
-    <div class="text-center" style="color: red;" *ngIf="error">
-        <h5 class="mt-20">
-            <li class="pi pi-exclamation-triangle" style="color: red;font-size: xx-large;"></li>
-            <span> An error has occured...</span>
-        </h5>
-        <h6 class="color-aqua">{{errorMsg}}</h6>
-    </div>
+<ng-template #trackTicketDialog>
+    <mat-card class="report-dialog">
+        <mat-card-header>
+            <mat-card-title>Track Progress</mat-card-title>
+            <button mat-icon-button type="button" aria-label="Close tracking" (click)="closeTrackTicketDialog()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-card-header>
+        <mat-card-content><app-track-ticket></app-track-ticket></mat-card-content>
+    </mat-card>
+</ng-template>
 
-</div>
-
-<div *ngIf="showReportFaultDialog" class="dialogBackgroud dialogNoBackgroud"></div>
-<p-dialog [(visible)]="showReportFaultDialog" *ngIf="showReportFaultDialog" [style]="{width: '97%'}"
-    [baseZIndex]="10000">
-    <p-header>
-        <img style="float: left; width: 80px;
-        margin-top: 15px;" class="logo-img" src="../../../assets/images/logo.png"> <h3>Mpumalanga facilities Management</h3> 
-    </p-header>
-    <app-add-fault></app-add-fault>
-</p-dialog>
-
-<div *ngIf="showTrackTicketDialog" class="dialogBackgroud"></div>
-<p-dialog [(visible)]="showTrackTicketDialog" *ngIf="showTrackTicketDialog" [style]="{width: '95%'}"
-    [baseZIndex]="10000">
-    <p-header> Track Progress </p-header>
-    <app-track-ticket></app-track-ticket>
-</p-dialog>
-
-<div *ngIf="showDialog" class="dialogBackgroud"></div>
-<p-dialog [(visible)]="showDialog" *ngIf="showDialog" [style]="{width: '95%'}" [baseZIndex]="10000">
-    <p-header><img style="float: left" class="logo-img" src="../../../assets/images/logo.png"><br/>
-        Mpumalanga facilities Management  </p-header>
-    <p-content style="text-align: center;">
-      
-        <div >
-            <p>What would you like to do?</p>
-        </div>
-    </p-content>
-    <p-footer>
-        <div>
-           
-            <button type="button" style="float: left;width: 45%;margin-left: -6px;" (click)="showReportFaultDialog=true"
-                label="Report Fault"></button>
-
-                
-        </div>
-        
-    </p-footer>
-</p-dialog>
-
-
+<ng-template #reportFaultChoiceDialog>
+    <mat-card class="report-dialog">
+        <mat-card-header class="report-dialog-header">
+            <img class="logo-img" src="../../../assets/images/logo.png" alt="Mpumalanga logo">
+            <mat-card-title>Mpumalanga Facilities Management</mat-card-title>
+            <button mat-icon-button type="button" aria-label="Close" (click)="closeReportFaultChoiceDialog()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-card-header>
+        <mat-card-content class="dialog-question">What would you like to do?</mat-card-content>
+        <mat-card-actions align="end">
+            <button mat-raised-button color="primary" type="button" (click)="reportFaultFromChoice()">
+                Report Fault
+            </button>
+            <button mat-button type="button" (click)="trackTicketFromChoice()">Track Progress</button>
+        </mat-card-actions>
+    </mat-card>
+</ng-template>

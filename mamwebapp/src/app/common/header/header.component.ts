@@ -1,12 +1,12 @@
-import { AfterViewInit, Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild, EventEmitter, HostListener, Output, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AuthenticationService } from '../../services/authentication.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/models/user.model';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   standalone: false,
@@ -16,14 +16,16 @@ import { User } from 'src/app/models/user.model';
   changeDetection: ChangeDetectionStrategy.Eager
 })
 export class HeaderComponent implements OnInit, AfterViewInit {
+  @Output() navigationExpandedChange = new EventEmitter<boolean>();
+  mobileNavOpen = false;
   @ViewChild('changePasswordDialog') changePasswordDialog: TemplateRef<unknown>;
+  @ViewChild('mobileNavigationToggle') mobileNavigationToggle: ElementRef<HTMLButtonElement>;
   showSettings: boolean = false;
   showDialog: boolean = false;
   changePasswordForm: FormGroup;
   loading = false;
   submitted = false;
   returnUrl: string;
-  error = '';
   currentUser: User;
   showSideMenu: boolean = true;
   newPassword: string = '';
@@ -34,7 +36,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
 
   constructor(private router: Router,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar,
+    private toastService: ToastService,
     private formBuilder: FormBuilder,
     private userService: UserService,
     private authenticationService: AuthenticationService) { }
@@ -42,7 +44,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.authenticationService.currentUser.subscribe(x => {
       this.currentUser = x;
-      if(!this.currentUser.passwordIsChanged)
+      if (this.currentUser && !this.currentUser.passwordIsChanged)
         this.showDialog = true;
       });
     this.changePasswordForm = this.formBuilder.group({
@@ -58,6 +60,32 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     }
   }
 
+  toggleDesktopNavigation() {
+    this.showSideMenu = !this.showSideMenu;
+    this.navigationExpandedChange.emit(this.showSideMenu);
+  }
+
+  toggleMobileNavigation() {
+    this.mobileNavOpen = !this.mobileNavOpen;
+  }
+
+  closeMobileNavigation() {
+    this.mobileNavOpen = false;
+  }
+
+  @HostListener('document:keydown.escape')
+  closeMobileNavigationOnEscape() {
+    if (!this.mobileNavOpen) {
+      return;
+    }
+    this.closeMobileNavigation();
+    this.mobileNavigationToggle?.nativeElement.focus();
+  }
+
+  get displayName(): string {
+    return [this.currentUser?.name, this.currentUser?.surname].filter(Boolean).join(' ');
+  }
+
   get f() { return this.changePasswordForm.controls; }
 
   logout() {
@@ -70,7 +98,10 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     this.showDialog = true;
     if (!this.passwordDialogRef) {
       this.passwordDialogRef = this.dialog.open(this.changePasswordDialog, {
-        width: 'min(92vw, 520px)',
+        width: 'min(92vw, 500px)',
+        maxWidth: 'calc(100vw - 24px)',
+        panelClass: 'password-change-dialog',
+        autoFocus: 'first-tabbable',
         disableClose: true
       });
       this.passwordDialogRef.afterClosed().subscribe(() => {
@@ -88,7 +119,6 @@ export class HeaderComponent implements OnInit, AfterViewInit {
   onSubmit() {
     this.submitted = true;
     this.loading = false;
-    this.error = '';
     // stop here if form is invalid
     if (this.changePasswordForm.invalid || (this.f.newpassword.value !== this.f.confirmpassword.value)) {
       return;
@@ -99,18 +129,13 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         data => {          
           this.currentUser.passwordIsChanged = true;
           localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-          this.showSuccess('Change Password', 'Password has been changed successful.');
+          this.toastService.showSuccess('Password changed successfully.');
           this.closeChangePasswordDialog();
         },
-        error => {
-          this.error = error;
+        () => {
+          this.toastService.showError('Unable to change your password. Please try again.');
           this.loading = false;
         });
   }
 
-  showSuccess(title: string,detail: string ) {
-    this.snackBar.open(detail, title, { duration: 5000 });
-  }
-
 }
-

@@ -1,0 +1,23 @@
+:host {
+    display: block;
+    min-width: 0;
+}
+
+.gap-analysis-table-container {
+    max-height: min(48vh, 440px);
+}
+
+.gap-analysis-table {
+    min-width: 1100px;
+}
+
+.gap-analysis-table mat-form-field {
+    width: 100%;
+    min-width: 180px;
+}
+
+.gap-analysis-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 0.75rem;
+}

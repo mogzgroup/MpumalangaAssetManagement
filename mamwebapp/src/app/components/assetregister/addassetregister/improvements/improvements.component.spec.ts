@@ -1,4 +1,7 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 import { ImprovementsComponent } from './improvements.component';
 
@@ -6,12 +9,13 @@ describe('ImprovementsComponent', () => {
   let component: ImprovementsComponent;
   let fixture: ComponentFixture<ImprovementsComponent>;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
-      declarations: [ ImprovementsComponent ]
+      declarations: [ImprovementsComponent],
+      imports: [CommonModule, MatCardModule, MatIconModule]
     })
     .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ImprovementsComponent);
@@ -23,4 +27,3 @@ describe('ImprovementsComponent', () => {
     expect(component).toBeTruthy();
   });
 });
-

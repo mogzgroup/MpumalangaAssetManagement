@@ -1,23 +1,23 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, Output, AfterViewInit, EventEmitter, Input, NgZone, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, Output, AfterViewInit, EventEmitter, Input, NgZone, ChangeDetectionStrategy, TemplateRef } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { first } from 'rxjs/operators';
 import { User } from '../../models/user.model';
 import { HiringRegisterService } from '../../services/hiring-register/hiring-register.service';
-import { MenuItem, MessageService } from 'primeng/api';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../services/authentication.service';
-import { ConfirmationService } from 'primeng/api';
 import { FormControl } from '@angular/forms';
 import { SharedService } from 'src/app/services/shared.service';
 import { HiredProperty } from 'src/app/models/hired-property';
 import { DatePipe } from '@angular/common';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   standalone: false,
   selector: 'app-hiring',
   templateUrl: './hiring.component.html',
   styleUrls: ['./hiring.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService, ConfirmationService]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 
 export class HiringComponent implements OnInit {
@@ -26,8 +26,11 @@ export class HiringComponent implements OnInit {
   formattedEstablishmentAddress: string;
 
 
-  loading = false;
+  loadingProperties = false;
+  propertiesLoadError = '';
   isAdding = false;
+  isUpdating = false;
+  deletingHiredProperty = false;
   hiringForm: FormGroup;
   types: any = [];
   userDepartments: any[] = [];
@@ -42,76 +45,105 @@ export class HiringComponent implements OnInit {
   options: google.maps.MapOptions = {};
   markers = [];
   zoom = 8;
-  showComfirmaDelete = false;
   showResetPasswordComfirmation: boolean = false;
   clonedHiredProperties: HiredProperty[] = [];
-  printItems: MenuItem[];
-
   cols: any[];
-  items: MenuItem[];
-  home: MenuItem;
+  pagedHiredProperties: HiredProperty[] = [];
+  filteredPropertyCount = 0;
+  filterText = '';
+  pageIndex = 0;
+  pageSize = 10;
+  sortField = '';
+  sortAscending = true;
   submitted = false;
-  error = '';
   emailExsist: boolean = false;
   selectedHiredProperty: HiredProperty;
 
 
   index: any;
-  showDialog: boolean = false;
   showConfirmResetPassword: boolean = false;
   msgs: any[] = [];
   newUserError: string = '';
-  errorMsg: string = 'error';
   departments: any[] = [];
   selectedRole: Number = 0;
-  buttonItems: MenuItem[];
   header: string = 'Add Candidate';
   dialogHeader = '';
+  @ViewChild('propertyDialog') propertyDialog: TemplateRef<unknown>;
+  @ViewChild('deletePropertyDialog') deletePropertyDialog: TemplateRef<unknown>;
+  private propertyDialogRef: MatDialogRef<unknown> | null = null;
+  private deleteDialogRef: MatDialogRef<unknown> | null = null;
 
   constructor(private hiringRegisterService: HiringRegisterService,
     private formBuilder: FormBuilder,
-    private confirmationService: ConfirmationService,
     private authenticationService: AuthenticationService,
     private datePipe: DatePipe,
-    private messageService: MessageService,
+    private toastService: ToastService,
+    private dialog: MatDialog,
     private sharedService: SharedService,
     public zone: NgZone) { }
   roles: any[];
 
   ngOnInit() {
-    const center = { lat: 50.064192, lng: -130.605469 };
-    // Create a bounding box with sides ~10km away from the center point
-    const defaultBounds = {
-      north: center.lat + 0.1,
-      south: center.lat - 0.1,
-      east: center.lng + 0.1,
-      west: center.lng - 0.1,
-    };
-
-    this.printItems = [
-      {
-        label: 'PDF', icon: 'pi pi-file-pdf', command: () =>
-          this.exportPdf()
-      }, {
-        label: 'Excel', icon: 'pi pi-file-excel', command: () =>
-          this.exportExcel()
-      }
-    ];
     this.center = {
       lat: -26.0722042,
       lng: 30.0752488,
     };
     this.markers.push(this.center);
+    this.loadHiredProperties();
+
+    this.authenticationService.currentUser.subscribe(x => {
+      this.currentUser = x;
+    });
+
+    this.types = this.sharedService.getPropertyTypes();
+    this.userDepartments = this.sharedService.getDepartments();
+    this.districts = this.sharedService.getDistricts();
+    this.buildingConditions = this.sharedService.getConditionRatings();
+
+    this.cols = [
+      { field: 'id', header: 'File Reference' },
+      { field: 'propertyCode', header: 'Property code' },
+      { field: 'district', header: 'District' },
+      { field: 'type', header: 'Type' },
+      { field: 'startingDate', header: 'Start Date' },
+      { field: 'terminationDate', header: 'Termination Date' },
+      { field: 'userDepartment', header: 'User Department' },
+      { field: 'status', header: 'Status' }
+    ];
+
+    this.initForm();
+  }
+
+  loadHiredProperties() {
+    if (this.loadingProperties) {
+      return;
+    }
+    this.loadingProperties = true;
+    this.propertiesLoadError = '';
     this.hiringRegisterService.getHiredProperties().pipe(first()).subscribe(properties => {
+      this.loadingProperties = false;
+      if (!Array.isArray(properties)) {
+        this.propertiesLoadError = 'Unable to load hired properties. Please try again.';
+        this.toastService.showError(this.propertiesLoadError);
+        return;
+      }
       this.markers = [];
+      let placesService: google.maps.places.PlacesService;
       properties.forEach(element => {
-        if (element.address && element.address != '') {
-          var service = new google.maps.places.PlacesService(document.createElement('div'));
-          var request = {
+        const latitude = Number(element.latitude);
+        const longitude = Number(element.longitude);
+        if (Number.isFinite(latitude) && Number.isFinite(longitude) && latitude !== 0 && longitude !== 0) {
+          this.markers.push({
+            position: { lat: latitude, lng: longitude },
+            title: element.propertyCode + ': ' + (element.address || element.propertyCode)
+          });
+        } else if (element.address && element.address.trim() !== '') {
+          placesService ??= new google.maps.places.PlacesService(document.createElement('div'));
+          const request = {
             query: element.address,
             fields: ['name', 'geometry'],
           };
-          service.findPlaceFromQuery(request, (results, status) => {
+          placesService.findPlaceFromQuery(request, (results, status) => {
             if (status == google.maps.places.PlacesServiceStatus.OK) {
               if (results[0].geometry) {
                 let maker = {
@@ -133,52 +165,24 @@ export class HiringComponent implements OnInit {
         element.startingDate = this.datePipe.transform(element.startingDate, "EEEE, d MMMM, y");
         element.terminationDate = this.datePipe.transform(element.terminationDate, "EEEE, d MMMM, y");
       });
-      this.loading = false;
       this.hiredProperties = properties;
       this.clonedHiredProperties = properties;
+      this.updateVisibleProperties();
+    }, error => {
+      this.loadingProperties = false;
+      this.propertiesLoadError = 'Unable to load hired properties. Please try again.';
+      this.toastService.showError(this.toastService.getApiErrorMessage(error));
     });
+  }
 
-    this.authenticationService.currentUser.subscribe(x => {
-      this.currentUser = x;
-    });
-
-    this.buttonItems = [
-      {
-        label: 'View', icon: 'pi pi-eye', command: () =>
-          this.viewProperty()
-      },
-      {
-        label: 'Update', icon: 'pi pi-pencil', command: () =>
-          this.editProperty()
-      }, {
-        label: 'Delete', icon: 'pi pi-trash', command: () =>
-          this.confirmDelete()
-      }
-    ];
-
-    this.types = this.sharedService.getPropertyTypes();
-    this.userDepartments = this.sharedService.getDepartments();
-    this.districts = this.sharedService.getDistricts();
-    this.buildingConditions = this.sharedService.getConditionRatings();
-
-
-
-    this.items = [{ icon: 'pi pi-home', url: 'dashboard' },
-    { label: 'Hiring' }];
-
-    this.cols = [
-      { field: 'id', header: 'File Reference' },
-      { field: 'propertyCode', header: 'Property code' },
-      { field: 'district', header: 'District' },
-      { field: 'type', header: 'Type' },
-      { field: 'startingDate', header: 'Start Date' },
-      { field: 'terminationDate', header: 'Termination Date' },
-      { field: 'userDepartment', header: 'User Department' },
-      { field: 'status', header: 'Status' }
-    ];
-
-    this.loading = false;
-    this.initForm();
+  trackMarker(index: number, marker: {
+    position?: google.maps.LatLngLiteral;
+    lat?: number;
+    lng?: number;
+    title?: string;
+  }): string {
+    const position = marker.position || marker;
+    return `${position.lat}:${position.lng}:${marker.title || index}`;
   }
 
   handleAddressChange(address: any) {
@@ -225,7 +229,55 @@ export class HiringComponent implements OnInit {
     });
   }
 
+  updateVisibleProperties() {
+    const filter = this.filterText.trim().toLowerCase();
+    let properties = this.hiredProperties.filter(property =>
+      !filter || Object.values(property).some(value => String(value ?? '').toLowerCase().includes(filter))
+    );
+    if (this.sortField) {
+      const field = this.sortField;
+      properties = properties.sort((left, right) => {
+        const a = this.propertyValue(left, field).toLowerCase();
+        const b = this.propertyValue(right, field).toLowerCase();
+        return (a.localeCompare(b, undefined, { numeric: true }) * (this.sortAscending ? 1 : -1));
+      });
+    }
+    this.filteredPropertyCount = properties.length;
+    const lastPage = Math.max(0, Math.ceil(properties.length / this.pageSize) - 1);
+    this.pageIndex = Math.min(this.pageIndex, lastPage);
+    const start = this.pageIndex * this.pageSize;
+    this.pagedHiredProperties = properties.slice(start, start + this.pageSize);
+  }
+
+  propertyValue(property: HiredProperty, field: string): string {
+    const value = Object.entries(property).find(([key]) => key === field)?.[1];
+    return String(value ?? '');
+  }
+
+  filterProperties(value: string) {
+    this.filterText = value;
+    this.pageIndex = 0;
+    this.updateVisibleProperties();
+  }
+
+  sortBy(field: string) {
+    if (this.sortField === field) {
+      this.sortAscending = !this.sortAscending;
+    } else {
+      this.sortField = field;
+      this.sortAscending = true;
+    }
+    this.updateVisibleProperties();
+  }
+
+  pageChanged(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updateVisibleProperties();
+  }
+
   initForm() {
+    this.submitted = false;
     this.hiringForm = this.formBuilder.group({
       district: new FormControl('', Validators.compose([Validators.required])),
       type: new FormControl('', Validators.compose([Validators.required])),
@@ -247,8 +299,34 @@ export class HiringComponent implements OnInit {
     });
   }
 
+  openAddPropertyDialog() {
+    this.header = 'Add Property';
+    this.isView = false;
+    this.initForm();
+    this.openPropertyDialog();
+  }
+
+  private openPropertyDialog() {
+    this.propertyDialogRef = this.dialog.open(this.propertyDialog, {
+      width: 'min(92vw, 1100px)',
+      maxWidth: 'calc(100vw - 24px)',
+      maxHeight: 'calc(100dvh - 24px)',
+      panelClass: 'hiring-property-dialog'
+    });
+    this.propertyDialogRef.afterClosed().subscribe(() => {
+      this.propertyDialogRef = null;
+    });
+  }
+
+  closePropertyDialog() {
+    if (this.isAdding || this.isUpdating) {
+      return;
+    }
+    this.propertyDialogRef?.close();
+  }
+
   setProperty() {
-    this.showDialog = true;
+    this.submitted = false;
     const district = this.districts.filter(d => d.name == this.selectedHiredProperty.district)[0];
     const type = this.types.filter(d => d.name == this.selectedHiredProperty.type.trim())[0];
     const userDepartment = this.userDepartments.filter(d => d.name == this.selectedHiredProperty.userDepartment.trim())[0];
@@ -278,12 +356,14 @@ export class HiringComponent implements OnInit {
     this.isView = false;
     this.header = "Edit Property";
     this.setProperty();
+    this.openPropertyDialog();
   }
 
   viewProperty() {
     this.isView = true;
     this.header = this.selectedHiredProperty.propertyCode;
     this.setProperty();
+    this.openPropertyDialog();
   }
 
   get f() { return this.hiringForm.controls; }
@@ -294,6 +374,22 @@ export class HiringComponent implements OnInit {
   }
 
   onSubmit() {
+    this.submitted = true;
+    if (this.isAdding || this.isView || !this.hiringForm) {
+      return;
+    }
+    this.hiringForm.markAllAsTouched();
+    if (this.hiringForm.invalid) {
+      return;
+    }
+    if (this.validProperty(this.f.propertyCode.value, undefined)) {
+      this.toastService.showError('A property with this code already exists.');
+      return;
+    }
+    if (!this.currentUser) {
+      this.toastService.showError('Your session is unavailable. Please sign in and try again.');
+      return;
+    }
 
     const hiredProperty = new HiredProperty();//{
     hiredProperty.id = 0,
@@ -325,6 +421,23 @@ export class HiringComponent implements OnInit {
   }
 
   onUpdate() {
+    this.submitted = true;
+    if (this.isUpdating || this.isView || !this.hiringForm || !this.selectedHiredProperty) {
+      return;
+    }
+    this.hiringForm.markAllAsTouched();
+    if (this.hiringForm.invalid) {
+      return;
+    }
+    if (this.validProperty(this.f.propertyCode.value, this.selectedHiredProperty.id)) {
+      this.toastService.showError('A property with this code already exists.');
+      return;
+    }
+    if (!this.currentUser) {
+      this.toastService.showError('Your session is unavailable. Please sign in and try again.');
+      return;
+    }
+
     const hiredProperty = new HiredProperty();//{
     hiredProperty.id = this.selectedHiredProperty.id,
       hiredProperty.type = this.hiringForm.controls["type"].value != undefined ? this.hiringForm.controls["type"].value.name : null;
@@ -358,6 +471,14 @@ export class HiringComponent implements OnInit {
   }
 
   addHiredProperty(hiredProperty: HiredProperty) {
+    if (this.isAdding) {
+      return;
+    }
+
+    this.isAdding = true;
+    if (this.propertyDialogRef) {
+      this.propertyDialogRef.disableClose = true;
+    }
     this.hiringRegisterService.addHiredProperty(hiredProperty).pipe().subscribe(id => {
       if (id != 0) {
         hiredProperty.id = id;
@@ -367,36 +488,57 @@ export class HiringComponent implements OnInit {
         _hiredProperty.startingDate = this.datePipe.transform(hiredProperty.startingDate, "EEEE, d MMMM, y");
         _hiredProperty.terminationDate = this.datePipe.transform(hiredProperty.terminationDate, "EEEE, d MMMM, y");
         this.hiredProperties.push(_hiredProperty);
-        this.showToast('Add Property', 'Property has been added successful');
+        this.updateVisibleProperties();
+        this.toastService.showSuccess('Property added successfully.');
+        this.propertyDialogRef?.close();
       } else {
-        this.messageService.add({ severity: 'error', summary: 'Add Property', detail: 'Property is not added successful.' });
+        if (this.propertyDialogRef) {
+          this.propertyDialogRef.disableClose = false;
+        }
+        this.toastService.showError('Unable to add this property. Please try again.');
       }
-      this.showDialog = false;
       this.isAdding = false;
-    },
-      error => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occurred', detail: 'An error occurred while processing your request. please try again!' });
-        this.error = error;
+    }, error => {
+        if (this.propertyDialogRef) {
+          this.propertyDialogRef.disableClose = false;
+        }
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
         this.isAdding = false;
       });
   }
 
   updateHiredProperty(hiredProperty: HiredProperty) {
+    if (this.isUpdating) {
+      return;
+    }
+    this.isUpdating = true;
+    if (this.propertyDialogRef) {
+      this.propertyDialogRef.disableClose = true;
+    }
     this.hiringRegisterService.updateHiredProperty(hiredProperty).pipe(first()).subscribe(isUpdated => {
       if (isUpdated) {
-        this.showToast('Update Property', 'Property has been updated successful.');
-        this.loading = false;
+        this.toastService.showSuccess('Property updated successfully.');
         const _hiredProperty: any = hiredProperty;
         _hiredProperty.createdDate = this.datePipe.transform(hiredProperty.createdDate, "yyyy-MM-dd");
         _hiredProperty.modifiedDate = this.datePipe.transform(hiredProperty.modifiedDate, "yyyy-MM-dd");
         _hiredProperty.startingDate = this.datePipe.transform(hiredProperty.startingDate, "EEEE, d MMMM, y");
         _hiredProperty.terminationDate = this.datePipe.transform(hiredProperty.terminationDate, "EEEE, d MMMM, y");
         this.hiredProperties[this.index] = hiredProperty;
-        this.showDialog = false;
+        this.updateVisibleProperties();
+        this.propertyDialogRef?.close();
       } else {
-        this.showErrorToast('Update Property', 'Property has not been updated successful.');
-        this.loading = false;
+        if (this.propertyDialogRef) {
+          this.propertyDialogRef.disableClose = false;
+        }
+        this.toastService.showError('Unable to update this property. Please try again.');
       }
+      this.isUpdating = false;
+    }, error => {
+      this.isUpdating = false;
+      if (this.propertyDialogRef) {
+        this.propertyDialogRef.disableClose = false;
+      }
+      this.toastService.showError(this.toastService.getApiErrorMessage(error));
     });
   }
 
@@ -406,21 +548,14 @@ export class HiringComponent implements OnInit {
       if (propertyCode === undefined || propertyCode === '')
         return false
       else
-        return this.hiredProperties.filter(u => u.propertyCode.toLowerCase() == _propertyCode.toLowerCase() && u.id != id).length > 0;
+        return this.hiredProperties.filter(u => (u.propertyCode || '').toLowerCase() == _propertyCode.toLowerCase() && u.id != id).length > 0;
     } else { //for add      
-      return this.hiredProperties.filter(u => u.propertyCode.toLowerCase() == _propertyCode.toLowerCase()).length > 0 ? this.emailExsist = true : this.emailExsist = false;
+      return this.hiredProperties.filter(u => (u.propertyCode || '').toLowerCase() == _propertyCode.toLowerCase()).length > 0 ? this.emailExsist = true : this.emailExsist = false;
     }
   }
 
   onRemoveFile(event: any) { }
   onSelectFile(files: any) { }
-  showToast(summary: string, detail: string) {
-    this.messageService.add({ severity: 'success', summary: summary, detail: detail });
-  }
-  showErrorToast(summary: string, detail: string) {
-    this.messageService.add({ severity: 'error', summary: summary, detail: detail });
-  }
-
   setRole(e) {
     this.selectedRole = e.value.factor
   }
@@ -431,29 +566,59 @@ export class HiringComponent implements OnInit {
 
 
   deleteHiredProperty() {
+    if (this.deletingHiredProperty || !this.selectedHiredProperty) {
+      return;
+    }
+    this.deletingHiredProperty = true;
+    if (this.deleteDialogRef) {
+      this.deleteDialogRef.disableClose = true;
+    }
     this.selectedHiredProperty.createdDate = new Date(this.selectedHiredProperty.createdDate);
     this.selectedHiredProperty.modifiedDate = new Date(this.selectedHiredProperty.modifiedDate);
     this.selectedHiredProperty.startingDate = new Date(this.selectedHiredProperty.startingDate);
     this.selectedHiredProperty.terminationDate = new Date(this.selectedHiredProperty.terminationDate);
     this.hiringRegisterService.deleteHiredProperty(this.selectedHiredProperty).pipe(first()).subscribe(isDeleted => {
       if (isDeleted) {
-        this.messageService.add({ severity: 'warn', summary: 'Delete Property', detail: 'Property has been deleted successful.' });
+        this.toastService.showSuccess('Property deleted successfully.');
         this.hiredProperties.splice(this.index, 1);
+        this.updateVisibleProperties();
+        this.deleteDialogRef?.close();
       } else {
-        this.messageService.add({ severity: 'error', summary: 'Delete Property', detail: 'Property is not deleted successful.' });
+        if (this.deleteDialogRef) {
+          this.deleteDialogRef.disableClose = false;
+        }
+        this.toastService.showError('Unable to delete this property. Please try again.');
       }
-      this.loading = false;
+      this.deletingHiredProperty = false;
     }, error => {
-      this.messageService.add({ severity: 'error', summary: 'Error Occurred', detail: 'An error occurred while processing your request. please try again!' });
+      this.deletingHiredProperty = false;
+      if (this.deleteDialogRef) {
+        this.deleteDialogRef.disableClose = false;
+      }
+      this.toastService.showError(this.toastService.getApiErrorMessage(error));
     });
   }
 
   confirmDelete() {
-    this.showComfirmaDelete = true;
+    this.deleteDialogRef = this.dialog.open(this.deletePropertyDialog, {
+      width: 'min(92vw, 480px)'
+    });
+    const dialogRef = this.deleteDialogRef;
+    dialogRef.afterClosed().subscribe(() => {
+      if (this.deleteDialogRef === dialogRef) {
+        this.deleteDialogRef = null;
+      }
+    });
   }
 
-  selectProperty(hiredProperty: HiredProperty, index: Number) {
+  closeDeleteDialog() {
+    if (!this.deletingHiredProperty) {
+      this.deleteDialogRef?.close();
+    }
+  }
+
+  selectProperty(hiredProperty: HiredProperty) {
     this.selectedHiredProperty = hiredProperty;
-    this.index = index;
+    this.index = this.hiredProperties.indexOf(hiredProperty);
   }
 }

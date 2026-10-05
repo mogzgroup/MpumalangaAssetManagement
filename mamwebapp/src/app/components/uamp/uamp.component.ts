@@ -1,10 +1,13 @@
-import { Component, OnInit, Input, ViewChild, AfterViewInit, ElementRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ChangeDetectionStrategy, TemplateRef } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { User } from 'src/app/models/user.model';
-import { Subject } from 'rxjs/internal/Subject';
 import { first } from 'rxjs/operators';
-import { MenuItem, MessageService } from 'primeng/api';
 import { UAMP } from 'src/app/models/uamp.model';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { ToastService } from 'src/app/services/toast.service';
 import { UampService } from '../../services/uamp/uamp.service';
 import { TempleteTwoPointOne } from 'src/app/models/templetes/templete-two-point-one.model';
 import { Router } from '@angular/router';
@@ -15,14 +18,22 @@ import { Router } from '@angular/router';
   templateUrl: './uamp.component.html',
   styleUrls: ['./uamp.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService],
 })
-export class UampComponent implements OnInit { 
+export class UampComponent implements OnInit, OnDestroy, AfterViewInit {
   templeteTwoPointOne: TempleteTwoPointOne;
   properties: any[] = [];
   generatingUamp: boolean = false;
   value: number = 0;
-  uamps: UAMP[];
+  uamps: UAMP[] = [];
+  loadingUamps = false;
+  uampLoadError = '';
+  private progressTimer: ReturnType<typeof setInterval> | undefined;
+  @ViewChild('uampProgressDialog') private uampProgressTemplate: TemplateRef<unknown>;
+  private progressDialogRef: MatDialogRef<unknown> | null = null;
+  dataSource = new MatTableDataSource<UAMP>([]);
+  displayedColumns = ['fileReference', 'department', 'createdDate', 'creator', 'status', 'actions'];
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   umapTemplete: any[];
   leasedPropertyCount: Number = 0;
   activeIndex: number = 0;
@@ -31,36 +42,36 @@ export class UampComponent implements OnInit {
   showUAMP: Boolean = false;
   currentUser: User;
   uamp: UAMP;
-  buttonItems: MenuItem[];
   templateOne: any;
-  erMsgs: { severity: string; summary: string; detail: string }[] = [];
-  error: string = '';
-  items = [
-    { icon: 'pi pi-home',url: 'dashboard' },
-    { label: 'UAMP' }];
-
-  constructor(private router: Router, public messageService: MessageService, public uampService: UampService, private authenticationService: AuthenticationService) {
+  constructor(
+    private router: Router,
+    private toastService: ToastService,
+    public uampService: UampService,
+    private authenticationService: AuthenticationService,
+    private dialog: MatDialog
+  ) {
     this.startCounter();
-    this.buttonItems = [
-      {
-        label: 'View', icon: 'pi pi-eye', command: () =>
-          this.viewUamp()
-      },
-      { separator: true },
-      {
-        label: 'Update', icon: 'pi pi-print', command: () =>
-          this.updateUamp()
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      if (property === 'creator') {
+        return `${item.user?.name || ''} ${item.user?.surname || ''}`.trim();
       }
-    ];
+      if (property === 'createdDate') {
+        return item.createdDate ? new Date(item.createdDate).getTime() : 0;
+      }
+      return item[property] as string | number;
+    };
   }
 
   startCounter() {
-    let interval = setInterval(() => {
+    if (this.progressTimer) {
+      return;
+    }
+    this.progressTimer = setInterval(() => {
       this.value = this.value + Math.floor(Math.random() * 10) + 1;
-      this.erMsgs = [];
       if (this.value >= 100) {
         this.value = 100;
-        //clearInterval(interval);   
+        clearInterval(this.progressTimer);
+        this.progressTimer = undefined;
       }
     }, 3000);
   }
@@ -68,38 +79,75 @@ export class UampComponent implements OnInit {
   ngOnInit() {  
     this.authenticationService.currentUser.pipe().subscribe(x => {
       this.currentUser = x;
+      if (x && !this.loadingUamps && this.uamps.length === 0 && !this.uampLoadError) {
+        this.getUamps();
+      }
     });
-    this.getUamps();
   }
+
+  ngOnDestroy() {
+    if (this.progressTimer) {
+      clearInterval(this.progressTimer);
+    }
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
   selectUamp(uamp) {
     this.uamp = uamp;
   }
 
   viewUamp() {
     this.showDialog = true;
-    this.generatingUamp = true;
+    this.openProgressDialog();
     this.value = 10;
     this.uampService.getUamp(this.uamp.id).subscribe(
       (response) => {
         this.uamp = response;
-        this.generatingUamp = false;
+        this.closeProgressDialog();
       },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get UAMP details' });
-        this.generatingUamp = false;
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
+        this.closeProgressDialog();
       }
     );
 
   }
 
   getUamps() {
-    this.uamps = [];
+    if (this.loadingUamps) {
+      return;
+    }
+    if (!this.currentUser?.department) {
+      this.uampLoadError = 'Unable to load UAMP records. Please try again.';
+      this.toastService.showError(this.uampLoadError);
+      return;
+    }
+
+    this.loadingUamps = true;
+    this.uampLoadError = '';
     this.uampService.getUamps(this.currentUser.department).subscribe(
       (response) => {
-        this.uamps = response
+        this.loadingUamps = false;
+        if (!Array.isArray(response)) {
+          this.uamps = [];
+          this.dataSource.data = [];
+          this.uampLoadError = 'Unable to load UAMP records. Please try again.';
+          this.toastService.showError(this.uampLoadError);
+          return;
+        }
+        this.uamps = response;
+        this.dataSource.data = this.uamps;
       },
       (error) => {
-        this.erMsgs = [{ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get UAMPS for your department' }];
+        this.loadingUamps = false;
+        this.uamps = [];
+        this.dataSource.data = [];
+        this.uampLoadError = 'Unable to load UAMP records. Please try again.';
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       }
     );
   }
@@ -108,20 +156,20 @@ export class UampComponent implements OnInit {
     this.uampService.getuampwithtemplateone(id).subscribe(
       (response) => {
         this.uamp = response;
-        this.generatingUamp = false;
+        this.closeProgressDialog();
         this.uampService.assignUamp(this.uamp);
         this.router.navigate(['uampDetails/uampTemp1']);
       },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get UAMP details' });
-        this.generatingUamp = false;
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
+        this.closeProgressDialog();
       }
     );
   }
 
   updateUamp() {
     this.showUAMP = true;
-    this.generatingUamp = true;
+    this.openProgressDialog();
     this.activeIndex = 0;
     this.value = 10;
     this.startCounter();
@@ -129,7 +177,7 @@ export class UampComponent implements OnInit {
   }
 
   startUamp() {
-    this.generatingUamp = true;
+    this.openProgressDialog();
     let uamp: UAMP = {
       id: 0,
       status: 'New',
@@ -146,13 +194,13 @@ export class UampComponent implements OnInit {
     this.uampService.startuamp(uamp).subscribe(
       (response) => {
         this.uamp = response;
-        this.generatingUamp = false;
+        this.closeProgressDialog();
         this.uampService.assignUamp(this.uamp);
         this.router.navigate(['uampDetails/uampTemp1']);
       },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to generate UAMP' });
-        this.generatingUamp = false;
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
+        this.closeProgressDialog();
       });
   }
 
@@ -179,26 +227,49 @@ export class UampComponent implements OnInit {
     }
   }
 
+  private openProgressDialog() {
+    this.generatingUamp = true;
+    const dialogRef = this.dialog.open(this.uampProgressTemplate, {
+      width: '420px',
+      maxWidth: '95vw',
+      disableClose: true
+    });
+    this.progressDialogRef = dialogRef;
+    dialogRef.afterClosed().subscribe(() => {
+      if (this.progressDialogRef === dialogRef) {
+        this.progressDialogRef = null;
+        this.generatingUamp = false;
+      }
+    });
+  }
+
+  private closeProgressDialog() {
+    this.progressDialogRef?.close();
+    this.progressDialogRef = null;
+    this.generatingUamp = false;
+  }
+
   onSave() {
     this.uamp.status = "Saved";
     this.uampService.saveUamp(this.uamp).pipe(first()).subscribe(uamp => {
       this.uamp = uamp;
       this.uampService.assignUamp(uamp);
-      this.messageService.add({ severity: 'success', summary: 'Save UAMP', detail: 'UAMP has been saved successful.' });
+      this.toastService.showSuccess('UAMP saved successfully.');
 
       const foundUamp = this.uamps.filter(u => u.id == this.uamp.id);
-      if (foundUamp.length == 0)
+      if (foundUamp.length == 0) {
         this.uamps.push(this.uamp);
-      else {
+      } else {
         const index = this.uamps.indexOf(foundUamp[0]);
         this.uamps[index] = uamp;
       }
+      this.dataSource.data = this.uamps;
 
       this.activeIndex = 0;
       this.showUAMP = false;
     },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to save UAMP' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
   }
 
@@ -208,16 +279,18 @@ export class UampComponent implements OnInit {
     this.uampService.saveUamp(this.uamp).pipe(first()).subscribe(uamp => {
       this.uamp = uamp;
       this.uampService.assignUamp(uamp);
-      this.messageService.add({ severity: 'success', summary: 'Submit UAMP', detail: 'UAMP has been submited successful.' });
+      this.toastService.showSuccess('UAMP submitted successfully.');
 
       const foundUamp = this.uamps.filter(u => u.id == this.uamp.id).length;
-      if (foundUamp == 0)
+      if (foundUamp == 0) {
         this.uamps.push(this.uamp);
+        this.dataSource.data = this.uamps;
+      }
       this.activeIndex = 0;
       this.showUAMP = false;
     },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to submit UAMP' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
   }
 
@@ -231,4 +304,3 @@ export class UampComponent implements OnInit {
     return result;
   }
 }
-

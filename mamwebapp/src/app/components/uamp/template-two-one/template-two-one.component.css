@@ -1,63 +1,76 @@
-:host ::ng-deep .p-rowgroup-footer td {
+.table-container {
+  overflow: auto;
+  max-height: min(58vh, 520px);
+  scrollbar-gutter: stable;
+  max-width: 100%;
+}
+
+.property-table {
+  border-collapse: collapse;
+  min-width: 2200px;
+  width: 100%;
+}
+
+.property-table th,
+.property-table td {
+  border: 1px solid #d5d5d5;
+  padding: 0.5rem;
+  vertical-align: middle;
+}
+
+.property-table th {
+  background: #f4f4f4;
+  font-size: 0.8rem;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  white-space: normal;
+}
+
+.property-table td {
+  min-width: 120px;
+}
+
+.property-table input,
+.property-table mat-select {
+  min-width: 110px;
+  width: 100%;
+}
+
+.property-table input {
+  box-sizing: border-box;
+}
+
+.group-row td {
+  background: #e8edf2;
   font-weight: 700;
 }
 
-:host ::ng-deep .p-rowgroup-header .p-row-toggler{
-    vertical-align: middle;
-    margin-right: .25rem;      
+.property-section-title {
+  color: #245a43;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
-:host ::ng-deep .p-rowgroup-header span {
-  font-weight: 700;
+.property-empty-state {
+  padding: 1.5rem !important;
+  text-align: center;
 }
 
-header{
-    font-size: larger;
-    font-weight: normal;
-    padding: 15px;
-  }
-  
-  .header{
-    background-color: #9FA7AF;
-      border: 1px solid #007ad9;
-      color: white;
-      margin: -8px -15px 0px -15px;
-  }
-
-  th{
-    overflow-wrap: break-word;
-    width: 150px;
-  }
-
-  td{
-    overflow-wrap: break-word;
-  }
-
-  th small{
-    font-weight: normal;
-  }
-
-  .inputOnDataTable input
-{
-    width: 70px !important;   
+.property-dialog {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 2rem);
+  overflow: hidden;
 }
 
-.inputPeso input
-{
-    width: 20px !important;   
-    margin-left: 20px;
-    float: left;
+.property-dialog mat-card-content {
+  min-height: 0;
+  overflow-y: auto;
 }
 
-.w-140{
-  width: 140px !important;
+.uamp-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
 }
-
-.p-component{
-	width: fit-content;
-}
-
-.p-datatable .p-datatable-thead > tr > th {
-font-size: 12px !important;
-}
-  

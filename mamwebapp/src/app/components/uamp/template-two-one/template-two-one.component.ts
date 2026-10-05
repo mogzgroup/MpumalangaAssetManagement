@@ -1,12 +1,10 @@
-import { MessageService } from 'primeng/api';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ToastService } from 'src/app/services/toast.service';
+import { PageEvent } from '@angular/material/paginator';
 import { UAMP } from 'src/app/models/uamp.model';
-import { DialogService } from 'primeng/dynamicdialog';
-import { FormControl, FormArray } from '@angular/forms';
-import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Property } from 'src/app/models/property.model';
 import { UampService } from '../../../services/uamp/uamp.service';
-import { FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { TempleteTwoPointOne } from 'src/app/models/templetes/templete-two-point-one.model';
 import { AddMunicipalUtilityServicesComponent } from './add-municipal-utility-services/add-municipal-utility-services';
 import { Router } from '@angular/router';
@@ -18,14 +16,14 @@ import { first } from 'rxjs/operators';
   selector: 'app-template-two-one',
   templateUrl: './template-two-one.component.html',
   styleUrls: ['./template-two-one.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService, DialogService, DynamicDialogRef]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class TemplateTwoOneComponent implements OnInit {
-  rowGroupMetadata: any;
   properties: Array<Property> = [];
+  pagedProperties: Array<Property> = [];
+  pageIndex = 0;
+  pageSize = 5;
   submitted: boolean = false;
-  propertyForm: FormGroup;
   municipalUtilityServices: any[];
   operationalCosts: any[];
   conditionRatings: any[];
@@ -38,11 +36,9 @@ export class TemplateTwoOneComponent implements OnInit {
   isLoading: boolean = false;
 
   constructor(private uampService: UampService,
-    private messageService: MessageService,
+    private toastService: ToastService,
     private sharedService: SharedService,
-    public ref: DynamicDialogRef,
-    public dialogService: DialogService,
-    private formBuilder: FormBuilder,
+    private dialog: MatDialog,
     private router: Router) {
 
     this.uampService.uampChange.subscribe((value) => {
@@ -67,14 +63,18 @@ export class TemplateTwoOneComponent implements OnInit {
 
   assginData() {
     this.uamp = this.uampService.uamp;
-    if (!this.uamp)
+    if (!this.uamp) {
       this.router.navigate(['uamp']);
-      
+      return;
+    }
+
     this.buildHtml();
   }
 
   buildHtml(){
-    this.uamp.templeteTwoPointOne.properties.forEach(element => {
+    this.properties = [];
+    const templateProperties = this.uamp.templeteTwoPointOne?.properties ?? [];
+    templateProperties.forEach(element => {
       if (element.accessibility)
         element.accessibilityObj = this.accessibilities.filter(a => a.name == element.accessibility)[0];
 
@@ -95,7 +95,9 @@ export class TemplateTwoOneComponent implements OnInit {
 
       this.properties.push(element);
     }
-    )
+    );
+    this.properties.sort((first, second) => (first.assetDescription || '').localeCompare(second.assetDescription || ''));
+    this.updatePagedProperties();
   }
 
   getDataForNextTemplate() {
@@ -108,13 +110,11 @@ export class TemplateTwoOneComponent implements OnInit {
         this.router.navigate(['uampDetails/uampTemp22']); 
       },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to get template data' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
         this.isLoading = false;
       }
     );
   }
-
-  get p() { return this.propertyForm.controls; }
 
   conditionRatingCahnged(property: Property, e) {
     property.conditionRating = e.value.factor;
@@ -141,45 +141,28 @@ export class TemplateTwoOneComponent implements OnInit {
   }
 
   show(property: any) {
-    const ref = this.dialogService.open(AddMunicipalUtilityServicesComponent, {
-      header: 'Municipal Utility Service',
-      width: '40%',
-      contentStyle: { "max-height": "500px", "overflow": "auto" },
-      baseZIndex: 10000,
-      data: { property: property }
-    });
-
-    ref.onClose.subscribe(result => {
-      console.log(result);
-      if (property) {
-        property = property;
-      }
+    this.dialog.open(AddMunicipalUtilityServicesComponent, {
+      width: 'min(700px, 95vw)',
+      maxHeight: '90vh',
+      data: { property }
     });
   }
 
-  onSort() {
-    this.updateRowGroupMetaData();
+  pageChanged(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updatePagedProperties();
   }
 
-  updateRowGroupMetaData() {
-    this.rowGroupMetadata = {};
-    if (this.properties) {
-      for (let i = 0; i < this.properties.length; i++) {
-        let rowData = this.properties[i];
-        let brand = rowData.assetDescription;
-        if (i == 0) {
-          this.rowGroupMetadata[brand] = { index: 0, size: 1 };
-        }
-        else {
-          let previousRowData = this.properties[i - 1];
-          let previousRowGroup = previousRowData.assetDescription;
-          if (brand === previousRowGroup)
-            this.rowGroupMetadata[brand].size++;
-          else
-            this.rowGroupMetadata[brand] = { index: i, size: 1 };
-        }
-      }
-    }
+  isGroupStart(property: Property, pageRowIndex: number): boolean {
+    const propertyIndex = this.pageIndex * this.pageSize + pageRowIndex;
+    return propertyIndex === 0 ||
+      this.properties[propertyIndex - 1]?.assetDescription !== property.assetDescription;
+  }
+
+  private updatePagedProperties() {
+    const start = this.pageIndex * this.pageSize;
+    this.pagedProperties = this.properties.slice(start, start + this.pageSize);
   }
 
   nextPage() {
@@ -195,11 +178,11 @@ export class TemplateTwoOneComponent implements OnInit {
     this.uampService.saveUamp(this.uamp).pipe(first()).subscribe(uamp => {
       this.uamp = uamp;
       this.uampService.assignUamp(uamp);
-      this.messageService.add({ severity: 'success', summary: 'Save UAMP', detail: 'UAMP has been saved successful.' });
+      this.toastService.showSuccess('UAMP has been saved successfully.');
       this.cancel();
     },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to save UAMP' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
   }
 
@@ -207,4 +190,3 @@ export class TemplateTwoOneComponent implements OnInit {
     this.router.navigate(['uamp']);
   }
 }
-

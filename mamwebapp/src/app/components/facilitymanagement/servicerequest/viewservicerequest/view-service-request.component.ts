@@ -1,6 +1,4 @@
 import { Component, Input, OnInit, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
-import { flatMap } from 'rxjs/operators';
 import { FaultNote } from 'src/app/models/fault-note.model';
 import { Fault } from 'src/app/models/fault.model';
 import { Project } from 'src/app/models/project.model';
@@ -10,14 +8,14 @@ import { FaultService } from 'src/app/services/facility-management/fault.service
 import { ProjectService } from 'src/app/services/facility-management/project.service';
 import { SupplierService } from 'src/app/services/facility-management/supplier.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   standalone: false,
   selector: 'app-view-service-request',
   templateUrl: './view-service-request.component.html',
   styleUrls: ['./view-service-request.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService, ConfirmationService]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class ViewServiceRequestComponent implements OnInit {
 
@@ -67,7 +65,7 @@ export class ViewServiceRequestComponent implements OnInit {
   }
 
   constructor(private authenticationService: AuthenticationService, private sharedService: SharedService,
-    private messageService: MessageService, private projectService: ProjectService,
+    private toastService: ToastService, private projectService: ProjectService,
     private supplierService: SupplierService, private faultService: FaultService) { }
 
   ngOnInit() {
@@ -93,8 +91,9 @@ export class ViewServiceRequestComponent implements OnInit {
         });
       }
     },
-      (error) => {
-      });
+        error => {
+          this.toastService.showError(this.toastService.getApiErrorMessage(error));
+        });
 
     this.projectService.getProjects().subscribe(projects => {
       if (projects.length > 0) {
@@ -108,7 +107,8 @@ export class ViewServiceRequestComponent implements OnInit {
         });
       }
     },
-      (error) => {
+      error => {
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
 
     if (this.selectedServiceRequest.hasCompletionCertificate) {
@@ -167,18 +167,15 @@ export class ViewServiceRequestComponent implements OnInit {
           this.uploadContractInvoice();
         }
 
-        this.showToast('Fault', 'Your fault has been submitted successfully.', 'success');
+        this.toastService.showSuccess('Service request updated successfully.');
         this.isUpdated = true;
         this.onCancel();
       } else {
-        this.showToast('Report a Fault', 'Your fault has not been submitted successfully.', 'error');
+        this.toastService.showError('The service request could not be updated. Please try again.');
       }
     },
       error => {
-        this.messageService.add({
-          severity: 'error', summary: 'Error Occurred',
-          detail: 'An error occurred while processing your request. please try again!'
-        });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
         this.isUpdated = false;
       });
   }
@@ -196,10 +193,6 @@ export class ViewServiceRequestComponent implements OnInit {
     return true;
   }
 
-  showToast(summary: string, detail: string, severity: string) {
-    this.messageService.add({ severity, summary, detail });
-  }
-
   onCloseicket() {
     this.isUpdated = false;
     this.selectedServiceRequest.status = 'Closed';
@@ -214,18 +207,15 @@ export class ViewServiceRequestComponent implements OnInit {
     this.selectedServiceRequest.modifiedDate = today;
     this.faultService.updateFault(this.selectedServiceRequest).pipe().subscribe(isUpdated => {
       if (isUpdated) {
-        this.showToast('Fault', 'Your fault has been closed successfully.', 'success');
+        this.toastService.showSuccess('Service request closed successfully.');
         this.isUpdated = true;
         this.onCancel();
       } else {
-        this.showToast('Report a Fault', 'Your fault has not been closed successfully.', 'error');
+        this.toastService.showError('Unable to close this service request. Please try again.');
       }
     },
       error => {
-        this.messageService.add({
-          severity: 'error', summary: 'Error Occurred',
-          detail: 'An error occurred while processing your request. please try again!'
-        });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
         this.isUpdated = false;
       });
   }
@@ -254,7 +244,7 @@ export class ViewServiceRequestComponent implements OnInit {
     this.faultService.getFiles(fileReference).pipe().subscribe(files => {
       for (let i = 0; i < files.length; i++) {
         let name = files[i].split('\\').pop();
-        let url = 'https://amethysthemisphere.dedicated.co.za:81/Uploads/Faults/' + name;
+        let url = '/Uploads/Faults/' + name;
 
         if (name.includes('Contract')) {
           this.selectedServiceRequest.contractInvoiceUrl = url;
@@ -290,13 +280,11 @@ export class ViewServiceRequestComponent implements OnInit {
   }
 
   onChooseContractInvoice(evt: any) {
-    const uploadedFile = evt[0];
-    this.contractInvoice = uploadedFile;
+    this.contractInvoice = (evt.target as HTMLInputElement).files?.[0] ?? null;
   }
 
   onChooseCompletionCertificate(evt: any) {
-    const uploadedFile = evt[0];
-    this.completionCertificate = uploadedFile;
+    this.completionCertificate = (evt.target as HTMLInputElement).files?.[0] ?? null;
   }
 
   uploadCompletionCertificate() {
@@ -309,10 +297,8 @@ export class ViewServiceRequestComponent implements OnInit {
         }
       },
         error => {
-          this.messageService.add({
-            severity: 'error', summary: 'Error Occurred',
-            detail: 'An error occurred while processing your request. please try again!'
-          });
+          this.toastService.showError('The completion certificate could not be uploaded. ' +
+            this.toastService.getApiErrorMessage(error));
           this.selectedServiceRequest.hasCompletionCertificate = false;
         });
   }
@@ -327,10 +313,8 @@ export class ViewServiceRequestComponent implements OnInit {
         }
       },
         error => {
-          this.messageService.add({
-            severity: 'error', summary: 'Error Occurred',
-            detail: 'An error occurred while processing your request. please try again!'
-          });
+          this.toastService.showError('The contract invoice could not be uploaded. ' +
+            this.toastService.getApiErrorMessage(error));
           this.selectedServiceRequest.hasContractInvoice = false;
         });
   }
@@ -343,4 +327,3 @@ export class ViewServiceRequestComponent implements OnInit {
     return this.selectedServiceRequest.completionCertificateUrl;
   }
 }
-

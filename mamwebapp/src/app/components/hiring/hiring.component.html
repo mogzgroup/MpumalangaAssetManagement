@@ -1,317 +1,1036 @@
-<p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
-<p-breadcrumb [model]="items"></p-breadcrumb>
-<div class="text-center" style="color: red;" *ngIf="error">
-    <h5 class="mt-20">
-        <li class="pi pi-exclamation-triangle" style="color: red;font-size: xx-large;"></li><span> An error has
-            occured...</span>
-    </h5>
-    <h6 class="color-aqua">{{errorMsg}}</h6>
-</div>
 
-<div class="row">
-    <button style="float: right;" (click)="showDialog=true;header='Add Property';isView = false;initForm();"
-        type="button" label="Add Property" class="ui-button-info"></button>
-</div>
-<div class="row">
-    <div style="width:100%;height:400px">
-        <google-map #map height="400px" width="100%" [zoom]="zoom" [center]="center" [options]="options">
-            <map-marker (mapClick)="openInfo(marker)" *ngFor="let marker of markers"
-                [position]="marker.position" [label]="marker.label" [title]="marker.title"
-                [options]="marker.options">
-            </map-marker>
-            <map-info-window>{{ dialogHeader }}</map-info-window>
-        </google-map>
+<!-- =========================================================
+     Map / Add Property
+     ========================================================= -->
+
+<section class="map-section">
+    <div class="hiring-actions">
+        <button
+            mat-raised-button
+            color="primary"
+            type="button"
+            (click)="openAddPropertyDialog()">
+
+            <mat-icon>add</mat-icon>
+            <span>Add Property</span>
+        </button>
     </div>
-    <p-table #dt [columns]="cols" [paginator]="true" [rows]="10" selectionMode="single" rowExpandMode="single"
-        *ngIf="!loading" [value]="hiredProperties" dataKey="id" editMode="row">
-        <ng-template pTemplate="caption">
-            <div style="text-align: right">
-                <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
-                <input type="text" pInputText size="50" placeholder="Global Filter" class="ui-inputtext ui-widget"
-                    (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
-            </div>
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th  [pSortableColumn]="col.field" *ngFor="let col of cols" [style.width]="col.field == 'status' ? '100px' : 'unset'">
-                    {{col.header}} <p-sortIcon [field]="col.field" ariaLabel="Activate to sort"
-                    ariaLabelDesc="Activate to sort in descending order"
-                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
-                </th>
-                <th>Actions</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
-            <tr [pEditableRow]="rowData">
-                <td *ngFor="let col of cols">
-                    <i *ngIf="col.field == 'status'" class="pi pi-circle-on" style="font-size: 2rem"
-                        [style.color]="rowData[col.field]"></i>
-                    <span *ngIf="col.field != 'status'">{{rowData[col.field]}}</span>
-                </td>
-                <td style="text-align:center">
-                    <p-splitButton label="More" [model]="buttonItems" (onDropdownClick)="selectProperty(rowData, ri)"
-                        mat-button></p-splitButton>
-                </td>
-            </tr>
-        </ng-template>
-    </p-table>
-    <div class="p-d-flex" style="text-align: end;">
-        <p-splitButton label="Export" [model]="printItems" icon="pi pi-save">
-        </p-splitButton>
-    </div>
-</div>
 
-<div *ngIf="showComfirmaDelete" class="dialogBackgroud"></div>
-<p-dialog header="Confirmation" [(visible)]="showComfirmaDelete" [breakpoints]="{'90px': '75vw'}"
-    [style]="{width: '25vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
-    <p>Are you sure that you want to delete this property?</p>
-    <p-footer>
-        <button style="float: left;" (click)="showComfirmaDelete=false" type="button" label="No"
-            class="ui-button-info"></button>
-        <button style="float: right;" (click)="showComfirmaDelete=false;deleteHiredProperty()" type="button"
-            label="Yes" class="ui-button-info"></button>
-    </p-footer>
-</p-dialog>
+    <google-map
+        #map
+        height="180px"
+        width="100%"
+        [zoom]="zoom"
+        [center]="center"
+        [options]="options">
 
-<div *ngIf="showDialog" class="dialogBackgroud"></div>
-<p-dialog header="{{header}}" [(visible)]="showDialog" [style]="{width: '75vw'}" [baseZIndex]="2">
-    <p-tabView [style]="{'max-height':'600px', 'overflow-y': 'auto'}">
-        <p-tabPanel header="Details" style="background-color: var(--surface-b);color: var(--text-color);">
-            <form [formGroup]="hiringForm">
-                <div class="formgrid grid">
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1" style="width: 100%;z-index: 1000;">
-                            <label for="propertyCode">Property Code</label>
-                            <input formControlName="propertyCode" autocomplete="off" [attr.disabled]="isView?'':null"
-                                type="text" pInputText class="ui-inputtext ui-widget">
-                            <div *ngIf="submitted && f.propertyCode.errors" class="text-error"><br>
-                                <div *ngIf="l.propertyCode.errors.required">This field is required.</div>
-                            </div>
-                        </span>
+        <map-marker
+            *ngFor="let marker of markers; trackBy: trackMarker"
+            (mapClick)="openInfo(marker)"
+            [position]="marker.position"
+            [label]="marker.label"
+            [title]="marker.title"
+            [options]="marker.options">
+        </map-marker>
+
+        <map-info-window>
+            {{ dialogHeader }}
+        </map-info-window>
+
+    </google-map>
+</section>
+
+
+<!-- =========================================================
+     Hiring Properties Table
+     ========================================================= -->
+
+<mat-card class="hiring-table-card">
+    <mat-card-content>
+
+        <div class="hiring-table-actions">
+
+            <mat-form-field appearance="outline">
+                <mat-label>Search properties</mat-label>
+
+                <mat-icon matPrefix>
+                    search
+                </mat-icon>
+
+                <input
+                    matInput
+                    type="text"
+                    autocomplete="off"
+                    placeholder="Search properties"
+                    (input)="filterProperties($any($event.target).value)">
+            </mat-form-field>
+
+            <button
+                mat-button
+                type="button"
+                (click)="exportPdf()">
+
+                <mat-icon>picture_as_pdf</mat-icon>
+                <span>Export PDF</span>
+            </button>
+
+            <button
+                mat-button
+                type="button"
+                (click)="exportExcel()">
+
+                <mat-icon>table_view</mat-icon>
+                <span>Export Excel</span>
+            </button>
+
+        </div>
+
+
+        <!-- =================================================
+             Table
+             ================================================= -->
+
+        <div class="hiring-table-scroll app-table-scroll">
+
+            <table class="hiring-table">
+
+                <thead>
+                    <tr>
+
+                        <th
+                            *ngFor="let col of cols"
+                            [class.status-column]="col.field === 'status'">
+
+                            <button
+                                mat-button
+                                type="button"
+                                (click)="sortBy(col.field)"
+                                [disabled]="loadingProperties">
+
+                                {{ col.header }}
+
+                                <mat-icon
+                                    *ngIf="sortField === col.field">
+
+                                    {{
+                                        sortAscending
+                                            ? 'arrow_upward'
+                                            : 'arrow_downward'
+                                    }}
+
+                                </mat-icon>
+
+                            </button>
+
+                        </th>
+
+                        <th class="actions-column">
+                            Actions
+                        </th>
+
+                    </tr>
+                </thead>
+
+
+                <tbody>
+
+                    <!-- Data -->
+                    <tr *ngFor="let rowData of pagedHiredProperties">
+
+                        <td *ngFor="let col of cols">
+
+                            <mat-icon
+                                *ngIf="col.field === 'status'"
+                                class="status-indicator"
+                                [style.color]="propertyValue(rowData, col.field)">
+
+                                circle
+
+                            </mat-icon>
+
+                            <span *ngIf="col.field !== 'status'">
+                                {{ propertyValue(rowData, col.field) }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- Actions -->
+                        <td class="actions-column">
+
+                            <button
+                                mat-icon-button
+                                type="button"
+                                [matMenuTriggerFor]="propertyMenu"
+                                (click)="selectProperty(rowData)"
+                                [disabled]="
+                                    loadingProperties ||
+                                    deletingHiredProperty
+                                "
+                                [attr.aria-label]="
+                                    'Actions for property ' +
+                                    rowData.propertyCode
+                                ">
+
+                                <mat-icon>
+                                    more_vert
+                                </mat-icon>
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- Loading / Empty / Error -->
+                    <tr *ngIf="pagedHiredProperties.length === 0">
+
+                        <td
+                            [attr.colspan]="cols.length + 1"
+                            class="empty-state">
+
+                            <ng-container
+                                *ngIf="
+                                    loadingProperties;
+                                    else hiredPropertyLoadResult
+                                ">
+
+                                <mat-progress-bar
+                                    mode="indeterminate"
+                                    aria-label="Loading hired properties">
+                                </mat-progress-bar>
+
+                                <span>
+                                    Loading properties...
+                                </span>
+
+                            </ng-container>
+
+
+                            <ng-template #hiredPropertyLoadResult>
+
+                                <ng-container
+                                    *ngIf="
+                                        propertiesLoadError;
+                                        else hiredPropertyEmptyState
+                                    ">
+
+                                    <span>No data found</span>
+
+                                    <button
+                                        mat-button
+                                        type="button"
+                                        (click)="loadHiredProperties()">
+
+                                        <mat-icon>
+                                            refresh
+                                        </mat-icon>
+
+                                        Retry
+
+                                    </button>
+
+                                </ng-container>
+
+
+                                <ng-template #hiredPropertyEmptyState>
+
+                                    No data found
+
+                                </ng-template>
+
+                            </ng-template>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- Pagination -->
+
+        <mat-paginator
+            [length]="filteredPropertyCount"
+            [pageIndex]="pageIndex"
+            [pageSize]="pageSize"
+            [pageSizeOptions]="[10, 25, 50]"
+            (page)="pageChanged($event)"
+            showFirstLastButtons
+            aria-label="Select page of hired properties">
+        </mat-paginator>
+
+
+        <!-- Actions Menu -->
+
+        <mat-menu #propertyMenu="matMenu">
+
+            <button
+                mat-menu-item
+                type="button"
+                (click)="viewProperty()">
+
+                <mat-icon>visibility</mat-icon>
+                <span>View</span>
+
+            </button>
+
+            <button
+                mat-menu-item
+                type="button"
+                (click)="editProperty()">
+
+                <mat-icon>edit</mat-icon>
+                <span>Edit</span>
+
+            </button>
+
+            <button
+                mat-menu-item
+                type="button"
+                (click)="confirmDelete()">
+
+                <mat-icon>delete</mat-icon>
+                <span>Delete</span>
+
+            </button>
+
+        </mat-menu>
+
+    </mat-card-content>
+</mat-card>
+
+
+<!-- =========================================================
+     Delete Confirmation
+     ========================================================= -->
+
+<ng-template #deletePropertyDialog>
+    <h2 mat-dialog-title>Confirm delete</h2>
+    <mat-dialog-content>
+        <p>Are you sure you want to delete this property?</p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="closeDeleteDialog()"
+            [disabled]="deletingHiredProperty">Cancel</button>
+        <button mat-raised-button color="warn" type="button" (click)="deleteHiredProperty()"
+            [disabled]="deletingHiredProperty">
+            <mat-spinner *ngIf="deletingHiredProperty" diameter="18"></mat-spinner>
+            <span>{{ deletingHiredProperty ? 'Deleting...' : 'Delete' }}</span>
+        </button>
+    </mat-dialog-actions>
+</ng-template>
+
+
+<!-- =========================================================
+     Add / Edit / View Property Dialog
+     ========================================================= -->
+
+<ng-template #propertyDialog>
+
+    <mat-card class="hiring-dialog">
+
+        <!-- Fixed Header -->
+
+        <mat-card-header>
+
+            <mat-card-title>
+                {{ header }}
+            </mat-card-title>
+
+        </mat-card-header>
+
+
+        <!-- Scrollable Content -->
+
+        <mat-card-content>
+
+            <mat-tab-group>
+
+                <!-- =================================================
+                     Details
+                     ================================================= -->
+
+                <mat-tab label="Details">
+
+                    <form
+                        [formGroup]="hiringForm"
+                        class="hiring-form">
+
+                        <!-- Property Code -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                Property Code
+                            </mat-label>
+
+                            <input
+                                matInput
+                                formControlName="propertyCode"
+                                autocomplete="off"
+                                [readonly]="isView"
+                                required>
+
+                            <mat-error
+                                *ngIf="
+                                    f.propertyCode.hasError('required') &&
+                                    (submitted || f.propertyCode.touched)
+                                ">
+
+                                Property Code is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- Current Rental -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                Current Monthly Rental
+                            </mat-label>
+
+                            <input
+                                matInput
+                                type="number"
+                                formControlName="rentalAmount"
+                                [readonly]="isView"
+                                required>
+
+                            <mat-error
+                                *ngIf="
+                                    f.rentalAmount.hasError('required') &&
+                                    (submitted || f.rentalAmount.touched)
+                                ">
+
+                                Current monthly rental is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- Start Rental -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                Start Rental Amount
+                            </mat-label>
+
+                            <input
+                                matInput
+                                type="number"
+                                formControlName="startRentalAmount"
+                                [readonly]="isView"
+                                required>
+
+                            <mat-error
+                                *ngIf="
+                                    f.startRentalAmount.hasError('required') &&
+                                    (submitted || f.startRentalAmount.touched)
+                                ">
+
+                                Start rental amount is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- District -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                District
+                            </mat-label>
+
+                            <mat-select
+                                formControlName="district"
+                                [disabled]="isView"
+                                required>
+
+                                <mat-option
+                                    *ngFor="let item of districts"
+                                    [value]="item">
+
+                                    {{ item.name }}
+
+                                </mat-option>
+
+                            </mat-select>
+
+                            <mat-error
+                                *ngIf="
+                                    f.district.hasError('required') &&
+                                    (submitted || f.district.touched)
+                                ">
+
+                                District is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- Asset Type -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                Asset Type
+                            </mat-label>
+
+                            <mat-select
+                                formControlName="type"
+                                [disabled]="isView"
+                                required>
+
+                                <mat-option
+                                    *ngFor="let item of types"
+                                    [value]="item">
+
+                                    {{ item.name }}
+
+                                </mat-option>
+
+                            </mat-select>
+
+                            <mat-error
+                                *ngIf="
+                                    f.type.hasError('required') &&
+                                    (submitted || f.type.touched)
+                                ">
+
+                                Asset type is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- Building Condition -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                Building Condition
+                            </mat-label>
+
+                            <mat-select
+                                formControlName="buildingCondition"
+                                [disabled]="isView"
+                                required>
+
+                                <mat-option
+                                    *ngFor="let item of buildingConditions"
+                                    [value]="item">
+
+                                    {{ item.name }}
+
+                                </mat-option>
+
+                            </mat-select>
+
+                            <mat-error
+                                *ngIf="
+                                    f.buildingCondition.hasError('required') &&
+                                    (submitted || f.buildingCondition.touched)
+                                ">
+
+                                Building condition is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- User Department -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                User Department
+                            </mat-label>
+
+                            <mat-select
+                                formControlName="userDepartment"
+                                [disabled]="isView"
+                                required>
+
+                                <mat-option
+                                    *ngFor="let item of userDepartments"
+                                    [value]="item">
+
+                                    {{ item.name }}
+
+                                </mat-option>
+
+                            </mat-select>
+
+                            <mat-error
+                                *ngIf="
+                                    f.userDepartment.hasError('required') &&
+                                    (submitted || f.userDepartment.touched)
+                                ">
+
+                                User department is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- Address - Full Width -->
+
+                        <mat-form-field
+                            appearance="outline"
+                            class="address-field">
+
+                            <mat-label>
+                                Location and Physical Address
+                            </mat-label>
+
+                            <input
+                                matInput
+                                formControlName="address"
+                                ngx-google-places-autocomplete
+                                (onAddressChange)="handleAddressChange($event)"
+                                [readonly]="isView"
+                                required>
+
+                            <mat-error
+                                *ngIf="
+                                    f.address.hasError('required') &&
+                                    (submitted || f.address.touched)
+                                ">
+
+                                Physical address is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- Town -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                Town
+                            </mat-label>
+
+                            <input
+                                matInput
+                                formControlName="town"
+                                autocomplete="off"
+                                [readonly]="isView"
+                                required>
+
+                            <mat-error
+                                *ngIf="
+                                    f.town.hasError('required') &&
+                                    (submitted || f.town.touched)
+                                ">
+
+                                Town is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- Staff -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                Number of Staff
+                            </mat-label>
+
+                            <input
+                                matInput
+                                type="number"
+                                formControlName="staffNumber"
+                                [readonly]="isView"
+                                required>
+
+                            <mat-error
+                                *ngIf="
+                                    f.staffNumber.hasError('required') &&
+                                    (submitted || f.staffNumber.touched)
+                                ">
+
+                                Number of staff is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- Area -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                Area (Square Metres)
+                            </mat-label>
+
+                            <input
+                                matInput
+                                type="number"
+                                formControlName="area"
+                                [readonly]="isView"
+                                required>
+
+                            <mat-error
+                                *ngIf="
+                                    f.area.hasError('required') &&
+                                    (submitted || f.area.touched)
+                                ">
+
+                                Area is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- Escalation Rate -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                Escalation Rate (%)
+                            </mat-label>
+
+                            <input
+                                matInput
+                                type="number"
+                                formControlName="escalationRate"
+                                [readonly]="isView"
+                                required>
+
+                            <mat-error
+                                *ngIf="
+                                    f.escalationRate.hasError('required') &&
+                                    (submitted || f.escalationRate.touched)
+                                ">
+
+                                Escalation rate is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- Start Date -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                Lease Start Date
+                            </mat-label>
+
+                            <input
+                                matInput
+                                [matDatepicker]="startDatePicker"
+                                formControlName="startDate"
+                                [disabled]="isView"
+                                required>
+
+                            <mat-datepicker-toggle
+                                matIconSuffix
+                                [for]="startDatePicker">
+                            </mat-datepicker-toggle>
+
+                            <mat-datepicker
+                                #startDatePicker>
+                            </mat-datepicker>
+
+                            <mat-error
+                                *ngIf="
+                                    f.startDate.hasError('required') &&
+                                    (submitted || f.startDate.touched)
+                                ">
+
+                                Lease start date is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- Termination Date -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                Lease Termination Date
+                            </mat-label>
+
+                            <input
+                                matInput
+                                [matDatepicker]="terminationDatePicker"
+                                formControlName="terminationDate"
+                                [disabled]="isView"
+                                required>
+
+                            <mat-datepicker-toggle
+                                matIconSuffix
+                                [for]="terminationDatePicker">
+                            </mat-datepicker-toggle>
+
+                            <mat-datepicker
+                                #terminationDatePicker>
+                            </mat-datepicker>
+
+                            <mat-error
+                                *ngIf="
+                                    f.terminationDate.hasError('required') &&
+                                    (submitted || f.terminationDate.touched)
+                                ">
+
+                                Lease termination date is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- Escalation Date -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                Escalation Date
+                            </mat-label>
+
+                            <input
+                                matInput
+                                [matDatepicker]="escalationDatePicker"
+                                formControlName="escalationDate"
+                                [disabled]="isView"
+                                required>
+
+                            <mat-datepicker-toggle
+                                matIconSuffix
+                                [for]="escalationDatePicker">
+                            </mat-datepicker-toggle>
+
+                            <mat-datepicker
+                                #escalationDatePicker>
+                            </mat-datepicker>
+
+                            <mat-error
+                                *ngIf="
+                                    f.escalationDate.hasError('required') &&
+                                    (submitted || f.escalationDate.touched)
+                                ">
+
+                                Escalation date is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- Landlord -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                Landlord / Agent Name
+                            </mat-label>
+
+                            <input
+                                matInput
+                                formControlName="landlandAgentName"
+                                autocomplete="off"
+                                [readonly]="isView"
+                                required>
+
+                            <mat-error
+                                *ngIf="
+                                    f.landlandAgentName.hasError('required') &&
+                                    (submitted || f.landlandAgentName.touched)
+                                ">
+
+                                Landlord / agent name is required.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+
+                        <!-- Contact -->
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                Landlord / Agent Contact Details
+                            </mat-label>
+
+                            <input
+                                matInput
+                                type="email"
+                                formControlName="landlandAgentContactDetails"
+                                autocomplete="off"
+                                [readonly]="isView"
+                                required>
+
+                            <mat-error
+                                *ngIf="
+                                    f.landlandAgentContactDetails.hasError('required') &&
+                                    (submitted || f.landlandAgentContactDetails.touched)
+                                ">
+
+                                Landlord / agent contact details are required.
+
+                            </mat-error>
+
+                            <mat-error
+                                *ngIf="
+                                    f.landlandAgentContactDetails.hasError('email') &&
+                                    f.landlandAgentContactDetails.touched
+                                ">
+
+                                Enter a valid email address.
+
+                            </mat-error>
+
+                        </mat-form-field>
+
+                    </form>
+
+                </mat-tab>
+
+
+                <!-- =================================================
+                     Documents
+                     ================================================= -->
+
+                <mat-tab label="Documents">
+
+                    <div
+                        class="document-upload"
+                        *ngIf="!isView">
+
+                        <label for="hired-property-files">
+                            Choose files
+                        </label>
+
+                        <input
+                            id="hired-property-files"
+                            type="file"
+                            multiple
+                            (change)="onSelectFile($any($event.target).files)">
+
                     </div>
 
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1" style="width: 100%;">
-                            <label for="rentalAmount">Current Monthly Rental</label>
-                            <p-inputNumber class="ui-inputtext ui-widget" [disabled]="isView"
-                                formControlName="rentalAmount" mode="currency" currency="ZAR" locale="en-ZA">
-                            </p-inputNumber>
-                            <div *ngIf="submitted && f.rentalAmount.errors" class="text-error"><br>
-                                <div *ngIf="l.rentalAmount.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
 
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1" style="width: 100%;">
-                            <label for="startRentalAmount">Start Rental Amount</label>
-                            <p-inputNumber class="ui-inputtext ui-widget" [disabled]="isView"
-                                formControlName="startRentalAmount" mode="currency" currency="ZAR" locale="en-ZA">
-                            </p-inputNumber>
-                            <div *ngIf="submitted && f.startRentalAmount.errors" class="text-error"><br>
-                                <div *ngIf="l.startRentalAmount.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
+                    <ul class="document-list">
 
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1" style="width: 100%;">
-                            <label for="district">District</label>
-                            <p-dropdown class="ui-inputtext ui-widget" [style]="{'width':'570px'}" inputId="type"
-                                [disabled]="isView" [options]="districts" placeholder="Please select"
-                                 formControlName="district" optionLabel="name"></p-dropdown>
-                            <div *ngIf="submitted && f.district.errors" class="text-error"><br>
-                                <div *ngIf="f.district.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
+                        <li *ngFor="let file of files">
 
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1" style="width: 100%;">
-                            <label for="type">Asset Type</label>
-                            <p-dropdown class="ui-inputtext ui-widget" [style]="{'width':'570px'}" inputId="type"
-                                [disabled]="isView" [options]="types" placeholder="Please select"
-                                 formControlName="type" optionLabel="name"></p-dropdown>
-                            <div *ngIf="submitted && f.type.errors" class="text-error"><br>
-                                <div *ngIf="f.type.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
+                            <a
+                                target="_blank"
+                                rel="noopener"
+                                [href]="file.url">
 
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1" style="width: 100%;">
-                            <label for="buildingCondition">Condition of the Building</label>
-                            <p-dropdown class="ui-inputtext ui-widget" [style]="{'width':'570px'}" inputId="type"
-                                [disabled]="isView" [options]="buildingConditions" placeholder="Please select"
-                                formControlName="buildingCondition" optionLabel="name">
-                            </p-dropdown>
-                            <div *ngIf="submitted && f.buildingCondition.errors" class="text-error"><br>
-                                <div *ngIf="f.buildingCondition.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
+                                {{ file.name }}
 
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1" style="width: 100%;">
-                            <label for="userDepartment">User Department</label>
-                            <p-dropdown class="ui-inputtext ui-widget" [style]="{'width':'570px'}" inputId="type"
-                                [disabled]="isView" [options]="userDepartments" placeholder="Please select"
-                                 formControlName="userDepartment" optionLabel="name">
-                            </p-dropdown>
-                            <div *ngIf="submitted && f.userDepartment.errors" class="text-error"><br>
-                                <div *ngIf="f.userDepartment.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
+                            </a>
 
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1" style="width: 100%;">
-                            <label for="address">Location and Physical Adddress</label>
-                           <input formControlName="address" ngx-google-places-autocomplete (onAddressChange)="handleAddressChange($event)" type="text" pInputText class="ui-inputtext ui-widget"/>
-                            <div *ngIf="submitted && f.address.errors" class="text-error"><br>
-                                <div *ngIf="f.address.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
+                            <button
+                                mat-icon-button
+                                type="button"
+                                *ngIf="!isView"
+                                aria-label="Remove file"
+                                (click)="onRemoveFile(file)">
 
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1" style="width: 100%;">
-                            <label for="town">Town</label>
-                            <input formControlName="town" autocomplete="off" [attr.disabled]="isView?'':null"
-                                type="text" pInputText class="ui-inputtext ui-widget">
-                            <div *ngIf="submitted && f.town.errors" class="text-error"><br>
-                                <div *ngIf="f.town.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
+                                <mat-icon>
+                                    close
+                                </mat-icon>
 
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1" style="width: 100%;">
-                            <label for="staffNumber">Number of Staff</label>
-                            <p-inputNumber class="ui-inputtext ui-widget" [disabled]="isView"
-                                formControlName="staffNumber" mode="decimal">
-                            </p-inputNumber>
-                            <div *ngIf="submitted && f.staffNumber.errors" class="text-error"><br>
-                                <div *ngIf="l.staffNumber.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
+                            </button>
 
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1" style="width: 100%;">
-                            <label for="area">Area in Square Meter</label>
-                            <input formControlName="area" autocomplete="off" [attr.disabled]="isView?'':null"
-                                type="number" pInputText class="ui-inputtext ui-widget">
-                            <div *ngIf="submitted && f.area.errors" class="text-error"><br>
-                                <div *ngIf="f.area.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
+                        </li>
 
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1" style="width: 100%;">
-                            <label for="escalationRate">Escalation Rate</label>
-                            <p-inputNumber class="ui-inputtext ui-widget" [disabled]="isView"
-                                formControlName="escalationRate" inputId="percent" suffix="%">
-                            </p-inputNumber>
-                            <div *ngIf="submitted && f.escalationRate.errors" class="text-error"><br>
-                                <div *ngIf="l.escalationRate.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
+                    </ul>
 
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1 w-full">
-                            <label for="startDate">Start Date of Leased </label>
-                            <p-calendar appendTo="body" class="ui-inputtext ui-widget w-full" [disabled]="isView"
-                                formControlName="startDate" dateFormat="dd/mm/yy" showOtherMonths="true"
-                                showButtonBar="true">
-                            </p-calendar>
-                            <div *ngIf="submitted && f.startDate.errors" class="text-error"><br>
-                                <div *ngIf="f.startDate.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
+                </mat-tab>
 
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1 w-full">
-                            <label for="terminationDate">Termination Date of Lease </label>
-                            <p-calendar appendTo="body" class="ui-inputtext ui-widget w-full" [disabled]="isView"
-                                formControlName="terminationDate" dateFormat="dd/mm/yy" showOtherMonths="true"
-                                showButtonBar="true"></p-calendar>
-                            <div *ngIf="submitted && f.terminationDate.errors" class="text-error"><br>
-                                <div *ngIf="f.terminationDate.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
+            </mat-tab-group>
 
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1 w-full">
-                            <label for="escalationDate">Escalation Date </label>
-                            <p-calendar appendTo="body" class="ui-inputtext ui-widget w-full" [disabled]="isView"
-                                formControlName="escalationDate" dateFormat="dd/mm/yy" showOtherMonths="true"
-                                showButtonBar="true">
-                            </p-calendar>
-                            <div *ngIf="submitted && f.escalationDate.errors" class="text-error"><br>
-                                <div *ngIf="f.escalationDate.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
-
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1" style="width: 100%;">
-                            <label for="landlandAgentName">Name of Landlord/ Agent</label>
-                            <input formControlName="landlandAgentName" autocomplete="off"
-                                [attr.disabled]="isView?'':null" type="text" pInputText class="ui-inputtext ui-widget">
-                            <div *ngIf="submitted && f.landlandAgentName.errors" class="text-error"><br>
-                                <div *ngIf="f.landlandAgentName.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
-
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1" style="width: 100%;">
-                            <label for="landlandAgentContactDetails">Landlord/ Agent Contact Details</label>
-                            <input formControlName="landlandAgentContactDetails" autocomplete="off"
-                                [attr.disabled]="isView?'':null" type="email" pInputText class="ui-inputtext ui-widget">
-                            <div *ngIf="submitted && f.landlandAgentContactDetails.errors" class="text-error"><br>
-                                <div *ngIf="f.landlandAgentContactDetails.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
-
-                    <div class="field grid col-4">
-                        <span class="p-input-icon-left p-1" style="width: 100%;">
-                            <label for="address">Location and Physical Adddress</label>
-                            <input formControlName="address" autocomplete="off" [attr.disabled]="isView?'':null"
-                                type="text" pInputText class="ui-inputtext ui-widget">
-                            <div *ngIf="submitted && f.address.errors" class="text-error"><br>
-                                <div *ngIf="f.address.errors.required">This field is required.</div>
-                            </div>
-                        </span>
-                    </div>
-                </div>                
-            </form>
-        </p-tabPanel>
-        <p-tabPanel header="Documents">
-            <p-fileUpload [showUploadButton]="false" [showCancelButton]="false" (onRemove)="onRemoveFile($event)"
-                multiple="multiple" (onSelect)="onSelectFile($event.files)"></p-fileUpload>
-            <div>
-                <ul *ngFor="let file of files; let i = index" style="list-style-type:none;">
-                    <li>
-                        <p><a target="_blank" href="{{ file.url }}">{{ file.name }}</a></p>
-                    </li>
-                </ul>
-            </div>
-        </p-tabPanel>
-    </p-tabView>
-    <p-dialog-footer>
-        <br/>
-        <button style="float: left;" type="button" icon="pi pi-times" (click)="showDialog=false"
-            label="Cancel" class="ui-button-secondary"></button>
-        <button *ngIf="header == 'Add Property'" style="float: right;" type="submit" (click)="onSubmit()" icon="pi pi-check" label="Submit"></button>
-        <button *ngIf="header == 'Edit Property'" style="float: right;" type="submit" (click)="onUpdate()" icon="pi pi-check" label="Update"></button>
-    </p-dialog-footer>
-</p-dialog>
+        </mat-card-content>
 
 
+        <!-- Fixed Actions -->
+
+        <mat-card-actions align="end">
+
+            <button
+                mat-button
+                type="button"
+                (click)="closePropertyDialog()"
+                [disabled]="isAdding || isUpdating">
+
+                Cancel
+
+            </button>
+
+
+            <button
+                mat-raised-button
+                color="primary"
+                *ngIf="header === 'Add Property'"
+                type="button"
+                (click)="onSubmit()"
+                [disabled]="hiringForm.invalid || isAdding">
+
+                <mat-spinner
+                    *ngIf="isAdding"
+                    diameter="18">
+                </mat-spinner>
+
+                <span>
+                    {{ isAdding ? 'Saving...' : 'Submit' }}
+                </span>
+
+            </button>
+
+
+            <button
+                mat-raised-button
+                color="primary"
+                *ngIf="header === 'Edit Property'"
+                type="button"
+                (click)="onUpdate()"
+                [disabled]="hiringForm.invalid || isUpdating">
+
+                <mat-spinner
+                    *ngIf="isUpdating"
+                    diameter="18">
+                </mat-spinner>
+
+                <span>
+                    {{ isUpdating ? 'Saving...' : 'Update' }}
+                </span>
+
+            </button>
+
+        </mat-card-actions>
+
+    </mat-card>
+
+</ng-template>

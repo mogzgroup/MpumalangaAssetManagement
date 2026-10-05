@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<UserSecretsId>2b993030-8a93-44e2-999c-c6820ff24084</UserSecretsId>
 	</PropertyGroup>
 	<ItemGroup>
@@ -17,13 +17,12 @@
 
 	
 	<ItemGroup>
-		<PackageReference Include="log4net" Version="2.0.8" />
-		<PackageReference Include="MicroKnights.Log4NetAdoNetAppender" Version="1.0.2" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.2.0" />
-		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
-		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.6.0" />
-		<PackageReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="log4net" Version="2.0.17" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.1" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,27 +1,111 @@
-.form-body{
-    overflow-y: auto; 
-    overflow-x: hidden;
-    height: 400px;
-    width: 100%; 
-    padding: 0px 25px 0px 25px;
+.service-request-card {
+  max-height: 80vh;
+  overflow: auto;
 }
 
-input{
-    width: 100%;
-}
-.no-border{
-    border-bottom: none !important
+.form-body {
+  padding: 0.5rem;
 }
 
-.date{
-    font-size: 14px;
-    margin-left: -5px;
-    margin-top: -9px;
-    color: gray;
+.request-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.details{
-    font-size: 14px;
-    font-weight: normal;
-    margin-top: -18px;
+.detail {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.detail-label {
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.control-heading {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.detail mat-form-field {
+  width: 100%;
+}
+
+.secondary-grid {
+  border-top: 1px solid #ddd;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr);
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.notes-section,
+.attachments-section,
+.documents-section {
+  min-width: 0;
+}
+
+.note-input {
+  width: 100%;
+}
+
+.notes-section {
+  align-items: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.notes-section mat-list {
+  flex-basis: 100%;
+}
+
+.attachments-section ul {
+  list-style: none;
+  overflow-wrap: anywhere;
+  padding-left: 0;
+}
+
+.documents-section {
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+
+.documents-section h3 {
+  font-size: 1rem;
+  margin: 0.5rem 0 0;
+}
+
+.document-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 900px) {
+  .request-grid,
+  .secondary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .documents-section {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .request-grid,
+  .secondary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .documents-section {
+    grid-column: auto;
+  }
 }

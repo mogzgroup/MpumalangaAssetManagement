@@ -1,63 +1,108 @@
-.ar-card{
-    background: #FFFFFF0D;
-    color: #fff;
-    position: absolute;
-    border-radius: .55rem;
-    margin-bottom: 30px;
-    transition: .5s;
-    border: 0;
-    width: 24%;
-    text-align: center;
-    vertical-align: middle;
-    height: 130px;
+.project-error {
+    color: #b3261e;
 }
 
-.ar-card > h1{
-    color: #66cfb6;
-    font-size: 2em;
-    font-weight: 700;
-    font-family: "calibri";
-}
-
-.ar-card > p{
-    color: #c4c7ca;
-    font-size: 1.2em;
-    font-weight: lighter;
-}
-
-.ui-tabview-panels {
-    background-color: transparent !important;    
-}
-
-.grid {
-    display: grid;
-    gap: 1rem;
-    grid-auto-flow: column;
-    margin: 0 0 1rem 0;
-  }
-  
-  .grid > div {
-    min-width: 10px;
-  }
-  
-  .number-count {
-    color: #66cfb6;
-    font-size: 2em;
-    font-weight: 700;
-    font-family: "calibri";
-  }
-  
-  .center {
+:host {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-    border: 3px solid green;
-  }
+    height: 100%;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+}
 
-  p-dialog, p-footer {
+.project-actions,
+.project-filter {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.project-filter mat-form-field {
+    width: min(100%, 360px);
+}
+
+.project-filter mat-icon {
+    margin-right: 0.5rem;
+}
+
+table {
     width: 100%;
-    float: left;
-    box-sizing: border-box;
-    padding: .5em;
-  }
+}
+
+.project-table-scroll {
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+.project-table-scroll table {
+    min-width: 760px;
+}
+
+.project-loading {
+    display: grid;
+    min-height: 140px;
+    flex: 1;
+    place-items: center;
+    color: #687970;
+}
+
+.material-dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.project-dialog {
+    display: flex;
+    flex-direction: column;
+    width: min(90vw, 1100px);
+    max-height: calc(100vh - 2rem);
+    overflow: hidden;
+}
+
+.project-dialog mat-card-content {
+    display: flex;
+    min-height: 0;
+    flex: 1 1 auto;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.project-dialog app-add-edit-project {
+    display: block;
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+.project-confirmation {
+    width: min(90vw, 400px);
+}
+
+.project-dialog mat-card-header {
+    align-items: center;
+    justify-content: space-between;
+}
+.project-table-state {
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.project-table-state mat-progress-bar {
+  margin: 0 auto 0.75rem;
+  max-width: 320px;
+}
+
+.project-table-state button {
+  margin-left: 0.5rem;
+}
+
+.project-confirmation mat-spinner {
+  display: inline-block;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}

@@ -21,7 +21,7 @@ namespace MAM.API.Controllers
         public LeaseManagementController(ILeaseManagementService leaseManagementService)
         {
             _leaseManagementService = leaseManagementService;
-            SetLog4NetConfiguration();
+            // log4net configured at application startup
         }
 
         [HttpGet]

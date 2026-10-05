@@ -12,6 +12,7 @@ import { OperationPlan } from 'src/app/models/operation-plan.model';
 import { StrategicAssessment } from 'src/app/models/strategic-assessment.model';
 import { SurrenderPlan } from 'src/app/models/surrender-plan.model';
 import { AcquisitionPlan } from 'src/app/models/acquisition-plan.model';
+import { cachedGet } from '../../helpers/http-cache';
 
 @Injectable({
   providedIn: 'root'
@@ -32,19 +33,19 @@ export class UampService {
 }
 
   getUamps(userDepartment: String): Observable<any>{
-    return this.http.get<Array<UAMP>>(`${environment.apiUrl}/api/uamp/getuamps/`+userDepartment);
+    return cachedGet<Array<UAMP>>(this.http, `${environment.apiUrl}/api/uamp/getuamps/`+userDepartment);
   }
 
   getUamp(id: Number): Observable<any>{
-    return this.http.get<Array<UAMP>>(`${environment.apiUrl}/api/uamp/getampbyid/`+id);
+    return cachedGet<Array<UAMP>>(this.http, `${environment.apiUrl}/api/uamp/getampbyid/`+id);
   }
 
   getuamptemplate(id: Number, templateNumber: Number): Observable<any>{
-    return this.http.get<any>(`${environment.apiUrl}/api/uamp/getuamptemplate/`+id + `/`+ templateNumber);
+    return cachedGet<any>(this.http, `${environment.apiUrl}/api/uamp/getuamptemplate/`+id + `/`+ templateNumber);
   }
 
   getuampwithtemplateone(id: Number): Observable<any>{
-    return this.http.get<UAMP>(`${environment.apiUrl}/api/uamp/getuampwithtemplateone/`+id);
+    return cachedGet<UAMP>(this.http, `${environment.apiUrl}/api/uamp/getuampwithtemplateone/`+id);
   }
 
   saveUamp(uamp: UAMP){
@@ -84,4 +85,3 @@ export class UampService {
   }
 
 }
-

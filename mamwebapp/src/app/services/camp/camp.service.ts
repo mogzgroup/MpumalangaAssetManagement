@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Camp } from 'src/app/models/camp.model';
 import { environment } from '../../../environments/environment';
+import { cachedGet } from '../../helpers/http-cache';
 
 @Injectable({
     providedIn: 'root'
@@ -27,7 +28,6 @@ import { environment } from '../../../environments/environment';
       }
 
     getCampDetails(id: number): Observable<Camp> {
-        return this.http.get<Camp>(`${environment.apiUrl}/api/camp/getCampDetails/${id}`);
+        return cachedGet<Camp>(this.http, `${environment.apiUrl}/api/camp/getCampDetails/${id}`);
       }
 }
-

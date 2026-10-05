@@ -1,9 +1,10 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { ToastService } from 'src/app/services/toast.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MessageService } from 'primeng/api';
 import { first } from 'rxjs/operators';
-import { Facility } from 'src/app/models/facility.model';
 import { MtefBudgetPeriod } from 'src/app/models/mtef-budget-period.model';
 import { UAMP } from 'src/app/models/uamp.model';
 import { SharedService } from 'src/app/services/shared.service';
@@ -14,29 +15,38 @@ import { UampService } from 'src/app/services/uamp/uamp.service';
   selector: 'app-template-seven',
   templateUrl: './template-seven.component.html',
   styleUrls: ['./template-seven.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class TemplateSevenComponent implements OnInit {
-  @Input() properties: Facility[];
   uamp: UAMP;
   municipalUtilityServices: any;
   budgetPeriodForm: FormGroup;
   showFields: boolean = false;
   groups: any[];
   mtefBudgetPeriods: MtefBudgetPeriod[];
-  rowGroupMetadata: any;
   displayDialog: boolean = false;
   dialogHeader: string = '';
   isEdit: boolean = false;
   mode: string = 'Edit';
   year1Allocation: number = 0;
+  pageIndex = 0;
+  pageSize = 5;
+  pagedBudgetPeriods: MtefBudgetPeriod[] = [];
 
-  constructor(private messageService: MessageService, private sharedService: SharedService, private router: Router, private uampService: UampService, private formBuilder: FormBuilder) {
+  @ViewChild('formDialog') private formDialogTemplate: TemplateRef<unknown>;
+  openAddDialog() {
+    this.dialogHeader = 'Add Budget for MTEF Period';
+    this.isEdit = false;
+    this.resetForm();
+    this.openFormDialog();
+  }
+
+  constructor(private toastService: ToastService, private sharedService: SharedService, private router: Router, private uampService: UampService, private formBuilder: FormBuilder, private dialog: MatDialog) {
     this.uampService.uampChange.subscribe((value) => {
       if (value) {
         this.uamp = value;
         this.mtefBudgetPeriods = this.uamp.templeteSeven.mtefBudgetPeriods
+        this.updatePagedBudgetPeriods();
       }
     });
   }
@@ -75,6 +85,7 @@ export class TemplateSevenComponent implements OnInit {
       this.router.navigate(['uamp']);
 
     this.mtefBudgetPeriods =  this.sharedService.calculateBudgetPeriods(this.uamp).templeteSeven.mtefBudgetPeriods;
+    this.updatePagedBudgetPeriods();
   }
 
   updateOperationPlan() {
@@ -293,13 +304,6 @@ export class TemplateSevenComponent implements OnInit {
     return municipalUtilityServices;
   }
 
-  onBlurDistrict() {
-    const district = this.budgetPeriodForm.controls["district"].value;
-    if (district) {
-      this.showFields = district.length > 2 ? true : false;
-    }
-  }
-
   getTempleteDate(templete) {
     let arraryList = []
     switch (templete) {
@@ -334,28 +338,23 @@ export class TemplateSevenComponent implements OnInit {
   }
 
   onSort() {
-    this.updateRowGroupMetaData();
+    this.updatePagedBudgetPeriods();
   }
 
-  updateRowGroupMetaData() {
-    this.rowGroupMetadata = {};
-    if (this.mtefBudgetPeriods) {
-      for (let i = 0; i < this.mtefBudgetPeriods.length; i++) {
-        let rowData = this.mtefBudgetPeriods[i];
-        let group = rowData.group;
-        if (i == 0) {
-          this.rowGroupMetadata[group] = { index: 0, size: 1 };
-        }
-        else {
-          let previousRowData = this.mtefBudgetPeriods[i - 1];
-          let previousRowGroup = previousRowData.group;
-          if (group === previousRowGroup)
-            this.rowGroupMetadata[group].size++;
-          else
-            this.rowGroupMetadata[group] = { index: i, size: 1 };
-        }
-      }
-    }
+  pageChanged(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updatePagedBudgetPeriods();
+  }
+
+  isBudgetGroupStart(period: MtefBudgetPeriod, pageRowIndex: number): boolean {
+    const periodIndex = this.pageIndex * this.pageSize + pageRowIndex;
+    return periodIndex === 0 || this.mtefBudgetPeriods[periodIndex - 1]?.group !== period.group;
+  }
+
+  private updatePagedBudgetPeriods() {
+    const start = this.pageIndex * this.pageSize;
+    this.pagedBudgetPeriods = this.mtefBudgetPeriods?.slice(start, start + this.pageSize) ?? [];
   }
 
   addBudgetforMtefPeriod() {
@@ -396,7 +395,7 @@ export class TemplateSevenComponent implements OnInit {
     this.uampService.assignUamp(this.uamp);
     this.resetForm();
     this.onSort();
-    this.displayDialog = false;
+    this.closeFormDialog();
   }
 
   resetForm() {
@@ -412,11 +411,11 @@ export class TemplateSevenComponent implements OnInit {
     this.uampService.saveUamp(this.uamp).pipe(first()).subscribe(uamp => {
       this.uamp = uamp;
       this.uampService.assignUamp(uamp);
-      this.messageService.add({ severity: 'success', summary: 'Save UAMP', detail: 'UAMP has been saved successful.' });
+      this.toastService.showSuccess('UAMP has been saved successfully.');
       this.cancel();
     },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to save UAMP' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
   }
 
@@ -425,16 +424,35 @@ export class TemplateSevenComponent implements OnInit {
     this.uampService.saveUamp(this.uamp).pipe(first()).subscribe(uamp => {
       this.uamp = uamp;
       this.uampService.assignUamp(uamp);
-      this.messageService.add({ severity: 'success', summary: 'Submit UAMP', detail: 'UAMP has been submitted successful.' });
+      this.toastService.showSuccess('UAMP has been submitted successfully.');
       this.cancel();
     },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error Occoured', detail: 'Unable to submit UAMP' });
+        this.toastService.showError(this.toastService.getApiErrorMessage(error));
       });
   }
 
   cancel() {
     this.router.navigate(['uamp']);
   }
-}
+  private formDialogRef: MatDialogRef<unknown> | null = null;
 
+  private openFormDialog() {
+    this.displayDialog = true;
+    const dialogRef = this.dialog.open(this.formDialogTemplate, { maxWidth: '95vw' });
+    this.formDialogRef = dialogRef;
+    dialogRef.afterClosed().subscribe(() => {
+      if (this.formDialogRef === dialogRef) {
+        this.formDialogRef = null;
+        this.displayDialog = false;
+      }
+    });
+  }
+
+  closeFormDialog() {
+    this.formDialogRef?.close();
+    this.formDialogRef = null;
+    this.displayDialog = false;
+  }
+
+}

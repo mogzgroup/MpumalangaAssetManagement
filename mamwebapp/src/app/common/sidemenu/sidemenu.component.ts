@@ -1,8 +1,7 @@
-import { ChangeDetectorRef, Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, ChangeDetectionStrategy, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../../../app/services/authentication.service';
 import { User } from '../../../app/models/user.model';
-import { Role } from 'src/app/models/role.model';
 
 @Component({
   standalone: false,
@@ -12,16 +11,24 @@ import { Role } from 'src/app/models/role.model';
   styleUrls: ['./sidemenu.component.css']
 })
 export class SidemenuComponent implements OnInit {
+  @Input() expanded = true;
+  @Input() mobileOpen = false;
+  @Output() navigationRequested = new EventEmitter<void>();
+
   currentUser: User;
-  constructor(private router: Router,
-    private authenticationService: AuthenticationService, private changeDetectionRef: ChangeDetectorRef) { }
+  constructor(private router: Router, private authenticationService: AuthenticationService) { }
 
   ngOnInit() {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
   }
 
-  navigate(url){
+  navigate(url: string) {
     this.router.navigate([url]);
+    this.navigationRequested.emit();
+  }
+
+  isActive(url: string): boolean {
+    return this.router.url.split('?')[0].toLowerCase().startsWith(`/${url.toLowerCase()}`);
   }
 
   isAdmin() {
@@ -45,10 +52,4 @@ export class SidemenuComponent implements OnInit {
     }else
     return false;
   }
-  // ngOnDestroy() {
-  //   if (!this.changeDetectionRef['destroyed']) {
-  //     this.changeDetectionRef.detectChanges();
-  //   }
-  // }
-
 }

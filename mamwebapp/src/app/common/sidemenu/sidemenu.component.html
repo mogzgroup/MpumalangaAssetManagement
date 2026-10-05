@@ -1,31 +1,55 @@
-<div class="layout-menu-container">
-    <div class="profile profile-expanded">
+<aside class="layout-menu-container" [class.collapsed]="!expanded" [class.mobile-open]="mobileOpen">
+    <div class="profile">
         <img class="profile-image" src="../../../assets/images/profile.png" alt="">
-        <span class="profile-name">{{currentUser?.name}} {{currentUser?.surname}}</span>
+        <div class="profile-details" *ngIf="expanded || mobileOpen">
+            <span class="profile-name">{{currentUser?.name}} {{currentUser?.surname}}</span>
+            <span class="profile-role">Signed in</span>
+        </div>
     </div>
+
     <mat-nav-list aria-label="Main navigation">
-        <a mat-list-item *ngIf="!isDepartmantUser()" (click)="navigate('dashboard')" matTooltip="Dashboard" aria-label="Dashboard">
+        <a mat-list-item *ngIf="!isDepartmantUser()" (click)="navigate('dashboard')"
+            [class.active]="isActive('dashboard')" matTooltip="Dashboard" [matTooltipDisabled]="expanded || mobileOpen"
+            aria-label="Dashboard">
             <mat-icon matListItemIcon>dashboard</mat-icon>
+            <span matListItemTitle *ngIf="expanded || mobileOpen">Dashboard</span>
         </a>
-        <a mat-list-item *ngIf="isAdmin()" (click)="navigate('users')" matTooltip="Users" aria-label="Users">
+        <a mat-list-item *ngIf="isAdmin()" (click)="navigate('users')"
+            [class.active]="isActive('users')" matTooltip="Users" [matTooltipDisabled]="expanded || mobileOpen"
+            aria-label="Users">
             <mat-icon matListItemIcon>group</mat-icon>
+            <span matListItemTitle *ngIf="expanded || mobileOpen">Users</span>
         </a>
-        <a mat-list-item *ngIf="!isDepartmantUser() || isAdmin()" (click)="navigate('assetregister')" matTooltip="Asset Register" aria-label="Asset Register">
+        <a mat-list-item *ngIf="!isDepartmantUser() || isAdmin()" (click)="navigate('assetregister')"
+            [class.active]="isActive('assetregister')" matTooltip="Asset Register"
+            [matTooltipDisabled]="expanded || mobileOpen" aria-label="Asset Register">
             <mat-icon matListItemIcon>inventory_2</mat-icon>
+            <span matListItemTitle *ngIf="expanded || mobileOpen">Asset Register</span>
         </a>
-        <a mat-list-item (click)="navigate('leaseRegister')" matTooltip="Lease Management" aria-label="Lease Management">
+        <a mat-list-item (click)="navigate('leaseRegister')" [class.active]="isActive('leaseRegister')"
+            matTooltip="Lease Management" [matTooltipDisabled]="expanded || mobileOpen" aria-label="Lease Management">
             <mat-icon matListItemIcon>menu_book</mat-icon>
+            <span matListItemTitle *ngIf="expanded || mobileOpen">Lease Management</span>
         </a>
-        <a mat-list-item (click)="navigate('facility')" matTooltip="Facility Management" aria-label="Facility Management">
+        <a mat-list-item (click)="navigate('facility')" [class.active]="isActive('facility')"
+            matTooltip="Facility Management" [matTooltipDisabled]="expanded || mobileOpen" aria-label="Facility Management">
             <mat-icon matListItemIcon>event</mat-icon>
+            <span matListItemTitle *ngIf="expanded || mobileOpen">Facility Management</span>
         </a>
-        <a mat-list-item (click)="navigate('uamp')" matTooltip="UAMP" aria-label="UAMP">
+        <a mat-list-item (click)="navigate('uamp')" [class.active]="isActive('uamp')"
+            matTooltip="UAMP" [matTooltipDisabled]="expanded || mobileOpen" aria-label="UAMP">
             <mat-icon matListItemIcon>domain</mat-icon>
+            <span matListItemTitle *ngIf="expanded || mobileOpen">UAMP</span>
         </a>
-        <a mat-list-item (click)="navigate('camp')" matTooltip="CAMP" aria-label="CAMP">
+        <a mat-list-item (click)="navigate('camp')" [class.active]="isActive('camp')"
+            matTooltip="CAMP" [matTooltipDisabled]="expanded || mobileOpen" aria-label="CAMP">
             <mat-icon matListItemIcon>description</mat-icon>
+            <span matListItemTitle *ngIf="expanded || mobileOpen">CAMP</span>
         </a>
     </mat-nav-list>
-</div>
 
-
+    <div class="navigation-footer" *ngIf="expanded || mobileOpen">
+        <mat-icon>verified_user</mat-icon>
+        <span>Secure workspace</span>
+    </div>
+</aside>

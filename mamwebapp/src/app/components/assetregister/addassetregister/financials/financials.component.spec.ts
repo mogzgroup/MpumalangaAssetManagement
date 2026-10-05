@@ -1,4 +1,13 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 import { FinancialsComponent } from './financials.component';
 
@@ -6,12 +15,23 @@ describe('FinancialsComponent', () => {
   let component: FinancialsComponent;
   let fixture: ComponentFixture<FinancialsComponent>;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
-      declarations: [ FinancialsComponent ]
+      declarations: [FinancialsComponent],
+      imports: [
+        CommonModule,
+        FormsModule,
+        MatButtonModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        MatSelectModule
+      ],
+      providers: [{ provide: Router, useValue: { navigate: jasmine.createSpy('navigate') } }]
     })
     .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(FinancialsComponent);
@@ -23,4 +43,3 @@ describe('FinancialsComponent', () => {
     expect(component).toBeTruthy();
   });
 });
-

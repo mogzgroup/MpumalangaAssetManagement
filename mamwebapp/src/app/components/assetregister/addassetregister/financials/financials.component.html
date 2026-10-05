@@ -1,34 +1,38 @@
-<div class="stepsdemo-content">
-    <p-card>
-        <ng-template pTemplate="title">
-            Seat Information
-        </ng-template>
-        <ng-template pTemplate="subtitle">
-            Choose your seat
-        </ng-template>
-        <ng-template pTemplate="content">
-            <div class="p-fluid p-formgrid p-grid">
-                <div class="p-field p-col-12 p-md-6">
-                    <label for="class">Class</label>
-                    <p-dropdown inputId="class" [(ngModel)]="seatInformation.class" [options]="classes" (onChange)="setVagons($event)" optionLabel="name" placeholder="Select a Class"></p-dropdown>
-                </div>
-                <div class="p-field p-col-12 p-md-6">
-                    <label for="wagon">Wagon</label>
-                    <p-dropdown inputId="wagon" [(ngModel)]="seatInformation.wagon" [options]="vagons" (onChange)="setSeats($event)" optionLabel="wagon" placeholder="Select a Wagon"></p-dropdown>
-                </div>
-                <div class="p-field p-col-12">
-                    <label for="seat">Seat</label>
-                    <p-dropdown inputId="seat" [(ngModel)]="seatInformation.seat" [options]="seats" optionLabel="seat" placeholder="Select a Seat"></p-dropdown>
-                </div>
-            </div>
-        </ng-template>
-        <ng-template pTemplate="footer">
-            <div class="p-grid p-nogutter p-justify-between">
-                <button (click)="prevPage()" >Back</button>
-                <button (click)="nextPage()" >Next</button>
-            </div>
-        </ng-template>
-    </p-card>
+<div class="stepsdemo-content asset-step-page">
+    <mat-card class="asset-step-card">
+        <mat-card-header>
+            <mat-card-title>Seat Information</mat-card-title>
+            <mat-card-subtitle>Choose your seat</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="seat-information-form asset-step-grid">
+            <mat-form-field appearance="outline">
+                <mat-label>Class</mat-label>
+                <mat-select id="class" [(ngModel)]="seatInformation.class"
+                    (selectionChange)="setVagons({ value: $event.value })">
+                    <mat-option *ngFor="let item of classes" [value]="item">{{ item.name }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Wagon</mat-label>
+                <mat-select id="wagon" [(ngModel)]="seatInformation.wagon"
+                    (selectionChange)="setSeats({ value: $event.value })">
+                    <mat-option *ngFor="let item of vagons" [value]="item">{{ item.wagon }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Seat</mat-label>
+                <mat-select id="seat" [(ngModel)]="seatInformation.seat">
+                    <mat-option *ngFor="let item of seats" [value]="item">{{ item.seat }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-card-content>
+        <mat-card-actions class="asset-step-actions" align="end">
+            <button mat-button type="button" (click)="prevPage()">
+                <mat-icon>arrow_back</mat-icon><span>Back</span>
+            </button>
+            <button mat-raised-button color="primary" type="button" (click)="nextPage()">
+                <span>Next</span><mat-icon>arrow_forward</mat-icon>
+            </button>
+        </mat-card-actions>
+    </mat-card>
 </div>
-
-

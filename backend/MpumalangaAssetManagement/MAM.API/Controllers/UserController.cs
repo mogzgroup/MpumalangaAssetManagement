@@ -20,7 +20,6 @@ namespace MAM.API.Controllers
         public UserController(IUserService userService)
         {
             _userService = userService;
-            SetLog4NetConfiguration();
         }
 
         [AllowAnonymous]

@@ -1,0 +1,94 @@
+:host {
+    display: flex;
+    height: 100%;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.service-request-filter {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+.service-request-filter mat-form-field {
+    width: min(100%, 360px);
+}
+
+.service-request-filter mat-icon {
+    margin-right: 0.5rem;
+}
+
+.service-status {
+    font-size: 1rem;
+    vertical-align: middle;
+}
+
+.service-request-table-scroll {
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+.service-request-table-scroll table {
+    min-width: 760px;
+}
+
+.service-request-loading {
+    display: grid;
+    min-height: 140px;
+    flex: 1;
+    place-items: center;
+    color: #687970;
+}
+
+.service-request-error {
+    color: #b3261e;
+}
+
+table {
+    width: 100%;
+}
+
+.service-request-dialog {
+    display: flex;
+    flex-direction: column;
+    width: min(70vw, 1100px);
+    max-height: 90vh;
+    min-height: 0;
+}
+
+.service-request-confirmation {
+    width: min(90vw, 400px);
+}
+
+.service-request-dialog mat-card-header {
+    align-items: center;
+    justify-content: space-between;
+}
+
+.service-request-dialog mat-card-content {
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: auto;
+}
+.service-request-table-state {
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.service-request-table-state mat-progress-bar {
+  margin: 0 auto 0.75rem;
+  max-width: 320px;
+}
+
+.service-request-table-state button {
+  margin-left: 0.5rem;
+}
+
+.service-request-confirmation mat-spinner {
+  display: inline-block;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}

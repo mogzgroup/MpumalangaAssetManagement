@@ -1,7 +1,32 @@
-.button-outlined{
-        background-color: unset;
-                    color: red;
-                    border-color: unset;
-                    border: unset;
-    }
+.service-form {
+  align-items: start;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+}
 
+.service-table-container {
+  overflow-x: auto;
+}
+
+.service-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.service-table th,
+.service-table td {
+  border-bottom: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.service-table tfoot td {
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .service-form {
+    grid-template-columns: 1fr;
+  }
+}

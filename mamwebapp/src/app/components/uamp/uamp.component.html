@@ -1,82 +1,122 @@
-<p-messages closable="true" [(value)]="erMsgs" [styleClass]="error" [showTransitionOptions]="'1ms'"
-    [hideTransitionOptions]="'1ms'"></p-messages>
-    <p-breadcrumb [model]="items"></p-breadcrumb>
-    <br/>
-<div>
-    <span>
-        <div style="text-align: end;padding: 20px;">
-            <button type="button" label="Start UAMP" (click)="startUamp()"></button>
-        </div>
-    </span>
+<div class="uamp-start">
+    <button mat-raised-button color="primary" type="button" (click)="startUamp()">
+        <mat-icon>play_arrow</mat-icon>
+        Start UAMP
+    </button>
 </div>
+
 <div class="grid">
     <div>
-        <p-card>
-            <div>
-                <div style="text-align: center;" class="number-count">
-                    {{stateOwnedPropertyCount}}
+        <mat-card>
+            <mat-card-content>
+                <div class="number-count">
+                    {{ stateOwnedPropertyCount }}
                 </div>
-                <div style="text-align: center;">
+                <div class="property-count-label">
                     State Owned Properties
                 </div>
-            </div>
-        </p-card>
+            </mat-card-content>
+        </mat-card>
     </div>
+
     <div>
-        <p-card>
-            <div style="text-align: center;" class="number-count">
-                {{leasedPropertyCount}}
-            </div>
-            <div style="text-align: center;">
-                Leased Properties
-            </div>
-        </p-card>
+        <mat-card>
+            <mat-card-content>
+                <div class="number-count">
+                    {{ leasedPropertyCount }}
+                </div>
+                <div class="property-count-label">
+                    Leased Properties
+                </div>
+            </mat-card-content>
+        </mat-card>
     </div>
 </div>
 
-<p-table [value]="uamps" [paginator]="true" [rows]="5" [showCurrentPageReport]="true" responsiveLayout="scroll"
-    [rowsPerPageOptions]="[5,10,15]">
-    <ng-template pTemplate="header">
-        <tr>
-            <th pSortableColumn="fileReference">File Reference <p-sortIcon field="fileReference"></p-sortIcon>
-            </th>
-            <th pSortableColumn="department">Department <p-sortIcon field="department"></p-sortIcon>
-            </th>
-            <th pSortableColumn="createdDate">Created Date <p-sortIcon field="createdDate"></p-sortIcon>
-            </th>
-            <th pSortableColumn="user.name">Creator <p-sortIcon field="user.name"></p-sortIcon>
-            </th>
-            <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon>
-            </th>
-            <th>Actions</th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-uamp>
-        <tr>
-            <td>{{uamp.fileReference}}</td>
-            <td>{{uamp.department}}</td>
-            <td>{{uamp.createdDate | date}}</td>
-            <td>{{uamp.user.name}} {{uamp.user.surname}}</td>
-            <td>{{uamp.status}}</td>
-            <td>
-                <div style="text-align: center;">
-                    <p-splitButton label="More" [model]="buttonItems" (onDropdownClick)="selectUamp(uamp)"
-                        mat-button>
-                    </p-splitButton>
-                </div>
-            </td>
-        </tr>
-    </ng-template>
-</p-table>
+<div class="app-table-scroll uamp-table-scroll">
+<table mat-table [dataSource]="dataSource" matSort>
+    <ng-container matColumnDef="fileReference">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>File Reference</th>
+        <td mat-cell *matCellDef="let uamp">{{ uamp.fileReference }}</td>
+    </ng-container>
 
-<div *ngIf="generatingUamp" class="dialogBackgroud"></div>
-<p-dialog [(visible)]="generatingUamp" *ngIf="generatingUamp" [style]="{width: '80vw'}" [baseZIndex]="10000">
-    <p-header> UAMP </p-header>
-    <div class="card" *ngIf="generatingUamp">
-        <h5>Generating UAMP...</h5>
-        <p-progressBar [value]="value"></p-progressBar>
-    </div>
-    <app-view-uamp [uamp]="uamp" *ngIf="!generatingUamp"></app-view-uamp>
-</p-dialog>
+    <ng-container matColumnDef="department">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Department</th>
+        <td mat-cell *matCellDef="let uamp">{{ uamp.department }}</td>
+    </ng-container>
 
+    <ng-container matColumnDef="createdDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Created Date</th>
+        <td mat-cell *matCellDef="let uamp">{{ uamp.createdDate | date }}</td>
+    </ng-container>
 
+    <ng-container matColumnDef="creator">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Creator</th>
+        <td mat-cell *matCellDef="let uamp">{{ uamp.user?.name }} {{ uamp.user?.surname }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <td mat-cell *matCellDef="let uamp">{{ uamp.status }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let uamp">
+            <button mat-icon-button [matMenuTriggerFor]="uampMenu" (click)="selectUamp(uamp)"
+                [disabled]="loadingUamps" [attr.aria-label]="'Actions for UAMP ' + uamp.fileReference">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr *matNoDataRow>
+        <td [attr.colspan]="displayedColumns.length" class="uamp-table-state">
+            <ng-container *ngIf="loadingUamps; else uampLoadResult">
+                <mat-progress-bar mode="indeterminate" aria-label="Loading UAMP records"></mat-progress-bar>
+                <span>Loading UAMP records...</span>
+            </ng-container>
+            <ng-template #uampLoadResult>
+                <ng-container *ngTemplateOutlet="uampEmptyState"></ng-container>
+                <ng-template #uampEmptyState>
+                    <span>No data found</span>
+                    <ng-container *ngIf="uampLoadError">
+                    <button mat-button type="button" (click)="getUamps()">
+                        <mat-icon>refresh</mat-icon>Retry
+                    </button>
+                    </ng-container>
+                </ng-template>
+            </ng-template>
+        </td>
+    </tr>
+</table>
+</div>
+
+<mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 15]" showFirstLastButtons
+    aria-label="Select page of UAMP records"></mat-paginator>
+
+<mat-menu #uampMenu="matMenu">
+    <button mat-menu-item type="button" (click)="viewUamp()">
+        <mat-icon>visibility</mat-icon>
+        <span>View</span>
+    </button>
+    <button mat-menu-item type="button" (click)="updateUamp()">
+        <mat-icon>edit</mat-icon>
+        <span>Update</span>
+    </button>
+</mat-menu>
+
+<ng-template #uampProgressDialog>
+    <mat-card class="uamp-progress-dialog">
+        <mat-card-header mat-dialog-title>
+            <mat-card-title>UAMP</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content mat-dialog-content>
+            <h5>Generating UAMP...</h5>
+            <mat-progress-bar mode="determinate" [value]="value"></mat-progress-bar>
+        </mat-card-content>
+    </mat-card>
+</ng-template>

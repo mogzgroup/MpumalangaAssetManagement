@@ -1,9 +1,59 @@
 th{
     word-wrap: break-word;
     font-size: 12px;
+    position: sticky;
+    top: 0;
+    background: var(--mat-sys-surface, #fff);
+    z-index: 1;
 }
 
 td{
     word-wrap: break-word;
     font-size: 10px;
+}
+
+.uamp-summary-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0;
+}
+
+.uamp-summary-row > button {
+    justify-self: end;
+}
+
+.uamp-metadata {
+    margin-top: -1rem;
+}
+
+.uamp-table-container {
+    overflow-x: auto;
+}
+
+.uamp-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.uamp-table th,
+.uamp-table td {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 0.5rem;
+    vertical-align: top;
+}
+
+.uamp-table tbody tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+@media (max-width: 768px) {
+    .uamp-summary-row {
+        grid-template-columns: 1fr;
+    }
+
+    .uamp-summary-row > button {
+        justify-self: start;
+    }
 }

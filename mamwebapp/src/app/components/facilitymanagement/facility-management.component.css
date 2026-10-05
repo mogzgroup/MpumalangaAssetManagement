@@ -25,14 +25,10 @@
     font-weight: lighter;
 }
 
-.ui-tabview-panels {
-    background-color: transparent !important;    
-}
-
 .grid {
     display: grid;
     gap: 1rem;
-    grid-auto-flow: column;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     margin: 0 0 1rem 0;
   }
   
@@ -55,5 +51,73 @@
     border: 3px solid green;
   }
 
- 
+.facility-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+:host {
+    display: flex;
+    height: 100%;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.facility-breadcrumb,
+.grid {
+    flex: 0 0 auto;
+}
+
+.grid {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.grid mat-card-content {
+    display: grid;
+    min-height: 72px;
+    align-content: center;
+    gap: 0.25rem;
+    padding: 0.65rem;
+    color: #687970;
+    font-size: 0.82rem;
+    text-align: center;
+}
+
+.number-count {
+    color: #17633f;
+    font-size: 1.45rem;
+}
+
+.facility-tabs {
+    display: flex;
+    min-height: 0;
+    flex: 1 1 auto;
+    flex-direction: column;
+}
+
+:host ::ng-deep .facility-tabs .mat-mdc-tab-body-wrapper {
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+:host ::ng-deep .facility-tabs .mat-mdc-tab-body-content {
+    height: 100%;
+    overflow: hidden;
+}
+
+@media (max-width: 600px) {
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

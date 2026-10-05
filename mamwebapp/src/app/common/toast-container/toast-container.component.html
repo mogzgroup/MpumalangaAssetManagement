@@ -1,0 +1,19 @@
+<div class="app-toast-stack" role="region" aria-label="Notifications" aria-live="off">
+    <div *ngFor="let toast of messages$ | async"
+        class="app-toast"
+        [class.toast-success]="toast.type === 'success'"
+        [class.toast-error]="toast.type === 'error'"
+        [class.toast-warning]="toast.type === 'warning'"
+        [class.toast-info]="toast.type === 'info'"
+        [class.toast-leaving]="toast.leaving"
+        [attr.role]="toast.role"
+        [attr.aria-live]="toast.role === 'alert' ? 'assertive' : 'polite'"
+        aria-atomic="true">
+        <mat-icon class="app-toast-icon" aria-hidden="true">{{ toast.icon }}</mat-icon>
+        <span class="app-toast-message">{{ toast.message }}</span>
+        <button mat-icon-button type="button" class="app-toast-dismiss"
+            aria-label="Dismiss notification" (click)="dismiss(toast.id)">
+            <mat-icon aria-hidden="true">close</mat-icon>
+        </button>
+    </div>
+</div>

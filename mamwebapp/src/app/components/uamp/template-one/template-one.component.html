@@ -1,138 +1,150 @@
 <div class="stepsdemo-content mt-5">
-    <p-card>
-        <ng-template pTemplate="title">
-           
-        </ng-template>
-        <ng-template pTemplate="subtitle">
-            Summary of accommodation requirements per budget programme
-        </ng-template>
-        <ng-template pTemplate="content">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-subtitle>Summary of accommodation requirements per budget programme</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
             <div class="formgrid grid">
-                <div class="field col-6">
-                    <span class="p-float-label p-input-icon-left w-full">
-                        <textarea [ngModelOptions]="{standalone: true}" (blur)="updateUamp()"
-                            [(ngModel)]="uamp.templeteOne.optimalSupportingAccommodation.mission" autocomplete="off"
-                            type="text" pInputText class="ui-inputtext ui-widget"></textarea>
-                        <label for="float-input">Mission</label>
-                        <small *ngIf="submitted && o.mission.errors && o.mission.errors.required" class="p-error">This
-                            field is required.</small>
-                    </span>
-                </div>
-                <div class="field col-6">
-                    <span class="p-float-label p-input-icon-left w-full">
-                        <textarea [ngModelOptions]="{standalone: true}" (blur)="updateUamp()"
-                            [(ngModel)]="uamp.templeteOne.optimalSupportingAccommodation.supportingAccommodation"
-                            autocomplete="off" type="text" pInputText class="ui-inputtext ui-widget"></textarea>
-                        <label for="float-input">Optimal supporting accommodation</label>
-                        <small
-                            *ngIf="submitted && o.optimalSupportingAccommodation.errors && o.optimalSupportingAccommodation.errors.required"
-                            class="p-error">This field is required.</small>
-                        <span style="font-size: xx-small;">(What are the optimal assets required to support this
-                            mission)</span>
-                    </span>
-                </div>
-                
+                <mat-form-field appearance="outline" class="field col-6">
+                    <mat-label>Mission</mat-label>
+                    <textarea matInput [(ngModel)]="uamp.templeteOne.optimalSupportingAccommodation.mission"
+                        [ngModelOptions]="{standalone: true}" (blur)="updateUamp()" autocomplete="off"></textarea>
+                    <mat-error *ngIf="submitted && o.mission.errors && o.mission.errors.required">
+                        This field is required.
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="field col-6">
+                    <mat-label>Optimal supporting accommodation</mat-label>
+                    <textarea matInput
+                        [(ngModel)]="uamp.templeteOne.optimalSupportingAccommodation.supportingAccommodation"
+                        [ngModelOptions]="{standalone: true}" (blur)="updateUamp()" autocomplete="off"></textarea>
+                    <mat-hint>What are the optimal assets required to support this mission?</mat-hint>
+                    <mat-error *ngIf="submitted && o.optimalSupportingAccommodation.errors
+                        && o.optimalSupportingAccommodation.errors.required">
+                        This field is required.
+                    </mat-error>
+                </mat-form-field>
             </div>
 
             <div class="mt-5">
-                <p-table [value]="programmes" styleClass="p-datatable-striped" [responsive]="true" [paginator]="true"
-                    [rows]="5" [showCurrentPageReport]="true" responsiveLayout="scroll"
-                    [rowsPerPageOptions]="[5,10,15]">
-                    <ng-template pTemplate="caption">
-                        <div class="p-d-flex right p-jc-between text-right">
-                            <button mat-button pTooltip="Add Programme" type="button" (click)="displayDialog = true; dialogHeader = 'Add Programme'"><span class="pi pi-plus"></span>Add Programme</button>
-                        </div>
-                    </ng-template>
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th>Corporate Objectives</th>
-                            <th>Outcomes/ Planned Outputs</th>
-                            <th>Optimal Supporting Accommodation Solution</th>
-                            <th>Rationale for Chosen Solution</th>
-                            <th style="width: 200px;"></th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-programme>
-                        <tr>
-                            <td>{{programme.corporateObjective}}</td>
-                            <td>{{programme.outcomes}}</td>
-                            <td>{{programme.optimalSupportingAccommodationSolution}}</td>
-                            <td>{{programme.rationaleChosenSolution}}</td>
-                            <td style="text-align: center;" *ngIf="programmes.length > 0">
-                                <p-splitButton label="More" *ngIf="mode != 'View'" [model]="buttonItems"
-                                    (onDropdownClick)="selectProgramme(programme)" mat-button>
-                                </p-splitButton>
-                            </td>
-                        </tr>
-                    </ng-template>
-                </p-table>
+                <div class="programme-actions">
+                    <button mat-raised-button color="primary" matTooltip="Add Programme" type="button"
+                        (click)="openAddProgremme()">
+                        <mat-icon>add</mat-icon>
+                        Add Programme
+                    </button>
+                </div>
+
+                <table mat-table [dataSource]="dataSource" class="mat-elevation-z1">
+                    <ng-container matColumnDef="corporateObjective">
+                        <th mat-header-cell *matHeaderCellDef>Corporate Objectives</th>
+                        <td mat-cell *matCellDef="let programme">{{ programme.corporateObjective }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="outcomes">
+                        <th mat-header-cell *matHeaderCellDef>Outcomes/ Planned Outputs</th>
+                        <td mat-cell *matCellDef="let programme">{{ programme.outcomes }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="solution">
+                        <th mat-header-cell *matHeaderCellDef>Optimal Supporting Accommodation Solution</th>
+                        <td mat-cell *matCellDef="let programme">
+                            {{ programme.optimalSupportingAccommodationSolution }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="rationale">
+                        <th mat-header-cell *matHeaderCellDef>Rationale for Chosen Solution</th>
+                        <td mat-cell *matCellDef="let programme">{{ programme.rationaleChosenSolution }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let programme">
+                            <button mat-button *ngIf="mode !== 'View'" [matMenuTriggerFor]="programmeMenu"
+                                (click)="selectProgramme(programme)">
+                                More
+                                <mat-icon>arrow_drop_down</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                </table>
+                <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 15]" showFirstLastButtons
+                    aria-label="Select page of programmes"></mat-paginator>
+
+                <mat-menu #programmeMenu="matMenu">
+                    <button mat-menu-item type="button" (click)="update()">
+                        <mat-icon>edit</mat-icon>
+                        <span>Update</span>
+                    </button>
+                    <button mat-menu-item type="button" (click)="confirmDelete()">
+                        <mat-icon>delete</mat-icon>
+                        <span>Delete</span>
+                    </button>
+                </mat-menu>
             </div>
-        </ng-template>
-    </p-card>
+        </mat-card-content>
+    </mat-card>
 </div>
 
-<div *ngIf="displayDialog" class="dialogBackgroud"></div>
-<p-dialog header="{{dialogHeader}}" [(visible)]="displayDialog">
-    <p-body>
+<ng-template #programmeDialog>
+    <h2 mat-dialog-title>{{ dialogHeader }}</h2>
+    <mat-dialog-content>
         <form [formGroup]="programmeForm">
             <div class="formgrid grid">
-                <div class="field col-6">
-                    <label for="corporateObjective">Corporate Objectives</label>
-                    <textarea formControlName="corporateObjective" autocomplete="off" type="text" pInputTextarea
-                        class="ui-inputtext ui-widget"></textarea>                    
-                    <div *ngIf="submitted && p.corporateObjective.errors" class="text-error"><br>
-                        <div *ngIf="p.corporateObjective.errors.required">This field is required.</div>
-                    </div>
-                </div>
-                <div class="field col-6">
-                    <label for="outcomes">Outcomes/ Planned Outputs</label>
-                    <textarea formControlName="outcomes" type="text" pInputText
-                        class="ui-inputtext ui-widget"></textarea>               
-                    <div *ngIf="submitted && p.outcomes.errors" class="text-error"><br>
-                        <div *ngIf="p.outcomes.errors.required">This field is required.</div>
-                    </div>
-                </div>
-                <div class="field col-6">
-                    <label for="optimalSupportingAccommodationSolution">Optimal Supporting Accommodation
-                        Solution</label>
-                    <textarea formControlName="optimalSupportingAccommodationSolution" autocomplete="off" type="text"
-                        pInputText class="ui-inputtext ui-widget"></textarea>
-                    <div *ngIf="submitted && p.optimalSupportingAccommodationSolution.errors" class="text-error"><br>
-                        <div *ngIf="p.optimalSupportingAccommodationSolution.errors.required">This field is required.
-                        </div>
-                    </div>
-                    <span style="font-size: xx-small;">(Give a brief summary of the accommodation requirements, current
-                        usage and solutions for Head Office& Regions / Districts)</span>
-                </div>
-                <div class="field col-6 md-6">
-                    <label for="rationaleChosenSolution">Rationale for Chosen Solution</label>
-                    <textarea formControlName="rationaleChosenSolution" autocomplete="off" type="text" pInputText
-                        class="ui-inputtext ui-widget"></textarea>
-                    <div *ngIf="submitted && p.rationaleChosenSolution.errors" class="text-error"><br>
-                        <div *ngIf="p.rationaleChosenSolution.errors.required">This field is required.</div>
-                    </div>
-                    <span style="font-size: xx-small;">Provide a brief motivation for your solutions</span>
-                </div>
+                <mat-form-field appearance="outline" class="field col-6">
+                    <mat-label>Corporate Objectives</mat-label>
+                    <textarea matInput formControlName="corporateObjective" autocomplete="off"></textarea>
+                    <mat-error *ngIf="submitted && p.corporateObjective.errors?.required">
+                        This field is required.
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="field col-6">
+                    <mat-label>Outcomes/ Planned Outputs</mat-label>
+                    <textarea matInput formControlName="outcomes"></textarea>
+                    <mat-error *ngIf="submitted && p.outcomes.errors?.required">This field is required.</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="field col-6">
+                    <mat-label>Optimal Supporting Accommodation Solution</mat-label>
+                    <textarea matInput formControlName="optimalSupportingAccommodationSolution"
+                        autocomplete="off"></textarea>
+                    <mat-hint>Give a brief summary of the accommodation requirements, current usage and solutions for
+                        Head Office &amp; Regions / Districts.</mat-hint>
+                    <mat-error *ngIf="submitted && p.optimalSupportingAccommodationSolution.errors?.required">
+                        This field is required.
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="field col-6">
+                    <mat-label>Rationale for Chosen Solution</mat-label>
+                    <textarea matInput formControlName="rationaleChosenSolution" autocomplete="off"></textarea>
+                    <mat-hint>Provide a brief motivation for your solutions.</mat-hint>
+                    <mat-error *ngIf="submitted && p.rationaleChosenSolution.errors?.required">
+                        This field is required.
+                    </mat-error>
+                </mat-form-field>
             </div>
         </form>
-    </p-body>
-    <p-footer>
-        <div class="p-grid p-nogutter p-justify-between">
-            <button mat-button [style]="{'float':'left'}" mat-button (click)="displayDialog = false" >Cancel</button>
-            <button mat-button *ngIf="!isEdit" [style]="{'float':'right'}" (click)="addProgram()" >Add</button>
-            <button mat-button *ngIf="isEdit" [style]="{'float':'right'}" (click)="onUpdate()" >Update</button>
-        </div>
-    </p-footer>
-</p-dialog>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="closeProgrammeDialog()">Cancel</button>
+        <button mat-raised-button color="primary" *ngIf="!isEdit" type="button" (click)="addProgram()">Add</button>
+        <button mat-raised-button color="primary" *ngIf="isEdit" type="button" (click)="onUpdate()">Update</button>
+    </mat-dialog-actions>
+</ng-template>
 
 <div class="uamp-footer">
-    <div class="p-grid p-nogutter p-justify-between">
-        <button mat-button (click)="cancel()"><span class="pi pi-angle-left"></span>Cancel</button>
-        
-        <button mat-button [style]="{'float':'right'}" (click)="save()" class="ml-1" >Save</button>
-        <button mat-button styleClass="btn-next" (click)="nextPage()" >Next</button>
-    </div>
+    <button mat-button type="button" (click)="cancel()">
+        <mat-icon>chevron_left</mat-icon>
+        Cancel
+    </button>
+    <span class="uamp-footer-spacer"></span>
+    <button mat-button type="button" (click)="save()">Save</button>
+    <button mat-raised-button color="primary" type="button" (click)="nextPage()">Next</button>
 </div>
-
-
-

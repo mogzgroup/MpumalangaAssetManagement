@@ -11,7 +11,6 @@ import { UAMP } from 'src/app/models/uamp.model';
 })
 export class ViewUampComponent implements OnInit {
   activeIndex: number = 0;
-  items: any[] = [];
   municipalUtilityServices: any[] = [];
   @Input() uamp: UAMP;
 
@@ -245,4 +244,3 @@ export class ViewUampComponent implements OnInit {
   }
 
 }
-

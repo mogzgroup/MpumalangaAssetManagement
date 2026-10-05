@@ -1,6 +1,5 @@
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, Input, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { MenuItem, MessageService } from 'primeng/api';
 import { first } from 'rxjs/operators';
 import { LeasedProperty } from 'src/app/models/leased-property.model';
 import { User } from 'src/app/models/user.model';
@@ -8,28 +7,22 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { FaultService } from 'src/app/services/facility-management/fault.service';
 import { LeasedPropertiesService } from 'src/app/services/leased-property/leased-property.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   standalone: false,
   selector: 'app-facility-management',
   templateUrl: './facility-management.component.html',
   styleUrls: ['./facility-management.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService,]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class FacilityManagementComponent implements OnInit {
 
-  error = '';
-  errorMsg = '';
   public newCount: number = 0;
   public inProgressCount: number = 0;
   public completedCount: number = 0;
   public total: number = 0;
-  public items: any = [ { icon: 'pi pi-home',url: 'dashboard' },
-  { label: 'Facility Management' }
-];
-
-  constructor(private faultService: FaultService) {
+  constructor(private faultService: FaultService, private toastService: ToastService) {
   
   }
 
@@ -61,8 +54,8 @@ export class FacilityManagementComponent implements OnInit {
         
       }
     },
-    (error) => {
+    error => {
+      this.toastService.showError(this.toastService.getApiErrorMessage(error));
     });
   }
 }
-

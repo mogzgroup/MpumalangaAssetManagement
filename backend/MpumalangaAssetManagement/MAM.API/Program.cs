@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
 
 namespace MAM.API
 {
@@ -7,13 +7,19 @@ namespace MAM.API
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
-        }
+            var builder = WebApplication.CreateBuilder(args);
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .UseUrls("http://localhost:5000", "https://localhost:5001") // multiple URLs
-                .Build();
+            builder.WebHost.UseUrls("http://127.0.0.1:5000");
+
+            var startup = new Startup(builder.Configuration);
+
+            startup.ConfigureServices(builder.Services);
+
+            var app = builder.Build();
+
+            startup.Configure(app, app.Environment);
+
+            app.Run();
+        }
     }
 }

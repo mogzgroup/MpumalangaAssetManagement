@@ -26,7 +26,7 @@ namespace MAM.API.Controllers
         {
             _projectService = projectService;
             _facilityService = facilityService;
-            SetLog4NetConfiguration();
+            // log4net is configured at application startup; no per-controller configuration required.
         }
 
         [HttpGet]

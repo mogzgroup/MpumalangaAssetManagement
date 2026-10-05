@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LeasedProperty } from 'src/app/models/leased-property.model';
 import { environment } from 'src/environments/environment';
+import { cachedGet } from '../../helpers/http-cache';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class LeasedPropertiesService {
       constructor(private http: HttpClient) { }
 
       getLeasedProperties(): Observable<any>{
-        return this.http.get<Array<LeasedProperty>>(`${environment.apiUrl}/api/leasemanagement/getleasedproperties`);
+        return cachedGet<Array<LeasedProperty>>(this.http, `${environment.apiUrl}/api/leasemanagement/getleasedproperties`);
       }
 
       getLeasedPropertyDetails(leasedProperty): Observable<any>{
@@ -51,4 +52,3 @@ export class LeasedPropertiesService {
         return this.http.post<any>(`${environment.apiUrl}/api/facility/uploadSnagListFiles/`+ fileName, formData,{ headers: header });
       }
 }
-

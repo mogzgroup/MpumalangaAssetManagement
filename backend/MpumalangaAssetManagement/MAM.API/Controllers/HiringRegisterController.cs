@@ -24,7 +24,7 @@ namespace MAM.API.Controllers
         public HiringRegisterController(IHiringRegisterService hiringRegisterService)
         {
             _hiringRegisterService = hiringRegisterService;
-            SetLog4NetConfiguration();
+            // log4net configured at application startup
         }
 
         [HttpGet]

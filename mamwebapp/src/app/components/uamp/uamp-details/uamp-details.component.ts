@@ -1,29 +1,18 @@
 import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { MenuItem, MessageService } from 'primeng/api';
-import { Subscription } from 'rxjs';
-import { StrategicAssessment } from 'src/app/models/strategic-assessment.model';
 import { UAMP } from 'src/app/models/uamp.model';
 
 @Component({
   standalone: false,
   selector: 'app-uamp-details',
   templateUrl: './uamp-details.component.html',
-  styles: [`
-        :host ::ng-deep .ui-steps .ui-steps-item {
-            width: 20%;
-        }
-    `],
   styleUrls: ['./uamp-details.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  providers: [MessageService],
 })
 export class UampDetailsComponent implements OnInit {
-  templates: MenuItem[];
-  subscription: Subscription;
+  templates: { label: string; routerLink: string }[];
   @Input() uamp: UAMP;
-  activeIndex: 1;
 
-  constructor(public messageService: MessageService) { }
+  constructor() { }
 
   ngOnInit() {
     this.templates = [{
@@ -73,4 +62,3 @@ export class UampDetailsComponent implements OnInit {
     ];
   }
 }
-
