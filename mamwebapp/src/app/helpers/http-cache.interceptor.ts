@@ -5,7 +5,7 @@ import {
   HttpRequest,
   HttpResponse
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { finalize, shareReplay, tap } from 'rxjs/operators';
 
@@ -19,6 +19,8 @@ interface CacheEntry {
 
 @Injectable()
 export class HttpCacheInterceptor implements HttpInterceptor {
+  private authenticationService = inject(AuthenticationService);
+
   private static readonly MAX_CACHE_ENTRIES = 100;
   private readonly responses = new Map<string, CacheEntry>();
   private readonly inFlight = new Map<string, Observable<HttpEvent<unknown>>>();
@@ -26,7 +28,7 @@ export class HttpCacheInterceptor implements HttpInterceptor {
   private currentUserToken: string | null = null;
   private cacheRevision = 0;
 
-  constructor(private authenticationService: AuthenticationService) {
+  constructor() {
     const currentUser = this.authenticationService.currentUserValue;
     this.currentUserId = currentUser?.id ?? null;
     this.currentUserToken = currentUser?.token ?? null;

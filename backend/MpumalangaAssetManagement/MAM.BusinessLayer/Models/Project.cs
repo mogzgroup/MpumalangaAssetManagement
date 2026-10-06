@@ -77,8 +77,9 @@ namespace MAM.BusinessLayer.Models
                 PropertyId = project.PropertyId,
                 Name = project.Name,
                 PlannedDuration = project.PlannedDuration,
-                StartDate = project.StartDate,
-                PracticalCompletionDate = project.PracticalCompletionDate,
+                // Ensure DateTime values are within SQL Server datetime range (avoid DateTime.MinValue -> datetime conversion errors)
+                StartDate = project.StartDate == default ? DateTime.UtcNow : project.StartDate,
+                PracticalCompletionDate = project.PracticalCompletionDate == default ? DateTime.UtcNow : project.PracticalCompletionDate,
                 ScopeofWork = project.ScopeofWork,
                 HasFinancials = project.HasFinancials,
                 HasParentProject = project.HasParentProject,
@@ -93,7 +94,7 @@ namespace MAM.BusinessLayer.Models
                 BusinessName = project.BusinessName,
                 BusinessRegNumber = project.BusinessRegNumber,
                 Status = project.Status,
-                CreatedDate = project.CreatedDate,
+                CreatedDate = project.CreatedDate == default ? DateTime.UtcNow : project.CreatedDate,
                 ModifiedDate = project.ModifiedDate,
                 // Suppliers = project.Suppliers,
                 IsDeleted = project.IsDeleted

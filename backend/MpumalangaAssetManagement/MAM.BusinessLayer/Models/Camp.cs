@@ -21,9 +21,9 @@ namespace MAM.BusinessLayer.Models
 
         public List<Camp> ConvertToCamps(List<DataAccess.Tables.Camp> campTbs)
         {
-            List<Camp> camps = new List<Camp>();
+            if (campTbs == null) return new List<Camp>();
 
-            return (List<Camp>)campTbs.Select(c => new Camp()
+            return campTbs.Select(c => new Camp()
             {
                 Id = c.Id,
                 Status = c.Status,
@@ -31,7 +31,7 @@ namespace MAM.BusinessLayer.Models
                 OptimalSupportingAccommodationId = c.OptimalSupportingAccommodationId,
                 UserId = c.UserId,
                 CreatedDate = c.CreatedDate,
-            });
+            }).ToList();
         }
     }
 }

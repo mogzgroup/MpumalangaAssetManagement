@@ -1,94 +1,128 @@
-<form [formGroup]="reportFaultForm" *ngIf="!isSuccessful" class="form-body">
+@if (!isSuccessful) {
+  <form [formGroup]="reportFaultForm" class="form-body">
     <mat-form-field appearance="outline">
-        <mat-label>Town</mat-label>
-        <input matInput formControlName="townName" [matAutocomplete]="townAutocomplete" required
-            (input)="filterTown($any($event.target).value)">
+      <mat-label>Town</mat-label>
+      <input matInput formControlName="townName" [matAutocomplete]="townAutocomplete" required
+        (input)="filterTown($any($event.target).value)">
         <mat-autocomplete #townAutocomplete="matAutocomplete" [displayWith]="displayOption"
-            (optionSelected)="onTownChange($event.option.value)">
-            <mat-option *ngFor="let town of filteredTowns" [value]="town">{{ town.name }}</mat-option>
+          (optionSelected)="onTownChange($event.option.value)">
+          @for (town of filteredTowns; track town) {
+            <mat-option [value]="town">{{ town.name }}</mat-option>
+          }
         </mat-autocomplete>
-        <mat-error *ngIf="f.townName.hasError('required') && (submitted || f.townName.touched)">This field is required.</mat-error>
-        <mat-error *ngIf="f.townName.hasError('selectionRequired') && (submitted || f.townName.touched)">Select a town from the list.</mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
+        @if (f.townName.hasError('required') && (submitted || f.townName.touched)) {
+          <mat-error>This field is required.</mat-error>
+        }
+        @if (f.townName.hasError('selectionRequired') && (submitted || f.townName.touched)) {
+          <mat-error>Select a town from the list.</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline">
         <mat-label>Building name</mat-label>
         <input matInput formControlName="buildingName" [matAutocomplete]="buildingAutocomplete" required
-            (input)="filterBuilding($any($event.target).value)" [disabled]="!enableBuilding">
-        <mat-autocomplete #buildingAutocomplete="matAutocomplete" [displayWith]="displayOption"
+          (input)="filterBuilding($any($event.target).value)" [disabled]="!enableBuilding">
+          <mat-autocomplete #buildingAutocomplete="matAutocomplete" [displayWith]="displayOption"
             (optionSelected)="onBuildingChange($event.option.value)">
-            <mat-option *ngFor="let building of filteredBuildings" [value]="building">{{ building.name }}</mat-option>
-        </mat-autocomplete>
-        <mat-error *ngIf="f.buildingName.hasError('required') && (submitted || f.buildingName.touched)">This field is required.</mat-error>
-        <mat-error *ngIf="f.buildingName.hasError('selectionRequired') && (submitted || f.buildingName.touched)">Select a building from the list.</mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-        <mat-label>Exact Location of Issue</mat-label>
-        <input matInput formControlName="propertyDescription" required>
-        <mat-error *ngIf="f.propertyDescription.hasError('required') && (submitted || f.propertyDescription.touched)">This field is required.</mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-        <mat-label>Description of the issue</mat-label>
-        <textarea matInput rows="3" formControlName="descriptionoftheIssue" required></textarea>
-        <mat-error *ngIf="f.descriptionoftheIssue.hasError('required') && (submitted || f.descriptionoftheIssue.touched)">This field is required.</mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-        <mat-label>Name &amp; Surname</mat-label>
-        <input matInput formControlName="nameSurname" required>
-        <mat-error *ngIf="f.nameSurname.hasError('required') && (submitted || f.nameSurname.touched)">This field is required.</mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-        <mat-label>Contact Number</mat-label>
-        <input matInput type="tel" pattern="[0-9]+" maxlength="10" placeholder="000 000 0000"
+            @for (building of filteredBuildings; track building) {
+              <mat-option [value]="building">{{ building.name }}</mat-option>
+            }
+          </mat-autocomplete>
+          @if (f.buildingName.hasError('required') && (submitted || f.buildingName.touched)) {
+            <mat-error>This field is required.</mat-error>
+          }
+          @if (f.buildingName.hasError('selectionRequired') && (submitted || f.buildingName.touched)) {
+            <mat-error>Select a building from the list.</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Exact Location of Issue</mat-label>
+          <input matInput formControlName="propertyDescription" required>
+          @if (f.propertyDescription.hasError('required') && (submitted || f.propertyDescription.touched)) {
+            <mat-error>This field is required.</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Description of the issue</mat-label>
+          <textarea matInput rows="3" formControlName="descriptionoftheIssue" required></textarea>
+          @if (f.descriptionoftheIssue.hasError('required') && (submitted || f.descriptionoftheIssue.touched)) {
+            <mat-error>This field is required.</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Name &amp; Surname</mat-label>
+          <input matInput formControlName="nameSurname" required>
+          @if (f.nameSurname.hasError('required') && (submitted || f.nameSurname.touched)) {
+            <mat-error>This field is required.</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Contact Number</mat-label>
+          <input matInput type="tel" pattern="[0-9]+" maxlength="10" placeholder="000 000 0000"
             formControlName="contactNumber" required>
-        <mat-error *ngIf="f.contactNumber.hasError('required') && (submitted || f.contactNumber.touched)">This field is required.</mat-error>
-        <mat-error *ngIf="f.contactNumber.hasError('minlength') && (submitted || f.contactNumber.touched)">Enter 10 digits.</mat-error>
-        <mat-error *ngIf="f.contactNumber.hasError('maxlength') && (submitted || f.contactNumber.touched)">Enter 10 digits.</mat-error>
-        <mat-error *ngIf="f.contactNumber.hasError('pattern') && (submitted || f.contactNumber.touched)">Use digits only.</mat-error>
-    </mat-form-field>
+            @if (f.contactNumber.hasError('required') && (submitted || f.contactNumber.touched)) {
+              <mat-error>This field is required.</mat-error>
+            }
+            @if (f.contactNumber.hasError('minlength') && (submitted || f.contactNumber.touched)) {
+              <mat-error>Enter 10 digits.</mat-error>
+            }
+            @if (f.contactNumber.hasError('maxlength') && (submitted || f.contactNumber.touched)) {
+              <mat-error>Enter 10 digits.</mat-error>
+            }
+            @if (f.contactNumber.hasError('pattern') && (submitted || f.contactNumber.touched)) {
+              <mat-error>Use digits only.</mat-error>
+            }
+          </mat-form-field>
+          <div class="file-upload">
+            <label for="fault-attachments">Add pictures</label>
+            <input id="fault-attachments" type="file" accept="image/*" multiple (change)="onChooseFile($event)">
+            @if (attachments.length) {
+              <ul>
+                @for (file of attachments; track file; let index = $index) {
+                  <li>
+                    {{ file.name }}
+                    <button mat-icon-button type="button" (click)="onRemoveAttachment(index)" [attr.aria-label]="'Remove ' + file.name">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </form>
+      }
 
-    <div class="file-upload">
-        <label for="fault-attachments">Add pictures</label>
-        <input id="fault-attachments" type="file" accept="image/*" multiple (change)="onChooseFile($event)">
-        <ul *ngIf="attachments.length">
-            <li *ngFor="let file of attachments; let index = index">
-                {{ file.name }}
-                <button mat-icon-button type="button" (click)="onRemoveAttachment(index)" [attr.aria-label]="'Remove ' + file.name">
-                    <mat-icon>close</mat-icon>
-                </button>
-            </li>
-        </ul>
-    </div>
-</form>
+      @if (isSuccessful) {
+        <div class="success">
+          <p>Your fault has been successfully reported.</p>
+          <p>Your reference number is <strong>{{ fault.referenceNo }}</strong></p>
+        </div>
+      }
 
-<div *ngIf="isSuccessful" class="success">
-    <p>Your fault has been successfully reported.</p>
-    <p>Your reference number is <strong>{{ fault.referenceNo }}</strong></p>
-</div>
+      <div class="form-actions">
+        <button mat-button type="button" (click)="openTrackTicketDialog()">Track Progress</button>
+        <span class="spacer"></span>
+        @if (!isSuccessful) {
+          <button mat-raised-button color="primary" type="button" (click)="onSubmit()"
+            [disabled]="reportFaultForm.invalid || isSubmitting || isUploading || loadingTowns || loadingBuildings">
+            @if (isSubmitting || isUploading) {
+              <mat-spinner diameter="18"></mat-spinner>
+            }
+            {{ isUploading ? 'Uploading...' : isSubmitting ? 'Submitting...' : 'Submit' }}
+          </button>
+        }
+        @if (isSuccessful) {
+          <button mat-raised-button color="primary" type="button" (click)="onDone()">Done</button>
+        }
+      </div>
 
-<div class="form-actions">
-    <button mat-button type="button" (click)="openTrackTicketDialog()">Track Progress</button>
-    <span class="spacer"></span>
-    <button mat-raised-button color="primary" type="button" *ngIf="!isSuccessful" (click)="onSubmit()"
-        [disabled]="reportFaultForm.invalid || isSubmitting || isUploading || loadingTowns || loadingBuildings">
-        <mat-spinner *ngIf="isSubmitting || isUploading" diameter="18"></mat-spinner>
-        {{ isUploading ? 'Uploading...' : isSubmitting ? 'Submitting...' : 'Submit' }}
-    </button>
-    <button mat-raised-button color="primary" type="button" *ngIf="isSuccessful" (click)="onDone()">Done</button>
-</div>
-
-<ng-template #trackTicketDialog>
-    <mat-card class="track-dialog">
-        <mat-card-header>
+      <ng-template #trackTicketDialog>
+        <mat-card class="track-dialog">
+          <mat-card-header>
             <mat-card-title>Track Progress</mat-card-title>
             <button mat-icon-button type="button" aria-label="Close tracking" (click)="closeTrackTicketDialog()">
-                <mat-icon>close</mat-icon>
+              <mat-icon>close</mat-icon>
             </button>
-        </mat-card-header>
-        <mat-card-content><app-track-ticket></app-track-ticket></mat-card-content>
-    </mat-card>
-</ng-template>
+          </mat-card-header>
+          <mat-card-content><app-track-ticket></app-track-ticket></mat-card-content>
+        </mat-card>
+      </ng-template>

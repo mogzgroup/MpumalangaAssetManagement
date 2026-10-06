@@ -1,28 +1,40 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { CurrencyPipe } from '@angular/common';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatInput } from '@angular/material/input';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+
 
 @Component({
-  standalone: false,
-  selector: 'app-add-municipal-utility-services',
-  templateUrl: './add-municipal-utility-services.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrls: ['./add-municipal-utility-services.css']
+    selector: 'app-add-municipal-utility-services',
+    templateUrl: './add-municipal-utility-services.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./add-municipal-utility-services.css'],
+    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatError, MatInput, MatButton, MatIcon, MatIconButton, MatDialogActions, CurrencyPipe]
 })
 export class AddMunicipalUtilityServicesComponent implements OnInit {
-  submitted: boolean = false;
+  dialogRef = inject<MatDialogRef<AddMunicipalUtilityServicesComponent>>(MatDialogRef);
+  data = inject<{
+    property: any;
+}>(MAT_DIALOG_DATA);
+  private formBuilder = inject(FormBuilder);
+
+  submitted = false;
   municipalUtilityServices: any[] = [];
   municipalUtilityServiceForm: FormGroup;
   property: any;
-  total: number = 0;
+  total = 0;
   names: any[];
 
-  constructor(
-    public dialogRef: MatDialogRef<AddMunicipalUtilityServicesComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { property: any },
-    private formBuilder: FormBuilder
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.municipalUtilityServiceForm = this.formBuilder.group({
         name: [undefined, Validators.required],
         cost: [undefined, Validators.required],        

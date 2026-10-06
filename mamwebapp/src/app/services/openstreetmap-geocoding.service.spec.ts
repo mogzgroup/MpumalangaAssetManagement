@@ -15,7 +15,7 @@ describe('OpenStreetMapGeocodingService', () => {
   afterEach(() => httpTestingController.verify());
 
   it('limits address lookup to South Africa and returns candidate locations', () => {
-    let result: Array<{ display_name: string; lat: string; lon: string }>;
+    let result: { display_name: string; lat: string; lon: string }[];
     service.searchAddress('Mbombela').subscribe(locations => result = locations);
     const request = httpTestingController.expectOne(request =>
       request.url === 'https://nominatim.openstreetmap.org/search' &&

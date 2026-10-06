@@ -14,6 +14,13 @@ rewrite configuration forwards those requests to the API listener on
 `127.0.0.1:5000`. Install IIS URL Rewrite and Application Request Routing, and
 enable ARR proxying on the server.
 
+When serving the frontend with nginx, include `nginx-maplibre.conf` inside the
+active site’s `server` block, then validate and reload nginx. MapLibre’s module
+workers require `.mjs` responses to use the `application/javascript` MIME type;
+the IIS `web.config` setting does not configure nginx. Verify both
+`/assets/maplibre-gl/maplibre-gl-worker.mjs` and
+`/assets/maplibre-gl/maplibre-gl-shared.mjs` return that content type.
+
 ## Maps
 
 Maps use MapLibre GL JS with the OpenFreeMap Liberty style and OpenStreetMap

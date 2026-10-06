@@ -1,6 +1,6 @@
 ﻿using MAM.BusinessLayer.Models;
 using MAM.BusinessLayer.Models.Enums;
-using MAM.BusinessLayer.Repositories;
+using MAM.BusinessLayer.Interfaces;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -32,130 +32,46 @@ namespace MAM.API.Services
     public class FacilityService : IFacilityService
     {
         private readonly AppSettings _appSettings;
+        private readonly IFacilityRepository _facilityRepository;
 
-        public FacilityService(IOptions<AppSettings> appSettings)
+        public FacilityService(IOptions<AppSettings> appSettings, IFacilityRepository facilityRepository)
         {
             _appSettings = appSettings.Value;
+            _facilityRepository = facilityRepository;
         }
 
-        public List<DashboardWedge> GetDashboardWedges() {
-            using (var _facilityRepository = new FacilityRepository(_appSettings))
-            {
-                return _facilityRepository.GetDashboardWedges();
-            }
-        }
+        public List<DashboardWedge> GetDashboardWedges() => _facilityRepository.GetDashboardWedges();
 
-        public List<FacilityType> GetFacilityZonings() {
-            using (var _facilityRepository = new FacilityRepository(_appSettings))
-            {
-                return _facilityRepository.GetFacilityZonings();
-            }
-        }
+        public List<FacilityType> GetFacilityZonings() => _facilityRepository.GetFacilityZonings();
 
-        public List<FacilitySummaryChart> GetFacilitySummaries()
-        {
-            using (var _facilityRepository = new FacilityRepository(_appSettings))
-            {
-                return _facilityRepository.GetFacilitySummaries();
-            }
-        }
+        public List<FacilitySummaryChart> GetFacilitySummaries() => _facilityRepository.GetFacilitySummaries();
 
-        public List<MapCoordinate> GetMapCoordinates()
-        {
-            using (var _facilityRepository = new FacilityRepository(_appSettings))
-            {
-                return _facilityRepository.GetMapCoordinates();
-            }
-        }
+        public List<MapCoordinate> GetMapCoordinates() => _facilityRepository.GetMapCoordinates();
 
-        public List<Facility> GetAllFacilities()
-        {
-            using (var _facilityRepository = new FacilityRepository(_appSettings))
-            {
-                return _facilityRepository.GetAllFacilities();
-            }
-        }
+        public List<Facility> GetAllFacilities() => _facilityRepository.GetAllFacilities();
 
-        public List<Facility> GetProjectFacilities()
-        {
-            using (var _facilityRepository = new FacilityRepository(_appSettings))
-            {
-                return _facilityRepository.GetProjectFacilities();
-            }
-        }
+        public List<Facility> GetProjectFacilities() => _facilityRepository.GetProjectFacilities();
 
-        public List<Facility> GetBuildings()
-        {
-            using (var _facilityRepository = new FacilityRepository(_appSettings))
-            {
-                return _facilityRepository.GetBuildings();
-            }
-        }
+        public List<Facility> GetBuildings() => _facilityRepository.GetBuildings();
 
-        public List<Facility> GetAssetRegisterFacilities() {
-            using (var _facilityRepository = new FacilityRepository(_appSettings))
-            {
-                return _facilityRepository.GetAssetRegisterFacilities();
-            }
-        }
+        public List<Facility> GetAssetRegisterFacilities() => _facilityRepository.GetAssetRegisterFacilities();
 
-        public List<Facility> GetProperties(string userDepartment)
-        {
-            using (var _facilityRepository = new FacilityRepository(_appSettings))
-            {
-                return _facilityRepository.GetProperties(userDepartment);
-            }
-        }
+        public List<Facility> GetProperties(string userDepartment) => _facilityRepository.GetProperties(userDepartment);
 
-        public Facility GetFacilityById(int id, FacilityTypes facilityType)
-        {
-            using (var _facilityRepository = new FacilityRepository(_appSettings))
-            {
-                return _facilityRepository.GetFacilityById(id, facilityType);
-            }
-        }
+        public Facility GetFacilityById(int id, FacilityTypes facilityType) => _facilityRepository.GetFacilityById(id, facilityType);
 
-        public Facility SaveFacility(string step, Facility facility)
-        {
-            using (var _facilityRepository = new FacilityRepository(_appSettings))
-            {
-                return _facilityRepository.SaveFacility(step, facility);
-            }
-        }
+        public Facility SaveFacility(string step, Facility facility) => _facilityRepository.SaveFacility(step, facility);
 
         public bool UpdateFacility(string step, Facility facility)
         {
-            bool isUpdated = false;
-            using (var _facilityRepository = new FacilityRepository(_appSettings))
-            {
-                _facilityRepository.UpdateFacility(step, facility);
-                isUpdated = true;
-            }
-            return isUpdated;
+            _facilityRepository.UpdateFacility(step, facility);
+            return true;
         }
 
-        public bool DeleteFacility(int id)
-        {
-            using (var _facilityRepository = new FacilityRepository(_appSettings))
-            {
-                return _facilityRepository.DeleteFacility(id);
-            }
-        }
+        public bool DeleteFacility(int id) => _facilityRepository.DeleteFacility(id);
 
-        public List<string> GetTowns()
-        {
-            using (var _facilityRepository = new FacilityRepository(_appSettings))
-            {
-                return _facilityRepository.GetTowns();
-            }
-        }
+        public List<string> GetTowns() => _facilityRepository.GetTowns();
 
-        public List<Facility> GetBuildingsByTown(string town)
-        {
-            using (var _facilityRepository = new FacilityRepository(_appSettings))
-            {
-                return _facilityRepository.GetBuildingsByTown(town);
-            }
-        }
+        public List<Facility> GetBuildingsByTown(string town) => _facilityRepository.GetBuildingsByTown(town);
     }
 }

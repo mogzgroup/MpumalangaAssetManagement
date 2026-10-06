@@ -1,198 +1,246 @@
 <mat-tab-group [(selectedIndex)]="activeIndex">
-    <mat-tab label="Details">
-        <form [formGroup]="projectForm" class="project-form">
-            <mat-form-field appearance="outline">
-                <mat-label>District</mat-label>
-                <mat-select formControlName="district" [disabled]="isViewOnly" placeholder="Please select" required
-                    (selectionChange)="onDistrictChange($event); showAssets = true">
-                    <mat-option *ngFor="let district of districts" [value]="district">{{ district.name }}</mat-option>
-                </mat-select>
-                <mat-error *ngIf="f.district?.hasError('required') && (submitted || f.district?.touched)">This field is required.</mat-error>
-            </mat-form-field>
+  <mat-tab label="Details">
+    <form [formGroup]="projectForm" class="project-form">
+      <mat-form-field appearance="outline">
+        <mat-label>District</mat-label>
+        <mat-select formControlName="district" [disabled]="isViewOnly" placeholder="Please select" required
+          (selectionChange)="onDistrictChange($event); showAssets = true">
+          @for (district of districts; track district) {
+            <mat-option [value]="district">{{ district.name }}</mat-option>
+          }
+        </mat-select>
+        @if (f.district?.hasError('required') && (submitted || f.district?.touched)) {
+          <mat-error>This field is required.</mat-error>
+        }
+      </mat-form-field>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Property</mat-label>
-                <mat-select formControlName="property" [disabled]="isViewOnly" placeholder="Please select" required
-                    (selectionChange)="onPropertyChange($event); showAll = true">
-                    <mat-option *ngFor="let property of properties" [value]="property">{{ property.name }}</mat-option>
-                </mat-select>
-                <mat-error *ngIf="f.property?.hasError('required') && (submitted || f.property?.touched)">This field is required.</mat-error>
-            </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Property</mat-label>
+        <mat-select formControlName="property" [disabled]="isViewOnly" placeholder="Please select" required
+          (selectionChange)="onPropertyChange($event); showAll = true">
+          @for (property of properties; track property) {
+            <mat-option [value]="property">{{ property.name }}</mat-option>
+          }
+        </mat-select>
+        @if (f.property?.hasError('required') && (submitted || f.property?.touched)) {
+          <mat-error>This field is required.</mat-error>
+        }
+      </mat-form-field>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Order Number</mat-label>
-                <input matInput [(ngModel)]="project.orderNumber" [ngModelOptions]="{standalone: true}" readonly>
-            </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Order Number</mat-label>
+        <input matInput [(ngModel)]="project.orderNumber" [ngModelOptions]="{standalone: true}" readonly>
+      </mat-form-field>
 
-            <mat-expansion-panel class="full-width" expanded>
-                <mat-expansion-panel-header><mat-panel-title>General</mat-panel-title></mat-expansion-panel-header>
-                <div class="project-form">
-                    <mat-form-field appearance="outline">
-                        <mat-label>Name</mat-label>
-                        <input matInput formControlName="name" [readonly]="isViewOnly" required>
-                        <mat-error *ngIf="f.name?.hasError('required') && (submitted || f.name?.touched)">Project name is required.</mat-error>
-                    </mat-form-field>
-                    <mat-form-field appearance="outline">
-                        <mat-label>Start Date</mat-label>
-                        <input matInput [matDatepicker]="startPicker" formControlName="startDate" [readonly]="isViewOnly" required>
-                        <mat-datepicker-toggle matIconSuffix [for]="startPicker" [disabled]="isViewOnly"></mat-datepicker-toggle>
-                        <mat-datepicker #startPicker></mat-datepicker>
-                        <mat-error *ngIf="f.startDate?.hasError('required') && (submitted || f.startDate?.touched)">Start date is required.</mat-error>
-                    </mat-form-field>
-                    <mat-form-field appearance="outline">
-                        <mat-label>Practical Completion Date</mat-label>
-                        <input matInput [matDatepicker]="completionPicker" formControlName="completionDate" [readonly]="isViewOnly" required>
-                        <mat-datepicker-toggle matIconSuffix [for]="completionPicker" [disabled]="isViewOnly"></mat-datepicker-toggle>
-                        <mat-datepicker #completionPicker></mat-datepicker>
-                        <mat-error *ngIf="f.completionDate?.hasError('required') && (submitted || f.completionDate?.touched)">Completion date is required.</mat-error>
-                    </mat-form-field>
-                    <mat-form-field appearance="outline">
-                        <mat-label>Planned Duration</mat-label>
-                        <input matInput formControlName="duration" [readonly]="isViewOnly">
-                    </mat-form-field>
-                    <mat-form-field appearance="outline" class="full-width">
-                        <mat-label>Scope of work</mat-label>
-                        <textarea matInput rows="3" formControlName="scope" [readonly]="isViewOnly" required></textarea>
-                        <mat-error *ngIf="f.scope?.hasError('required') && (submitted || f.scope?.touched)">Project scope is required.</mat-error>
-                    </mat-form-field>
-                </div>
-            </mat-expansion-panel>
+      <mat-expansion-panel class="full-width" expanded>
+        <mat-expansion-panel-header><mat-panel-title>General</mat-panel-title></mat-expansion-panel-header>
+        <div class="project-form">
+          <mat-form-field appearance="outline">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" [readonly]="isViewOnly" required>
+            @if (f.name?.hasError('required') && (submitted || f.name?.touched)) {
+              <mat-error>Project name is required.</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Start Date</mat-label>
+            <input matInput [matDatepicker]="startPicker" formControlName="startDate" [readonly]="isViewOnly" required>
+            <mat-datepicker-toggle matIconSuffix [for]="startPicker" [disabled]="isViewOnly"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+            @if (f.startDate?.hasError('required') && (submitted || f.startDate?.touched)) {
+              <mat-error>Start date is required.</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Practical Completion Date</mat-label>
+            <input matInput [matDatepicker]="completionPicker" formControlName="completionDate" [readonly]="isViewOnly" required>
+            <mat-datepicker-toggle matIconSuffix [for]="completionPicker" [disabled]="isViewOnly"></mat-datepicker-toggle>
+            <mat-datepicker #completionPicker></mat-datepicker>
+            @if (f.completionDate?.hasError('required') && (submitted || f.completionDate?.touched)) {
+              <mat-error>Completion date is required.</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Planned Duration</mat-label>
+            <input matInput formControlName="duration" [readonly]="isViewOnly">
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Scope of work</mat-label>
+            <textarea matInput rows="3" formControlName="scope" [readonly]="isViewOnly" required></textarea>
+            @if (f.scope?.hasError('required') && (submitted || f.scope?.touched)) {
+              <mat-error>Project scope is required.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
 
-            <div class="toggle-row">
-                <mat-checkbox formControlName="hasProjectFinance" [disabled]="isViewOnly"
-                    (change)="hasProjectFinanceChange($event)">Are the project financials available?</mat-checkbox>
-            </div>
-            <mat-form-field appearance="outline" *ngIf="financeChecked">
-                <mat-label>Amount (ZAR)</mat-label>
-                <input matInput type="number" min="0" step="0.01" formControlName="amount" [readonly]="isViewOnly">
-            </mat-form-field>
-            <mat-form-field appearance="outline" *ngIf="financeChecked">
-                <mat-label>Account</mat-label>
-                <input matInput type="number" formControlName="account" [readonly]="isViewOnly">
-            </mat-form-field>
+      <div class="toggle-row">
+        <mat-checkbox formControlName="hasProjectFinance" [disabled]="isViewOnly"
+        (change)="hasProjectFinanceChange($event)">Are the project financials available?</mat-checkbox>
+      </div>
+      @if (financeChecked) {
+        <mat-form-field appearance="outline">
+          <mat-label>Amount (ZAR)</mat-label>
+          <input matInput type="number" min="0" step="0.01" formControlName="amount" [readonly]="isViewOnly">
+        </mat-form-field>
+      }
+      @if (financeChecked) {
+        <mat-form-field appearance="outline">
+          <mat-label>Account</mat-label>
+          <input matInput type="number" formControlName="account" [readonly]="isViewOnly">
+        </mat-form-field>
+      }
 
-            <div class="toggle-row">
-                <mat-checkbox formControlName="hasParentProject" [disabled]="isViewOnly"
-                    (change)="hasParentChange($event)">Does this project have a parent?</mat-checkbox>
-            </div>
-            <mat-form-field appearance="outline" *ngIf="hasParentChecked">
-                <mat-label>Parent Project</mat-label>
-                <mat-select formControlName="property" [disabled]="isViewOnly" placeholder="Please select"
-                    (selectionChange)="onProperty($event); showAll = true">
-                    <mat-option *ngFor="let property of properties" [value]="property">{{ property.name }}</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </form>
-    </mat-tab>
+      <div class="toggle-row">
+        <mat-checkbox formControlName="hasParentProject" [disabled]="isViewOnly"
+        (change)="hasParentChange($event)">Does this project have a parent?</mat-checkbox>
+      </div>
+      @if (hasParentChecked) {
+        <mat-form-field appearance="outline">
+          <mat-label>Parent Project</mat-label>
+          <mat-select formControlName="property" [disabled]="isViewOnly" placeholder="Please select"
+            (selectionChange)="onProperty($event); showAll = true">
+            @for (property of properties; track property) {
+              <mat-option [value]="property">{{ property.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+    </form>
+  </mat-tab>
 
-    <mat-tab label="Managed By">
-        <form [formGroup]="managedByForm" class="project-form">
-            <mat-form-field appearance="outline">
-                <mat-label>Managed By</mat-label>
-                <mat-select formControlName="managedBy" [disabled]="isViewOnly" placeholder="Please select" required
-                    (selectionChange)="onManagedByChange($event)">
-                    <mat-option *ngFor="let manager of managedBylist" [value]="manager">{{ manager.name }}</mat-option>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>{{ isManagedByExternalCompany ? 'Business Name' : 'Employee Name' }}</mat-label>
-                <input matInput formControlName="name" [readonly]="isViewOnly" required>
-                <mat-error *ngIf="m.name?.hasError('required') && (submitted || m.name?.touched)">This field is required.</mat-error>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>{{ isManagedByExternalCompany ? 'Business Reg Number' : 'Employee Number' }}</mat-label>
-                <input matInput formControlName="employeeCompanyNumber" [readonly]="isViewOnly">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Contact Name</mat-label>
-                <input matInput formControlName="contactName" [readonly]="isViewOnly">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Contact Number</mat-label>
-                <input matInput type="tel" pattern="[0-9]+" maxlength="10" placeholder="000 000 0000"
-                    formControlName="contactNumber" [readonly]="isViewOnly">
-            </mat-form-field>
-        </form>
+  <mat-tab label="Managed By">
+    <form [formGroup]="managedByForm" class="project-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Managed By</mat-label>
+        <mat-select formControlName="managedBy" [disabled]="isViewOnly" placeholder="Please select" required
+          (selectionChange)="onManagedByChange($event)">
+          @for (manager of managedBylist; track manager) {
+            <mat-option [value]="manager">{{ manager.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ isManagedByExternalCompany ? 'Business Name' : 'Employee Name' }}</mat-label>
+        <input matInput formControlName="name" [readonly]="isViewOnly" required>
+        @if (m.name?.hasError('required') && (submitted || m.name?.touched)) {
+          <mat-error>This field is required.</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ isManagedByExternalCompany ? 'Business Reg Number' : 'Employee Number' }}</mat-label>
+        <input matInput formControlName="employeeCompanyNumber" [readonly]="isViewOnly">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Contact Name</mat-label>
+        <input matInput formControlName="contactName" [readonly]="isViewOnly">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Contact Number</mat-label>
+        <input matInput type="tel" pattern="[0-9]+" maxlength="10" placeholder="000 000 0000"
+          formControlName="contactNumber" [readonly]="isViewOnly">
+        </mat-form-field>
+      </form>
     </mat-tab>
 
     <mat-tab label="Suppliers">
-        <form [formGroup]="supplierForm" class="project-form">
-            <mat-form-field appearance="outline">
-                <mat-label>Supplier</mat-label>
-                <mat-select formControlName="supplier" [disabled]="isViewOnly" placeholder="Please select"
-                    (selectionChange)="onSupplierChange($event.value)">
-                    <mat-option *ngFor="let supplier of supplierDropdownOptions" [value]="supplier">{{ supplier.name }}</mat-option>
-                </mat-select>
+      <form [formGroup]="supplierForm" class="project-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Supplier</mat-label>
+          <mat-select formControlName="supplier" [disabled]="isViewOnly" placeholder="Please select"
+            (selectionChange)="onSupplierChange($event.value)">
+            @for (supplier of supplierDropdownOptions; track supplier) {
+              <mat-option [value]="supplier">{{ supplier.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Company Name</mat-label>
+          <input matInput [(ngModel)]="projectSupplier.companyName" [ngModelOptions]="{standalone: true}"
+            [readonly]="isViewOnly">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Company Number</mat-label>
+            <input matInput [(ngModel)]="projectSupplier.companyNumber" [ngModelOptions]="{standalone: true}"
+              [readonly]="isViewOnly">
             </mat-form-field>
             <mat-form-field appearance="outline">
-                <mat-label>Company Name</mat-label>
-                <input matInput [(ngModel)]="projectSupplier.companyName" [ngModelOptions]="{standalone: true}"
-                    [readonly]="isViewOnly">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Company Number</mat-label>
-                <input matInput [(ngModel)]="projectSupplier.companyNumber" [ngModelOptions]="{standalone: true}"
-                    [readonly]="isViewOnly">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Contact Name</mat-label>
-                <input matInput [(ngModel)]="projectSupplier.contactName" [ngModelOptions]="{standalone: true}"
-                    [readonly]="isViewOnly">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
+              <mat-label>Contact Name</mat-label>
+              <input matInput [(ngModel)]="projectSupplier.contactName" [ngModelOptions]="{standalone: true}"
+                [readonly]="isViewOnly">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
                 <mat-label>Contact Number</mat-label>
                 <input matInput type="tel" [(ngModel)]="projectSupplier.contactNumber" [ngModelOptions]="{standalone: true}"
-                    [readonly]="isViewOnly" placeholder="000 000 0000">
-            </mat-form-field>
-            <div class="supplier-add">
-                <button mat-raised-button color="primary" type="button" (click)="onAddSupplier()" [disabled]="isViewOnly">
+                  [readonly]="isViewOnly" placeholder="000 000 0000">
+                </mat-form-field>
+                <div class="supplier-add">
+                  <button mat-raised-button color="primary" type="button" (click)="onAddSupplier()" [disabled]="isViewOnly">
                     <mat-icon>add</mat-icon>Add Supplier
-                </button>
-            </div>
-        </form>
+                  </button>
+                </div>
+              </form>
 
-        <mat-form-field appearance="outline" class="supplier-filter">
-            <mat-label>Filter suppliers</mat-label>
-            <input matInput [(ngModel)]="supplierFilter" [ngModelOptions]="{standalone: true}">
-            <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
-        <div class="supplier-table-container">
-            <table class="supplier-table">
-                <thead>
+              <mat-form-field appearance="outline" class="supplier-filter">
+                <mat-label>Filter suppliers</mat-label>
+                <input matInput [(ngModel)]="supplierFilter" [ngModelOptions]="{standalone: true}">
+                <mat-icon matSuffix>search</mat-icon>
+              </mat-form-field>
+              <div class="supplier-table-container">
+                <table class="supplier-table">
+                  <thead>
                     <tr>
-                        <th *ngFor="let col of supplierCols">{{ col.header }}</th>
-                        <th>Actions</th>
+                      @for (col of supplierCols; track col) {
+                        <th>{{ col.header }}</th>
+                      }
+                      <th>Actions</th>
                     </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let row of filteredProjectSuppliers">
-                        <td *ngFor="let col of supplierCols">{{ row[col.field] }}</td>
+                  </thead>
+                  <tbody>
+                    @for (row of filteredProjectSuppliers; track row) {
+                      <tr>
+                        @for (col of supplierCols; track col) {
+                          <td>{{ row[col.field] }}</td>
+                        }
                         <td>
+                          @if (mode !== 'View') {
                             <button mat-icon-button type="button" (click)="selectSupplier(row); deleteSupplier()"
-                                *ngIf="mode !== 'View'" aria-label="Delete supplier">
-                                <mat-icon>delete</mat-icon>
+                              aria-label="Delete supplier">
+                              <mat-icon>delete</mat-icon>
                             </button>
+                          }
                         </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </mat-tab>
-</mat-tab-group>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
 
-<div class="project-actions">
-    <button mat-button *ngIf="activeIndex > 0" type="button" (click)="activeIndex = activeIndex - 1" [disabled]="loading">
-        <mat-icon>chevron_left</mat-icon>Back
-    </button>
-    <span class="spacer"></span>
-    <button mat-raised-button color="primary" *ngIf="activeIndex < 2" type="button" (click)="saveDetails()"
-        [disabled]="loading || isViewOnly || (activeIndex === 0 ? projectForm.invalid : activeIndex === 1 ? managedByForm.invalid : false)">
-        <mat-spinner *ngIf="loading" diameter="18"></mat-spinner>
-        Next<mat-icon iconPositionEnd>chevron_right</mat-icon>
-    </button>
-    <button mat-raised-button color="primary" *ngIf="activeIndex === 2" type="button" (click)="onSaveSuppliers()"
-        [disabled]="loading || isViewOnly">
-        <mat-spinner *ngIf="loading" diameter="18"></mat-spinner>
-        {{ loading ? 'Saving...' : 'Save' }}
-    </button>
-</div>
+          <div class="project-actions">
+            @if (activeIndex > 0) {
+              <button mat-button type="button" (click)="activeIndex = activeIndex - 1" [disabled]="loading">
+                <mat-icon>chevron_left</mat-icon>Back
+              </button>
+            }
+            <span class="spacer"></span>
+            @if (activeIndex < 2) {
+              <button mat-raised-button color="primary" type="button" (click)="saveDetails()"
+                [disabled]="loading || isViewOnly || (activeIndex === 0 ? projectForm.invalid : activeIndex === 1 ? managedByForm.invalid : false)">
+                @if (loading) {
+                  <mat-spinner diameter="18"></mat-spinner>
+                }
+                Next<mat-icon iconPositionEnd>chevron_right</mat-icon>
+              </button>
+            }
+            @if (activeIndex === 2) {
+              <button mat-raised-button color="primary" type="button" (click)="onSaveSuppliers()"
+                [disabled]="loading || isViewOnly">
+                @if (loading) {
+                  <mat-spinner diameter="18"></mat-spinner>
+                }
+                {{ loading ? 'Saving...' : 'Save' }}
+              </button>
+            }
+          </div>

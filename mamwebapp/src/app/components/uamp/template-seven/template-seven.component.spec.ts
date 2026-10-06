@@ -7,8 +7,8 @@ describe('TemplateSevenComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ TemplateSevenComponent ]
-    })
+    imports: [TemplateSevenComponent]
+})
     .compileComponents();
   }));
 

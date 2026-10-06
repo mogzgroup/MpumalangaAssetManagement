@@ -1,155 +1,157 @@
 <div class="mt-5">
-    <mat-card>
-        <mat-card-header>
-            <mat-card-subtitle>Operation Plan: assets leased out/ investment purposes assets</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-            <p><small>NB: THIS TEMPLATE IS FOR COMPLETION BY CUSTODIANS ONLY AND THOSE USERS THAT HAVE BEEN GRANTED THE
-                AUTHORITY TO LEASE OUT STATE OWNED ASSETS</small></p>
-            <div class="operation-plan-table">
-                <table mat-table [dataSource]="dataSource">
-                    <ng-container matColumnDef="district">
-                        <th mat-header-cell *matHeaderCellDef>District</th>
-                        <td mat-cell *matCellDef="let plan">{{plan.districtRegion}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="town">
-                        <th mat-header-cell *matHeaderCellDef>Town</th>
-                        <td mat-cell *matCellDef="let plan">{{plan.town}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="municipality">
-                        <th mat-header-cell *matHeaderCellDef>Local Municipality</th>
-                        <td mat-cell *matCellDef="let plan">{{plan.localAuthority}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="assetDescription">
-                        <th mat-header-cell *matHeaderCellDef>Asset Description</th>
-                        <td mat-cell *matCellDef="let plan">{{plan.assetDescription}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="streetDescription">
-                        <th mat-header-cell *matHeaderCellDef>Street Description</th>
-                        <td mat-cell *matCellDef="let plan">{{plan.streetDescription}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="propertyDescription">
-                        <th mat-header-cell *matHeaderCellDef>Property Description</th>
-                        <td mat-cell *matCellDef="let plan">{{plan.repairDescription}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="leaseType">
-                        <th mat-header-cell *matHeaderCellDef>Lease Type</th>
-                        <td mat-cell *matCellDef="let plan">
-                            <mat-form-field appearance="outline">
-                                <mat-select [(ngModel)]="plan.leaseTypeObj"
-                                    (selectionChange)="onLeaseTypeChange(plan, {value: $event.value})"
-                                    [ngModelOptions]="{standalone: true}" aria-label="Lease Type">
-                                    <mat-option *ngFor="let type of leaseTypes" [value]="type">{{type.name}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="parkingBays">
-                        <th mat-header-cell *matHeaderCellDef>No. of Parking Bays</th>
-                        <td mat-cell *matCellDef="let plan">
-                            <mat-form-field appearance="outline">
-                                <input matInput type="number" [(ngModel)]="plan.noofParkingBays"
-                                    [ngModelOptions]="{standalone: true}" aria-label="Parking bays">
-                            </mat-form-field>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="usableSpace">
-                        <th mat-header-cell *matHeaderCellDef>Usable Space (M²)</th>
-                        <td mat-cell *matCellDef="let plan">
-                            <mat-form-field appearance="outline">
-                                <input matInput type="number" [(ngModel)]="plan.usableSpace"
-                                    [ngModelOptions]="{standalone: true}" aria-label="Usable space">
-                            </mat-form-field>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="constructionArea">
-                        <th mat-header-cell *matHeaderCellDef>Construction Area (M²)</th>
-                        <td mat-cell *matCellDef="let plan">
-                            <mat-form-field appearance="outline">
-                                <input matInput type="number" [(ngModel)]="plan.constructionArea"
-                                    [ngModelOptions]="{standalone: true}" aria-label="Construction area">
-                            </mat-form-field>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="extent">
-                        <th mat-header-cell *matHeaderCellDef>Extent of Land (HA)</th>
-                        <td mat-cell *matCellDef="let plan">{{plan.extent}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="leaseStartDate">
-                        <th mat-header-cell *matHeaderCellDef>Lease Start Date</th>
-                        <td mat-cell *matCellDef="let plan">
-                            <mat-form-field appearance="outline">
-                                <input matInput [matDatepicker]="leaseStartPicker" [(ngModel)]="plan.leaseStartDate"
-                                    [ngModelOptions]="{standalone: true}" aria-label="Lease start date">
-                                <mat-datepicker-toggle matIconSuffix [for]="leaseStartPicker"></mat-datepicker-toggle>
-                                <mat-datepicker #leaseStartPicker></mat-datepicker>
-                            </mat-form-field>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="leaseEndDate">
-                        <th mat-header-cell *matHeaderCellDef>Lease End Date</th>
-                        <td mat-cell *matCellDef="let plan">
-                            <mat-form-field appearance="outline">
-                                <input matInput [matDatepicker]="leaseEndPicker" [(ngModel)]="plan.leaseEndDate"
-                                    [ngModelOptions]="{standalone: true}" aria-label="Lease end date">
-                                <mat-datepicker-toggle matIconSuffix [for]="leaseEndPicker"></mat-datepicker-toggle>
-                                <mat-datepicker #leaseEndPicker></mat-datepicker>
-                            </mat-form-field>
-                        </td>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-subtitle>Operation Plan: assets leased out/ investment purposes assets</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p><small>NB: THIS TEMPLATE IS FOR COMPLETION BY CUSTODIANS ONLY AND THOSE USERS THAT HAVE BEEN GRANTED THE
+      AUTHORITY TO LEASE OUT STATE OWNED ASSETS</small></p>
+      <div class="operation-plan-table">
+        <table mat-table [dataSource]="dataSource">
+          <ng-container matColumnDef="district">
+            <th mat-header-cell *matHeaderCellDef>District</th>
+            <td mat-cell *matCellDef="let plan">{{plan.districtRegion}}</td>
+          </ng-container>
+          <ng-container matColumnDef="town">
+            <th mat-header-cell *matHeaderCellDef>Town</th>
+            <td mat-cell *matCellDef="let plan">{{plan.town}}</td>
+          </ng-container>
+          <ng-container matColumnDef="municipality">
+            <th mat-header-cell *matHeaderCellDef>Local Municipality</th>
+            <td mat-cell *matCellDef="let plan">{{plan.localAuthority}}</td>
+          </ng-container>
+          <ng-container matColumnDef="assetDescription">
+            <th mat-header-cell *matHeaderCellDef>Asset Description</th>
+            <td mat-cell *matCellDef="let plan">{{plan.assetDescription}}</td>
+          </ng-container>
+          <ng-container matColumnDef="streetDescription">
+            <th mat-header-cell *matHeaderCellDef>Street Description</th>
+            <td mat-cell *matCellDef="let plan">{{plan.streetDescription}}</td>
+          </ng-container>
+          <ng-container matColumnDef="propertyDescription">
+            <th mat-header-cell *matHeaderCellDef>Property Description</th>
+            <td mat-cell *matCellDef="let plan">{{plan.repairDescription}}</td>
+          </ng-container>
+          <ng-container matColumnDef="leaseType">
+            <th mat-header-cell *matHeaderCellDef>Lease Type</th>
+            <td mat-cell *matCellDef="let plan">
+              <mat-form-field appearance="outline">
+                <mat-select [(ngModel)]="plan.leaseTypeObj"
+                  (selectionChange)="onLeaseTypeChange(plan, {value: $event.value})"
+                  [ngModelOptions]="{standalone: true}" aria-label="Lease Type">
+                  @for (type of leaseTypes; track type) {
+                    <mat-option [value]="type">{{type.name}}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="parkingBays">
+            <th mat-header-cell *matHeaderCellDef>No. of Parking Bays</th>
+            <td mat-cell *matCellDef="let plan">
+              <mat-form-field appearance="outline">
+                <input matInput type="number" [(ngModel)]="plan.noofParkingBays"
+                  [ngModelOptions]="{standalone: true}" aria-label="Parking bays">
+                </mat-form-field>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="usableSpace">
+              <th mat-header-cell *matHeaderCellDef>Usable Space (M²)</th>
+              <td mat-cell *matCellDef="let plan">
+                <mat-form-field appearance="outline">
+                  <input matInput type="number" [(ngModel)]="plan.usableSpace"
+                    [ngModelOptions]="{standalone: true}" aria-label="Usable space">
+                  </mat-form-field>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="constructionArea">
+                <th mat-header-cell *matHeaderCellDef>Construction Area (M²)</th>
+                <td mat-cell *matCellDef="let plan">
+                  <mat-form-field appearance="outline">
+                    <input matInput type="number" [(ngModel)]="plan.constructionArea"
+                      [ngModelOptions]="{standalone: true}" aria-label="Construction area">
+                    </mat-form-field>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="extent">
+                  <th mat-header-cell *matHeaderCellDef>Extent of Land (HA)</th>
+                  <td mat-cell *matCellDef="let plan">{{plan.extent}}</td>
+                </ng-container>
+                <ng-container matColumnDef="leaseStartDate">
+                  <th mat-header-cell *matHeaderCellDef>Lease Start Date</th>
+                  <td mat-cell *matCellDef="let plan">
+                    <mat-form-field appearance="outline">
+                      <input matInput [matDatepicker]="leaseStartPicker" [(ngModel)]="plan.leaseStartDate"
+                        [ngModelOptions]="{standalone: true}" aria-label="Lease start date">
+                        <mat-datepicker-toggle matIconSuffix [for]="leaseStartPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #leaseStartPicker></mat-datepicker>
+                      </mat-form-field>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="leaseEndDate">
+                    <th mat-header-cell *matHeaderCellDef>Lease End Date</th>
+                    <td mat-cell *matCellDef="let plan">
+                      <mat-form-field appearance="outline">
+                        <input matInput [matDatepicker]="leaseEndPicker" [(ngModel)]="plan.leaseEndDate"
+                          [ngModelOptions]="{standalone: true}" aria-label="Lease end date">
+                          <mat-datepicker-toggle matIconSuffix [for]="leaseEndPicker"></mat-datepicker-toggle>
+                          <mat-datepicker #leaseEndPicker></mat-datepicker>
+                        </mat-form-field>
+                      </td>
                     </ng-container>
                     <ng-container matColumnDef="rental">
-                        <th mat-header-cell *matHeaderCellDef>Rental PM/PA</th>
-                        <td mat-cell *matCellDef="let plan">
-                            <mat-form-field appearance="outline">
-                                <span matTextPrefix>R&nbsp;</span>
-                                <input matInput type="number" [(ngModel)]="plan.rentalPmPa"
-                                    [ngModelOptions]="{standalone: true}" aria-label="Rental per month per annum">
-                            </mat-form-field>
+                      <th mat-header-cell *matHeaderCellDef>Rental PM/PA</th>
+                      <td mat-cell *matCellDef="let plan">
+                        <mat-form-field appearance="outline">
+                          <span matTextPrefix>R&nbsp;</span>
+                          <input matInput type="number" [(ngModel)]="plan.rentalPmPa"
+                            [ngModelOptions]="{standalone: true}" aria-label="Rental per month per annum">
+                          </mat-form-field>
                         </td>
-                    </ng-container>
-                    <ng-container matColumnDef="comment">
+                      </ng-container>
+                      <ng-container matColumnDef="comment">
                         <th mat-header-cell *matHeaderCellDef>Comments</th>
                         <td mat-cell *matCellDef="let plan">
-                            <mat-form-field appearance="outline">
-                                <input matInput [(ngModel)]="plan.comment" [ngModelOptions]="{standalone: true}"
-                                    autocomplete="off" aria-label="Comments">
+                          <mat-form-field appearance="outline">
+                            <input matInput [(ngModel)]="plan.comment" [ngModelOptions]="{standalone: true}"
+                              autocomplete="off" aria-label="Comments">
                             </mat-form-field>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="leased">
-                        <th mat-header-cell *matHeaderCellDef>Leased</th>
-                        <td mat-cell *matCellDef="let plan">
+                          </td>
+                        </ng-container>
+                        <ng-container matColumnDef="leased">
+                          <th mat-header-cell *matHeaderCellDef>Leased</th>
+                          <td mat-cell *matCellDef="let plan">
                             <mat-slide-toggle [(ngModel)]="plan.leased"
-                                (change)="onLeased(plan, $event.checked)"
-                                [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
-                        </td>
-                    </ng-container>
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-                </table>
-            </div>
-            <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 15]" showFirstLastButtons
-                aria-label="Select page of operation plans"></mat-paginator>
-        </mat-card-content>
-    </mat-card>
-</div>
+                              (change)="onLeased(plan, $event.checked)"
+                            [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+                          </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                      </table>
+                    </div>
+                    <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 15]" showFirstLastButtons
+                    aria-label="Select page of operation plans"></mat-paginator>
+                  </mat-card-content>
+                </mat-card>
+              </div>
 
-<ng-template #leaseConfirmationDialog>
-    <mat-card class="lease-confirmation">
-        <mat-card-header mat-dialog-title><mat-card-title>Confirmation</mat-card-title></mat-card-header>
-        <mat-card-content mat-dialog-content>Are you sure that this property is leased?</mat-card-content>
-        <mat-card-actions mat-dialog-actions align="end">
-            <button mat-button type="button" (click)="confirmLeased(false)">No</button>
-            <button mat-raised-button color="primary" type="button" (click)="confirmLeased(true)">Yes</button>
-        </mat-card-actions>
-    </mat-card>
-</ng-template>
+              <ng-template #leaseConfirmationDialog>
+                <mat-card class="lease-confirmation">
+                  <mat-card-header mat-dialog-title><mat-card-title>Confirmation</mat-card-title></mat-card-header>
+                  <mat-card-content mat-dialog-content>Are you sure that this property is leased?</mat-card-content>
+                  <mat-card-actions mat-dialog-actions align="end">
+                    <button mat-button type="button" (click)="confirmLeased(false)">No</button>
+                    <button mat-raised-button color="primary" type="button" (click)="confirmLeased(true)">Yes</button>
+                  </mat-card-actions>
+                </mat-card>
+              </ng-template>
 
-<div class="uamp-footer">
-    <button mat-button type="button" (click)="back()">
-        <mat-icon>chevron_left</mat-icon>Back
-    </button>
-    <span class="uamp-footer-spacer"></span>
-    <button mat-button type="button" (click)="save()">Save</button>
-    <button mat-raised-button color="primary" type="button" (click)="nextPage()">Next</button>
-</div>
+              <div class="uamp-footer">
+                <button mat-button type="button" (click)="back()">
+                  <mat-icon>chevron_left</mat-icon>Back
+                </button>
+                <span class="uamp-footer-spacer"></span>
+                <button mat-button type="button" (click)="save()">Save</button>
+                <button mat-raised-button color="primary" type="button" (click)="nextPage()">Next</button>
+              </div>

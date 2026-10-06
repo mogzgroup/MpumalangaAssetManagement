@@ -1,150 +1,168 @@
 <div class="stepsdemo-content mt-5">
-    <mat-card>
-        <mat-card-header>
-            <mat-card-subtitle>Summary of accommodation requirements per budget programme</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-            <div class="formgrid grid">
-                <mat-form-field appearance="outline" class="field col-6">
-                    <mat-label>Mission</mat-label>
-                    <textarea matInput [(ngModel)]="uamp.templeteOne.optimalSupportingAccommodation.mission"
-                        [ngModelOptions]="{standalone: true}" (blur)="updateUamp()" autocomplete="off"></textarea>
-                    <mat-error *ngIf="submitted && o.mission.errors && o.mission.errors.required">
-                        This field is required.
-                    </mat-error>
-                </mat-form-field>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-subtitle>Summary of accommodation requirements per budget programme</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="formgrid grid">
+        <mat-form-field appearance="outline" class="field col-6">
+          <mat-label>Mission</mat-label>
+          <textarea matInput [(ngModel)]="uamp.templeteOne.optimalSupportingAccommodation.mission"
+          [ngModelOptions]="{standalone: true}" (blur)="updateUamp()" autocomplete="off"></textarea>
+          @if (submitted && o.mission.errors && o.mission.errors.required) {
+            <mat-error>
+              This field is required.
+            </mat-error>
+          }
+        </mat-form-field>
 
-                <mat-form-field appearance="outline" class="field col-6">
-                    <mat-label>Optimal supporting accommodation</mat-label>
-                    <textarea matInput
-                        [(ngModel)]="uamp.templeteOne.optimalSupportingAccommodation.supportingAccommodation"
-                        [ngModelOptions]="{standalone: true}" (blur)="updateUamp()" autocomplete="off"></textarea>
-                    <mat-hint>What are the optimal assets required to support this mission?</mat-hint>
-                    <mat-error *ngIf="submitted && o.optimalSupportingAccommodation.errors
-                        && o.optimalSupportingAccommodation.errors.required">
-                        This field is required.
-                    </mat-error>
-                </mat-form-field>
-            </div>
+        <mat-form-field appearance="outline" class="field col-6">
+          <mat-label>Optimal supporting accommodation</mat-label>
+          <textarea matInput
+            [(ngModel)]="uamp.templeteOne.optimalSupportingAccommodation.supportingAccommodation"
+          [ngModelOptions]="{standalone: true}" (blur)="updateUamp()" autocomplete="off"></textarea>
+          <mat-hint>What are the optimal assets required to support this mission?</mat-hint>
+          @if (submitted && o.optimalSupportingAccommodation.errors
+            && o.optimalSupportingAccommodation.errors.required) {
+            <mat-error>
+              This field is required.
+            </mat-error>
+          }
+        </mat-form-field>
+      </div>
 
-            <div class="mt-5">
-                <div class="programme-actions">
-                    <button mat-raised-button color="primary" matTooltip="Add Programme" type="button"
-                        (click)="openAddProgremme()">
-                        <mat-icon>add</mat-icon>
-                        Add Programme
-                    </button>
-                </div>
+      <div class="mt-5">
+        <div class="programme-actions">
+          <button mat-raised-button color="primary" matTooltip="Add Programme" type="button"
+            (click)="openAddProgremme()">
+            <mat-icon>add</mat-icon>
+            Add Programme
+          </button>
+        </div>
 
-                <table mat-table [dataSource]="dataSource" class="mat-elevation-z1">
-                    <ng-container matColumnDef="corporateObjective">
-                        <th mat-header-cell *matHeaderCellDef>Corporate Objectives</th>
-                        <td mat-cell *matCellDef="let programme">{{ programme.corporateObjective }}</td>
-                    </ng-container>
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z1">
+          <ng-container matColumnDef="corporateObjective">
+            <th mat-header-cell *matHeaderCellDef>Corporate Objectives</th>
+            <td mat-cell *matCellDef="let programme">{{ programme.corporateObjective }}</td>
+          </ng-container>
 
-                    <ng-container matColumnDef="outcomes">
-                        <th mat-header-cell *matHeaderCellDef>Outcomes/ Planned Outputs</th>
-                        <td mat-cell *matCellDef="let programme">{{ programme.outcomes }}</td>
-                    </ng-container>
+          <ng-container matColumnDef="outcomes">
+            <th mat-header-cell *matHeaderCellDef>Outcomes/ Planned Outputs</th>
+            <td mat-cell *matCellDef="let programme">{{ programme.outcomes }}</td>
+          </ng-container>
 
-                    <ng-container matColumnDef="solution">
-                        <th mat-header-cell *matHeaderCellDef>Optimal Supporting Accommodation Solution</th>
-                        <td mat-cell *matCellDef="let programme">
-                            {{ programme.optimalSupportingAccommodationSolution }}
-                        </td>
-                    </ng-container>
+          <ng-container matColumnDef="solution">
+            <th mat-header-cell *matHeaderCellDef>Optimal Supporting Accommodation Solution</th>
+            <td mat-cell *matCellDef="let programme">
+              {{ programme.optimalSupportingAccommodationSolution }}
+            </td>
+          </ng-container>
 
-                    <ng-container matColumnDef="rationale">
-                        <th mat-header-cell *matHeaderCellDef>Rationale for Chosen Solution</th>
-                        <td mat-cell *matCellDef="let programme">{{ programme.rationaleChosenSolution }}</td>
-                    </ng-container>
+          <ng-container matColumnDef="rationale">
+            <th mat-header-cell *matHeaderCellDef>Rationale for Chosen Solution</th>
+            <td mat-cell *matCellDef="let programme">{{ programme.rationaleChosenSolution }}</td>
+          </ng-container>
 
-                    <ng-container matColumnDef="actions">
-                        <th mat-header-cell *matHeaderCellDef></th>
-                        <td mat-cell *matCellDef="let programme">
-                            <button mat-button *ngIf="mode !== 'View'" [matMenuTriggerFor]="programmeMenu"
-                                (click)="selectProgramme(programme)">
-                                More
-                                <mat-icon>arrow_drop_down</mat-icon>
-                            </button>
-                        </td>
-                    </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let programme">
+              @if (mode !== 'View') {
+                <button mat-button [matMenuTriggerFor]="programmeMenu"
+                  (click)="selectProgramme(programme)">
+                  More
+                  <mat-icon>arrow_drop_down</mat-icon>
+                </button>
+              }
+            </td>
+          </ng-container>
 
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-                </table>
-                <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 15]" showFirstLastButtons
-                    aria-label="Select page of programmes"></mat-paginator>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+        <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 15]" showFirstLastButtons
+        aria-label="Select page of programmes"></mat-paginator>
 
-                <mat-menu #programmeMenu="matMenu">
-                    <button mat-menu-item type="button" (click)="update()">
-                        <mat-icon>edit</mat-icon>
-                        <span>Update</span>
-                    </button>
-                    <button mat-menu-item type="button" (click)="confirmDelete()">
-                        <mat-icon>delete</mat-icon>
-                        <span>Delete</span>
-                    </button>
-                </mat-menu>
-            </div>
-        </mat-card-content>
-    </mat-card>
+        <mat-menu #programmeMenu="matMenu">
+          <button mat-menu-item type="button" (click)="update()">
+            <mat-icon>edit</mat-icon>
+            <span>Update</span>
+          </button>
+          <button mat-menu-item type="button" (click)="confirmDelete()">
+            <mat-icon>delete</mat-icon>
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>
 
 <ng-template #programmeDialog>
-    <h2 mat-dialog-title>{{ dialogHeader }}</h2>
-    <mat-dialog-content>
-        <form [formGroup]="programmeForm">
-            <div class="formgrid grid">
-                <mat-form-field appearance="outline" class="field col-6">
-                    <mat-label>Corporate Objectives</mat-label>
-                    <textarea matInput formControlName="corporateObjective" autocomplete="off"></textarea>
-                    <mat-error *ngIf="submitted && p.corporateObjective.errors?.required">
-                        This field is required.
-                    </mat-error>
-                </mat-form-field>
+  <h2 mat-dialog-title>{{ dialogHeader }}</h2>
+  <mat-dialog-content>
+    <form [formGroup]="programmeForm">
+      <div class="formgrid grid">
+        <mat-form-field appearance="outline" class="field col-6">
+          <mat-label>Corporate Objectives</mat-label>
+          <textarea matInput formControlName="corporateObjective" autocomplete="off"></textarea>
+          @if (submitted && p.corporateObjective.errors?.required) {
+            <mat-error>
+              This field is required.
+            </mat-error>
+          }
+        </mat-form-field>
 
-                <mat-form-field appearance="outline" class="field col-6">
-                    <mat-label>Outcomes/ Planned Outputs</mat-label>
-                    <textarea matInput formControlName="outcomes"></textarea>
-                    <mat-error *ngIf="submitted && p.outcomes.errors?.required">This field is required.</mat-error>
-                </mat-form-field>
+        <mat-form-field appearance="outline" class="field col-6">
+          <mat-label>Outcomes/ Planned Outputs</mat-label>
+          <textarea matInput formControlName="outcomes"></textarea>
+          @if (submitted && p.outcomes.errors?.required) {
+            <mat-error>This field is required.</mat-error>
+          }
+        </mat-form-field>
 
-                <mat-form-field appearance="outline" class="field col-6">
-                    <mat-label>Optimal Supporting Accommodation Solution</mat-label>
-                    <textarea matInput formControlName="optimalSupportingAccommodationSolution"
-                        autocomplete="off"></textarea>
-                    <mat-hint>Give a brief summary of the accommodation requirements, current usage and solutions for
-                        Head Office &amp; Regions / Districts.</mat-hint>
-                    <mat-error *ngIf="submitted && p.optimalSupportingAccommodationSolution.errors?.required">
-                        This field is required.
-                    </mat-error>
-                </mat-form-field>
+        <mat-form-field appearance="outline" class="field col-6">
+          <mat-label>Optimal Supporting Accommodation Solution</mat-label>
+          <textarea matInput formControlName="optimalSupportingAccommodationSolution"
+          autocomplete="off"></textarea>
+          <mat-hint>Give a brief summary of the accommodation requirements, current usage and solutions for
+          Head Office &amp; Regions / Districts.</mat-hint>
+          @if (submitted && p.optimalSupportingAccommodationSolution.errors?.required) {
+            <mat-error>
+              This field is required.
+            </mat-error>
+          }
+        </mat-form-field>
 
-                <mat-form-field appearance="outline" class="field col-6">
-                    <mat-label>Rationale for Chosen Solution</mat-label>
-                    <textarea matInput formControlName="rationaleChosenSolution" autocomplete="off"></textarea>
-                    <mat-hint>Provide a brief motivation for your solutions.</mat-hint>
-                    <mat-error *ngIf="submitted && p.rationaleChosenSolution.errors?.required">
-                        This field is required.
-                    </mat-error>
-                </mat-form-field>
-            </div>
-        </form>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-        <button mat-button type="button" (click)="closeProgrammeDialog()">Cancel</button>
-        <button mat-raised-button color="primary" *ngIf="!isEdit" type="button" (click)="addProgram()">Add</button>
-        <button mat-raised-button color="primary" *ngIf="isEdit" type="button" (click)="onUpdate()">Update</button>
-    </mat-dialog-actions>
+        <mat-form-field appearance="outline" class="field col-6">
+          <mat-label>Rationale for Chosen Solution</mat-label>
+          <textarea matInput formControlName="rationaleChosenSolution" autocomplete="off"></textarea>
+          <mat-hint>Provide a brief motivation for your solutions.</mat-hint>
+          @if (submitted && p.rationaleChosenSolution.errors?.required) {
+            <mat-error>
+              This field is required.
+            </mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="closeProgrammeDialog()">Cancel</button>
+    @if (!isEdit) {
+      <button mat-raised-button color="primary" type="button" (click)="addProgram()">Add</button>
+    }
+    @if (isEdit) {
+      <button mat-raised-button color="primary" type="button" (click)="onUpdate()">Update</button>
+    }
+  </mat-dialog-actions>
 </ng-template>
 
 <div class="uamp-footer">
-    <button mat-button type="button" (click)="cancel()">
-        <mat-icon>chevron_left</mat-icon>
-        Cancel
-    </button>
-    <span class="uamp-footer-spacer"></span>
-    <button mat-button type="button" (click)="save()">Save</button>
-    <button mat-raised-button color="primary" type="button" (click)="nextPage()">Next</button>
+  <button mat-button type="button" (click)="cancel()">
+    <mat-icon>chevron_left</mat-icon>
+    Cancel
+  </button>
+  <span class="uamp-footer-spacer"></span>
+  <button mat-button type="button" (click)="save()">Save</button>
+  <button mat-raised-button color="primary" type="button" (click)="nextPage()">Next</button>
 </div>

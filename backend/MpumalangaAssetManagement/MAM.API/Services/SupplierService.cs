@@ -1,5 +1,5 @@
 ﻿using MAM.BusinessLayer.Models;
-using MAM.BusinessLayer.Repositories;
+using MAM.BusinessLayer.Interfaces;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -16,25 +16,16 @@ namespace MAM.API.Services
     public class SupplierService : ISupplierService
     {
         private readonly AppSettings _appSettings;
+        private readonly ISupplierRepository _supplierRepository;
 
-        public SupplierService(IOptions<AppSettings> appSettings)
+        public SupplierService(IOptions<AppSettings> appSettings, ISupplierRepository supplierRepository)
         {
             _appSettings = appSettings.Value;
+            _supplierRepository = supplierRepository;
         }
 
-        public List<Supplier> AddSuppliers(List<Supplier> suppliers){
-            using (var _supplierRepository = new SupplierRepository(_appSettings))
-            {
-                return _supplierRepository.AddSuppliers(suppliers);
-            }
-        }
+        public List<Supplier> AddSuppliers(List<Supplier> suppliers) => _supplierRepository.AddSuppliers(suppliers);
 
-        public List<Supplier> GetSuppliers()
-        {
-            using (var _supplierRepository = new SupplierRepository(_appSettings))
-            {
-                return _supplierRepository.GetSuppliers();
-            }
-        }
+        public List<Supplier> GetSuppliers() => _supplierRepository.GetSuppliers();
     }
 }

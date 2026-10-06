@@ -8,8 +8,8 @@ describe('ViewServiceRequestComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewServiceRequestComponent ]
-    })
+    imports: [ViewServiceRequestComponent]
+})
     .compileComponents();
   }));
 

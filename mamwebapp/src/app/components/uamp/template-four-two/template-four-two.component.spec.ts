@@ -8,8 +8,8 @@ describe('TemplateFourTwoComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ TemplateFourTwoComponent ]
-    })
+    imports: [TemplateFourTwoComponent]
+})
     .compileComponents();
   }));
 

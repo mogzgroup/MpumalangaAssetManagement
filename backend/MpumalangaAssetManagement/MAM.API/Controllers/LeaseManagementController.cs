@@ -30,32 +30,16 @@ namespace MAM.API.Controllers
         [Route("getleasedproperties")]
         public IActionResult GetLeasedProperties()
         {
-            try
-            {
-                List<LeasedProperty> properties = _leaseManagementService.GetLeasedProperties();
-                return Ok(properties);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            List<LeasedProperty> properties = _leaseManagementService.GetLeasedProperties();
+            return Ok(properties);
         }
 
         [HttpPost]
         [Route("getleasedpropertydetails")]
         public IActionResult GetLeasedPropertyDetails(LeasedProperty leasedProperty)
         {
-            try
-            {
-                leasedProperty = _leaseManagementService.GetLeasedPropertyDetails(leasedProperty);
-                return Ok(leasedProperty);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            leasedProperty = _leaseManagementService.GetLeasedPropertyDetails(leasedProperty);
+            return Ok(leasedProperty);
         }
 
         [HttpPost, DisableRequestSizeLimit]
@@ -65,35 +49,27 @@ namespace MAM.API.Controllers
 
             bool isUploaded = false;
 
-            try
+            for (int i = 0; i < Request.Form.Files.Count(); i++)
             {
-                for (int i = 0; i < Request.Form.Files.Count(); i++)
-                {
-                    var file = Request.Form.Files[i];
-                    var oFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    string _fileName = fileName + "_" + i + Path.GetExtension(oFileName);
-                    var folderName = Path.Combine("Uploads", "HandoverDocuments");
-                    var pathToSave = _uploadStorage.GetDirectory("HandoverDocuments");
+                var file = Request.Form.Files[i];
+                var oFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                string _fileName = fileName + "_" + i + Path.GetExtension(oFileName);
+                var folderName = Path.Combine("Uploads", "HandoverDocuments");
+                var pathToSave = _uploadStorage.GetDirectory("HandoverDocuments");
 
-                    if (file.Length > 0)
+                if (file.Length > 0)
+                {
+                    var fullPath = Path.Combine(pathToSave, _fileName);
+                    var dbPath = Path.Combine(folderName, _fileName);
+                    using (FileStream stream = new FileStream(fullPath, FileMode.Create))
                     {
-                        var fullPath = Path.Combine(pathToSave, _fileName);
-                        var dbPath = Path.Combine(folderName, _fileName);
-                        using (FileStream stream = new FileStream(fullPath, FileMode.Create))
-                        {
-                            file.CopyTo(stream);
-                        }
-                    }
-                    else
-                    {
-                        return BadRequest();
+                        file.CopyTo(stream);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
+                else
+                {
+                    return BadRequest();
+                }
             }
 
             isUploaded = true;
@@ -104,16 +80,8 @@ namespace MAM.API.Controllers
         [Route("deleteLeasedProperty")]
         public IActionResult DeleteLeasedProperty([FromBody]LeasedProperty leasedProperty)
         {
-            try
-            {
-                bool isUpdated = _leaseManagementService.DeleteLeasedProperty(leasedProperty);
-                return Ok(isUpdated);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            bool isUpdated = _leaseManagementService.DeleteLeasedProperty(leasedProperty);
+            return Ok(isUpdated);
         }
 
         [HttpPost, DisableRequestSizeLimit]
@@ -123,35 +91,27 @@ namespace MAM.API.Controllers
 
             bool isUploaded = false;
 
-            try
+            for (int i = 0; i < Request.Form.Files.Count(); i++)
             {
-                for (int i = 0; i < Request.Form.Files.Count(); i++)
-                {
-                    var file = Request.Form.Files[i];
-                    var oFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    string _fileName = fileName + "_" + i + Path.GetExtension(oFileName);
-                    var folderName = Path.Combine("Uploads", "SnagList");
-                    var pathToSave = _uploadStorage.GetDirectory("SnagList");
+                var file = Request.Form.Files[i];
+                var oFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                string _fileName = fileName + "_" + i + Path.GetExtension(oFileName);
+                var folderName = Path.Combine("Uploads", "SnagList");
+                var pathToSave = _uploadStorage.GetDirectory("SnagList");
 
-                    if (file.Length > 0)
+                if (file.Length > 0)
+                {
+                    var fullPath = Path.Combine(pathToSave, _fileName);
+                    var dbPath = Path.Combine(folderName, _fileName);
+                    using (FileStream stream = new FileStream(fullPath, FileMode.Create))
                     {
-                        var fullPath = Path.Combine(pathToSave, _fileName);
-                        var dbPath = Path.Combine(folderName, _fileName);
-                        using (FileStream stream = new FileStream(fullPath, FileMode.Create))
-                        {
-                            file.CopyTo(stream);
-                        }
-                    }
-                    else
-                    {
-                        return BadRequest();
+                        file.CopyTo(stream);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
+                else
+                {
+                    return BadRequest();
+                }
             }
 
             isUploaded = true;

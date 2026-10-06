@@ -1,47 +1,92 @@
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild, inject } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { UampService } from 'src/app/services/uamp/uamp.service';
 import { ToastService } from 'src/app/services/toast.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
-import { CurrentUtlisation } from '../../../models/current-utilisation.model';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { FacilityService } from 'src/app/services/facility/facility.service';
+import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
+import { FormGroup, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AcquisitionPlan } from 'src/app/models/acquisition-plan.model';
 import { UAMP } from 'src/app/models/uamp.model';
 import { Property } from 'src/app/models/property.model';
-import { SurrenderPlan } from 'src/app/models/surrender-plan.model';
 import { Router } from '@angular/router';
 import { SharedService } from 'src/app/services/shared.service';
+import { MatCard, MatCardSubtitle, MatCardContent, MatCardHeader, MatCardTitle, MatCardActions } from '@angular/material/card';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { CurrencyPipe } from '@angular/common';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatInput } from '@angular/material/input';
 
 @Component({
-  standalone: false,
-  selector: 'app-template-four-two',
-  templateUrl: './template-four-two.component.html',
-  styleUrls: ['./template-four-two.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
+    selector: 'app-template-four-two',
+    templateUrl: './template-four-two.component.html',
+    styleUrls: ['./template-four-two.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [
+    MatCard,
+    MatCardSubtitle,
+    MatCardContent,
+    MatButton,
+    MatTooltip,
+    MatIcon,
+    MatButtonToggleGroup,
+    FormsModule,
+    MatButtonToggle,
+    MatIconButton,
+    MatMenuTrigger,
+    MatPaginator,
+    MatMenu,
+    MatMenuItem,
+    MatCardHeader,
+    MatDialogTitle,
+    MatCardTitle,
+    CdkScrollable,
+    MatDialogContent,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatInput,
+    MatCardActions,
+    MatDialogActions,
+    CurrencyPipe
+],
 })
 export class TemplateFourTwoComponent implements OnInit {
+  private sharedService = inject(SharedService);
+  private router = inject(Router);
+  uampService = inject(UampService);
+  private formBuilder = inject(FormBuilder);
+  private toastService = inject(ToastService);
+  private dialog = inject(MatDialog);
+
   acquisitionPlanForm: FormGroup;
-  submitted: boolean = false;
+  submitted = false;
   regions: any[];
   initialNeedYears: any[];
   statuses: any[];
   acquisitionTypes: any[];
-  acquisitionPlans: Array<AcquisitionPlan> = [];
+  acquisitionPlans: AcquisitionPlan[] = [];
   uamp: UAMP;
-  showComfirmationDelete:boolean = false;
+  showComfirmationDelete = false;
   showConfirmationRequired = false;
   pendingRequiredPlan: AcquisitionPlan | null = null;
   selectedAcquisitionPlan: AcquisitionPlan;
-  isEdit: boolean = false;
+  isEdit = false;
   requiredOptions: any[];
-  displayDialog: boolean = false;
-  dialogHeader: string = '';
-  mode: string = 'Edit';
-  index: number = 0;
-  isLoading: boolean = false;
-  pagedAcquisitionPlans: Array<AcquisitionPlan> = [];
+  displayDialog = false;
+  dialogHeader = '';
+  mode = 'Edit';
+  index = 0;
+  isLoading = false;
+  pagedAcquisitionPlans: AcquisitionPlan[] = [];
   pageIndex = 0;
   pageSize = 5;
 
@@ -55,7 +100,7 @@ export class TemplateFourTwoComponent implements OnInit {
     this.openFormDialog();
   }
 
-  constructor(private sharedService: SharedService, private router: Router, public uampService: UampService, private formBuilder: FormBuilder, private toastService: ToastService, private dialog: MatDialog) {
+  constructor() {
     this.uampService.uampChange.subscribe((value) => {
       if(value)
       {
@@ -222,7 +267,7 @@ export class TemplateFourTwoComponent implements OnInit {
 
   deleteAcquisitionPlan(){
     if(this.selectedAcquisitionPlan.id == 0){
-      var index = this.acquisitionPlans.indexOf(this.selectedAcquisitionPlan);    
+      const index = this.acquisitionPlans.indexOf(this.selectedAcquisitionPlan);    
       this.acquisitionPlans.splice(index, 1);
       this.updatePagedAcquisitionPlans();
       this.closeDeleteConfirmation();
@@ -231,7 +276,7 @@ export class TemplateFourTwoComponent implements OnInit {
       this.uampService.deleteAcquisitionPlan(this.selectedAcquisitionPlan).pipe(first()).subscribe(isDeleted => {
         if (isDeleted) {
           this.toastService.showSuccess('Acquisition plan has been deleted successfully.');
-          var index = this.acquisitionPlans.indexOf(this.selectedAcquisitionPlan);    
+          const index = this.acquisitionPlans.indexOf(this.selectedAcquisitionPlan);    
           this.acquisitionPlans.splice(index, 1);
           this.updatePagedAcquisitionPlans();
           this.closeDeleteConfirmation();

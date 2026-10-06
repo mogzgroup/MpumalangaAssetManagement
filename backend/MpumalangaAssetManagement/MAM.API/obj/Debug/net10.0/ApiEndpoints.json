@@ -403,6 +403,16 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "MAM.API.Controllers.HealthDbController",
+    "Method": "Get",
+    "RelativePath": "api/health/db",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "MAM.API.Controllers.HiringRegisterController",
     "Method": "Index",
     "RelativePath": "api/hiringregister",

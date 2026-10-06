@@ -2,22 +2,16 @@
 using MAM.BusinessLayer.Models;
 using MAM.BusinessLayer.Models.Enums;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MAM.BusinessLayer.Repositories
 {
-    public class FacilityRepository : IFacilityRepository, IDisposable
+    public class FacilityRepository : IFacilityRepository
     {
         private AppSettings appSettings { get; set; }
-        // Flag: Has Dispose already been called?
-        bool disposed = false;
-        // Instantiate a SafeHandle instance.
-        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
 
         public FacilityRepository(AppSettings settings)
         {
@@ -75,6 +69,7 @@ namespace MAM.BusinessLayer.Repositories
             int land;
             using (var db = new DataAccess.DataContext(appSettings.ConnectionString))
             {
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var counts = db.Facilities.AsNoTracking()
                     .GroupBy(_ => 1)
                     .Select(facilities => new
@@ -86,6 +81,18 @@ namespace MAM.BusinessLayer.Repositories
                         Land = facilities.Count(f => f.Type == "Land")
                     })
                     .SingleOrDefault();
+                sw.Stop();
+
+                // Instrumentation: log query duration and row counts for diagnostics (no sensitive data)
+                if (sw.ElapsedMilliseconds > 200) // threshold = 200ms, tune as needed
+                {
+                    try
+                    {
+                        var msg = $"GetDashboardWedges DB query took {sw.ElapsedMilliseconds}ms; counts: Total={counts?.Total ?? 0}, SignedOff={counts?.SignedOff ?? 0}, NonResidential={counts?.NonResidential ?? 0}, Dwellings={counts?.Dwellings ?? 0}, Land={counts?.Land ?? 0}";
+                        System.Diagnostics.Trace.TraceInformation(msg);
+                    }
+                    catch { }
+                }
 
                 total = counts?.Total ?? 0;
                 signedOff = counts?.SignedOff ?? 0;
@@ -279,12 +286,15 @@ namespace MAM.BusinessLayer.Repositories
 
         public Facility GetFacilityById(int id, FacilityTypes facilityType)
         {
-            Facility facility = new Facility();
+            Facility facility = null;
 
             using (var dataAccess = new DataAccess.Repositories.FacilityRepository(appSettings.ConnectionString))
             {
-                facility = facility.ConvertToFacility(dataAccess.GetFacilityById(id));
+                var dbFacility = dataAccess.GetFacilityById(id);
+                if (dbFacility == null)
+                    return null;
 
+                facility = new Facility().ConvertToFacility(dbFacility);
             }
 
             return facility;
@@ -524,28 +534,6 @@ namespace MAM.BusinessLayer.Repositories
             return isDeleted;
         }
 
-        public void Dispose()
-        {
-            // Dispose of unmanaged resources.
-            Dispose(true);
-            // Suppress finalization.
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                handle.Dispose();
-                // Free any other managed objects here.
-                //
-            }
-
-            disposed = true;
-        }
+        // Business-layer repository does not hold unmanaged resources; data-access handles disposal where needed.
     }
 }

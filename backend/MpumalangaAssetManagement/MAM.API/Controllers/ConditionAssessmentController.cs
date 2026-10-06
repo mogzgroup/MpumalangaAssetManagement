@@ -25,48 +25,24 @@ namespace MAM.API.Controllers
         [Route("getconditionassessments/{facilityId}")]
         public IActionResult GetConditionAssessments(int facilityId)
         {
-            try
-            {
-                List<ConditionAssessment> conditionsAssessments = _conditionAssessmentService.GetConditionAssessments(facilityId);
-                return Ok(conditionsAssessments);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            List<ConditionAssessment> conditionsAssessments = _conditionAssessmentService.GetConditionAssessments(facilityId);
+            return Ok(conditionsAssessments);
         }
 
         [HttpPost]
         [Route("saveConditionAssessment")]
         public IActionResult SaveConditionAssessment(ConditionAssessment conditionAssessment)
         {
-            try
-            {
-                int conditionAssessmentId = _conditionAssessmentService.AddConditionAssessment(conditionAssessment);
-                return Ok(conditionAssessmentId);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            int conditionAssessmentId = _conditionAssessmentService.AddConditionAssessment(conditionAssessment);
+            return Ok(conditionAssessmentId);
         }
 
         [HttpDelete]
         [Route("deleteConditionAssessment/{id}")]
         public IActionResult DeleteConditionAssessment(int id)
         {
-            try
-            {
-                bool isDeleted = _conditionAssessmentService.DeleteConditionAssessment(id);
-                return Ok(isDeleted);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            bool isDeleted = _conditionAssessmentService.DeleteConditionAssessment(id);
+            return Ok(isDeleted);
         }
     }
 }

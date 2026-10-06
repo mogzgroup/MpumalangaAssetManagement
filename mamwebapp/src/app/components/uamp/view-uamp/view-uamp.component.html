@@ -1,187 +1,194 @@
 <div id="uampId">
-    <div class="uamp-summary-row">
-        <strong>User Immovable Asset Management Plan</strong>
-        <span>Department: <strong>{{uamp.department}}</strong></span>
-        <button mat-button printSectionId="uampId" [useExistingCss]="true" ngxPrint>
-            <mat-icon>print</mat-icon> Print
-        </button>
+  <div class="uamp-summary-row">
+    <strong>User Immovable Asset Management Plan</strong>
+    <span>Department: <strong>{{uamp.department}}</strong></span>
+    <button mat-button printSectionId="uampId" [useExistingCss]="true" ngxPrint>
+      <mat-icon>print</mat-icon> Print
+    </button>
+  </div>
+
+  <div class="uamp-summary-row uamp-metadata">
+    <span>File Reference: {{uamp.fileReference}}</span>
+    <span>Created Date: {{uamp.createdDate | date}}</span>
+    <span>Status {{uamp.status}}</span>
+  </div>
+  <hr />
+  <mat-expansion-panel>
+    <mat-expansion-panel-header><mat-panel-title>Template 1: Programmes</mat-panel-title></mat-expansion-panel-header>
+    <div class="uamp-table-container">
+      <table class="uamp-table">
+        <thead>
+          <tr>
+            <th>Corporate Objectives</th>
+            <th>Outcomes/ Planned Outputs</th>
+            <th>Optimal Supporting Accommodation Solution</th>
+            <th>Rationale for Chosen Solution</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (programme of uamp.templeteOne.programmes; track programme) {
+            <tr>
+              <td>{{programme.corporateObjective}}</td>
+              <td>{{programme.outcomes}}</td>
+              <td>{{programme.optimalSupportingAccommodationSolution}}</td>
+              <td>{{programme.rationaleChosenSolution}}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
-  
-    <div class="uamp-summary-row uamp-metadata">
-        <span>File Reference: {{uamp.fileReference}}</span>
-        <span>Created Date: {{uamp.createdDate | date}}</span>
-        <span>Status {{uamp.status}}</span>
-    </div>
-    <hr />
+  </mat-expansion-panel>
+  <br>
     <mat-expansion-panel>
-        <mat-expansion-panel-header><mat-panel-title>Template 1: Programmes</mat-panel-title></mat-expansion-panel-header>
-        <div class="uamp-table-container">
+      <mat-expansion-panel-header><mat-panel-title>Template 2.1: STATE-OWNED ASSETS OCCUPIED BY/ ALLOCATED TO USERS AND FUNCTIONAL PERFORMANCE</mat-panel-title></mat-expansion-panel-header>
+      <div class="uamp-table-container">
         <table class="uamp-table">
-            <thead>
-                <tr>
-                    <th>Corporate Objectives</th>
-                    <th>Outcomes/ Planned Outputs</th>
-                    <th>Optimal Supporting Accommodation Solution</th>
-                    <th>Rationale for Chosen Solution</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let programme of uamp.templeteOne.programmes">
-                    <td>{{programme.corporateObjective}}</td>
-                    <td>{{programme.outcomes}}</td>
-                    <td>{{programme.optimalSupportingAccommodationSolution}}</td>
-                    <td>{{programme.rationaleChosenSolution}}</td>
-                </tr>
-            </tbody>
+          <thead>
+            <tr>
+              <th>File Reference No.</th>
+              <th>Districts</th>
+              <th>Town</th>
+              <th>Local Municipality</th>
+              <th>Asset Description</th>
+              <th>Old Street Address</th>
+              <th>Current Street Address</th>
+              <th>Property Description</th>
+              <th>Asset Type</th>
+              <th>No. of Parking Bays</th>
+              <th>Usable/ Allocated Space <br> <small>(M²) 0000.00</small></th>
+              <th>Extent of Land (HA) <br> <small>(M²) 0000.00</small></th>
+              <th>Municipal/ Utility Services</th>
+              <th>Property Rates & Taxes</th>
+              <th>Operational Costs</th>
+              <th>Required Performance Standard</th>
+              <th>Accessibility</th>
+              <th>Condition Rating</th>
+              <th>Suitability Index</th>
+              <th>Operating Performance Index</th>
+              <th>Functional Performance Index</th>
+              <th>Comments</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (property of uamp.templeteTwoPointOne.properties; track property) {
+              <tr>
+                <td>{{property.fileReferenceNo}}</td>
+                <td>{{property.districtRegion}}</td>
+                <td>{{property.town}}</td>
+                <td>{{property.localAuthority}}</td>
+                <td>{{property.assetDescription}}</td>
+                <td>{{property.currentStreetAddress}}</td>
+                <td>{{property.districtMunicipality}}</td>
+                <td>{{property.propertyDescription}}</td>
+                <td>{{property.assetType}}</td>
+                <td>{{property.noofParkingBays}}</td>
+                <td>{{property.usableAllocatedSpace}}</td>
+                <td>{{property.extentofLand}}</td>
+                <td>{{property.extentofLand}}</td>
+                <td>{{property.propertyRatesTaxes}} </td>
+                <td>{{property.operationalCosts}} </td>
+                <td>{{property.requiredPerformanceStandard}}</td>
+                <td>{{property.accessibility}}</td>
+                <td>{{property.conditionRating}}</td>
+                <td>{{property.suitabilityIndex}}</td>
+                <td>{{property.operationalPerformanceIndex}}</td>
+                <td>{{property.functionalPerformanceIndex}}</td>
+                <td>{{property.comment}}</td>
+              </tr>
+            }
+          </tbody>
         </table>
-        </div>
+      </div>
     </mat-expansion-panel>
     <br>
-    <mat-expansion-panel>
-        <mat-expansion-panel-header><mat-panel-title>Template 2.1: STATE-OWNED ASSETS OCCUPIED BY/ ALLOCATED TO USERS AND FUNCTIONAL PERFORMANCE</mat-panel-title></mat-expansion-panel-header>
-        <div class="uamp-table-container">
-        <table class="uamp-table">
-            <thead>
-                <tr>
-                    <th>File Reference No.</th>
-                    <th>Districts</th>
-                    <th>Town</th>
-                    <th>Local Municipality</th>
-                    <th>Asset Description</th>
-                    <th>Old Street Address</th>
-                    <th>Current Street Address</th>
-                    <th>Property Description</th>
-                    <th>Asset Type</th>
-                    <th>No. of Parking Bays</th>
-                    <th>Usable/ Allocated Space <br> <small>(M²) 0000.00</small></th>
-                    <th>Extent of Land (HA) <br> <small>(M²) 0000.00</small></th>
-                    <th>Municipal/ Utility Services</th>
-                    <th>Property Rates & Taxes</th>
-                    <th>Operational Costs</th>
-                    <th>Required Performance Standard</th>
-                    <th>Accessibility</th>
-                    <th>Condition Rating</th>
-                    <th>Suitability Index</th>
-                    <th>Operating Performance Index</th>
-                    <th>Functional Performance Index</th>
-                    <th>Comments</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let property of uamp.templeteTwoPointOne.properties">
-                    <td>{{property.fileReferenceNo}}</td>
-                    <td>{{property.districtRegion}}</td>
-                    <td>{{property.town}}</td>
-                    <td>{{property.localAuthority}}</td>
-                    <td>{{property.assetDescription}}</td>
-                    <td>{{property.currentStreetAddress}}</td>
-                    <td>{{property.districtMunicipality}}</td>
-                    <td>{{property.propertyDescription}}</td>
-                    <td>{{property.assetType}}</td>
-                    <td>{{property.noofParkingBays}}</td>
-                    <td>{{property.usableAllocatedSpace}}</td>
-                    <td>{{property.extentofLand}}</td>
-                    <td>{{property.extentofLand}}</td>
-                    <td>{{property.propertyRatesTaxes}} </td>
-                    <td>{{property.operationalCosts}} </td>
-                    <td>{{property.requiredPerformanceStandard}}</td>
-                    <td>{{property.accessibility}}</td>
-                    <td>{{property.conditionRating}}</td>
-                    <td>{{property.suitabilityIndex}}</td>
-                    <td>{{property.operationalPerformanceIndex}}</td>
-                    <td>{{property.functionalPerformanceIndex}}</td>
-                    <td>{{property.comment}}</td>
-                </tr>
-            </tbody>
-        </table>
-        </div>
-    </mat-expansion-panel>
-    <br>
-    <mat-expansion-panel>
+      <mat-expansion-panel>
         <mat-expansion-panel-header><mat-panel-title>Template 2.2: LEASED ASSETS OCCUPIED BY/ ALLOCATED TO SCHEDULE OF CURRENT LEASED ACCOMMODATION</mat-panel-title></mat-expansion-panel-header>
         <div class="uamp-table-container">
-        <table class="uamp-table">
+          <table class="uamp-table">
             <thead>
-                <tr>
-                    <th>Serial No.</th>
-                    <th>User Dept Code</th>
-                    <th>File Reference No.</th>
-                    <th>District</th>
-                    <th>Town</th>
-                    <th>Local Municipality</th>
-                    <th>Asset Description</th>
-                    <th>Old Street Address</th>
-                    <th>Current Street Address</th>
-                    <th>Property Description</th>
-                    <th>Asset Type</th>
-                    <th>No. OF Parking Bays Allocated</th>
-                    <th>Lettable Space<br> <small>(M²) 0000.00</small></th>
-                    <th>Extent of Land (HA) <br> <small>(M²) 0000.00</small></th>
-                    <th>Rental PM</th>
-                    <th>Rental PA</th>
-                    <th>Operational Cost</th>
-                    <th>Lease Start Date</th>
-                    <th>Lease End Date</th>
-                    <th>Lease Term</th>
-                </tr>
+              <tr>
+                <th>Serial No.</th>
+                <th>User Dept Code</th>
+                <th>File Reference No.</th>
+                <th>District</th>
+                <th>Town</th>
+                <th>Local Municipality</th>
+                <th>Asset Description</th>
+                <th>Old Street Address</th>
+                <th>Current Street Address</th>
+                <th>Property Description</th>
+                <th>Asset Type</th>
+                <th>No. OF Parking Bays Allocated</th>
+                <th>Lettable Space<br> <small>(M²) 0000.00</small></th>
+                <th>Extent of Land (HA) <br> <small>(M²) 0000.00</small></th>
+                <th>Rental PM</th>
+                <th>Rental PA</th>
+                <th>Operational Cost</th>
+                <th>Lease Start Date</th>
+                <th>Lease End Date</th>
+                <th>Lease Term</th>
+              </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let property of uamp.templeteTwoPointTwo.properties">
-                    <td>{{property.serialNo}}</td>
-                    <td>{{property.userDepartment}}</td>
-                    <td>{{property.fileReference}}</td>
-                    <td>{{property.localAuthority}}</td>
-                    <td>{{property.town}}</td>
-                    <td>{{property.localAuthority}}</td>
-                    <td>{{property.assetDescription}}</td>
-                    <td>{{property.currentStreetAddress}}</td>
-                    <td>{{property.currentStreetAddress}}</td>
-                    <td>{{property.propertyDescription}}</td>
-                    <td>{{property.assetType}}</td>
-                    <td>{{property.noofParkingBays}}</td>
-                    <td>{{property.lettableSpace}}</td>
-                    <td>{{property.extentofLand}}</td>
-                    <td>{{property.rentalAmountPM}}</td>
-                    <td>{{property.rentalAmountPA}}</td>
-                    <td>{{property.operationalCosts}}</td>
-                    <td>{{property.leaseStartDate}}</td>
-                    <td>{{property.leaseEndDate}}</td>
-                    <td>{{property.leaseTerm}}</td>
+              @for (property of uamp.templeteTwoPointTwo.properties; track property) {
+                <tr>
+                  <td>{{property.serialNo}}</td>
+                  <td>{{property.userDepartment}}</td>
+                  <td>{{property.fileReference}}</td>
+                  <td>{{property.localAuthority}}</td>
+                  <td>{{property.town}}</td>
+                  <td>{{property.localAuthority}}</td>
+                  <td>{{property.assetDescription}}</td>
+                  <td>{{property.currentStreetAddress}}</td>
+                  <td>{{property.currentStreetAddress}}</td>
+                  <td>{{property.propertyDescription}}</td>
+                  <td>{{property.assetType}}</td>
+                  <td>{{property.noofParkingBays}}</td>
+                  <td>{{property.lettableSpace}}</td>
+                  <td>{{property.extentofLand}}</td>
+                  <td>{{property.rentalAmountPM}}</td>
+                  <td>{{property.rentalAmountPA}}</td>
+                  <td>{{property.operationalCosts}}</td>
+                  <td>{{property.leaseStartDate}}</td>
+                  <td>{{property.leaseEndDate}}</td>
+                  <td>{{property.leaseTerm}}</td>
                 </tr>
+              }
             </tbody>
-        </table>
+          </table>
         </div>
-    </mat-expansion-panel>
-    <br>
-    <mat-expansion-panel>
-        <mat-expansion-panel-header><mat-panel-title>Template 3: STRATEGIC NEEDS ASSESSMENT: CURRENT UTILISATION/NEEDS ASSESSMENT OF ACCOMMODATION OCCUPIED</mat-panel-title></mat-expansion-panel-header>
-        <div class="uamp-table-container">
-        <table class="uamp-table">
-            <thead>
+      </mat-expansion-panel>
+      <br>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header><mat-panel-title>Template 3: STRATEGIC NEEDS ASSESSMENT: CURRENT UTILISATION/NEEDS ASSESSMENT OF ACCOMMODATION OCCUPIED</mat-panel-title></mat-expansion-panel-header>
+          <div class="uamp-table-container">
+            <table class="uamp-table">
+              <thead>
                 <tr>
-                    <th></th>
-                    <th colspan="4" style="width: 25%;">Requirements in Terms of Approved Organogram</th>
-                    <th colspan="4" style="width: 25%;">Requirements in Terms of filled & budgeted Posts</th>
-                    <th></th>
-                    <th colspan="2">Space Utilisation</th>
+                  <th></th>
+                  <th colspan="4" style="width: 25%;">Requirements in Terms of Approved Organogram</th>
+                  <th colspan="4" style="width: 25%;">Requirements in Terms of filled & budgeted Posts</th>
+                  <th></th>
+                  <th colspan="2">Space Utilisation</th>
                 </tr>
                 <tr>
-                    <th>Post Description/ Title</th>
-                    <th>Level</th>
-                    <th>Quantity</th>
-                    <th>Norm</th>
-                    <th>Requirement</th>
-                    <th>Level</th>
-                    <th>Quantity</th>
-                    <th>Norm</th>
-                    <th>Requirement</th>
-                    <th>Allocated Space</th>
-                    <th>Surplus (+) or Shortage (-) of Accommodation(m²)</th>
-                    <th>Percentage Utilised</th>
+                  <th>Post Description/ Title</th>
+                  <th>Level</th>
+                  <th>Quantity</th>
+                  <th>Norm</th>
+                  <th>Requirement</th>
+                  <th>Level</th>
+                  <th>Quantity</th>
+                  <th>Norm</th>
+                  <th>Requirement</th>
+                  <th>Allocated Space</th>
+                  <th>Surplus (+) or Shortage (-) of Accommodation(m²)</th>
+                  <th>Percentage Utilised</th>
                 </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let strategicNeedsAssessment of uamp.templeteThree.strategicAssessments">
+              </thead>
+              <tbody>
+                @for (strategicNeedsAssessment of uamp.templeteThree.strategicAssessments; track strategicNeedsAssessment) {
+                  <tr>
                     <td>{{strategicNeedsAssessment.postDescriptionTitle}}</td>
                     <td>{{strategicNeedsAssessment.fbpLevel}}</td>
                     <td>{{strategicNeedsAssessment.fbpQuantity}}</td>
@@ -193,20 +200,21 @@
                     <td>{{strategicNeedsAssessment.aoRequirement}}</td>
                     <td>{{strategicNeedsAssessment.allocatedSpace}}</td>
                     <td>{{strategicNeedsAssessment.surplusShortageAccommodation}}</td>
-                    <td>{{strategicNeedsAssessment.percentageUtilised | number : '1.2-2'}}%</td>                    
-                </tr>
-            </tbody>
-        </table>
-        </div>
-    </mat-expansion-panel>
-    
-    <br>
-    <mat-expansion-panel>
-        <mat-expansion-panel-header><mat-panel-title>Template 4.1: ACQUISITION PLAN: NEW ACCOMMODATION REQUIREMENTS (CAPITAL PROJECTS)</mat-panel-title></mat-expansion-panel-header>
-        <div class="uamp-table-container">
-        <table class="uamp-table">
-            <thead>
-                <tr>
+                    <td>{{strategicNeedsAssessment.percentageUtilised | number : '1.2-2'}}%</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </mat-expansion-panel>
+
+        <br>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header><mat-panel-title>Template 4.1: ACQUISITION PLAN: NEW ACCOMMODATION REQUIREMENTS (CAPITAL PROJECTS)</mat-panel-title></mat-expansion-panel-header>
+            <div class="uamp-table-container">
+              <table class="uamp-table">
+                <thead>
+                  <tr>
                     <th>District/ Region</th>
                     <th>Town</th>
                     <th>Service Description</th>
@@ -219,549 +227,563 @@
                     <th>Cash Flow <small>(MTEF Year 1)</small></th>
                     <th>Cash Flow <small>(MTEF Year 2)</small></th>
                     <th>Cash Flow <small>(MTEF Year 3)</small></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let acquisitionPlan of uamp.templeteFourPointOne.acquisitionPlans">
-                    <td>{{acquisitionPlan.districtRegion}}</td>
-                    <td>{{acquisitionPlan.town}}</td>
-                    <td>{{acquisitionPlan.serviceDescription}}</td>
-                    <td>{{acquisitionPlan.budgetType}}</td>
-                    <td>{{acquisitionPlan.extent}}</td>
-                    <td>{{acquisitionPlan.initialNeedYear}}</td>
-                    <td>{{acquisitionPlan.acquisitionType}}</td>
-                    <td>{{acquisitionPlan.status}}</td>
-                    <td>{{acquisitionPlan.totalAmountRequired | currency:'ZAR':'R'}}</td>
-                    <td>{{acquisitionPlan.cashFlowYear1 | currency:'ZAR':'R'}}</td>
-                    <td>{{acquisitionPlan.cashFlowYear2 | currency:'ZAR':'R'}}</td>
-                    <td>{{acquisitionPlan.cashFlowYear3 | currency:'ZAR':'R'}}</td>
-                </tr>
-            </tbody>
-        </table>
-        </div>
-    </mat-expansion-panel>
-    
-    <br>
-    <mat-expansion-panel>
-        <mat-expansion-panel-header><mat-panel-title>Template 4.2: ACQUISITION PLAN: NEW LEASED ACCOMMODATION REQUIREMENTS</mat-panel-title></mat-expansion-panel-header>
-        <div class="uamp-table-container">
-        <table class="uamp-table">
-            <thead>
-                <tr>
-                    <th>District/ Region</th>
-                    <th>Town</th>
-                    <th>Service Description</th>
-                    <th>Budget Type</th>
-                    <th>Extent Required (m²)</th>
-                    <th>Acquisition Type</th>
-                    <th>Status</th>
-                    <th>Total Amount Required </th>
-                    <th>Cash Flow <small>(MTEF Year 1)</small></th>
-                    <th>Cash Flow <small>(MTEF Year 2)</small></th>
-                    <th>Cash Flow <small>(MTEF Year 3)</small></th>
-                    <th>Cash Flow <small>(MTEF Year 4)</small></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let acquisitionPlan of uamp.templeteFourPointTwo.acquisitionPlans">
-                    <td>{{acquisitionPlan.districtRegion}}</td>
-                    <td>{{acquisitionPlan.town}}</td>
-                    <td>{{acquisitionPlan.serviceDescription}}</td>
-                    <td>{{acquisitionPlan.budgetType}}</td>
-                    <td>{{acquisitionPlan.extent}}</td>
-                    <td>{{acquisitionPlan.acquisitionType}}</td>
-                    <td>{{acquisitionPlan.status}}</td>
-                    <td>{{acquisitionPlan.totalAmountRequired | currency:'ZAR':'R'}}</td>
-                    <td>{{acquisitionPlan.cashFlowYear1 | currency:'ZAR':'R'}}</td>
-                    <td>{{acquisitionPlan.cashFlowYear2 | currency:'ZAR':'R'}}</td>
-                    <td>{{acquisitionPlan.cashFlowYear3 | currency:'ZAR':'R'}}</td>
-                    <td>{{acquisitionPlan.cashFlowYear4 | currency:'ZAR':'R'}}</td>
-                </tr>
-            </tbody>
-        </table>
-        </div>
-    </mat-expansion-panel>
-
-    <br>
-    <mat-expansion-panel>
-        <mat-expansion-panel-header><mat-panel-title>Template 5.1: OPERATIONS PLAN: ADDITIONS, REFURBISHMENT AND / OR RECONFIGURATION TO EXISTING BUILDINGS</mat-panel-title></mat-expansion-panel-header>
-        <div class="uamp-table-container">
-        <table class="uamp-table">
-            <thead>
-                <tr>
-                    <th>District/ Region</th>   
-                    <th>Town</th>
-                    <th>Service Description</th>
-                    <th>Budget Type</th>
-                    <th>Year <br><small>in which initial needs were submitted</small></th>
-                    <th>Status</th>
-                    <th>Total Amount Required</th>
-                    <th>Cash Flow <small>(MTEF Year 1)</small></th>
-                    <th>Cash Flow <small>(MTEF Year 2)</small></th>
-                    <th>Cash Flow <small>(MTEF Year 3)</small></th>
-                    <th>Cash Flow <small>(MTEF Year 4)</small></th>
-                    <th>Cash Flow <small>(MTEF Year 5)</small></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let operationPlan of uamp.templeteFivePointOne.operationPlans">
-                    <td>{{operationPlan.districtRegion}}</td>
-                    <td>{{operationPlan.town}}</td>
-                    <td>{{operationPlan.serviceDescription}}</td>
-                    <td>{{operationPlan.budgetType}}</td>
-                    <td>{{operationPlan.initialNeedYear}}</td>
-                    <td>{{operationPlan.status}}</td>
-                    <td>{{operationPlan.totalAmountRequired | currency:'ZAR':'R'}}</td>
-                    <td>{{operationPlan.cashFlowYear1 | currency:'ZAR':'R'}}</td>
-                    <td>{{operationPlan.cashFlowYear2 | currency:'ZAR':'R'}}</td>
-                    <td>{{operationPlan.cashFlowYear3 | currency:'ZAR':'R'}}</td>
-                    <td>{{operationPlan.cashFlowYear4 | currency:'ZAR':'R'}}</td>
-                    <td>{{operationPlan.cashFlowYear5 | currency:'ZAR':'R'}}</td>                   
-                </tr>
-            </tbody>
-        </table>
-        </div>
-    </mat-expansion-panel>
-    <br>
-
-    <mat-expansion-panel>
-        <mat-expansion-panel-header><mat-panel-title>Template 5.2: OPERATIONS PLAN: MAINTENANCE REQUIREMENTS</mat-panel-title></mat-expansion-panel-header>
-        <div class="uamp-table-container">
-        <table class="uamp-table">
-            <thead>
-                <tr>
-                    <th>District</th>               
-                    <th>Town</th>
-                    <th>Local Municipality</th>
-                    <th>Asset Description</th>
-                    <th>Repair Description</th>
-                    <th>YEAR <br> <small>in which initial request was submitted</small></th>
-                    <th style="width: 200px;">Prioity / Service Reanking</th>
-                    <th>Total Amount Required</th>
-                    <th>Cash Flow <br><small>(MTEF YR 1)</small></th>
-                    <th>Cash Flow <br><small>(MTEF YR 2)</small></th>
-                    <th>Cash Flow <br><small>(MTEF YR 3)</small></th>
-                    <th>Cash Flow <br><small>(MTEF YR 4)</small></th>
-                    <th>Cash Flow <br><small>(MTEF YR 5)</small></th>
-                </tr>
-            </thead>
-            <tbody>
-                    <tr *ngFor="let operationPlan of uamp.templeteFivePointTwo.operationPlans">
-                        <td>{{operationPlan.districtRegion}}</td>
-                        <td>{{operationPlan.town}}</td>
-                        <td>{{operationPlan.localAuthority}}</td>
-                        <td>{{operationPlan.assetDescription}}</td>
-                        <td>{{operationPlan.repairDescription}}</td>
-                        <td>{{operationPlan.initialNeedYear}}</td>
-                        <td>{{operationPlan.prioityServiceReanking}}</td>
-                        <td>{{operationPlan.totalAmountRequired}}</td>
-                        <td>{{operationPlan.cashFlowYear1}}</td>
-                        <td>{{operationPlan.cashFlowYear2}}</td>
-                        <td>{{operationPlan.cashFlowYear3}}</td>
-                        <td>{{operationPlan.cashFlowYear4}}</td>
-                        <td>{{operationPlan.cashFlowYear5}}</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (acquisitionPlan of uamp.templeteFourPointOne.acquisitionPlans; track acquisitionPlan) {
+                    <tr>
+                      <td>{{acquisitionPlan.districtRegion}}</td>
+                      <td>{{acquisitionPlan.town}}</td>
+                      <td>{{acquisitionPlan.serviceDescription}}</td>
+                      <td>{{acquisitionPlan.budgetType}}</td>
+                      <td>{{acquisitionPlan.extent}}</td>
+                      <td>{{acquisitionPlan.initialNeedYear}}</td>
+                      <td>{{acquisitionPlan.acquisitionType}}</td>
+                      <td>{{acquisitionPlan.status}}</td>
+                      <td>{{acquisitionPlan.totalAmountRequired | currency:'ZAR':'R'}}</td>
+                      <td>{{acquisitionPlan.cashFlowYear1 | currency:'ZAR':'R'}}</td>
+                      <td>{{acquisitionPlan.cashFlowYear2 | currency:'ZAR':'R'}}</td>
+                      <td>{{acquisitionPlan.cashFlowYear3 | currency:'ZAR':'R'}}</td>
                     </tr>
-            </tbody>
-        </table>
-        </div>
-    </mat-expansion-panel>
-    <br>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </mat-expansion-panel>
 
-    <mat-expansion-panel>
-        <mat-expansion-panel-header><mat-panel-title>Template 5.3: OPERATIONS PLAN: ASSETS LEASED OUT / INVESTMENT PURPOSES ASSETS</mat-panel-title></mat-expansion-panel-header>
-        <div class="uamp-table-container">
-        <table class="uamp-table">
-            <thead>
-                <tr>
-                    <th>District</th>               
-                    <th>Town</th>
-                    <th>Local Municipality</th>
-                    <th>Asset Description</th>
-                    <th>Street Description</th>
-                    <th>Property Description</th>
-                    <th>Lease Type</th>
-                    <th>No. of Parking Bays</th>
-                    <th>Usable Space<br><small>(M²) 0000.00</small></th>
-                    <th>Construction Area<br><small>(M²) 0000.00</small></th>
-                    <th>Extent of Land<br><small>(HA) 0000.0000</small></th>
-                    <th>Lease Start Date</th>
-                    <th>Lease Start End</th>
-                    <th>Rental PM/PA</th>
-                    <th>Comments</th>
-                </tr>
-            </thead>
-            <tbody>
-                    <tr *ngFor="let operationPlan of uamp.templeteFivePointThree.operationPlans">
-                        <td>{{operationPlan.districtRegion}}</td>
-                        <td>{{operationPlan.town}}</td>
-                        <td>{{operationPlan.localAuthority}}</td>
-                        <td>{{operationPlan.assetDescription}}</td>
-                        <td>{{operationPlan.streetDescription}}</td>
-                        <td>{{operationPlan.repairDescription}}</td>
-                        <td>{{operationPlan.leaseType}}</td>
-                        <td>{{operationPlan.noofParkingBays}}</td>
-                        <td>{{operationPlan.usableSpace}}</td>
-                        <td>{{operationPlan.constructionArea}}</td>
-                        <td>{{operationPlan.extent}}</td>
-                        <td>{{operationPlan.leaseStartDate}}</td>
-                        <td>{{operationPlan.leaseEndDate}}</td>
-                        <td>{{operationPlan.rentalPmPa}}</td>
-                        <td>{{operationPlan.comment}}</td>
+          <br>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header><mat-panel-title>Template 4.2: ACQUISITION PLAN: NEW LEASED ACCOMMODATION REQUIREMENTS</mat-panel-title></mat-expansion-panel-header>
+              <div class="uamp-table-container">
+                <table class="uamp-table">
+                  <thead>
+                    <tr>
+                      <th>District/ Region</th>
+                      <th>Town</th>
+                      <th>Service Description</th>
+                      <th>Budget Type</th>
+                      <th>Extent Required (m²)</th>
+                      <th>Acquisition Type</th>
+                      <th>Status</th>
+                      <th>Total Amount Required </th>
+                      <th>Cash Flow <small>(MTEF Year 1)</small></th>
+                      <th>Cash Flow <small>(MTEF Year 2)</small></th>
+                      <th>Cash Flow <small>(MTEF Year 3)</small></th>
+                      <th>Cash Flow <small>(MTEF Year 4)</small></th>
                     </tr>
-            </tbody>
-        </table>
-        </div>
-    </mat-expansion-panel>
+                  </thead>
+                  <tbody>
+                    @for (acquisitionPlan of uamp.templeteFourPointTwo.acquisitionPlans; track acquisitionPlan) {
+                      <tr>
+                        <td>{{acquisitionPlan.districtRegion}}</td>
+                        <td>{{acquisitionPlan.town}}</td>
+                        <td>{{acquisitionPlan.serviceDescription}}</td>
+                        <td>{{acquisitionPlan.budgetType}}</td>
+                        <td>{{acquisitionPlan.extent}}</td>
+                        <td>{{acquisitionPlan.acquisitionType}}</td>
+                        <td>{{acquisitionPlan.status}}</td>
+                        <td>{{acquisitionPlan.totalAmountRequired | currency:'ZAR':'R'}}</td>
+                        <td>{{acquisitionPlan.cashFlowYear1 | currency:'ZAR':'R'}}</td>
+                        <td>{{acquisitionPlan.cashFlowYear2 | currency:'ZAR':'R'}}</td>
+                        <td>{{acquisitionPlan.cashFlowYear3 | currency:'ZAR':'R'}}</td>
+                        <td>{{acquisitionPlan.cashFlowYear4 | currency:'ZAR':'R'}}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </mat-expansion-panel>
 
-    <!--surrenderPlans-->
-    <br>
-    <mat-expansion-panel>
-        <mat-expansion-panel-header><mat-panel-title>Template 6: SURRENDER PLAN: ACCOMMODATION/LAND IDENTIFIED TO BE RELINQUISHED TO THE CUSTODIAN</mat-panel-title></mat-expansion-panel-header>
-        <div class="uamp-table-container">
-        <table class="uamp-table">
-            <thead>
-                <tr>
-                    <th>District</th>
-                    <th>Town</th>
-                    <th>Local Municipality</th>
-                    <th>Asset Type</th>
-                    <th>Current Street Address</th>
-                    <th>Property Description</th>
-                    <th>Allocated/ Lettable Space<br> <small>(M²) 0000.00</small></th>
-                    <th>Extent of Land<br> <small>(HA) 0000.0000</small></th>
-                    <th>Surrender Rationale</th>
-                    <th>Date of Proposed Hand-Over</th>
-                    <th>Contractual Obligations</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let surrenderPlan of uamp.templeteSix.surrenderPlans">
-                    <td>{{surrenderPlan.districtMunicipality}}</td>
-                    <td>{{surrenderPlan.town}}</td>
-                    <td>{{surrenderPlan.localAuthority}}</td>
-                    <td>{{surrenderPlan.type}}</td>
-                    <td>{{surrenderPlan.currentStreetAddress}}</td>
-                    <td>{{surrenderPlan.name}}</td>
-                    <td>{{surrenderPlan.allocatedLettableSpace}}</td>
-                    <td>{{surrenderPlan.extent}}</td>
-                    <td>{{surrenderPlan.surrenderRationale}}</td>
-                    <td>{{surrenderPlan.proposedHandOverDate}}</td>
-                    <td>{{surrenderPlan.contractualObligations}}</td>
-                </tr>
-            </tbody>
-        </table>
-        </div>
-    </mat-expansion-panel>
+            <br>
+              <mat-expansion-panel>
+                <mat-expansion-panel-header><mat-panel-title>Template 5.1: OPERATIONS PLAN: ADDITIONS, REFURBISHMENT AND / OR RECONFIGURATION TO EXISTING BUILDINGS</mat-panel-title></mat-expansion-panel-header>
+                <div class="uamp-table-container">
+                  <table class="uamp-table">
+                    <thead>
+                      <tr>
+                        <th>District/ Region</th>
+                        <th>Town</th>
+                        <th>Service Description</th>
+                        <th>Budget Type</th>
+                        <th>Year <br><small>in which initial needs were submitted</small></th>
+                        <th>Status</th>
+                        <th>Total Amount Required</th>
+                        <th>Cash Flow <small>(MTEF Year 1)</small></th>
+                        <th>Cash Flow <small>(MTEF Year 2)</small></th>
+                        <th>Cash Flow <small>(MTEF Year 3)</small></th>
+                        <th>Cash Flow <small>(MTEF Year 4)</small></th>
+                        <th>Cash Flow <small>(MTEF Year 5)</small></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (operationPlan of uamp.templeteFivePointOne.operationPlans; track operationPlan) {
+                        <tr>
+                          <td>{{operationPlan.districtRegion}}</td>
+                          <td>{{operationPlan.town}}</td>
+                          <td>{{operationPlan.serviceDescription}}</td>
+                          <td>{{operationPlan.budgetType}}</td>
+                          <td>{{operationPlan.initialNeedYear}}</td>
+                          <td>{{operationPlan.status}}</td>
+                          <td>{{operationPlan.totalAmountRequired | currency:'ZAR':'R'}}</td>
+                          <td>{{operationPlan.cashFlowYear1 | currency:'ZAR':'R'}}</td>
+                          <td>{{operationPlan.cashFlowYear2 | currency:'ZAR':'R'}}</td>
+                          <td>{{operationPlan.cashFlowYear3 | currency:'ZAR':'R'}}</td>
+                          <td>{{operationPlan.cashFlowYear4 | currency:'ZAR':'R'}}</td>
+                          <td>{{operationPlan.cashFlowYear5 | currency:'ZAR':'R'}}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </mat-expansion-panel>
+              <br>
 
-    <br>
-    <mat-expansion-panel>
-        <mat-expansion-panel-header><mat-panel-title>Template 7: BUDGET FOR MTEF PERIOD</mat-panel-title></mat-expansion-panel-header>
-        <div class="uamp-table-container">
-        <table class="uamp-table">
-            <thead>
-                <tr>
-                    <th style="width: 230px;"></th>
-                    <th colspan="3">MTEF YEAR 1</th>
-                    <th colspan="3">MTEF YEAR 2</th>
-                    <th colspan="3">MTEF YEAR 3</th>
-                    <th colspan="3">MTEF YEAR 4</th>
-                    <th colspan="3">MTEF YEAR 5</th>
-                </tr>
-                <tr>
-                    <th></th>
-                    <th>MTEF Allocation</th>
-                    <th>Required Budget</th>
-                    <th>Shortfall</th>
-                    <th>MTEF Allocation</th>
-                    <th>Required Budget</th>
-                    <th>Shortfall</th>
-                    <th>MTEF Allocation</th>
-                    <th>Required Budget</th>
-                    <th>Shortfall</th>
-                    <th>MTEF Allocation</th>
-                    <th>Required Budget</th>
-                    <th>Shortfall</th>
-                    <th>MTEF Allocation</th>
-                    <th>Required Budget</th>
-                    <th>Shortfall</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td colspan="16"><strong>Capital Projects</strong></td>
-                    
-                <tr>
-                    <td>New Capital Works T4.1</td>
-                    <td>{{mtefAllocatoion(1, 'mtefAllocatoionT41Y1', 'totalAmountRequired', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(1, 'mtefAllocatoionT41Y1', 'amountRequiredT41Y1', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(1, 'mtefAllocatoionT41Y1', 'amountRequiredT41Y1', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(2, 'mtefAllocatoionT41Y2', 'amountRequiredT41Y1', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(2, 'mtefAllocatoionT41Y2', 'amountRequiredT41Y2', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(2, 'mtefAllocatoionT41Y2', 'amountRequiredT41Y2', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(3, 'mtefAllocatoionT41Y3', 'amountRequiredT41Y2', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(3, 'mtefAllocatoionT41Y3', 'amountRequiredT41Y3', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(3, 'mtefAllocatoionT41Y3', 'amountRequiredT41Y3', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(4, 'mtefAllocatoionT41Y4', 'amountRequiredT41Y3', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(4, 'mtefAllocatoionT41Y4', 'amountRequiredT41Y4', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(4, 'mtefAllocatoionT41Y4', 'amountRequiredT41Y4', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(5, 'mtefAllocatoionT41Y5', 'amountRequiredT41Y4', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(5, 'mtefAllocatoionT41Y5', 'amountRequiredT41Y5', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(5, 'mtefAllocatoionT41Y5', 'amountRequiredT41Y5', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
-                </tr>
-                <tr>
-                    <td>Refurb., Re-config.& Additions) T5.1</td>
-                    <td>{{mtefAllocatoion(1, 'mtefAllocatoionT51Y1', 'totalAmountRequired', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(1, 'mtefAllocatoionT51Y1', 'amountRequiredT51Y1', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(1, 'mtefAllocatoionT51Y1', 'amountRequiredT51Y1', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(2, 'mtefAllocatoionT51Y2', 'amountRequiredT51Y1', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(2, 'mtefAllocatoionT51Y2', 'amountRequiredT51Y2', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(2, 'mtefAllocatoionT51Y2', 'amountRequiredT51Y2', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(3, 'mtefAllocatoionT51Y3', 'amountRequiredT51Y2', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(3, 'mtefAllocatoionT51Y3', 'amountRequiredT51Y3', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(3, 'mtefAllocatoionT51Y3', 'amountRequiredT51Y3', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(4, 'mtefAllocatoionT51Y4', 'amountRequiredT51Y3', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(4, 'mtefAllocatoionT51Y4', 'amountRequiredT51Y4', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(4, 'mtefAllocatoionT51Y4', 'amountRequiredT51Y4', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(5, 'mtefAllocatoionT51Y5', 'amountRequiredT51Y4', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(5, 'mtefAllocatoionT51Y5', 'amountRequiredT51Y5', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(5, 'mtefAllocatoionT51Y5', 'amountRequiredT51Y5', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
-                </tr>
-                <tr>
-                    <td><strong>Total Capital Costs</strong></td>
-                    <td>{{totalCurrentCosts(1, 'mtefAllocatoion', 'T51 T41') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(1, 'amountRequired', 'T51 T41') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(1, 'shortfall', 'T51 T41') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(2, 'mtefAllocatoion', 'T51 T41') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(2, 'amountRequired', 'T51 T41') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(2, 'shortfall', 'T51 T41') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(3, 'mtefAllocatoion', 'T51 T41') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(3, 'amountRequired', 'T51 T41') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(3, 'shortfall', 'T51 T41') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(4, 'mtefAllocatoion', 'T51 T41') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(4, 'amountRequired', 'T51 T41') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(4, 'shortfall', 'T51 T41') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(5, 'mtefAllocatoion', 'T51 T41') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(5, 'amountRequired', 'T51 T41') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(5, 'shortfall', 'T51 T41') | currency:'ZAR':'R'}}</td>
-                </tr>
-                <tr>
-                    <td><strong>% Shortfall</strong></td>
-                    <td style="background-color: lightgray;"></td>
-                    <td style="background-color: lightgray;"></td>
-                    <td>{{shortfallCapitalCosts(1) | number : '1.2-2'}} %</td>
-                    <td style="background-color: lightgray;"></td>
-                    <td style="background-color: lightgray;"></td>
-                    <td>{{shortfallCapitalCosts(2) | number : '1.2-2'}} %</td>
-                    <td style="background-color: lightgray;"></td>
-                    <td style="background-color: lightgray;"></td>
-                    <td>{{shortfallCapitalCosts(3) | number : '1.2-2'}} %</td>
-                    <td style="background-color: lightgray;"></td>
-                    <td style="background-color: lightgray;"></td>
-                    <td>{{shortfallCapitalCosts(4) | number : '1.2-2'}} %</td>
-                    <td style="background-color: lightgray;"></td>
-                    <td style="background-color: lightgray;"></td>
-                    <td>{{shortfallCapitalCosts(5)| number : '1.2-2'}} %</td>
-                </tr>
-                <tr>
-                    <td><strong>Current Expenditure</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Existing Leases T2.2</td>
-                    <td>{{mtefAllocatoion(1, 'mtefAllocatoionElT22Y1', 'rentalPA', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(1, 'mtefAllocatoionElT22Y1', 'amountRequiredElT22Y1', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(1, 'mtefAllocatoionElT22Y1', 'amountRequiredElT22Y1', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(2, 'mtefAllocatoionElT22Y2', 'amountRequiredElT22Y1', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(2, 'mtefAllocatoionElT22Y2', 'amountRequiredElT22Y2', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(2, 'mtefAllocatoionElT22Y2', 'amountRequiredElT22Y2', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(3, 'mtefAllocatoionElT22Y3', 'amountRequiredElT22Y2', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(3, 'mtefAllocatoionElT22Y3', 'amountRequiredElT22Y3', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(3, 'mtefAllocatoionElT22Y3', 'amountRequiredElT22Y3', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(4, 'mtefAllocatoionElT22Y4', 'amountRequiredElT22Y3', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(4, 'mtefAllocatoionElT22Y4', 'amountRequiredElT22Y4', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(4, 'mtefAllocatoionElT22Y4', 'amountRequiredElT22Y4', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(5, 'mtefAllocatoionElT22Y5', 'amountRequiredElT22Y4', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(5, 'mtefAllocatoionElT22Y5', 'amountRequiredElT22Y5', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(5, 'mtefAllocatoionElT22Y5', 'amountRequiredElT22Y5', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>                
-                </tr>
-                <tr>
-                    <td>New leases T4.2</td>
-                    <td>{{mtefAllocatoion(1, 'mtefAllocatoionNlT42Y1', 'totalAmountRequired', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(1, 'mtefAllocatoionNlT42Y1', 'amountRequiredNlT42Y1', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(1, 'mtefAllocatoionNlT42Y1', 'amountRequiredNlT42Y1', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(2, 'mtefAllocatoionNlT42Y2', 'amountRequiredNlT42Y1', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(2, 'mtefAllocatoionNlT42Y2', 'amountRequiredNlT42Y2', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(2, 'mtefAllocatoionNlT42Y2', 'amountRequiredNlT42Y2', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(3, 'mtefAllocatoionNlT42Y3', 'amountRequiredNlT42Y2', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(3, 'mtefAllocatoionNlT42Y3', 'amountRequiredNlT42Y3', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(3, 'mtefAllocatoionNlT42Y3', 'amountRequiredNlT42Y3', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(4, 'mtefAllocatoionNlT42Y4', 'amountRequiredNlT42Y3', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(4, 'mtefAllocatoionNlT42Y4', 'amountRequiredNlT42Y4', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(4, 'mtefAllocatoionNlT42Y4', 'amountRequiredNlT42Y4', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(5, 'mtefAllocatoionNlT42Y5', 'amountRequiredNlT42Y4', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(5, 'mtefAllocatoionNlT42Y5', 'amountRequiredNlT42Y5', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(5, 'mtefAllocatoionNlT42Y5', 'amountRequiredNlT42Y5', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
-                </tr>
-                <tr *ngFor="let municipalUtilityService of municipalUtilityServices">
-                    <td>Operational Cost: {{municipalUtilityService.name}}</td>
-                    <td>{{mtefAllocatoionMUS(1, 'mtefAllocatoion' + municipalUtilityService.name +'Y1', 'operationalCost', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequiredMUS(1, 'mtefAllocatoion' + municipalUtilityService.name +'Y1', 'amountRequired' + municipalUtilityService.name +'Y1', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfallMUS(1, 'mtefAllocatoion' + municipalUtilityService.name +'Y1', 'amountRequired' + municipalUtilityService.name +'Y1', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoionMUS(2, 'mtefAllocatoion' + municipalUtilityService.name +'Y2', 'amountRequired' + municipalUtilityService.name +'Y1', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequiredMUS(2, 'mtefAllocatoion' + municipalUtilityService.name +'Y2', 'amountRequired' + municipalUtilityService.name +'Y2', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfallMUS(2, 'mtefAllocatoion' + municipalUtilityService.name +'Y2', 'amountRequired' + municipalUtilityService.name +'Y2', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoionMUS(3, 'mtefAllocatoion' + municipalUtilityService.name +'Y3', 'amountRequired' + municipalUtilityService.name +'Y2', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequiredMUS(3, 'mtefAllocatoion' + municipalUtilityService.name +'Y3', 'amountRequired' + municipalUtilityService.name +'Y3', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfallMUS(3, 'mtefAllocatoion' + municipalUtilityService.name +'Y3', 'amountRequired' + municipalUtilityService.name +'Y3', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoionMUS(4, 'mtefAllocatoion' + municipalUtilityService.name +'Y4', 'amountRequired' + municipalUtilityService.name +'Y3', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequiredMUS(4, 'mtefAllocatoion' + municipalUtilityService.name +'Y4', 'amountRequired' + municipalUtilityService.name +'Y4', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfallMUS(4, 'mtefAllocatoion' + municipalUtilityService.name +'Y4', 'amountRequired' + municipalUtilityService.name +'Y4', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoionMUS(5, 'mtefAllocatoion' + municipalUtilityService.name +'Y5', 'amountRequired' + municipalUtilityService.name +'Y4', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequiredMUS(5, 'mtefAllocatoion' + municipalUtilityService.name +'Y5', 'amountRequired' + municipalUtilityService.name +'Y5', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfallMUS(5, 'mtefAllocatoion' + municipalUtilityService.name +'Y5', 'amountRequired' + municipalUtilityService.name +'Y5', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
-                </tr>                
-                <tr>
-                    <td>Municipal / Utility Services: State-owned (Electricity, water, sewer & refuse) T2.1</td>
-                    <td>{{mtefAllocatoion(1, 'mtefAllocatoionMsso21Y1', 'municipalUtilityService', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(1, 'mtefAllocatoionMsso21Y1', 'amountRequiredMsso21Y1', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(1, 'mtefAllocatoionMsso21Y1', 'amountRequiredMsso21Y1', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(2, 'mtefAllocatoionMsso21Y2', 'amountRequiredMsso21Y1', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(2, 'mtefAllocatoionMsso21Y2', 'amountRequiredMsso21Y2', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(2, 'mtefAllocatoionMsso21Y2', 'amountRequiredMsso21Y2', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(3, 'mtefAllocatoionMsso21Y3', 'amountRequiredMsso21Y2', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(3, 'mtefAllocatoionMsso21Y3', 'amountRequiredMsso21Y3', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(3, 'mtefAllocatoionMsso21Y3', 'amountRequiredMsso21Y3', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(4, 'mtefAllocatoionMsso21Y4', 'amountRequiredMsso21Y3', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(4, 'mtefAllocatoionMsso21Y4', 'amountRequiredMsso21Y4', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(4, 'mtefAllocatoionMsso21Y4', 'amountRequiredMsso21Y4', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(5, 'mtefAllocatoionMsso21Y5', 'amountRequiredMsso21Y4', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(5, 'mtefAllocatoionMsso21Y5', 'amountRequiredMsso21Y5', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(5, 'mtefAllocatoionMsso21Y5', 'amountRequiredMsso21Y5', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                </tr>
-                <tr>
-                    <td>Municipal / Utility Services: Leased-in (Electricity, water, sewer & refuse)T2.2</td>
-                    <td>{{mtefAllocatoion(1, 'mtefAllocatoionMsso22Y1', 'operationalCost', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(1, 'mtefAllocatoionMsso22Y1', 'amountRequiredMsso22Y1', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(1, 'mtefAllocatoionMsso22Y1', 'amountRequiredMsso22Y1', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(2, 'mtefAllocatoionMsso22Y2', 'amountRequiredMsso22Y1', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(2, 'mtefAllocatoionMsso22Y2', 'amountRequiredMsso22Y2', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(2, 'mtefAllocatoionMsso22Y2', 'amountRequiredMsso22Y2', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(3, 'mtefAllocatoionMsso22Y3', 'amountRequiredMsso22Y2', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(3, 'mtefAllocatoionMsso22Y3', 'amountRequiredMsso22Y3', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(3, 'mtefAllocatoionMsso22Y3', 'amountRequiredMsso22Y3', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(4, 'mtefAllocatoionMsso22Y4', 'amountRequiredMsso22Y3', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(4, 'mtefAllocatoionMsso22Y4', 'amountRequiredMsso22Y4', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(4, 'mtefAllocatoionMsso22Y4', 'amountRequiredMsso22Y4', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(5, 'mtefAllocatoionMsso22Y5', 'amountRequiredMsso22Y4', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(5, 'mtefAllocatoionMsso22Y5', 'amountRequiredMsso22Y5', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(5, 'mtefAllocatoionMsso22Y5', 'amountRequiredMsso22Y5', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
-                </tr>
-                <tr>
-                    <td>Property Rates & Taxes T2.1</td>
-                    <td>{{mtefAllocatoion(1, 'mtefAllocatoionPrtT21Y1', 'propertyRatesTaxes', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(1, 'mtefAllocatoionPrtT21Y1', 'amountRequiredPrtT21Y1', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(1, 'mtefAllocatoionPrtT21Y1', 'amountRequiredPrtT21Y1', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(2, 'mtefAllocatoionPrtT21Y2', 'amountRequiredPrtT21Y1', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(2, 'mtefAllocatoionPrtT21Y2', 'amountRequiredPrtT21Y2', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(2, 'mtefAllocatoionPrtT21Y2', 'amountRequiredPrtT21Y2', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(3, 'mtefAllocatoionPrtT21Y3', 'amountRequiredPrtT21Y2', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(3, 'mtefAllocatoionPrtT21Y3', 'amountRequiredPrtT21Y3', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(3, 'mtefAllocatoionPrtT21Y3', 'amountRequiredPrtT21Y3', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(4, 'mtefAllocatoionPrtT21Y4', 'amountRequiredPrtT21Y3', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(4, 'mtefAllocatoionPrtT21Y4', 'amountRequiredPrtT21Y4', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(4, 'mtefAllocatoionPrtT21Y4', 'amountRequiredPrtT21Y4', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(5, 'mtefAllocatoionPrtT21Y5', 'amountRequiredPrtT21Y4', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(5, 'mtefAllocatoionPrtT21Y5', 'amountRequiredPrtT21Y5', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(5, 'mtefAllocatoionPrtT21Y5', 'amountRequiredPrtT21Y5', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
-                </tr>
-                <tr>
-                    <td>Maintenance Requirements (Repairs) T5.2</td>
-                    <td>{{mtefAllocatoion(1, 'mtefAllocatoionMrT52Y1', 'totalAmountRequired', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(1, 'mtefAllocatoionMrT52Y1', 'amountRequiredMrT52Y1', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(1, 'mtefAllocatoionMrT52Y1', 'amountRequiredMrT52Y1', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(2, 'mtefAllocatoionMrT52Y2', 'amountRequiredMrT52Y1', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(2, 'mtefAllocatoionMrT52Y2', 'amountRequiredMrT52Y2', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(2, 'mtefAllocatoionMrT52Y2', 'amountRequiredMrT52Y2', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(3, 'mtefAllocatoionMrT52Y3', 'amountRequiredMrT52Y2', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(3, 'mtefAllocatoionMrT52Y3', 'amountRequiredMrT52Y3', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(3, 'mtefAllocatoionMrT52Y3', 'amountRequiredMrT52Y3', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(4, 'mtefAllocatoionMrT52Y4', 'amountRequiredMrT52Y3', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(4, 'mtefAllocatoionMrT52Y4', 'amountRequiredMrT52Y4', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(4, 'mtefAllocatoionMrT52Y4', 'amountRequiredMrT52Y4', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{mtefAllocatoion(5, 'mtefAllocatoionMrT52Y5', 'amountRequiredMrT52Y4', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{amountRequired(5, 'mtefAllocatoionMrT52Y5', 'amountRequiredMrT52Y5', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
-                    <td>{{shortfall(5, 'mtefAllocatoionMrT52Y5', 'amountRequiredMrT52Y5', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
-                </tr>
-                <tr>
-                    <td><strong>Total Current Costs</strong></td>
-                    <td>{{totalCurrentCosts(1, 'mtefAllocatoion', null) | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(1, 'amountRequired', null) | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(1, 'shortfall', null) | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(2, 'mtefAllocatoion', null) | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(2, 'amountRequired', null) | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(2, 'shortfall', null) | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(3, 'mtefAllocatoion', null) | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(3, 'amountRequired', null) | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(3, 'shortfall', null) | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(4, 'mtefAllocatoion', null) | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(4, 'amountRequired', null) | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(4, 'shortfall', null) | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(5, 'mtefAllocatoion', null) | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(5, 'amountRequired', null) | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCurrentCosts(5, 'shortfall', null) | currency:'ZAR':'R'}}</td>
-                </tr>
-                <tr>
-                    <td><strong>Total Capital Works & Recurrent Costs</strong></td>
-                    <td>{{totalCapitalWorksAndRecurrentCosts(1, 'mtefAllocatoion') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCapitalWorksAndRecurrentCosts(1, 'amountRequired') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCapitalWorksAndRecurrentCosts(1, 'shortfall') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCapitalWorksAndRecurrentCosts(2, 'mtefAllocatoion') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCapitalWorksAndRecurrentCosts(2, 'amountRequired') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCapitalWorksAndRecurrentCosts(2, 'shortfall') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCapitalWorksAndRecurrentCosts(3, 'mtefAllocatoion') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCapitalWorksAndRecurrentCosts(3, 'amountRequired') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCapitalWorksAndRecurrentCosts(3, 'shortfall') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCapitalWorksAndRecurrentCosts(4, 'mtefAllocatoion') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCapitalWorksAndRecurrentCosts(4, 'amountRequired') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCapitalWorksAndRecurrentCosts(4, 'shortfall') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCapitalWorksAndRecurrentCosts(5, 'mtefAllocatoion') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCapitalWorksAndRecurrentCosts(5, 'amountRequired') | currency:'ZAR':'R'}}</td>
-                    <td>{{totalCapitalWorksAndRecurrentCosts(5, 'shortfall') | currency:'ZAR':'R'}}</td>
-                </tr>
-                <tr>
-                    <td><strong>% Shortfall</strong></td>
-                    <td style="background-color: lightgray;"></td>
-                    <td style="background-color: lightgray;"></td>
-                    <td>{{shorfallCapitalWorksAndRecurrentCosts(1) | number : '1.2-2'}} %</td>
-                    <td style="background-color: lightgray;"></td>
-                    <td style="background-color: lightgray;"></td>
-                    <td>{{shorfallCapitalWorksAndRecurrentCosts(2) | number : '1.2-2'}} %</td>
-                    <td style="background-color: lightgray;"></td>
-                    <td style="background-color: lightgray;"></td>
-                    <td>{{shorfallCapitalWorksAndRecurrentCosts(3) | number : '1.2-2'}} %</td>
-                    <td style="background-color: lightgray;"></td>
-                    <td style="background-color: lightgray;"></td>
-                    <td>{{shorfallCapitalWorksAndRecurrentCosts(4) | number : '1.2-2'}} %</td>
-                    <td style="background-color: lightgray;"></td>
-                    <td style="background-color: lightgray;"></td>
-                    <td>{{shorfallCapitalWorksAndRecurrentCosts(5) | number : '1.2-2'}} %</td>
-                </tr>
-            </tbody>
-        </table>
-        </div>
-    </mat-expansion-panel>
-</div>
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header><mat-panel-title>Template 5.2: OPERATIONS PLAN: MAINTENANCE REQUIREMENTS</mat-panel-title></mat-expansion-panel-header>
+                  <div class="uamp-table-container">
+                    <table class="uamp-table">
+                      <thead>
+                        <tr>
+                          <th>District</th>
+                          <th>Town</th>
+                          <th>Local Municipality</th>
+                          <th>Asset Description</th>
+                          <th>Repair Description</th>
+                          <th>YEAR <br> <small>in which initial request was submitted</small></th>
+                          <th style="width: 200px;">Prioity / Service Reanking</th>
+                          <th>Total Amount Required</th>
+                          <th>Cash Flow <br><small>(MTEF YR 1)</small></th>
+                          <th>Cash Flow <br><small>(MTEF YR 2)</small></th>
+                          <th>Cash Flow <br><small>(MTEF YR 3)</small></th>
+                          <th>Cash Flow <br><small>(MTEF YR 4)</small></th>
+                          <th>Cash Flow <br><small>(MTEF YR 5)</small></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (operationPlan of uamp.templeteFivePointTwo.operationPlans; track operationPlan) {
+                          <tr>
+                            <td>{{operationPlan.districtRegion}}</td>
+                            <td>{{operationPlan.town}}</td>
+                            <td>{{operationPlan.localAuthority}}</td>
+                            <td>{{operationPlan.assetDescription}}</td>
+                            <td>{{operationPlan.repairDescription}}</td>
+                            <td>{{operationPlan.initialNeedYear}}</td>
+                            <td>{{operationPlan.prioityServiceReanking}}</td>
+                            <td>{{operationPlan.totalAmountRequired}}</td>
+                            <td>{{operationPlan.cashFlowYear1}}</td>
+                            <td>{{operationPlan.cashFlowYear2}}</td>
+                            <td>{{operationPlan.cashFlowYear3}}</td>
+                            <td>{{operationPlan.cashFlowYear4}}</td>
+                            <td>{{operationPlan.cashFlowYear5}}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </mat-expansion-panel>
+                <br>
+
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header><mat-panel-title>Template 5.3: OPERATIONS PLAN: ASSETS LEASED OUT / INVESTMENT PURPOSES ASSETS</mat-panel-title></mat-expansion-panel-header>
+                    <div class="uamp-table-container">
+                      <table class="uamp-table">
+                        <thead>
+                          <tr>
+                            <th>District</th>
+                            <th>Town</th>
+                            <th>Local Municipality</th>
+                            <th>Asset Description</th>
+                            <th>Street Description</th>
+                            <th>Property Description</th>
+                            <th>Lease Type</th>
+                            <th>No. of Parking Bays</th>
+                            <th>Usable Space<br><small>(M²) 0000.00</small></th>
+                            <th>Construction Area<br><small>(M²) 0000.00</small></th>
+                            <th>Extent of Land<br><small>(HA) 0000.0000</small></th>
+                            <th>Lease Start Date</th>
+                            <th>Lease Start End</th>
+                            <th>Rental PM/PA</th>
+                            <th>Comments</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (operationPlan of uamp.templeteFivePointThree.operationPlans; track operationPlan) {
+                            <tr>
+                              <td>{{operationPlan.districtRegion}}</td>
+                              <td>{{operationPlan.town}}</td>
+                              <td>{{operationPlan.localAuthority}}</td>
+                              <td>{{operationPlan.assetDescription}}</td>
+                              <td>{{operationPlan.streetDescription}}</td>
+                              <td>{{operationPlan.repairDescription}}</td>
+                              <td>{{operationPlan.leaseType}}</td>
+                              <td>{{operationPlan.noofParkingBays}}</td>
+                              <td>{{operationPlan.usableSpace}}</td>
+                              <td>{{operationPlan.constructionArea}}</td>
+                              <td>{{operationPlan.extent}}</td>
+                              <td>{{operationPlan.leaseStartDate}}</td>
+                              <td>{{operationPlan.leaseEndDate}}</td>
+                              <td>{{operationPlan.rentalPmPa}}</td>
+                              <td>{{operationPlan.comment}}</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </mat-expansion-panel>
+
+                  <!--surrenderPlans-->
+                  <br>
+                    <mat-expansion-panel>
+                      <mat-expansion-panel-header><mat-panel-title>Template 6: SURRENDER PLAN: ACCOMMODATION/LAND IDENTIFIED TO BE RELINQUISHED TO THE CUSTODIAN</mat-panel-title></mat-expansion-panel-header>
+                      <div class="uamp-table-container">
+                        <table class="uamp-table">
+                          <thead>
+                            <tr>
+                              <th>District</th>
+                              <th>Town</th>
+                              <th>Local Municipality</th>
+                              <th>Asset Type</th>
+                              <th>Current Street Address</th>
+                              <th>Property Description</th>
+                              <th>Allocated/ Lettable Space<br> <small>(M²) 0000.00</small></th>
+                              <th>Extent of Land<br> <small>(HA) 0000.0000</small></th>
+                              <th>Surrender Rationale</th>
+                              <th>Date of Proposed Hand-Over</th>
+                              <th>Contractual Obligations</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for (surrenderPlan of uamp.templeteSix.surrenderPlans; track surrenderPlan) {
+                              <tr>
+                                <td>{{surrenderPlan.districtMunicipality}}</td>
+                                <td>{{surrenderPlan.town}}</td>
+                                <td>{{surrenderPlan.localAuthority}}</td>
+                                <td>{{surrenderPlan.type}}</td>
+                                <td>{{surrenderPlan.currentStreetAddress}}</td>
+                                <td>{{surrenderPlan.name}}</td>
+                                <td>{{surrenderPlan.allocatedLettableSpace}}</td>
+                                <td>{{surrenderPlan.extent}}</td>
+                                <td>{{surrenderPlan.surrenderRationale}}</td>
+                                <td>{{surrenderPlan.proposedHandOverDate}}</td>
+                                <td>{{surrenderPlan.contractualObligations}}</td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    </mat-expansion-panel>
+
+                    <br>
+                      <mat-expansion-panel>
+                        <mat-expansion-panel-header><mat-panel-title>Template 7: BUDGET FOR MTEF PERIOD</mat-panel-title></mat-expansion-panel-header>
+                        <div class="uamp-table-container">
+                          <table class="uamp-table">
+                            <thead>
+                              <tr>
+                                <th style="width: 230px;"></th>
+                                <th colspan="3">MTEF YEAR 1</th>
+                                <th colspan="3">MTEF YEAR 2</th>
+                                <th colspan="3">MTEF YEAR 3</th>
+                                <th colspan="3">MTEF YEAR 4</th>
+                                <th colspan="3">MTEF YEAR 5</th>
+                              </tr>
+                              <tr>
+                                <th></th>
+                                <th>MTEF Allocation</th>
+                                <th>Required Budget</th>
+                                <th>Shortfall</th>
+                                <th>MTEF Allocation</th>
+                                <th>Required Budget</th>
+                                <th>Shortfall</th>
+                                <th>MTEF Allocation</th>
+                                <th>Required Budget</th>
+                                <th>Shortfall</th>
+                                <th>MTEF Allocation</th>
+                                <th>Required Budget</th>
+                                <th>Shortfall</th>
+                                <th>MTEF Allocation</th>
+                                <th>Required Budget</th>
+                                <th>Shortfall</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td colspan="16"><strong>Capital Projects</strong></td>
+
+                                <tr>
+                                  <td>New Capital Works T4.1</td>
+                                  <td>{{mtefAllocatoion(1, 'mtefAllocatoionT41Y1', 'totalAmountRequired', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(1, 'mtefAllocatoionT41Y1', 'amountRequiredT41Y1', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(1, 'mtefAllocatoionT41Y1', 'amountRequiredT41Y1', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(2, 'mtefAllocatoionT41Y2', 'amountRequiredT41Y1', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(2, 'mtefAllocatoionT41Y2', 'amountRequiredT41Y2', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(2, 'mtefAllocatoionT41Y2', 'amountRequiredT41Y2', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(3, 'mtefAllocatoionT41Y3', 'amountRequiredT41Y2', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(3, 'mtefAllocatoionT41Y3', 'amountRequiredT41Y3', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(3, 'mtefAllocatoionT41Y3', 'amountRequiredT41Y3', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(4, 'mtefAllocatoionT41Y4', 'amountRequiredT41Y3', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(4, 'mtefAllocatoionT41Y4', 'amountRequiredT41Y4', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(4, 'mtefAllocatoionT41Y4', 'amountRequiredT41Y4', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(5, 'mtefAllocatoionT41Y5', 'amountRequiredT41Y4', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(5, 'mtefAllocatoionT41Y5', 'amountRequiredT41Y5', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(5, 'mtefAllocatoionT41Y5', 'amountRequiredT41Y5', 'templeteFourPointOne') | currency:'ZAR':'R'}}</td>
+                                </tr>
+                                <tr>
+                                  <td>Refurb., Re-config.& Additions) T5.1</td>
+                                  <td>{{mtefAllocatoion(1, 'mtefAllocatoionT51Y1', 'totalAmountRequired', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(1, 'mtefAllocatoionT51Y1', 'amountRequiredT51Y1', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(1, 'mtefAllocatoionT51Y1', 'amountRequiredT51Y1', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(2, 'mtefAllocatoionT51Y2', 'amountRequiredT51Y1', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(2, 'mtefAllocatoionT51Y2', 'amountRequiredT51Y2', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(2, 'mtefAllocatoionT51Y2', 'amountRequiredT51Y2', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(3, 'mtefAllocatoionT51Y3', 'amountRequiredT51Y2', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(3, 'mtefAllocatoionT51Y3', 'amountRequiredT51Y3', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(3, 'mtefAllocatoionT51Y3', 'amountRequiredT51Y3', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(4, 'mtefAllocatoionT51Y4', 'amountRequiredT51Y3', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(4, 'mtefAllocatoionT51Y4', 'amountRequiredT51Y4', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(4, 'mtefAllocatoionT51Y4', 'amountRequiredT51Y4', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(5, 'mtefAllocatoionT51Y5', 'amountRequiredT51Y4', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(5, 'mtefAllocatoionT51Y5', 'amountRequiredT51Y5', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(5, 'mtefAllocatoionT51Y5', 'amountRequiredT51Y5', 'templeteFivePointOne') | currency:'ZAR':'R'}}</td>
+                                </tr>
+                                <tr>
+                                  <td><strong>Total Capital Costs</strong></td>
+                                  <td>{{totalCurrentCosts(1, 'mtefAllocatoion', 'T51 T41') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(1, 'amountRequired', 'T51 T41') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(1, 'shortfall', 'T51 T41') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(2, 'mtefAllocatoion', 'T51 T41') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(2, 'amountRequired', 'T51 T41') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(2, 'shortfall', 'T51 T41') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(3, 'mtefAllocatoion', 'T51 T41') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(3, 'amountRequired', 'T51 T41') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(3, 'shortfall', 'T51 T41') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(4, 'mtefAllocatoion', 'T51 T41') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(4, 'amountRequired', 'T51 T41') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(4, 'shortfall', 'T51 T41') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(5, 'mtefAllocatoion', 'T51 T41') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(5, 'amountRequired', 'T51 T41') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(5, 'shortfall', 'T51 T41') | currency:'ZAR':'R'}}</td>
+                                </tr>
+                                <tr>
+                                  <td><strong>% Shortfall</strong></td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td>{{shortfallCapitalCosts(1) | number : '1.2-2'}} %</td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td>{{shortfallCapitalCosts(2) | number : '1.2-2'}} %</td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td>{{shortfallCapitalCosts(3) | number : '1.2-2'}} %</td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td>{{shortfallCapitalCosts(4) | number : '1.2-2'}} %</td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td>{{shortfallCapitalCosts(5)| number : '1.2-2'}} %</td>
+                                </tr>
+                                <tr>
+                                  <td><strong>Current Expenditure</strong></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                </tr>
+                                <tr>
+                                  <td>Existing Leases T2.2</td>
+                                  <td>{{mtefAllocatoion(1, 'mtefAllocatoionElT22Y1', 'rentalPA', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(1, 'mtefAllocatoionElT22Y1', 'amountRequiredElT22Y1', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(1, 'mtefAllocatoionElT22Y1', 'amountRequiredElT22Y1', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(2, 'mtefAllocatoionElT22Y2', 'amountRequiredElT22Y1', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(2, 'mtefAllocatoionElT22Y2', 'amountRequiredElT22Y2', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(2, 'mtefAllocatoionElT22Y2', 'amountRequiredElT22Y2', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(3, 'mtefAllocatoionElT22Y3', 'amountRequiredElT22Y2', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(3, 'mtefAllocatoionElT22Y3', 'amountRequiredElT22Y3', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(3, 'mtefAllocatoionElT22Y3', 'amountRequiredElT22Y3', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(4, 'mtefAllocatoionElT22Y4', 'amountRequiredElT22Y3', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(4, 'mtefAllocatoionElT22Y4', 'amountRequiredElT22Y4', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(4, 'mtefAllocatoionElT22Y4', 'amountRequiredElT22Y4', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(5, 'mtefAllocatoionElT22Y5', 'amountRequiredElT22Y4', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(5, 'mtefAllocatoionElT22Y5', 'amountRequiredElT22Y5', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(5, 'mtefAllocatoionElT22Y5', 'amountRequiredElT22Y5', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                </tr>
+                                <tr>
+                                  <td>New leases T4.2</td>
+                                  <td>{{mtefAllocatoion(1, 'mtefAllocatoionNlT42Y1', 'totalAmountRequired', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(1, 'mtefAllocatoionNlT42Y1', 'amountRequiredNlT42Y1', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(1, 'mtefAllocatoionNlT42Y1', 'amountRequiredNlT42Y1', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(2, 'mtefAllocatoionNlT42Y2', 'amountRequiredNlT42Y1', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(2, 'mtefAllocatoionNlT42Y2', 'amountRequiredNlT42Y2', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(2, 'mtefAllocatoionNlT42Y2', 'amountRequiredNlT42Y2', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(3, 'mtefAllocatoionNlT42Y3', 'amountRequiredNlT42Y2', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(3, 'mtefAllocatoionNlT42Y3', 'amountRequiredNlT42Y3', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(3, 'mtefAllocatoionNlT42Y3', 'amountRequiredNlT42Y3', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(4, 'mtefAllocatoionNlT42Y4', 'amountRequiredNlT42Y3', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(4, 'mtefAllocatoionNlT42Y4', 'amountRequiredNlT42Y4', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(4, 'mtefAllocatoionNlT42Y4', 'amountRequiredNlT42Y4', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(5, 'mtefAllocatoionNlT42Y5', 'amountRequiredNlT42Y4', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(5, 'mtefAllocatoionNlT42Y5', 'amountRequiredNlT42Y5', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(5, 'mtefAllocatoionNlT42Y5', 'amountRequiredNlT42Y5', 'templeteFourPointTwo') | currency:'ZAR':'R'}}</td>
+                                </tr>
+                                @for (municipalUtilityService of municipalUtilityServices; track municipalUtilityService) {
+                                  <tr>
+                                    <td>Operational Cost: {{municipalUtilityService.name}}</td>
+                                    <td>{{mtefAllocatoionMUS(1, 'mtefAllocatoion' + municipalUtilityService.name +'Y1', 'operationalCost', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
+                                    <td>{{amountRequiredMUS(1, 'mtefAllocatoion' + municipalUtilityService.name +'Y1', 'amountRequired' + municipalUtilityService.name +'Y1', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
+                                    <td>{{shortfallMUS(1, 'mtefAllocatoion' + municipalUtilityService.name +'Y1', 'amountRequired' + municipalUtilityService.name +'Y1', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
+                                    <td>{{mtefAllocatoionMUS(2, 'mtefAllocatoion' + municipalUtilityService.name +'Y2', 'amountRequired' + municipalUtilityService.name +'Y1', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
+                                    <td>{{amountRequiredMUS(2, 'mtefAllocatoion' + municipalUtilityService.name +'Y2', 'amountRequired' + municipalUtilityService.name +'Y2', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
+                                    <td>{{shortfallMUS(2, 'mtefAllocatoion' + municipalUtilityService.name +'Y2', 'amountRequired' + municipalUtilityService.name +'Y2', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
+                                    <td>{{mtefAllocatoionMUS(3, 'mtefAllocatoion' + municipalUtilityService.name +'Y3', 'amountRequired' + municipalUtilityService.name +'Y2', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
+                                    <td>{{amountRequiredMUS(3, 'mtefAllocatoion' + municipalUtilityService.name +'Y3', 'amountRequired' + municipalUtilityService.name +'Y3', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
+                                    <td>{{shortfallMUS(3, 'mtefAllocatoion' + municipalUtilityService.name +'Y3', 'amountRequired' + municipalUtilityService.name +'Y3', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
+                                    <td>{{mtefAllocatoionMUS(4, 'mtefAllocatoion' + municipalUtilityService.name +'Y4', 'amountRequired' + municipalUtilityService.name +'Y3', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
+                                    <td>{{amountRequiredMUS(4, 'mtefAllocatoion' + municipalUtilityService.name +'Y4', 'amountRequired' + municipalUtilityService.name +'Y4', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
+                                    <td>{{shortfallMUS(4, 'mtefAllocatoion' + municipalUtilityService.name +'Y4', 'amountRequired' + municipalUtilityService.name +'Y4', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
+                                    <td>{{mtefAllocatoionMUS(5, 'mtefAllocatoion' + municipalUtilityService.name +'Y5', 'amountRequired' + municipalUtilityService.name +'Y4', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
+                                    <td>{{amountRequiredMUS(5, 'mtefAllocatoion' + municipalUtilityService.name +'Y5', 'amountRequired' + municipalUtilityService.name +'Y5', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
+                                    <td>{{shortfallMUS(5, 'mtefAllocatoion' + municipalUtilityService.name +'Y5', 'amountRequired' + municipalUtilityService.name +'Y5', municipalUtilityService.totalCost) | currency:'ZAR':'R'}}</td>
+                                  </tr>
+                                }
+                                <tr>
+                                  <td>Municipal / Utility Services: State-owned (Electricity, water, sewer & refuse) T2.1</td>
+                                  <td>{{mtefAllocatoion(1, 'mtefAllocatoionMsso21Y1', 'municipalUtilityService', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(1, 'mtefAllocatoionMsso21Y1', 'amountRequiredMsso21Y1', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(1, 'mtefAllocatoionMsso21Y1', 'amountRequiredMsso21Y1', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(2, 'mtefAllocatoionMsso21Y2', 'amountRequiredMsso21Y1', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(2, 'mtefAllocatoionMsso21Y2', 'amountRequiredMsso21Y2', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(2, 'mtefAllocatoionMsso21Y2', 'amountRequiredMsso21Y2', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(3, 'mtefAllocatoionMsso21Y3', 'amountRequiredMsso21Y2', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(3, 'mtefAllocatoionMsso21Y3', 'amountRequiredMsso21Y3', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(3, 'mtefAllocatoionMsso21Y3', 'amountRequiredMsso21Y3', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(4, 'mtefAllocatoionMsso21Y4', 'amountRequiredMsso21Y3', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(4, 'mtefAllocatoionMsso21Y4', 'amountRequiredMsso21Y4', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(4, 'mtefAllocatoionMsso21Y4', 'amountRequiredMsso21Y4', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(5, 'mtefAllocatoionMsso21Y5', 'amountRequiredMsso21Y4', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(5, 'mtefAllocatoionMsso21Y5', 'amountRequiredMsso21Y5', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(5, 'mtefAllocatoionMsso21Y5', 'amountRequiredMsso21Y5', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                </tr>
+                                <tr>
+                                  <td>Municipal / Utility Services: Leased-in (Electricity, water, sewer & refuse)T2.2</td>
+                                  <td>{{mtefAllocatoion(1, 'mtefAllocatoionMsso22Y1', 'operationalCost', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(1, 'mtefAllocatoionMsso22Y1', 'amountRequiredMsso22Y1', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(1, 'mtefAllocatoionMsso22Y1', 'amountRequiredMsso22Y1', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(2, 'mtefAllocatoionMsso22Y2', 'amountRequiredMsso22Y1', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(2, 'mtefAllocatoionMsso22Y2', 'amountRequiredMsso22Y2', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(2, 'mtefAllocatoionMsso22Y2', 'amountRequiredMsso22Y2', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(3, 'mtefAllocatoionMsso22Y3', 'amountRequiredMsso22Y2', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(3, 'mtefAllocatoionMsso22Y3', 'amountRequiredMsso22Y3', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(3, 'mtefAllocatoionMsso22Y3', 'amountRequiredMsso22Y3', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(4, 'mtefAllocatoionMsso22Y4', 'amountRequiredMsso22Y3', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(4, 'mtefAllocatoionMsso22Y4', 'amountRequiredMsso22Y4', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(4, 'mtefAllocatoionMsso22Y4', 'amountRequiredMsso22Y4', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(5, 'mtefAllocatoionMsso22Y5', 'amountRequiredMsso22Y4', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(5, 'mtefAllocatoionMsso22Y5', 'amountRequiredMsso22Y5', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(5, 'mtefAllocatoionMsso22Y5', 'amountRequiredMsso22Y5', 'templeteTwoPointTwo') | currency:'ZAR':'R'}}</td>
+                                </tr>
+                                <tr>
+                                  <td>Property Rates & Taxes T2.1</td>
+                                  <td>{{mtefAllocatoion(1, 'mtefAllocatoionPrtT21Y1', 'propertyRatesTaxes', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(1, 'mtefAllocatoionPrtT21Y1', 'amountRequiredPrtT21Y1', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(1, 'mtefAllocatoionPrtT21Y1', 'amountRequiredPrtT21Y1', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(2, 'mtefAllocatoionPrtT21Y2', 'amountRequiredPrtT21Y1', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(2, 'mtefAllocatoionPrtT21Y2', 'amountRequiredPrtT21Y2', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(2, 'mtefAllocatoionPrtT21Y2', 'amountRequiredPrtT21Y2', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(3, 'mtefAllocatoionPrtT21Y3', 'amountRequiredPrtT21Y2', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(3, 'mtefAllocatoionPrtT21Y3', 'amountRequiredPrtT21Y3', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(3, 'mtefAllocatoionPrtT21Y3', 'amountRequiredPrtT21Y3', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(4, 'mtefAllocatoionPrtT21Y4', 'amountRequiredPrtT21Y3', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(4, 'mtefAllocatoionPrtT21Y4', 'amountRequiredPrtT21Y4', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(4, 'mtefAllocatoionPrtT21Y4', 'amountRequiredPrtT21Y4', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(5, 'mtefAllocatoionPrtT21Y5', 'amountRequiredPrtT21Y4', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(5, 'mtefAllocatoionPrtT21Y5', 'amountRequiredPrtT21Y5', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(5, 'mtefAllocatoionPrtT21Y5', 'amountRequiredPrtT21Y5', 'templeteTwoPointOne') | currency:'ZAR':'R'}}</td>
+                                </tr>
+                                <tr>
+                                  <td>Maintenance Requirements (Repairs) T5.2</td>
+                                  <td>{{mtefAllocatoion(1, 'mtefAllocatoionMrT52Y1', 'totalAmountRequired', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(1, 'mtefAllocatoionMrT52Y1', 'amountRequiredMrT52Y1', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(1, 'mtefAllocatoionMrT52Y1', 'amountRequiredMrT52Y1', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(2, 'mtefAllocatoionMrT52Y2', 'amountRequiredMrT52Y1', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(2, 'mtefAllocatoionMrT52Y2', 'amountRequiredMrT52Y2', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(2, 'mtefAllocatoionMrT52Y2', 'amountRequiredMrT52Y2', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(3, 'mtefAllocatoionMrT52Y3', 'amountRequiredMrT52Y2', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(3, 'mtefAllocatoionMrT52Y3', 'amountRequiredMrT52Y3', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(3, 'mtefAllocatoionMrT52Y3', 'amountRequiredMrT52Y3', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(4, 'mtefAllocatoionMrT52Y4', 'amountRequiredMrT52Y3', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(4, 'mtefAllocatoionMrT52Y4', 'amountRequiredMrT52Y4', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(4, 'mtefAllocatoionMrT52Y4', 'amountRequiredMrT52Y4', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{mtefAllocatoion(5, 'mtefAllocatoionMrT52Y5', 'amountRequiredMrT52Y4', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{amountRequired(5, 'mtefAllocatoionMrT52Y5', 'amountRequiredMrT52Y5', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
+                                  <td>{{shortfall(5, 'mtefAllocatoionMrT52Y5', 'amountRequiredMrT52Y5', 'templeteFivePointTwo') | currency:'ZAR':'R'}}</td>
+                                </tr>
+                                <tr>
+                                  <td><strong>Total Current Costs</strong></td>
+                                  <td>{{totalCurrentCosts(1, 'mtefAllocatoion', null) | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(1, 'amountRequired', null) | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(1, 'shortfall', null) | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(2, 'mtefAllocatoion', null) | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(2, 'amountRequired', null) | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(2, 'shortfall', null) | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(3, 'mtefAllocatoion', null) | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(3, 'amountRequired', null) | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(3, 'shortfall', null) | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(4, 'mtefAllocatoion', null) | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(4, 'amountRequired', null) | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(4, 'shortfall', null) | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(5, 'mtefAllocatoion', null) | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(5, 'amountRequired', null) | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCurrentCosts(5, 'shortfall', null) | currency:'ZAR':'R'}}</td>
+                                </tr>
+                                <tr>
+                                  <td><strong>Total Capital Works & Recurrent Costs</strong></td>
+                                  <td>{{totalCapitalWorksAndRecurrentCosts(1, 'mtefAllocatoion') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCapitalWorksAndRecurrentCosts(1, 'amountRequired') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCapitalWorksAndRecurrentCosts(1, 'shortfall') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCapitalWorksAndRecurrentCosts(2, 'mtefAllocatoion') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCapitalWorksAndRecurrentCosts(2, 'amountRequired') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCapitalWorksAndRecurrentCosts(2, 'shortfall') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCapitalWorksAndRecurrentCosts(3, 'mtefAllocatoion') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCapitalWorksAndRecurrentCosts(3, 'amountRequired') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCapitalWorksAndRecurrentCosts(3, 'shortfall') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCapitalWorksAndRecurrentCosts(4, 'mtefAllocatoion') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCapitalWorksAndRecurrentCosts(4, 'amountRequired') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCapitalWorksAndRecurrentCosts(4, 'shortfall') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCapitalWorksAndRecurrentCosts(5, 'mtefAllocatoion') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCapitalWorksAndRecurrentCosts(5, 'amountRequired') | currency:'ZAR':'R'}}</td>
+                                  <td>{{totalCapitalWorksAndRecurrentCosts(5, 'shortfall') | currency:'ZAR':'R'}}</td>
+                                </tr>
+                                <tr>
+                                  <td><strong>% Shortfall</strong></td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td>{{shorfallCapitalWorksAndRecurrentCosts(1) | number : '1.2-2'}} %</td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td>{{shorfallCapitalWorksAndRecurrentCosts(2) | number : '1.2-2'}} %</td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td>{{shorfallCapitalWorksAndRecurrentCosts(3) | number : '1.2-2'}} %</td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td>{{shorfallCapitalWorksAndRecurrentCosts(4) | number : '1.2-2'}} %</td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td style="background-color: lightgray;"></td>
+                                  <td>{{shorfallCapitalWorksAndRecurrentCosts(5) | number : '1.2-2'}} %</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </mat-expansion-panel>
+                      </div>

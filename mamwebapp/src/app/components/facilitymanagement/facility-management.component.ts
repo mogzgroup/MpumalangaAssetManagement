@@ -1,30 +1,27 @@
-import { DatePipe } from '@angular/common';
-import { Component, ElementRef, Input, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { first } from 'rxjs/operators';
-import { LeasedProperty } from 'src/app/models/leased-property.model';
-import { User } from 'src/app/models/user.model';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { FaultService } from 'src/app/services/facility-management/fault.service';
-import { LeasedPropertiesService } from 'src/app/services/leased-property/leased-property.service';
-import { SharedService } from 'src/app/services/shared.service';
 import { ToastService } from 'src/app/services/toast.service';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { ServiceRequestComponent } from './servicerequest/service-request.component';
+import { ProjectComponent } from './project/project.component';
 
 @Component({
-  standalone: false,
-  selector: 'app-facility-management',
-  templateUrl: './facility-management.component.html',
-  styleUrls: ['./facility-management.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-facility-management',
+    templateUrl: './facility-management.component.html',
+    styleUrls: ['./facility-management.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatCard, MatCardContent, MatTabGroup, MatTab, ServiceRequestComponent, ProjectComponent]
 })
 export class FacilityManagementComponent implements OnInit {
+  private faultService = inject(FaultService);
+  private toastService = inject(ToastService);
 
-  public newCount: number = 0;
-  public inProgressCount: number = 0;
-  public completedCount: number = 0;
-  public total: number = 0;
-  constructor(private faultService: FaultService, private toastService: ToastService) {
-  
-  }
+
+  public newCount = 0;
+  public inProgressCount = 0;
+  public completedCount = 0;
+  public total = 0;
 
   ngOnInit() {
     this.newCount = 0;

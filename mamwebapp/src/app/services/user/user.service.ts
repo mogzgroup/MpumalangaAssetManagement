@@ -1,6 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { User } from '../../models/user.model';
 
@@ -8,10 +7,11 @@ import { User } from '../../models/user.model';
   providedIn: 'root'
 })
 export class UserService {
+  private http = inject(HttpClient);
+
   private httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
-  constructor(private http: HttpClient) { }
 
   getAll() {
     return this.http.get<User[]>(`${environment.apiUrl}/api/user/getall`);

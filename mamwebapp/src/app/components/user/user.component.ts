@@ -1,23 +1,69 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ViewChild, TemplateRef, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { first } from 'rxjs/operators';
 import { User } from '../../models/user.model';
 import { UserService } from '../../services/user/user.service';
 import { AddUserComponent } from './add-user/add-user.component';
 import { ToastService } from '../../services/toast.service';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
+import { DatePipe } from '@angular/common';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { CdkScrollable } from '@angular/cdk/scrolling';
 
 @Component({
-  standalone: false,
-  selector: 'app-user',
-  templateUrl: './user.component.html',
-  styleUrls: ['./user.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
+    selector: 'app-user',
+    templateUrl: './user.component.html',
+    styleUrls: ['./user.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [
+    MatButton,
+    MatIcon,
+    MatFormField,
+    MatLabel,
+    MatPrefix,
+    MatInput,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    MatIconButton,
+    MatTooltip,
+    MatMenuTrigger,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatProgressSpinner,
+    MatPaginator,
+    MatMenu,
+    MatMenuContent,
+    MatMenuItem,
+    MatDialogTitle,
+    CdkScrollable,
+    MatDialogContent,
+    MatDialogActions,
+    DatePipe
+],
 })
 export class UserComponent implements OnInit {
+  private userService = inject(UserService);
+  private toastService = inject(ToastService);
+  private dialog = inject(MatDialog);
+
   @ViewChild('resetPasswordDialog') resetPasswordDialog: TemplateRef<unknown>;
   @ViewChild('deleteUserDialog') deleteUserDialog: TemplateRef<unknown>;
 
@@ -42,12 +88,6 @@ export class UserComponent implements OnInit {
   selectedUser: User;
   msgs: any[] = [];
   private confirmationDialogRef: MatDialogRef<unknown> | null = null;
-
-  constructor(
-    private userService: UserService,
-    private toastService: ToastService,
-    private dialog: MatDialog
-  ) { }
 
   ngOnInit(): void {
     this.dataSource.filterPredicate = (user, filter) => [

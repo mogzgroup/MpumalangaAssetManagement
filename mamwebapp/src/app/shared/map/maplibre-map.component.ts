@@ -1,22 +1,9 @@
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  NgZone,
-  OnChanges,
-  OnDestroy,
-  Output,
-  SimpleChanges,
-  ViewChild
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, NgZone, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
 import type { GeoJSONSource, Map as MapLibreMap, MapLayerMouseEvent, Popup } from 'maplibre-gl';
 import type { Feature, FeatureCollection, Point } from 'geojson';
 import { mapConfig } from './map-config';
 import { MapMarkerData, validCoordinates } from './map-marker.model';
+
 
 const LOCATION_SOURCE = 'mam-locations';
 const LOCATION_LAYER = 'mam-location-points';
@@ -24,17 +11,24 @@ const CLUSTER_LAYER = 'mam-location-clusters';
 const CLUSTER_COUNT_LAYER = 'mam-location-cluster-count';
 
 @Component({
-  standalone: false,
-  selector: 'app-maplibre-map',
-  template: `
+    selector: 'app-maplibre-map',
+    template: `
     <div #mapContainer class="maplibre-container" role="application" aria-label="Interactive map"></div>
-    <div class="maplibre-message" *ngIf="mapError" role="status">{{ mapError }}</div>
-    <div class="maplibre-loading" *ngIf="!mapReady && !mapError" role="status">Loading map...</div>
-  `,
-  styleUrls: ['./maplibre-map.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    @if (mapError) {
+      <div class="maplibre-message" role="status">{{ mapError }}</div>
+    }
+    @if (!mapReady && !mapError) {
+      <div class="maplibre-loading" role="status">Loading map...</div>
+    }
+    `,
+    styleUrls: ['./maplibre-map.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: []
 })
 export class MapLibreMapComponent implements AfterViewInit, OnChanges, OnDestroy {
+  private zone = inject(NgZone);
+  private changeDetector = inject(ChangeDetectorRef);
+
   @Input() markers: MapMarkerData[] = [];
   @Input() center: [number, number] = mapConfig.defaultCenter;
   @Input() zoom = mapConfig.defaultZoom;
@@ -53,11 +47,6 @@ export class MapLibreMapComponent implements AfterViewInit, OnChanges, OnDestroy
   private readonly markersById = new Map<string, MapMarkerData>();
   private destroyed = false;
 
-  constructor(
-    private zone: NgZone,
-    private changeDetector: ChangeDetectorRef
-  ) { }
-
   ngAfterViewInit(): void {
     void this.initializeMap();
   }
@@ -69,7 +58,9 @@ export class MapLibreMapComponent implements AfterViewInit, OnChanges, OnDestroy
         return;
       }
       this.maplibre = maplibre;
-      maplibre.setWorkerUrl(new URL('assets/maplibre-gl/maplibre-gl-worker.mjs', document.baseURI).href);
+      const workerUrl = new URL('assets/maplibre-gl/maplibre-gl-worker.mjs', document.baseURI);
+      workerUrl.searchParams.set('v', maplibre.getVersion());
+      maplibre.setWorkerUrl(workerUrl.href);
       this.map = new maplibre.Map({
         container: this.mapContainer.nativeElement,
         style: mapConfig.style,

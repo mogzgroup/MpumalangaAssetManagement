@@ -1,22 +1,28 @@
-import { Component, EventEmitter, Input, OnInit, ChangeDetectionStrategy, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, ChangeDetectionStrategy, Output, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../../../app/services/authentication.service';
 import { User } from '../../../app/models/user.model';
 
+import { MatNavList, MatListItem, MatListItemIcon, MatListItemTitle } from '@angular/material/list';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+
 @Component({
-  standalone: false,
-  selector: 'app-sidemenu',
-  templateUrl: './sidemenu.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrls: ['./sidemenu.component.css']
+    selector: 'app-sidemenu',
+    templateUrl: './sidemenu.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./sidemenu.component.css'],
+    imports: [MatNavList, MatListItem, MatTooltip, MatIcon, MatListItemIcon, MatListItemTitle]
 })
 export class SidemenuComponent implements OnInit {
+  private router = inject(Router);
+  private authenticationService = inject(AuthenticationService);
+
   @Input() expanded = true;
   @Input() mobileOpen = false;
   @Output() navigationRequested = new EventEmitter<void>();
 
   currentUser: User;
-  constructor(private router: Router, private authenticationService: AuthenticationService) { }
 
   ngOnInit() {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);

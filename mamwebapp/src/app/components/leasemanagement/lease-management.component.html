@@ -1,111 +1,119 @@
 <div class="lease-map">
-    <app-maplibre-map
-        [markers]="markers"
-        [center]="center"
-        [zoom]="zoom"
-        (markerSelected)="openInfo($event)">
-    </app-maplibre-map>
+  <app-maplibre-map
+    [markers]="markers"
+    [center]="center"
+    [zoom]="zoom"
+    (markerSelected)="openInfo($event)">
+  </app-maplibre-map>
 </div>
 
 <div class="lease-table-actions">
-    <mat-form-field appearance="outline">
-        <mat-label>Search leased properties</mat-label>
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput (input)="applyFilter($event.target.value)">
-    </mat-form-field>
-    <button mat-raised-button [matMenuTriggerFor]="exportMenu" type="button">
-        <mat-icon>download</mat-icon>Export
-    </button>
+  <mat-form-field appearance="outline">
+    <mat-label>Search leased properties</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput (input)="applyFilter($event.target.value)">
+  </mat-form-field>
+  <button mat-raised-button [matMenuTriggerFor]="exportMenu" type="button">
+    <mat-icon>download</mat-icon>Export
+  </button>
 </div>
 
 <div class="app-table-scroll lease-table-scroll">
-<table mat-table [dataSource]="dataSource" matSort id="lpComponentID">
-    <ng-container *ngFor="let col of cols" [matColumnDef]="col.field">
+  <table mat-table [dataSource]="dataSource" matSort id="lpComponentID">
+    @for (col of cols; track col) {
+      <ng-container [matColumnDef]="col.field">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{col.header}}</th>
         <td mat-cell *matCellDef="let rowData">
-            <mat-icon *ngIf="col.field === 'status'" class="status-indicator"
-                [style.color]="rowData[col.field]">circle</mat-icon>
-            <span *ngIf="col.field !== 'status'">{{rowData[col.field]}}</span>
+          @if (col.field === 'status') {
+            <mat-icon class="status-indicator"
+            [style.color]="rowData[col.field]">circle</mat-icon>
+          }
+          @if (col.field !== 'status') {
+            <span>{{rowData[col.field]}}</span>
+          }
         </td>
-    </ng-container>
+      </ng-container>
+    }
     <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Actions</th>
-        <td mat-cell *matCellDef="let rowData">
-            <button mat-icon-button [matMenuTriggerFor]="leasedPropertyMenu" (click)="selectProperty(rowData, 0)"
-                [disabled]="loading || deletingLeasedProperty"
-                [attr.aria-label]="'Actions for leased property ' + rowData.propertyCode">
-                <mat-icon>more_vert</mat-icon>
-            </button>
-        </td>
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let rowData">
+        <button mat-icon-button [matMenuTriggerFor]="leasedPropertyMenu" (click)="selectProperty(rowData, 0)"
+          [disabled]="loading || deletingLeasedProperty"
+          [attr.aria-label]="'Actions for leased property ' + rowData.propertyCode">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+      </td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     <tr *matNoDataRow>
-        <td [attr.colspan]="displayedColumns.length" class="lease-table-state">
-            <ng-container *ngIf="loading; else leasedPropertyLoadResult">
-                <mat-progress-bar mode="indeterminate" aria-label="Loading leased properties"></mat-progress-bar>
-                <span>Loading leased properties...</span>
-            </ng-container>
-            <ng-template #leasedPropertyLoadResult>
-                <ng-container *ngIf="loadError; else leasedPropertyEmptyState">
-                    <span>No data found</span>
-                    <button mat-button type="button" (click)="getLeasedProperties()">
-                        <mat-icon>refresh</mat-icon>Retry
-                    </button>
-                </ng-container>
-                <ng-template #leasedPropertyEmptyState>No data found</ng-template>
-            </ng-template>
-        </td>
+      <td [attr.colspan]="displayedColumns.length" class="lease-table-state">
+        @if (loading) {
+          <mat-progress-bar mode="indeterminate" aria-label="Loading leased properties"></mat-progress-bar>
+          <span>Loading leased properties...</span>
+        } @else {
+          @if (loadError) {
+            <span>No data found</span>
+            <button mat-button type="button" (click)="getLeasedProperties()">
+              <mat-icon>refresh</mat-icon>Retry
+            </button>
+          } @else {
+            No data found
+          }
+        }
+      </td>
     </tr>
-</table>
+  </table>
 </div>
 <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 15]" showFirstLastButtons
-    aria-label="Select page of leased properties"></mat-paginator>
+aria-label="Select page of leased properties"></mat-paginator>
 
 <mat-menu #leasedPropertyMenu="matMenu">
-    <button mat-menu-item type="button" (click)="viewLeasedProperty()">
-        <mat-icon>visibility</mat-icon><span>View</span>
-    </button>
-    <button mat-menu-item type="button" (click)="showComfirmaDeleteProperty()">
-        <mat-icon>delete</mat-icon><span>Delete</span>
-    </button>
+  <button mat-menu-item type="button" (click)="viewLeasedProperty()">
+    <mat-icon>visibility</mat-icon><span>View</span>
+  </button>
+  <button mat-menu-item type="button" (click)="showComfirmaDeleteProperty()">
+    <mat-icon>delete</mat-icon><span>Delete</span>
+  </button>
 </mat-menu>
 
 <mat-menu #exportMenu="matMenu">
-    <button mat-menu-item type="button" (click)="exportPdf()">
-        <mat-icon>picture_as_pdf</mat-icon><span>PDF</span>
-    </button>
-    <button mat-menu-item type="button" (click)="exportExcel()">
-        <mat-icon>table_view</mat-icon><span>Excel</span>
-    </button>
+  <button mat-menu-item type="button" (click)="exportPdf()">
+    <mat-icon>picture_as_pdf</mat-icon><span>PDF</span>
+  </button>
+  <button mat-menu-item type="button" (click)="exportExcel()">
+    <mat-icon>table_view</mat-icon><span>Excel</span>
+  </button>
 </mat-menu>
 
 <ng-template #leasedPropertyDialog>
-    <mat-card class="leased-property-dialog">
-        <mat-card-header>
-            <mat-card-title>Leased Property Details - {{selectedLeasedProperty.facilityName}}</mat-card-title>
-            <button mat-icon-button type="button" aria-label="Close" (click)="closeLeasedPropertyDialog()">
-                <mat-icon>close</mat-icon>
-            </button>
-        </mat-card-header>
-        <mat-card-content>
-            <app-leased-property (newAsset)="addUpdateAsset($event)"
-                [selectedLeasedProperty]="selectedLeasedProperty"></app-leased-property>
-        </mat-card-content>
-    </mat-card>
+  <mat-card class="leased-property-dialog">
+    <mat-card-header>
+      <mat-card-title>Leased Property Details - {{selectedLeasedProperty.facilityName}}</mat-card-title>
+      <button mat-icon-button type="button" aria-label="Close" (click)="closeLeasedPropertyDialog()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-card-header>
+    <mat-card-content>
+      <app-leased-property (newAsset)="addUpdateAsset($event)"
+      [selectedLeasedProperty]="selectedLeasedProperty"></app-leased-property>
+    </mat-card-content>
+  </mat-card>
 </ng-template>
 
 <ng-template #deletePropertyDialog>
-    <mat-card class="lease-confirmation">
-        <mat-card-header><mat-card-title>Confirmation</mat-card-title></mat-card-header>
-        <mat-card-content>Are you sure that you want to delete this property?</mat-card-content>
-        <mat-card-actions align="end">
-            <button mat-button type="button" [disabled]="deletingLeasedProperty" (click)="closeDeletePropertyDialog()">No</button>
-            <button mat-raised-button color="warn" type="button" (click)="deleteLeasedProperty()"
-                [disabled]="deletingLeasedProperty">
-                <mat-spinner *ngIf="deletingLeasedProperty" diameter="18"></mat-spinner>
-                <span>{{ deletingLeasedProperty ? 'Deleting...' : 'Delete' }}</span>
-            </button>
-        </mat-card-actions>
-    </mat-card>
+  <mat-card class="lease-confirmation">
+    <mat-card-header><mat-card-title>Confirmation</mat-card-title></mat-card-header>
+    <mat-card-content>Are you sure that you want to delete this property?</mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-button type="button" [disabled]="deletingLeasedProperty" (click)="closeDeletePropertyDialog()">No</button>
+      <button mat-raised-button color="warn" type="button" (click)="deleteLeasedProperty()"
+        [disabled]="deletingLeasedProperty">
+        @if (deletingLeasedProperty) {
+          <mat-spinner diameter="18"></mat-spinner>
+        }
+        <span>{{ deletingLeasedProperty ? 'Deleting...' : 'Delete' }}</span>
+      </button>
+    </mat-card-actions>
+  </mat-card>
 </ng-template>

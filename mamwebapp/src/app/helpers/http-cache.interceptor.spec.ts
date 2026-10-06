@@ -5,6 +5,7 @@ import {
   HttpRequest,
   HttpResponse
 } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 
@@ -32,7 +33,13 @@ describe('HttpCacheInterceptor', () => {
     const currentUser = { id: 7, token: 'test-token' };
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
     const router = jasmine.createSpyObj<Router>('Router', ['navigate']);
-    interceptor = new HttpCacheInterceptor(new AuthenticationService(null, router));
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: Router, useValue: router },
+        AuthenticationService
+      ]
+    });
+    interceptor = TestBed.runInInjectionContext(() => new HttpCacheInterceptor());
     handler = new CountingHttpHandler();
   });
 

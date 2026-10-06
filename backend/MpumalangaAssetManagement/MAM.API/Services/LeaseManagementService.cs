@@ -1,5 +1,5 @@
 ﻿using MAM.BusinessLayer.Models;
-using MAM.BusinessLayer.Repositories;
+using MAM.BusinessLayer.Interfaces;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -18,25 +18,26 @@ namespace MAM.API.Services
     public class LeaseManagementService : ILeaseManagementService
     {
         private readonly AppSettings _appSettings;
+        private readonly ILeaseManagementRepository _leaseManagementRepository;
 
-        public LeaseManagementService(IOptions<AppSettings> appSettings)
+        public LeaseManagementService(IOptions<AppSettings> appSettings, ILeaseManagementRepository leaseManagementRepository)
         {
             _appSettings = appSettings.Value;
+            _leaseManagementRepository = leaseManagementRepository;
         }
 
         public List<LeasedProperty> GetLeasedProperties()
         {
-            using var _leaseManagementRepository = new LeaseManagementRepository(_appSettings);
             return _leaseManagementRepository.GetLeasedProperties();
         }
 
-        public LeasedProperty GetLeasedPropertyDetails(LeasedProperty leasedProperty) {
-            using var _leaseManagementRepository = new LeaseManagementRepository(_appSettings);
+        public LeasedProperty GetLeasedPropertyDetails(LeasedProperty leasedProperty)
+        {
             return _leaseManagementRepository.GetLeasedPropertyDetails(leasedProperty);
         }
 
-        public bool DeleteLeasedProperty(LeasedProperty leasedProperty) {
-            using var _leaseManagementRepository = new LeaseManagementRepository(_appSettings);
+        public bool DeleteLeasedProperty(LeasedProperty leasedProperty)
+        {
             return _leaseManagementRepository.DeleteLeasedProperty(leasedProperty);
         }
     }

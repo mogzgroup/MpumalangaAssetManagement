@@ -1,16 +1,16 @@
 export class AcquisitionPlan {
-    id: Number;
-    userImmovableAssetManagementPlanId: Number;
-    prooertyId: Number;
-    templeteNumber: Number;
-    districtRegion: String;
-    town: String;
-    serviceDescription: String;
-    budgetType: String;
-    extent?: Number;
-    initialNeedYear?: Number;
-    acquisitionType: String;
-    status: String;
+    id: number;
+    userImmovableAssetManagementPlanId: number;
+    prooertyId: number;
+    templeteNumber: number;
+    districtRegion: string;
+    town: string;
+    serviceDescription: string;
+    budgetType: string;
+    extent?: number;
+    initialNeedYear?: number;
+    acquisitionType: string;
+    status: string;
     totalAmountRequired: number;
     cashFlowYear1?: number;
     cashFlowYear2?: number;

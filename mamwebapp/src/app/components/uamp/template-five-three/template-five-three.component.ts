@@ -1,24 +1,42 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild, AfterViewInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ViewChild, AfterViewInit, TemplateRef, inject } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { ToastService } from 'src/app/services/toast.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
 import { UampService } from 'src/app/services/uamp/uamp.service';
 import { OperationPlan } from 'src/app/models/operation-plan.model';
 import { UAMP } from 'src/app/models/uamp.model';
 import { SharedService } from 'src/app/services/shared.service';
 import { Router } from '@angular/router';
 import { first } from 'rxjs/operators';
+import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardTitle, MatCardActions } from '@angular/material/card';
+import { MatFormField, MatSuffix, MatPrefix } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+
+import { MatOption } from '@angular/material/autocomplete';
+import { MatInput } from '@angular/material/input';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
-  standalone: false,
-  selector: 'app-template-five-three',
-  templateUrl: './template-five-three.component.html',
-  styleUrls: ['./template-five-three.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-template-five-three',
+    templateUrl: './template-five-three.component.html',
+    styleUrls: ['./template-five-three.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatFormField, MatSelect, FormsModule, MatOption, MatInput, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, MatPrefix, MatSlideToggle, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatPaginator, MatDialogTitle, MatCardTitle, CdkScrollable, MatDialogContent, MatCardActions, MatDialogActions, MatButton, MatIcon]
 })
 export class TemplateFiveThreeComponent implements OnInit, AfterViewInit {
-  operationPlans: Array<OperationPlan> = [];
+  private router = inject(Router);
+  private sharedService = inject(SharedService);
+  private uampService = inject(UampService);
+  private toastService = inject(ToastService);
+  private dialog = inject(MatDialog);
+
+  operationPlans: OperationPlan[] = [];
   dataSource = new MatTableDataSource<OperationPlan>([]);
   displayedColumns = [
     'district', 'town', 'municipality', 'assetDescription', 'streetDescription',
@@ -34,15 +52,9 @@ export class TemplateFiveThreeComponent implements OnInit, AfterViewInit {
   leaseTypes: any[];
   prioities: any[];
   uamp: UAMP;
-  isLoading: boolean = false;
+  isLoading = false;
   
-  constructor(
-    private router: Router,
-    private sharedService: SharedService,
-    private uampService: UampService,
-    private toastService: ToastService,
-    private dialog: MatDialog
-  ) {
+  constructor() {
     this.uampService.uampChange.subscribe((value) => {
       if(value)
       {

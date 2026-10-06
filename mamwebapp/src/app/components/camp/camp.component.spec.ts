@@ -8,8 +8,8 @@ describe('CAMPComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ CampComponent ]
-    })
+    imports: [CampComponent]
+})
     .compileComponents();
   }));
 

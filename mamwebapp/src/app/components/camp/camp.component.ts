@@ -1,45 +1,62 @@
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild, inject } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Camp } from 'src/app/models/camp.model';
 import { User } from 'src/app/models/user.model';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CampService } from 'src/app/services/camp/camp.service';
 import { ToastService } from 'src/app/services/toast.service';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { NgIf, DatePipe } from '@angular/common';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { TemplateOneComponent } from '../uamp/template-one/template-one.component';
+import { TemplateTwoOneComponent } from '../uamp/template-two-one/template-two-one.component';
+import { TemplateTwoTwoComponent } from '../uamp/template-two-two/template-two-two.component';
+import { TemplateThreeComponent } from '../uamp/template-three/template-three.component';
+import { TemplateFourOneComponent } from '../uamp/template-four-one/template-four-one.component';
+import { TemplateFourTwoComponent } from '../uamp/template-four-two/template-four-two.component';
+import { TemplateFiveOneComponent } from '../uamp/template-five-one/template-five-one.component';
+import { TemplateFiveTwoComponent } from '../uamp/template-five-two/template-five-two.component';
+import { TemplateFiveThreeComponent } from '../uamp/template-five-three/template-five-three.component';
+import { TemplateSixComponent } from '../uamp/template-six/template-six.component';
+import { TemplateSevenComponent } from '../uamp/template-seven/template-seven.component';
 
 @Component({
-  standalone: false,
-  selector: 'app-camp',
-  templateUrl: './camp.component.html',
-  styleUrls: ['./camp.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-camp',
+    templateUrl: './camp.component.html',
+    styleUrls: ['./camp.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatButton, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatIconButton, MatMenuTrigger, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, NgIf, MatProgressBar, MatMenu, MatMenuItem, MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatTabGroup, MatTab, TemplateOneComponent, TemplateTwoOneComponent, TemplateTwoTwoComponent, TemplateThreeComponent, TemplateFourOneComponent, TemplateFourTwoComponent, TemplateFiveOneComponent, TemplateFiveTwoComponent, TemplateFiveThreeComponent, TemplateSixComponent, TemplateSevenComponent, MatCardActions, DatePipe]
 })
 export class CampComponent implements OnInit {
+  private toastService = inject(ToastService);
+  campService = inject(CampService);
+  private authenticationService = inject(AuthenticationService);
+  private dialog = inject(MatDialog);
+
   private readonly department = 'Public works, roads & transport';
-  loading: boolean = false;
+  loading = false;
   loadError = '';
   currentUser: User;
   camp: Camp;
-  generatingCamp: boolean = false;
-  showDialog: boolean = false;
-  showCAMP: boolean = false;
-  camps: Array<Camp> = [];
-  value: number = 0;
-  activeIndex: number = 0;
+  generatingCamp = false;
+  showDialog = false;
+  showCAMP = false;
+  camps: Camp[] = [];
+  value = 0;
+  activeIndex = 0;
   displayedColumns = ['fileReference', 'department', 'createdDate', 'creator', 'status', 'actions'];
   templeteTwoPointTwo: any = { properties: [] };
   properties: any[] = [];
-  mode: string = 'Edit';
+  mode = 'Edit';
   @ViewChild('campViewDialog') campViewDialog: TemplateRef<unknown>;
   @ViewChild('campEditorDialog') campEditorDialog: TemplateRef<unknown>;
   private campViewDialogRef: MatDialogRef<unknown> | null = null;
   private campEditorDialogRef: MatDialogRef<unknown> | null = null;
-
-  constructor(
-    private toastService: ToastService,
-    public campService: CampService,
-    private authenticationService: AuthenticationService,
-    private dialog: MatDialog
-  ) { }
 
     ngOnInit() {
       this.authenticationService.currentUser.pipe().subscribe(x => {

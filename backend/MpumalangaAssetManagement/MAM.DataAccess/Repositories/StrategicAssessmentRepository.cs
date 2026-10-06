@@ -1,18 +1,16 @@
 ﻿using MAM.DataAccess.Interfaces;
 using MAM.DataAccess.Tables;
-using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MAM.DataAccess.Repositories
 {
     public class StrategicAssessmentRepository : IStrategicAssessmentRepository, IDisposable
     {
-        bool disposed = false;
-        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+        // No unmanaged resources; provide no-op Dispose for callers that use 'using'
+        public void Dispose() { }
         private string _connectionString { get; set; }
 
         public StrategicAssessmentRepository(string connectionString)
@@ -39,6 +37,17 @@ namespace MAM.DataAccess.Repositories
             }
         }
 
+        public void AddStrategicAssessments(List<StrategicAssessment> strategicAssessments)
+        {
+            if (strategicAssessments == null || strategicAssessments.Count == 0)
+                return;
+            using (var db = new DataContext(_connectionString))
+            {
+                db.StrategicAssessments.AddRange(strategicAssessments);
+                db.SaveChanges();
+            }
+        }
+
         public void UpdateStrategicAssessment(StrategicAssessment strategicAssessment)
         {
             using (var db = new DataContext(_connectionString))
@@ -57,28 +66,6 @@ namespace MAM.DataAccess.Repositories
             }
         }
 
-        public void Dispose()
-        {
-            // Dispose of unmanaged resources.
-            Dispose(true);
-            // Suppress finalization.
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                handle.Dispose();
-                // Free any other managed objects here.
-                //
-            }
-
-            disposed = true;
-        }       
+        // Dispose implemented as no-op above
     }
 }

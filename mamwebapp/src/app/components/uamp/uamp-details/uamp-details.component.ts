@@ -1,12 +1,25 @@
 import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { UAMP } from 'src/app/models/uamp.model';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
+
+import { RouterLinkActive, RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
-  standalone: false,
-  selector: 'app-uamp-details',
-  templateUrl: './uamp-details.component.html',
-  styleUrls: ['./uamp-details.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
+    selector: 'app-uamp-details',
+    templateUrl: './uamp-details.component.html',
+    styleUrls: ['./uamp-details.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [
+    MatCard,
+    MatCardContent,
+    MatTabNav,
+    MatTabLink,
+    RouterLinkActive,
+    RouterLink,
+    MatTabNavPanel,
+    RouterOutlet
+],
 })
 export class UampDetailsComponent implements OnInit {
   templates: { label: string; routerLink: string }[];

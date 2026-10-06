@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LeasedProperty } from 'src/app/models/leased-property.model';
 import { environment } from 'src/environments/environment';
@@ -9,11 +9,11 @@ import { cachedGet } from '../../helpers/http-cache';
   providedIn: 'root'
 })
 export class LeasedPropertiesService {
-     
-      constructor(private http: HttpClient) { }
+      private http = inject(HttpClient);
+
 
       getLeasedProperties(): Observable<any>{
-        return cachedGet<Array<LeasedProperty>>(this.http, `${environment.apiUrl}/api/leasemanagement/getleasedproperties`);
+        return cachedGet<LeasedProperty[]>(this.http, `${environment.apiUrl}/api/leasemanagement/getleasedproperties`);
       }
 
       getLeasedPropertyDetails(leasedProperty): Observable<any>{
@@ -30,7 +30,7 @@ export class LeasedPropertiesService {
           formData.append('file', file, file.name);
         });
         
-        let header = new HttpHeaders({
+        const header = new HttpHeaders({
             'enctype': 'multipart/form-data',
             'Accept': 'application/json'
           });
@@ -44,7 +44,7 @@ export class LeasedPropertiesService {
           formData.append('file', file, file.name);
         });
         
-        let header = new HttpHeaders({
+        const header = new HttpHeaders({
             'enctype': 'multipart/form-data',
             'Accept': 'application/json'
           });

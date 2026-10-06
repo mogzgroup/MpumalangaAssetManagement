@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy, inject } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { ConditionAssessment } from 'src/app/models/condition-assessment.model';
 import { Facility } from 'src/app/models/facility.model';
@@ -8,23 +8,35 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ConditionAssessmentService } from 'src/app/services/condition-assessment/condition-assessment.service';
 import { AssetregisterComponent } from '../assetregister.component';
 import { ToastService } from 'src/app/services/toast.service';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatAccordion } from '@angular/material/expansion';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent } from '@angular/material/card';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  standalone: false,
-  selector: 'app-condition-assessment',
-  templateUrl: './condition-assessment.component.html',
-  styleUrls: ['./condition-assessment.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-condition-assessment',
+    templateUrl: './condition-assessment.component.html',
+    styleUrls: ['./condition-assessment.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatTabGroup, MatTab, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatIconButton, MatIcon, MatButtonToggleGroup, MatButtonToggle, MatTooltip, MatButton, MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent, MatAccordion, FormsModule]
 })
 export class ConditionAssessmentComponent implements OnInit {
+  private authenticationService = inject(AuthenticationService);
+  conditionAssessmentService = inject(ConditionAssessmentService);
+  private toastService = inject(ToastService);
+
   @Input() selectedFacility: Facility;
   @Input() assetComponent: AssetregisterComponent;
-  @Output("closeConditionAssessment") closeConditionAssessment = new EventEmitter<any>();
+  @Output() closeConditionAssessment = new EventEmitter<any>();
   @Output() stopSort= new EventEmitter<any>();
   uploadedFiles: File[] = [];
   landFiles: { name: string; url: string; file: File }[] = [];
-  ewwfCount: number = 0;
-  edCount: number = 0;
+  ewwfCount = 0;
+  edCount = 0;
   elements: any[] = [
     {title: 'Building/ Structural Elements', subTitles:[
       {name:'External walls & wall finishes', identifier: 'ewwfCount'},
@@ -86,7 +98,7 @@ export class ConditionAssessmentComponent implements OnInit {
         {name:'Room type air conditioners', identifier: 'rtacCount'}
       ]}
   ];
-  conditionAssessments: Array<ConditionAssessment> = [
+  conditionAssessments: ConditionAssessment[] = [
     {
       id: undefined,
       facilityId: undefined,
@@ -114,14 +126,14 @@ export class ConditionAssessmentComponent implements OnInit {
         department: undefined
       }
     }];
-  public pCount: number = 0;
-  public aCount: number = 0;
-  public cCount: number = 0;
-  public sCount: number = 0;
-  public oCount: number = 0;
-  public fCount: number = 0;
+  public pCount = 0;
+  public aCount = 0;
+  public cCount = 0;
+  public sCount = 0;
+  public oCount = 0;
+  public fCount = 0;
   loading: boolean;
-  dataIsLoaded: boolean = false;
+  dataIsLoaded = false;
   isBusy: boolean;
   currentUser: User;
   stateOptions: any[];
@@ -165,10 +177,10 @@ export class ConditionAssessmentComponent implements OnInit {
     { label: 'Escape route indicators/signage', key: 'erisValue' },
     { label: 'Burglar proofs (doors and windows)', key: 'bpValue' }
   ];
-  activeIndex: number = 0;
+  activeIndex = 0;
   items: any[] = [];
-  mode: string = 'Edit';
-  showdelete: boolean = false;
+  mode = 'Edit';
+  showdelete = false;
   lcValue: any;
   cbValue: any;
   hsValue: any;
@@ -186,7 +198,7 @@ export class ConditionAssessmentComponent implements OnInit {
   slValue: any;
   sgwValue: any;
 
-  constructor(private authenticationService: AuthenticationService, public conditionAssessmentService: ConditionAssessmentService, private toastService: ToastService) {
+  constructor() {
     this.stateOptions = [{label: 'Available', value: 'available'}, {label: 'Not Available', value: 'notAvailable'}];
 
     this.paymentOptions = [
@@ -217,7 +229,7 @@ export class ConditionAssessmentComponent implements OnInit {
 
   saveConditionAssessment() {
     this.isBusy = true;
-    var conditionAssessment: ConditionAssessment = {
+    const conditionAssessment: ConditionAssessment = {
       id: 0,
       facilityId: this.selectedFacility.id,
       createdDate: new Date(),

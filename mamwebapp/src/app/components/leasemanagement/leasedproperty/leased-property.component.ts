@@ -1,20 +1,21 @@
-import { DatePipe } from '@angular/common';
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { LeasedProperty } from 'src/app/models/leased-property.model';
+import { DatePipe, CurrencyPipe } from '@angular/common';
+import { Component, Input, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { LeasedPropertiesService } from 'src/app/services/leased-property/leased-property.service';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
 
 @Component({
-  standalone: false,
-  selector: 'app-leased-property',
-  templateUrl: './leased-property.component.html',
-  styleUrls: ['./leased-property.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-leased-property',
+    templateUrl: './leased-property.component.html',
+    styleUrls: ['./leased-property.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatTabGroup, MatTab, CurrencyPipe, DatePipe]
 })
 export class LeasedPropertyComponent implements OnInit {
-    activeIndex: number = 0;
+    private leasedPropertiesService = inject(LeasedPropertiesService);
+
+    activeIndex = 0;
   landFiles: any[] = [];
     @Input() selectedLeasedProperty: any;
-    constructor(private leasedPropertiesService: LeasedPropertiesService) { }
 
     ngOnInit() {
 

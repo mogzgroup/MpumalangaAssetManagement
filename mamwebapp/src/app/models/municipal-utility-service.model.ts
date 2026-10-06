@@ -1,6 +1,6 @@
 export class MunicipalUtilityService{
     id: number;
-    propertyId: Number;
+    propertyId: number;
     name: string;
     cost: number;
 }

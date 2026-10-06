@@ -1,5 +1,5 @@
 ﻿using MAM.BusinessLayer.Models;
-using MAM.BusinessLayer.Repositories;
+using MAM.BusinessLayer.Interfaces;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -20,37 +20,18 @@ namespace MAM.API.Services
     public class FaultService: IFaultService
     {
         private readonly AppSettings _appSettings;
+        private readonly IFaultRepository _faultRepository;
 
-        public FaultService(IOptions<AppSettings> appSettings)
+        public FaultService(IOptions<AppSettings> appSettings, IFaultRepository faultRepository)
         {
             _appSettings = appSettings.Value;
+            _faultRepository = faultRepository;
         }
 
-        public List<Fault> GetFaults()
-        {
-            using var _FaultRepository = new FaultRepository(_appSettings);
-            return _FaultRepository.GetFaults();
-        }
-        public bool UpdateFault(Fault fault)
-        {
-            using var _FaultRepository = new FaultRepository(_appSettings);
-            return _FaultRepository.UpdateFault(fault);
-        }
-        public bool DeleteFault(Fault fault)
-        {
-            using var _FaultRepository = new FaultRepository(_appSettings);
-            return _FaultRepository.DeleteFault(fault);
-        }
-        public int AddFault(Fault fault)
-        {
-            using var _FaultRepository = new FaultRepository(_appSettings);
-            return _FaultRepository.AddFault(fault);
-        }
-
-        public Fault GetFaultByReferenceNo(string referenceNo)
-        {
-            using var _FaultRepository = new FaultRepository(_appSettings);
-            return _FaultRepository.GetFaultByReferenceNo(referenceNo);
-        }
+        public List<Fault> GetFaults() => _faultRepository.GetFaults();
+        public bool UpdateFault(Fault fault) => _faultRepository.UpdateFault(fault);
+        public bool DeleteFault(Fault fault) => _faultRepository.DeleteFault(fault);
+        public int AddFault(Fault fault) => _faultRepository.AddFault(fault);
+        public Fault GetFaultByReferenceNo(string referenceNo) => _faultRepository.GetFaultByReferenceNo(referenceNo);
     }
 }

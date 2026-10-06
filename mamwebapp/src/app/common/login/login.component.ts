@@ -1,21 +1,50 @@
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { UserService } from '../../services/user/user.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { ToastService } from '../../services/toast.service';
+import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+
+import { MatButton } from '@angular/material/button';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { CdkScrollable } from '@angular/cdk/scrolling';
 
 @Component({
-  standalone: false,
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    MatButton,
+    MatSuffix,
+    MatProgressSpinner,
+    MatDialogTitle,
+    CdkScrollable,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose
+],
 })
 export class LoginComponent implements OnInit {
+  private userService = inject(UserService);
+  private formBuilder = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private authenticationService = inject(AuthenticationService);
+  private dialog = inject(MatDialog);
+  private toastService = inject(ToastService);
+
 
   @ViewChild('forgotPasswordDialog') forgotPasswordDialog: TemplateRef<unknown>;
 
@@ -25,21 +54,13 @@ export class LoginComponent implements OnInit {
   returnUrl: string;
 
   forgotPasswordForm: FormGroup;
-  showDialog: boolean = false;
+  showDialog = false;
   forgotPasswordLoading = false;
   forgotPasswordSubmitted = false;
   hidePassword = true;
   private forgotPasswordDialogRef: MatDialogRef<unknown> | null = null;
 
-  constructor(
-    private userService: UserService,
-    private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private authenticationService: AuthenticationService,
-    private dialog: MatDialog,
-    private toastService: ToastService
-  ) {
+  constructor() {
     // redirect to home if already logged in
     if (this.authenticationService.isAuthenticated) {
       this.router.navigate(['dashboard']);
@@ -125,7 +146,7 @@ export class LoginComponent implements OnInit {
     if (this.forgotPasswordDialogRef) {
       this.forgotPasswordDialogRef.disableClose = true;
     }
-    var randomstring = Math.random().toString(36).slice(-8);
+    const randomstring = Math.random().toString(36).slice(-8);
     this.userService.forgotpassword(this.ff.username.value, randomstring).pipe(first()).subscribe(isUpdated => {
       if (isUpdated) {
         this.forgotPasswordDialogRef?.close();

@@ -1,11 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Subject } from 'rxjs/internal/Subject';
 import { UAMP } from 'src/app/models/uamp.model';
 import { Observable } from 'rxjs';
-import { throwError } from 'rxjs';
-import {catchError, map} from 'rxjs/operators';
 import { Programme } from 'src/app/models/programme.model';
 import { Property } from 'src/app/models/property.model';
 import { OperationPlan } from 'src/app/models/operation-plan.model';
@@ -18,6 +16,8 @@ import { cachedGet } from '../../helpers/http-cache';
   providedIn: 'root'
 })
 export class UampService {
+  private http = inject(HttpClient);
+
   uamp: UAMP;
 
   uampChange: Subject<UAMP> = new Subject<UAMP>();
@@ -25,26 +25,25 @@ export class UampService {
   private httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
-  constructor(private http: HttpClient) { }
 
   assignUamp(umap: UAMP) {
     this.uamp = umap
     this.uampChange.next(this.uamp);
 }
 
-  getUamps(userDepartment: String): Observable<any>{
-    return cachedGet<Array<UAMP>>(this.http, `${environment.apiUrl}/api/uamp/getuamps/`+userDepartment);
+  getUamps(userDepartment: string): Observable<any>{
+    return cachedGet<UAMP[]>(this.http, `${environment.apiUrl}/api/uamp/getuamps/`+userDepartment);
   }
 
-  getUamp(id: Number): Observable<any>{
-    return cachedGet<Array<UAMP>>(this.http, `${environment.apiUrl}/api/uamp/getampbyid/`+id);
+  getUamp(id: number): Observable<any>{
+    return cachedGet<UAMP[]>(this.http, `${environment.apiUrl}/api/uamp/getampbyid/`+id);
   }
 
-  getuamptemplate(id: Number, templateNumber: Number): Observable<any>{
+  getuamptemplate(id: number, templateNumber: number): Observable<any>{
     return cachedGet<any>(this.http, `${environment.apiUrl}/api/uamp/getuamptemplate/`+id + `/`+ templateNumber);
   }
 
-  getuampwithtemplateone(id: Number): Observable<any>{
+  getuampwithtemplateone(id: number): Observable<any>{
     return cachedGet<UAMP>(this.http, `${environment.apiUrl}/api/uamp/getuampwithtemplateone/`+id);
   }
 

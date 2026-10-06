@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, defer, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -12,10 +12,10 @@ export interface GeocodingResult {
 
 @Injectable({ providedIn: 'root' })
 export class OpenStreetMapGeocodingService {
+  private http = inject(HttpClient);
+
   private readonly searchUrl = 'https://nominatim.openstreetmap.org/search';
   private nextRequestAt = 0;
-
-  constructor(private http: HttpClient) { }
 
   searchAddress(address: string): Observable<GeocodingResult[]> {
     const params = new HttpParams()

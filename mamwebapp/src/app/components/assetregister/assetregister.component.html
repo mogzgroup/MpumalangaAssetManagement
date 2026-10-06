@@ -1,172 +1,190 @@
 <div class="grid">
-    <div>
-        <mat-card>
-            <mat-card-content>
-                <div style="text-align: center;" class="number-count">
-                    {{landTotal}}
-                </div>
-                <div style="text-align: center;">
-                    Vacant Land Sites
-                </div>
-            </mat-card-content>
-        </mat-card>
-    </div>
-    <div>
-        <mat-card>
-            <mat-card-content>
-                <div style="text-align: center;" class="number-count">
-                {{buildingTotal}}
-                </div>
-                <div style="text-align: center;">Buildings</div>
-            </mat-card-content>
-        </mat-card>
-    </div>
-    <div>
-        <mat-card>
-            <mat-card-content>
-                <div style="text-align: center;" class="number-count">
-                {{nonResidentialBuildingTotal}}
-                </div>
-                <div style="text-align: center;">Non Residential Buildings</div>
-            </mat-card-content>
-        </mat-card>
-    </div>
-    <div>
-        <mat-card>
-            <mat-card-content>
-                <div style="text-align: center;" class="number-count">
-                    {{awaitingAppoval}}
-                </div>
-                <div style="text-align: center;">
-                    Awaiting Approval
-                </div>
-            </mat-card-content>
-        </mat-card>
-    </div>
+  <div>
+    <mat-card>
+      <mat-card-content>
+        <div style="text-align: center;" class="number-count">
+          {{landTotal}}
+        </div>
+        <div style="text-align: center;">
+          Vacant Land Sites
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div>
+    <mat-card>
+      <mat-card-content>
+        <div style="text-align: center;" class="number-count">
+          {{buildingTotal}}
+        </div>
+        <div style="text-align: center;">Buildings</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div>
+    <mat-card>
+      <mat-card-content>
+        <div style="text-align: center;" class="number-count">
+          {{nonResidentialBuildingTotal}}
+        </div>
+        <div style="text-align: center;">Non Residential Buildings</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div>
+    <mat-card>
+      <mat-card-content>
+        <div style="text-align: center;" class="number-count">
+          {{awaitingAppoval}}
+        </div>
+        <div style="text-align: center;">
+          Awaiting Approval
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>
 <div class="assetregister-toolbar">
-    <div class="assetregister-controls">
-    <button mat-raised-button color="primary" *ngIf="currentUser.roleId == 2 || currentUser.roleId == 3"
+  <div class="assetregister-controls">
+    @if (currentUser.roleId == 2 || currentUser.roleId == 3) {
+      <button mat-raised-button color="primary"
         type="button" [disabled]="loading" (click)="addFacility()">
         <mat-icon>add</mat-icon>
         Add New
-    </button>
+      </button>
+    }
     <div class="assetregister-filter">
-        <mat-form-field appearance="outline">
-            <mat-label>Search assets</mat-label>
-            <mat-icon matPrefix>search</mat-icon>
-            <input matInput (input)="applyFilter($event.target.value)">
-        </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Search assets</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput (input)="applyFilter($event.target.value)">
+      </mat-form-field>
     </div>
-    </div>
-    <div class="app-table-scroll assetregister-table-scroll">
-        <table mat-table [dataSource]="dataSource" matSort class="assetregister-table">
-            <ng-container *ngFor="let col of cols" [matColumnDef]="col.field">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{col.header}}</th>
-                <td mat-cell *matCellDef="let rowData">{{rowData[col.field] || '—'}}</td>
-            </ng-container>
-            <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef>Actions</th>
-                <td mat-cell *matCellDef="let rowData" class="asset-actions-cell">
-                    <button mat-icon-button [matMenuTriggerFor]="facilityMenu"
-                        [matMenuTriggerData]="{facility: rowData}"
-                        [attr.aria-label]="'Actions for ' + (rowData.name || rowData.clientCode)"
-                        matTooltip="Asset actions">
-                        <mat-icon>more_vert</mat-icon>
-                    </button>
-                </td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-            <tr class="mat-mdc-row" *matNoDataRow>
-                <td class="mat-mdc-cell asset-table-state-cell" [attr.colspan]="displayedColumns.length">
-                    <div *ngIf="loading" class="asset-table-state" role="status">
-                        <mat-spinner diameter="24" aria-hidden="true"></mat-spinner>
-                        <span>Loading assets...</span>
-                    </div>
-                    <div *ngIf="!loading && dataSource.filter" class="asset-table-state">
-                        No assets match your search.
-                        <button *ngIf="error" mat-stroked-button type="button" (click)="retryLoadFacilities()">Retry</button>
-                    </div>
-                    <div *ngIf="!loading && !dataSource.filter" class="asset-table-state">
-                        <mat-icon aria-hidden="true">inventory_2</mat-icon>
-                        <span>No data found.</span>
-                        <button *ngIf="error" mat-stroked-button type="button" (click)="retryLoadFacilities()">Retry</button>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons
-        aria-label="Select page of assets"></mat-paginator>
-    <mat-menu #facilityMenu="matMenu">
-        <ng-template matMenuContent let-facility="facility">
-            <button mat-menu-item type="button" (click)="viewFacility(facility)"><mat-icon>visibility</mat-icon><span>View</span></button>
-            <button mat-menu-item type="button" (click)="print(facility)"><mat-icon>print</mat-icon><span>Print</span></button>
-            <button mat-menu-item type="button" (click)="update(facility)"><mat-icon>edit</mat-icon><span>Edit</span></button>
-            <button mat-menu-item type="button" (click)="confirmDelete(facility)"><mat-icon>delete</mat-icon><span>Delete</span></button>
-            <button mat-menu-item type="button" (click)="conditionAssessment(facility)">
-                <mat-icon>fact_check</mat-icon><span>Condition Assessment</span>
-            </button>
-        </ng-template>
-    </mat-menu>
+  </div>
+  <div class="app-table-scroll assetregister-table-scroll">
+    <table mat-table [dataSource]="dataSource" matSort class="assetregister-table">
+      @for (col of cols; track col) {
+        <ng-container [matColumnDef]="col.field">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{col.header}}</th>
+          <td mat-cell *matCellDef="let rowData">{{rowData[col.field] || '—'}}</td>
+        </ng-container>
+      }
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let rowData" class="asset-actions-cell">
+          <button mat-icon-button [matMenuTriggerFor]="facilityMenu"
+            [matMenuTriggerData]="{facility: rowData}"
+            [attr.aria-label]="'Actions for ' + (rowData.name || rowData.clientCode)"
+            matTooltip="Asset actions">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr class="mat-mdc-row" *matNoDataRow>
+        <td class="mat-mdc-cell asset-table-state-cell" [attr.colspan]="displayedColumns.length">
+          @if (loading) {
+            <div class="asset-table-state" role="status">
+              <mat-spinner diameter="24" aria-hidden="true"></mat-spinner>
+              <span>Loading assets...</span>
+            </div>
+          }
+          @if (!loading && dataSource.filter) {
+            <div class="asset-table-state">
+              No assets match your search.
+              @if (error) {
+                <button mat-stroked-button type="button" (click)="retryLoadFacilities()">Retry</button>
+              }
+            </div>
+          }
+          @if (!loading && !dataSource.filter) {
+            <div class="asset-table-state">
+              <mat-icon aria-hidden="true">inventory_2</mat-icon>
+              <span>No data found.</span>
+              @if (error) {
+                <button mat-stroked-button type="button" (click)="retryLoadFacilities()">Retry</button>
+              }
+            </div>
+          }
+        </td>
+      </tr>
+    </table>
+  </div>
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons
+  aria-label="Select page of assets"></mat-paginator>
+  <mat-menu #facilityMenu="matMenu">
+    <ng-template matMenuContent let-facility="facility">
+      <button mat-menu-item type="button" (click)="viewFacility(facility)"><mat-icon>visibility</mat-icon><span>View</span></button>
+      <button mat-menu-item type="button" (click)="print(facility)"><mat-icon>print</mat-icon><span>Print</span></button>
+      <button mat-menu-item type="button" (click)="update(facility)"><mat-icon>edit</mat-icon><span>Edit</span></button>
+      <button mat-menu-item type="button" (click)="confirmDelete(facility)"><mat-icon>delete</mat-icon><span>Delete</span></button>
+      <button mat-menu-item type="button" (click)="conditionAssessment(facility)">
+        <mat-icon>fact_check</mat-icon><span>Condition Assessment</span>
+      </button>
+    </ng-template>
+  </mat-menu>
 </div>
 
 <ng-template #assetDialog>
-    <mat-card class="asset-dialog">
-        <mat-card-header>
-            <mat-card-title>{{dialogHeader}}</mat-card-title>
-            <button mat-icon-button type="button" aria-label="Close" (click)="closeAssetDialog()"><mat-icon>close</mat-icon></button>
-        </mat-card-header>
-        <mat-card-content>
-            <app-addassetregister (newAsset)="addUpdateAsset($event)" [selectedAsset]="selectedAsset"></app-addassetregister>
-        </mat-card-content>
-    </mat-card>
+  <mat-card class="asset-dialog">
+    <mat-card-header>
+      <mat-card-title>{{dialogHeader}}</mat-card-title>
+      <button mat-icon-button type="button" aria-label="Close" (click)="closeAssetDialog()"><mat-icon>close</mat-icon></button>
+    </mat-card-header>
+    <mat-card-content>
+      <app-addassetregister (newAsset)="addUpdateAsset($event)" [selectedAsset]="selectedAsset"></app-addassetregister>
+    </mat-card-content>
+  </mat-card>
 </ng-template>
 
 <ng-template #printDialog>
-    <mat-card class="asset-dialog">
-        <mat-card-header>
-            <mat-card-title>{{printDialogHeader}}</mat-card-title>
-            <button mat-icon-button type="button" aria-label="Close" (click)="closePrintDialog()"><mat-icon>close</mat-icon></button>
-        </mat-card-header>
-        <mat-card-content>
-            <app-print-asset [selectedFacility]="selectedAsset"></app-print-asset>
-        </mat-card-content>
-        <mat-card-actions>
-            <span>Created on {{selectedAsset.createdDate | date:"dd/MM/yy"}} by Admin Admin</span>
-            <span class="asset-dialog-spacer"></span>
-            <span>Approved on {{selectedAsset.approvedDate | date:"dd/MM/yy"}} by {{selectedAsset.approvedBy}}</span>
-        </mat-card-actions>
-    </mat-card>
+  <mat-card class="asset-dialog">
+    <mat-card-header>
+      <mat-card-title>{{printDialogHeader}}</mat-card-title>
+      <button mat-icon-button type="button" aria-label="Close" (click)="closePrintDialog()"><mat-icon>close</mat-icon></button>
+    </mat-card-header>
+    <mat-card-content>
+      <app-print-asset [selectedFacility]="selectedAsset"></app-print-asset>
+    </mat-card-content>
+    <mat-card-actions>
+      <span>Created on {{selectedAsset.createdDate | date:"dd/MM/yy"}} by Admin Admin</span>
+      <span class="asset-dialog-spacer"></span>
+      <span>Approved on {{selectedAsset.approvedDate | date:"dd/MM/yy"}} by {{selectedAsset.approvedBy}}</span>
+    </mat-card-actions>
+  </mat-card>
 </ng-template>
 
 <ng-template #deleteDialog>
-    <mat-card class="asset-confirmation">
-        <mat-card-header><mat-card-title>Delete asset</mat-card-title></mat-card-header>
-        <mat-card-content>Are you sure you want to delete <strong>{{facility?.name || facility?.clientCode}}</strong>?</mat-card-content>
-        <mat-card-actions align="end">
-            <button mat-button type="button" [disabled]="deleting" (click)="closeDeleteDialog()">Cancel</button>
-            <button mat-raised-button color="warn" type="button"
-                [disabled]="deleting" (click)="deleteFacility()">
-                <mat-spinner *ngIf="deleting" diameter="18" aria-label="Deleting asset"></mat-spinner>
-                <span *ngIf="!deleting">Delete asset</span>
-            </button>
-        </mat-card-actions>
-    </mat-card>
+  <mat-card class="asset-confirmation">
+    <mat-card-header><mat-card-title>Delete asset</mat-card-title></mat-card-header>
+    <mat-card-content>Are you sure you want to delete <strong>{{facility?.name || facility?.clientCode}}</strong>?</mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-button type="button" [disabled]="deleting" (click)="closeDeleteDialog()">Cancel</button>
+      <button mat-raised-button color="warn" type="button"
+        [disabled]="deleting" (click)="deleteFacility()">
+        @if (deleting) {
+          <mat-spinner diameter="18" aria-label="Deleting asset"></mat-spinner>
+        }
+        @if (!deleting) {
+          <span>Delete asset</span>
+        }
+      </button>
+    </mat-card-actions>
+  </mat-card>
 </ng-template>
 
 <ng-template #conditionAssessmentDialog>
-    <mat-card class="asset-condition-dialog">
-        <mat-card-header>
-            <mat-card-title>Condition Assessment</mat-card-title>
-            <button mat-icon-button type="button" aria-label="Close" (click)="closeConditionAssessmentDialog()">
-                <mat-icon>close</mat-icon>
-            </button>
-        </mat-card-header>
-        <mat-card-content>
-            <app-condition-assessment [selectedFacility]="selectedAsset"
-                (closeConditionAssessment)="closeConditionAssessment($event)"></app-condition-assessment>
-        </mat-card-content>
-    </mat-card>
+  <mat-card class="asset-condition-dialog">
+    <mat-card-header>
+      <mat-card-title>Condition Assessment</mat-card-title>
+      <button mat-icon-button type="button" aria-label="Close" (click)="closeConditionAssessmentDialog()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-card-header>
+    <mat-card-content>
+      <app-condition-assessment [selectedFacility]="selectedAsset"
+      (closeConditionAssessment)="closeConditionAssessment($event)"></app-condition-assessment>
+    </mat-card-content>
+  </mat-card>
 </ng-template>

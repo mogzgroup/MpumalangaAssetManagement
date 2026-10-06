@@ -1,8 +1,7 @@
-import { MtefYear } from "./mtef-year.model";
 
 export class MtefBudgetPeriod {
-    id: Number;
-    userImmovableAssetManagementPlanId: Number;
+    id: number;
+    userImmovableAssetManagementPlanId: number;
     order: number;
     isHeader: boolean;
     isPercentage: boolean;

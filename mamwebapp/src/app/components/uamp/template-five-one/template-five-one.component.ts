@@ -1,44 +1,63 @@
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild, inject } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { UampService } from 'src/app/services/uamp/uamp.service';
 import { ToastService } from 'src/app/services/toast.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
+import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { CurrentUtlisation } from '../../../models/current-utilisation.model';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FacilityService } from 'src/app/services/facility/facility.service';
 import { UAMP } from 'src/app/models/uamp.model';
 import { OperationPlan } from 'src/app/models/operation-plan.model';
 import { Router } from '@angular/router';
 import { SharedService } from 'src/app/services/shared.service';
+import { MatCard, MatCardSubtitle, MatCardContent, MatCardHeader, MatCardTitle, MatCardActions } from '@angular/material/card';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { CurrencyPipe } from '@angular/common';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatInput } from '@angular/material/input';
 
 @Component({
-  standalone: false,
-  selector: 'app-template-five-one',
-  templateUrl: './template-five-one.component.html',
-  styleUrls: ['./template-five-one.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-template-five-one',
+    templateUrl: './template-five-one.component.html',
+    styleUrls: ['./template-five-one.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatCard, MatCardSubtitle, MatCardContent, MatButton, MatTooltip, MatIcon, MatIconButton, MatMenuTrigger, MatPaginator, MatMenu, MatMenuItem, MatCardHeader, MatDialogTitle, MatCardTitle, CdkScrollable, MatDialogContent, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatInput, MatCardActions, MatDialogActions, CurrencyPipe]
 })
 export class TemplateFiveOneComponent implements OnInit {
+  private sharedService = inject(SharedService);
+  private router = inject(Router);
+  private facilityService = inject(FacilityService);
+  uampService = inject(UampService);
+  private formBuilder = inject(FormBuilder);
+  private toastService = inject(ToastService);
+  private dialog = inject(MatDialog);
+
   scheduleCurrentUtilisation: CurrentUtlisation[] = [];
   operationPlanForm: FormGroup;
-  submitted: boolean = false;
+  submitted = false;
   regions: any[];
   initialNeedYears: any[];
   statuses: any[];
   operationTypes: any[];
-  operationPlans: Array<OperationPlan> = [];
+  operationPlans: OperationPlan[] = [];
   uamp: UAMP;
-  showComfirmationDelete:boolean = false;
+  showComfirmationDelete = false;
   selectedOperationPlan: OperationPlan;
-  isEdit: boolean = false;
-  displayDialog: boolean = false;
-  dialogHeader: string = '';
-  mode: string = 'Edit';
-  isLoading: boolean = false;
+  isEdit = false;
+  displayDialog = false;
+  dialogHeader = '';
+  mode = 'Edit';
+  isLoading = false;
   pageIndex = 0;
   pageSize = 5;
-  pagedOperationPlans: Array<OperationPlan> = [];
+  pagedOperationPlans: OperationPlan[] = [];
 
   @ViewChild('formDialog') private formDialogTemplate: TemplateRef<unknown>;
   @ViewChild('deleteConfirmationDialog') private deleteConfirmationTemplate: TemplateRef<unknown>;
@@ -49,7 +68,7 @@ export class TemplateFiveOneComponent implements OnInit {
     this.openFormDialog();
   }
 
-  constructor(private sharedService: SharedService, private router: Router, private facilityService: FacilityService, public uampService: UampService, private formBuilder: FormBuilder, private toastService: ToastService, private dialog: MatDialog) {
+  constructor() {
     
     this.uampService.uampChange.subscribe((value) => {
       if(value)
@@ -169,7 +188,7 @@ export class TemplateFiveOneComponent implements OnInit {
       leased: false
     };
 
-    var index = this.operationPlans.indexOf(this.selectedOperationPlan); 
+    const index = this.operationPlans.indexOf(this.selectedOperationPlan); 
     this.operationPlans[index] = operationPlan;
     this.isEdit = false;
     this.uampService.assignUamp(this.uamp);
@@ -188,7 +207,7 @@ export class TemplateFiveOneComponent implements OnInit {
 
   deleteOperationPlan(){
     if(this.selectedOperationPlan.id == 0){
-      var index = this.operationPlans.indexOf(this.selectedOperationPlan);    
+      const index = this.operationPlans.indexOf(this.selectedOperationPlan);    
       this.operationPlans.splice(index, 1);
       this.updatePagedOperationPlans();
       this.closeDeleteConfirmation();
@@ -197,7 +216,7 @@ export class TemplateFiveOneComponent implements OnInit {
       this.uampService.deleteOperationPlan(this.selectedOperationPlan).pipe(first()).subscribe(isDeleted => {
         if (isDeleted) {
           this.toastService.showSuccess('Operation plan has been deleted successfully.');
-          var index = this.operationPlans.indexOf(this.selectedOperationPlan);    
+          const index = this.operationPlans.indexOf(this.selectedOperationPlan);    
           this.operationPlans.splice(index, 1);
           this.updatePagedOperationPlans();
           this.closeDeleteConfirmation();

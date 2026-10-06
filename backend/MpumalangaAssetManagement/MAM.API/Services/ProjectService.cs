@@ -1,5 +1,5 @@
 ﻿using MAM.BusinessLayer.Models;
-using MAM.BusinessLayer.Repositories;
+using MAM.BusinessLayer.Interfaces;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -19,30 +19,28 @@ namespace MAM.API.Services
     public class ProjectService : IProjectService
     {
         private readonly AppSettings _appSettings;
+        private readonly IProjectRepository _projectRepository;
 
-        public ProjectService(IOptions<AppSettings> appSettings)
+        public ProjectService(IOptions<AppSettings> appSettings, IProjectRepository projectRepository)
         {
             _appSettings = appSettings.Value;
+            _projectRepository = projectRepository;
         }
 
         public List<Project> GetProjects()
         {
-            using var _projectRepository = new ProjectRepository(_appSettings);
             return _projectRepository.GetProjects();
         }
         public Project UpdateProject(Project project)
         {
-            using var _projectRepository = new ProjectRepository(_appSettings);
             return _projectRepository.UpdateProject(project);
         }
         public bool DeleteProject(Project project)
         {
-            using var _projectRepository = new ProjectRepository(_appSettings);
             return _projectRepository.DeleteProject(project);
         }
         public int AddProject(Project project)
         {
-            using var _projectRepository = new ProjectRepository(_appSettings);
             return _projectRepository.AddProject(project);
         }
     }

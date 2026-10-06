@@ -8,8 +8,8 @@ describe('UampComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ UampComponent ]
-    })
+    imports: [UampComponent]
+})
     .compileComponents();
   }));
 

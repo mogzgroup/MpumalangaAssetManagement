@@ -1,111 +1,69 @@
 ﻿using MAM.BusinessLayer.Interfaces;
 using MAM.BusinessLayer.Model;
 using MAM.BusinessLayer.Models;
-using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MAM.BusinessLayer.Repositories
 {
-    public class ProjectRepository: IProjectRepository,  IDisposable
+    public class ProjectRepository: IProjectRepository
     {
         private AppSettings appSettings { get; set; }
-        // Flag: Has Dispose already been called?
-        bool disposed = false;
-        // Instantiate a SafeHandle instance.
-        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+        private readonly MAM.DataAccess.Interfaces.IProject _projectDataAccess;
+        private readonly MAM.DataAccess.Interfaces.IProjectSupplier _projectSupplierDataAccess;
 
-        public ProjectRepository(AppSettings settings)
+        public ProjectRepository(AppSettings settings, MAM.DataAccess.Interfaces.IProject projectDataAccess, MAM.DataAccess.Interfaces.IProjectSupplier projectSupplierDataAccess)
         {
             appSettings = settings;
+            _projectDataAccess = projectDataAccess;
+            _projectSupplierDataAccess = projectSupplierDataAccess;
         }
         public List<Project> GetProjects()
         {
             Project Project = new Project();
-            using (var dataAccess = new DataAccess.Repositories.ProjectRepository(appSettings.ConnectionString)) {
-                List<Project> projects = Project.ConvertToProjects(dataAccess.GetProjects());
-                return projects;
-            };  
+            List<Project> projects = Project.ConvertToProjects(_projectDataAccess.GetProjects());
+            return projects;
         }
         public Project UpdateProject(Project project)
         {
-            using (var dataAccess = new DataAccess.Repositories.ProjectRepository(appSettings.ConnectionString))
-            {
-                dataAccess.UpdateProject(project.ConvertToProjectTable(project));
-                AddUpdateProjectSupplier(project);
-                return project;
-            };
+            _projectDataAccess.UpdateProject(project.ConvertToProjectTable(project));
+            AddUpdateProjectSupplier(project);
+            return project;
         }
 
         public void AddUpdateProjectSupplier(Project project)
         {
-            using (var dataAccess = new DataAccess.Repositories.ProjectSupplierRepository(appSettings.ConnectionString))
+            foreach (var projectSupplier in project.ProjectSuppliers)
             {
-                foreach (var projectSupplier in project.ProjectSuppliers)
+                if (projectSupplier.Id > 0)
                 {
-                    if (projectSupplier.Id > 0)
-                    {
-                        dataAccess.UpdateProjectSupplier(projectSupplier.ConvertToProjectSupplierTable(projectSupplier));
-                    }
-                    else {
-                        dataAccess.AddProjectSupplier(projectSupplier.ConvertToProjectSupplierTable(projectSupplier));
-                    }                   
+                    _projectSupplierDataAccess.UpdateProjectSupplier(projectSupplier.ConvertToProjectSupplierTable(projectSupplier));
                 }
-            };
+                else {
+                    _projectSupplierDataAccess.AddProjectSupplier(projectSupplier.ConvertToProjectSupplierTable(projectSupplier));
+                }
+            }
         }
 
         public bool DeleteProject(Project project)
         {
-            using (var dataAccess = new DataAccess.Repositories.ProjectRepository(appSettings.ConnectionString))
-            {
-                project.IsDeleted = true;
-                dataAccess.UpdateProject(project.ConvertToProjectTable(project));
-                return true;
-            };
+            project.IsDeleted = true;
+            _projectDataAccess.UpdateProject(project.ConvertToProjectTable(project));
+            return true;
         }
 
         public bool DeleteProjectSupplier(int projectId)
         {
-            using (var dataAccess = new DataAccess.Repositories.ProjectSupplierRepository(appSettings.ConnectionString))
-            {
-                dataAccess.DeleteProjectSupplierById(projectId);
-                return true;
-            };
+            _projectSupplierDataAccess.DeleteProjectSupplierById(projectId);
+            return true;
         }
 
         public int AddProject(Project project)
         {
-            using (var dataAccess = new DataAccess.Repositories.ProjectRepository(appSettings.ConnectionString))
-            {
-                return dataAccess.AddProject(project.ConvertToProjectTable(project));
-                
-            };
+            return _projectDataAccess.AddProject(project.ConvertToProjectTable(project));
         }
 
-        public void Dispose()
-        {
-            // Dispose of unmanaged resources.
-            Dispose(true);
-            // Suppress finalization.
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                handle.Dispose();
-                // Free any other managed objects here.
-                //
-            }
-
-            disposed = true;
-        }
+        // Business-layer repository does not hold unmanaged resources; leave disposal to data-access.
     }
 }

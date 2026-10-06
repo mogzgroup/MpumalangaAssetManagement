@@ -11,9 +11,8 @@ describe('ImprovementsComponent', () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      declarations: [ImprovementsComponent],
-      imports: [CommonModule, MatCardModule, MatIconModule]
-    })
+    imports: [CommonModule, MatCardModule, MatIconModule, ImprovementsComponent]
+})
     .compileComponents();
   });
 

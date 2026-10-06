@@ -3,6 +3,7 @@ C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\Mpumalan
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\publish-api\appsettings.Development.json
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\publish-api\appsettings.json
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\publish-api\appsettings.Production.json
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\publish-api\appsettings.Test.json
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\publish-api\MAM.API.dll
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\publish-api\MAM.API.deps.json
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\publish-api\MAM.API.runtimeconfig.json

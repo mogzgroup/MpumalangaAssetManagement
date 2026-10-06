@@ -1,109 +1,125 @@
 <header class="topbar">
-    <div class="brand">
-        <img class="topbar-logo" src="../../../assets/images/logo.png" alt="Mpumalanga Provincial Government">
-        <span class="brand-title">Asset Management</span>
-    </div>
-    <div class="header-actions">
-        <button mat-icon-button class="desktop-nav-toggle" type="button" (click)="toggleDesktopNavigation()"
-            [attr.aria-label]="showSideMenu ? 'Collapse navigation' : 'Expand navigation'"
-            [attr.aria-expanded]="showSideMenu">
-            <mat-icon>{{ showSideMenu ? 'chevron_left' : 'chevron_right' }}</mat-icon>
-        </button>
-        <button #mobileNavigationToggle mat-icon-button class="mobile-nav-toggle" type="button" (click)="toggleMobileNavigation()"
-            [attr.aria-label]="mobileNavOpen ? 'Close navigation' : 'Open navigation'"
-            aria-controls="mobile-navigation"
-            [attr.aria-expanded]="mobileNavOpen">
-            <mat-icon>{{ mobileNavOpen ? 'close' : 'menu' }}</mat-icon>
-        </button>
-        <div class="user-section">
-            <div class="user-summary" *ngIf="displayName">
-                <span class="user-avatar" aria-hidden="true">{{ displayName.charAt(0) | uppercase }}</span>
-                <span class="user-name">{{ displayName }}</span>
-            </div>
-            <button mat-icon-button class="settings-trigger" type="button" aria-label="Account settings"
-                [matMenuTriggerFor]="settingsMenu">
-                <mat-icon>settings</mat-icon>
-            </button>
-            <mat-menu #settingsMenu="matMenu">
-                <button mat-menu-item (click)="openChangePasswordDialog()">
-                    <mat-icon>key</mat-icon><span>Change Password</span>
-                </button>
-                <button mat-menu-item (click)="logout()">
-                    <mat-icon>logout</mat-icon><span>Logout</span>
-                </button>
-            </mat-menu>
+  <div class="brand">
+    <img class="topbar-logo" src="../../../assets/images/logo.png" alt="Mpumalanga Provincial Government">
+    <span class="brand-title">Asset Management</span>
+  </div>
+  <div class="header-actions">
+    <button mat-icon-button class="desktop-nav-toggle" type="button" (click)="toggleDesktopNavigation()"
+      [attr.aria-label]="showSideMenu ? 'Collapse navigation' : 'Expand navigation'"
+      [attr.aria-expanded]="showSideMenu">
+      <mat-icon>{{ showSideMenu ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+    </button>
+    <button #mobileNavigationToggle mat-icon-button class="mobile-nav-toggle" type="button" (click)="toggleMobileNavigation()"
+      [attr.aria-label]="mobileNavOpen ? 'Close navigation' : 'Open navigation'"
+      aria-controls="mobile-navigation"
+      [attr.aria-expanded]="mobileNavOpen">
+      <mat-icon>{{ mobileNavOpen ? 'close' : 'menu' }}</mat-icon>
+    </button>
+    <div class="user-section">
+      @if (displayName) {
+        <div class="user-summary">
+          <span class="user-avatar" aria-hidden="true">{{ displayName.charAt(0) | uppercase }}</span>
+          <span class="user-name">{{ displayName }}</span>
         </div>
+      }
+      <button mat-icon-button class="settings-trigger" type="button" aria-label="Account settings"
+        [matMenuTriggerFor]="settingsMenu">
+        <mat-icon>settings</mat-icon>
+      </button>
+      <mat-menu #settingsMenu="matMenu">
+        <button mat-menu-item (click)="openChangePasswordDialog()">
+          <mat-icon>key</mat-icon><span>Change Password</span>
+        </button>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon><span>Logout</span>
+        </button>
+      </mat-menu>
     </div>
+  </div>
 </header>
-<div class="mobile-nav-scrim" *ngIf="mobileNavOpen" (click)="closeMobileNavigation()"></div>
+@if (mobileNavOpen) {
+  <div class="mobile-nav-scrim" (click)="closeMobileNavigation()"></div>
+}
 <app-sidemenu id="mobile-navigation" [expanded]="showSideMenu" [mobileOpen]="mobileNavOpen"
-    (navigationRequested)="closeMobileNavigation()"></app-sidemenu>
+(navigationRequested)="closeMobileNavigation()"></app-sidemenu>
 <ng-template #changePasswordDialog>
-    <div class="password-dialog">
-        <header mat-dialog-title class="password-dialog-heading">
-            <span class="password-dialog-icon" aria-hidden="true"><mat-icon>lock_reset</mat-icon></span>
-            <span class="password-dialog-copy">
-                <span class="password-dialog-title">Change password</span>
-                <span class="password-dialog-subtitle">Choose a new password to keep your account secure.</span>
-            </span>
-        </header>
-        <form [formGroup]="changePasswordForm" (ngSubmit)="onSubmit()" class="password-change-form">
-            <mat-dialog-content class="password-form">
-                <mat-form-field appearance="outline">
-                    <mat-label>Current password</mat-label>
-                    <mat-icon matPrefix aria-hidden="true">lock</mat-icon>
-                    <input matInput formControlName="oldpassword"
-                        [type]="hideOldPassword ? 'password' : 'text'" autocomplete="current-password">
-                    <button mat-icon-button matSuffix type="button"
-                        (click)="hideOldPassword = !hideOldPassword"
-                        [attr.aria-label]="hideOldPassword ? 'Show current password' : 'Hide current password'">
-                        <mat-icon>{{ hideOldPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
-                    </button>
-                    <mat-error *ngIf="submitted && f.oldpassword.errors?.required">Enter your current password.</mat-error>
-                </mat-form-field>
+  <div class="password-dialog">
+    <header mat-dialog-title class="password-dialog-heading">
+      <span class="password-dialog-icon" aria-hidden="true"><mat-icon>lock_reset</mat-icon></span>
+      <span class="password-dialog-copy">
+        <span class="password-dialog-title">Change password</span>
+        <span class="password-dialog-subtitle">Choose a new password to keep your account secure.</span>
+      </span>
+    </header>
+    <form [formGroup]="changePasswordForm" (ngSubmit)="onSubmit()" class="password-change-form">
+      <mat-dialog-content class="password-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Current password</mat-label>
+          <mat-icon matPrefix aria-hidden="true">lock</mat-icon>
+          <input matInput formControlName="oldpassword"
+            [type]="hideOldPassword ? 'password' : 'text'" autocomplete="current-password">
+            <button mat-icon-button matSuffix type="button"
+              (click)="hideOldPassword = !hideOldPassword"
+              [attr.aria-label]="hideOldPassword ? 'Show current password' : 'Hide current password'">
+              <mat-icon>{{ hideOldPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
+            @if (submitted && f.oldpassword.errors?.required) {
+              <mat-error>Enter your current password.</mat-error>
+            }
+          </mat-form-field>
 
-                <mat-form-field appearance="outline">
-                    <mat-label>New password</mat-label>
-                    <mat-icon matPrefix aria-hidden="true">key</mat-icon>
-                    <input matInput formControlName="newpassword"
-                        [type]="hideNewPassword ? 'password' : 'text'" autocomplete="new-password">
-                    <button mat-icon-button matSuffix type="button"
-                        (click)="hideNewPassword = !hideNewPassword"
-                        [attr.aria-label]="hideNewPassword ? 'Show new password' : 'Hide new password'">
-                        <mat-icon>{{ hideNewPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
-                    </button>
-                    <mat-hint>8+ characters, upper/lowercase, a number, and a symbol.</mat-hint>
-                    <mat-error *ngIf="submitted && f.newpassword.errors?.required">Enter a new password.</mat-error>
-                    <mat-error *ngIf="submitted && f.newpassword.errors?.pattern">
-                        The password does not meet the password policy.
-                    </mat-error>
-                </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>New password</mat-label>
+            <mat-icon matPrefix aria-hidden="true">key</mat-icon>
+            <input matInput formControlName="newpassword"
+              [type]="hideNewPassword ? 'password' : 'text'" autocomplete="new-password">
+              <button mat-icon-button matSuffix type="button"
+                (click)="hideNewPassword = !hideNewPassword"
+                [attr.aria-label]="hideNewPassword ? 'Show new password' : 'Hide new password'">
+                <mat-icon>{{ hideNewPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+              </button>
+              <mat-hint>8+ characters, upper/lowercase, a number, and a symbol.</mat-hint>
+              @if (submitted && f.newpassword.errors?.required) {
+                <mat-error>Enter a new password.</mat-error>
+              }
+              @if (submitted && f.newpassword.errors?.pattern) {
+                <mat-error>
+                  The password does not meet the password policy.
+                </mat-error>
+              }
+            </mat-form-field>
 
-                <mat-form-field appearance="outline">
-                    <mat-label>Confirm new password</mat-label>
-                    <mat-icon matPrefix aria-hidden="true">verified_user</mat-icon>
-                    <input matInput formControlName="confirmpassword"
-                        [type]="hideConfirmPassword ? 'password' : 'text'" autocomplete="new-password">
-                    <button mat-icon-button matSuffix type="button"
-                        (click)="hideConfirmPassword = !hideConfirmPassword"
-                        [attr.aria-label]="hideConfirmPassword ? 'Show confirmation password' : 'Hide confirmation password'">
-                        <mat-icon>{{ hideConfirmPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
-                    </button>
-                    <mat-error *ngIf="submitted && f.confirmpassword.errors?.required">
-                        Confirm your new password.
-                    </mat-error>
-                    <mat-error *ngIf="f.newpassword.value?.length > 2 && f.confirmpassword.value !== f.newpassword.value">
-                        Passwords do not match.
-                    </mat-error>
-                </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Confirm new password</mat-label>
+              <mat-icon matPrefix aria-hidden="true">verified_user</mat-icon>
+              <input matInput formControlName="confirmpassword"
+                [type]="hideConfirmPassword ? 'password' : 'text'" autocomplete="new-password">
+                <button mat-icon-button matSuffix type="button"
+                  (click)="hideConfirmPassword = !hideConfirmPassword"
+                  [attr.aria-label]="hideConfirmPassword ? 'Show confirmation password' : 'Hide confirmation password'">
+                  <mat-icon>{{ hideConfirmPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                @if (submitted && f.confirmpassword.errors?.required) {
+                  <mat-error>
+                    Confirm your new password.
+                  </mat-error>
+                }
+                @if (f.newpassword.value?.length > 2 && f.confirmpassword.value !== f.newpassword.value) {
+                  <mat-error>
+                    Passwords do not match.
+                  </mat-error>
+                }
+              </mat-form-field>
             </mat-dialog-content>
             <mat-dialog-actions align="end">
-                <button mat-button type="button" (click)="closeChangePasswordDialog()">Cancel</button>
-                <button mat-flat-button color="primary" type="submit" [disabled]="loading">
-                    <mat-spinner *ngIf="loading" diameter="18" aria-label="Updating password"></mat-spinner>
-                    <span>{{ loading ? 'Updating...' : 'Update password' }}</span>
-                </button>
+              <button mat-button type="button" (click)="closeChangePasswordDialog()">Cancel</button>
+              <button mat-flat-button color="primary" type="submit" [disabled]="loading">
+                @if (loading) {
+                  <mat-spinner diameter="18" aria-label="Updating password"></mat-spinner>
+                }
+                <span>{{ loading ? 'Updating...' : 'Update password' }}</span>
+              </button>
             </mat-dialog-actions>
-        </form>
-    </div>
-</ng-template>
+          </form>
+        </div>
+      </ng-template>

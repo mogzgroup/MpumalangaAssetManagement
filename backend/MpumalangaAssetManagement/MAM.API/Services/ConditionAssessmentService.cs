@@ -1,5 +1,5 @@
 ﻿using MAM.BusinessLayer.Models;
-using MAM.BusinessLayer.Repositories;
+using MAM.BusinessLayer.Interfaces;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -17,28 +17,16 @@ namespace MAM.API.Services
     public class ConditionAssessmentService : IConditionAssessmentService
     {
         private readonly AppSettings _appSettings;
+        private readonly IConditionAssessmentRepository _conditionAssessmentRepository;
 
-        public ConditionAssessmentService(IOptions<AppSettings> appSettings)
+        public ConditionAssessmentService(IOptions<AppSettings> appSettings, IConditionAssessmentRepository conditionAssessmentRepository)
         {
             _appSettings = appSettings.Value;
+            _conditionAssessmentRepository = conditionAssessmentRepository;
         }
 
-        public int AddConditionAssessment(ConditionAssessment conditionAssessment)
-        {
-            using var _facilityRepository = new ConditionAssessmentRepository(_appSettings);
-            return _facilityRepository.AddConditionAssessment(conditionAssessment);
-        }
-
-        public bool DeleteConditionAssessment(int id)
-        {
-            using var _facilityRepository = new ConditionAssessmentRepository(_appSettings);
-            return _facilityRepository.DeleteConditionAssessment(id);
-        }
-
-        public List<ConditionAssessment> GetConditionAssessments(int facilityId)
-        {
-            using var _facilityRepository = new ConditionAssessmentRepository(_appSettings);
-            return _facilityRepository.GetConditionAssessments(facilityId);
-        }
+        public int AddConditionAssessment(ConditionAssessment conditionAssessment) => _conditionAssessmentRepository.AddConditionAssessment(conditionAssessment);
+        public bool DeleteConditionAssessment(int id) => _conditionAssessmentRepository.DeleteConditionAssessment(id);
+        public List<ConditionAssessment> GetConditionAssessments(int facilityId) => _conditionAssessmentRepository.GetConditionAssessments(facilityId);
     }
 }

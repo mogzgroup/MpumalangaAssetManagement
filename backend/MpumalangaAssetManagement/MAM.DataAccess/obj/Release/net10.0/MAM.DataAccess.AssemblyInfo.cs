@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MAM.DataAccess")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1d2d1cbfcebf6aab61b3837e42754c0b15fbf863")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+50951f0446c4b9240f14f5b941c8e14189db14df")]
 [assembly: System.Reflection.AssemblyProductAttribute("MAM.DataAccess")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MAM.DataAccess")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

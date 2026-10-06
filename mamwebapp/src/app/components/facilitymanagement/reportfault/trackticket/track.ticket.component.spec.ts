@@ -8,8 +8,8 @@ describe('TrackTicketComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ TrackTicketComponent ]
-    })
+    imports: [TrackTicketComponent]
+})
     .compileComponents();
   }));
 

@@ -1,19 +1,19 @@
 export class SurrenderPlan{
-    id: Number;
-    userImmovableAssetManagementPlanId: Number;
+    id: number;
+    userImmovableAssetManagementPlanId: number;
     strategicAssessmentId?: number;
-    propertyId?: Number;
-    district: String;
-    town: String;
-    localMunicipality: String;
-    currentStreetAddress: String;
-    assetType: String;      
-    propertyDescription: String;
-    allocatedLettableSpace?: Number;
-    extentofLand?: Number;
-    surrenderRationale: String;
+    propertyId?: number;
+    district: string;
+    town: string;
+    localMunicipality: string;
+    currentStreetAddress: string;
+    assetType: string;      
+    propertyDescription: string;
+    allocatedLettableSpace?: number;
+    extentofLand?: number;
+    surrenderRationale: string;
     proposedHandOverDate?: Date;
-    contractualObligations: String;
+    contractualObligations: string;
     relinquish: boolean;
 }
 

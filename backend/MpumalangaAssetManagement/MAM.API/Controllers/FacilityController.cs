@@ -31,206 +31,105 @@ namespace MAM.API.Controllers
         [Route("getfacilityzonings")]
         public IActionResult GetFacilityZonings()
         {
-            try
-            {
-                List<FacilityType> facilityTypes = _facilityService.GetFacilityZonings();
-                return Ok(facilityTypes);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error in GetFacilityZonings", ex);
-                throw;
-            }
+            List<FacilityType> facilityTypes = _facilityService.GetFacilityZonings();
+            return Ok(facilityTypes);
         }
 
         [HttpGet]
         [Route("getdashboardwedges")]
         public IActionResult GetDashboardWedges()
         {
-            try
-            {
-                List<DashboardWedge> dashboardWedges = _facilityService.GetDashboardWedges();
-                return Ok(dashboardWedges);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error in GetDashboardWedges", ex);
-                throw;
-            }
+            List<DashboardWedge> dashboardWedges = _facilityService.GetDashboardWedges();
+            return Ok(dashboardWedges);
         }
 
         [HttpGet]
         [Route("getfacilitysummaries")]
         public IActionResult GetFacilitySummaries()
         {
-            try
-            {
-                List<FacilitySummaryChart> dashboardWedges = _facilityService.GetFacilitySummaries();
-                return Ok(dashboardWedges);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error in GetFacilitySummaries", ex);
-                throw;
-            }
+            List<FacilitySummaryChart> dashboardWedges = _facilityService.GetFacilitySummaries();
+            return Ok(dashboardWedges);
         }
 
         [HttpGet]
         [Route("getmapcoordinates")]
         public IActionResult GetMapCoordinates()
         {
-            try
-            {
-                List<MapCoordinate> mapCoordinates = _facilityService.GetMapCoordinates();
-                return Ok(mapCoordinates);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error in GetMapCoordinates", ex);
-                throw;
-            }
+            List<MapCoordinate> mapCoordinates = _facilityService.GetMapCoordinates();
+            return Ok(mapCoordinates);
         }
 
         [HttpGet]
         [Route("getproperties/{userDepartment}")]
         public IActionResult GetProperties(string userDepartment)
         {
-            try
-            {
-                List<Facility> facilities = _facilityService.GetProperties(userDepartment);
-                return Ok(facilities);
-            }
-            catch (Exception ex)
-            {
-                log.Info("Error", ex);
-                throw;
-            }
+            List<Facility> facilities = _facilityService.GetProperties(userDepartment);
+            return Ok(facilities);
         }
 
         [HttpGet]
         [Route("getbuildings/{town}")]
         public IActionResult GetBuildingsByTown(string town)
         {
-            try
-            {
-                List<Facility> facilities = _facilityService.GetBuildingsByTown(town);
-                return Ok(facilities);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            List<Facility> facilities = _facilityService.GetBuildingsByTown(town);
+            return Ok(facilities);
         }
 
         [HttpGet]
         [Route("getallfacilities")]
         public IActionResult GetAllFacilities()
         {
-            try
-            {
-                List<Facility> facilities = _facilityService.GetAllFacilities();
-                return Ok(facilities);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            List<Facility> facilities = _facilityService.GetAllFacilities();
+            return Ok(facilities);
         }
 
         [HttpGet]
         [Route("gettowns")]
         public IActionResult GetTowns()
         {
-            try
-            {
-                List<string> towns = _facilityService.GetTowns();
-                return Ok(towns);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            List<string> towns = _facilityService.GetTowns();
+            return Ok(towns);
         }
 
         [HttpGet]
         [Route("getassetregisterfacilities")]
         public IActionResult GetAssetRegisterFacilities()
         {
-            try
-            {
-                List<Facility> facilities = _facilityService.GetAssetRegisterFacilities();
-                return Ok(facilities);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            List<Facility> facilities = _facilityService.GetAssetRegisterFacilities();
+            return Ok(facilities);
         }
 
         [HttpGet]
         [Route("getFacilityByCode/{id}/{facilityType}")]
         public IActionResult GetFacilityById(int id, FacilityTypes facilityType)
         {
-            try
-            {
-                Facility facility = _facilityService.GetFacilityById(id, facilityType);
-                return Ok(facility);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            Facility facility = _facilityService.GetFacilityById(id, facilityType);
+            if (facility == null)
+                return NotFound();
+
+            return Ok(facility);
         }
 
         [HttpDelete]
         [Route("deleteFacility/{id}")]
         public IActionResult DeleteFacility(int id)
         {
-            try
-            {
-                return Ok(_facilityService.DeleteFacility(id));
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            return Ok(_facilityService.DeleteFacility(id));
         }
 
         [HttpPost]
         [Route("updateFacility/{step}")]
         public IActionResult UpdateFacility(string step, Facility facility)
         {
-            try
-            {
-                return Ok(_facilityService.UpdateFacility(step, facility));
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            return Ok(_facilityService.UpdateFacility(step, facility));
         }
 
         [HttpPost]
         [Route("saveFacility/{step}")]
         public IActionResult SaveFacility(string step, Facility facility)
         {
-            try
-            {
-                facility = _facilityService.SaveFacility(step, facility);
-                return Ok(facility);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            facility = _facilityService.SaveFacility(step, facility);
+            return Ok(facility);
         }
 
         [HttpGet]

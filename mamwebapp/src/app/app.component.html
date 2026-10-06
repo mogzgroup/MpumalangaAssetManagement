@@ -1,9 +1,11 @@
 
-<app-header *ngIf="loggedIn" (navigationExpandedChange)="setNavigationExpanded($event)"></app-header>
+@if (loggedIn) {
+  <app-header (navigationExpandedChange)="setNavigationExpanded($event)"></app-header>
+}
 
 <main class="container"
-    [class.login-route-container]="isLoginRoute"
-    [class.nav-collapsed]="!navigationExpanded">
+  [class.login-route-container]="isLoginRoute"
+  [class.nav-collapsed]="!navigationExpanded">
   <router-outlet></router-outlet>
 </main>
 

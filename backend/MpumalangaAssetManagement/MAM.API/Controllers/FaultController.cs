@@ -36,81 +36,41 @@ namespace MAM.API.Controllers
         [Route("getfaults")]
         public IActionResult GetFaults()
         {
-            try
-            {
-                List<Fault> faults = _faultService.GetFaults();
-                return Ok(faults);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            List<Fault> faults = _faultService.GetFaults();
+            return Ok(faults);
         }
 
         [HttpPost]
         [Route("addfault")]
         public IActionResult AddFault([FromBody] Fault fault)
         {
-            try
-            {
-                int id = _faultService.AddFault(fault);
-                return Ok(id);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            int id = _faultService.AddFault(fault);
+            return Ok(id);
         }
 
         [HttpGet]
         [Route("getfaultbyreferenceno/{referenceNo}")]
         public IActionResult GetFaultByReferenceNo(string referenceNo)
         {
-            try
-            {
-                Fault fault = _faultService.GetFaultByReferenceNo(referenceNo);
-                return Ok(fault);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            Fault fault = _faultService.GetFaultByReferenceNo(referenceNo);
+            return Ok(fault);
         }
 
         [HttpPost]
         [Route("updatefault")]
         public IActionResult UpdateFault([FromBody] Fault fault)
         {
-            try
-            {
-                bool isUpdated = _faultService.UpdateFault(fault);
-                return Ok(isUpdated);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            bool isUpdated = _faultService.UpdateFault(fault);
+            return Ok(isUpdated);
         }
 
         [HttpPost]
         [Route("deletefault")]
         public IActionResult DeletFault([FromBody]Fault fault)
         {
-            try
-            {
-                fault.IsDeleted = true;
-                bool isUpdated = _faultService.DeleteFault(fault);
-                return Ok(isUpdated);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            fault.IsDeleted = true;
+            bool isUpdated = _faultService.DeleteFault(fault);
+            return Ok(isUpdated);
         }    
 
     [HttpGet]
@@ -126,39 +86,30 @@ namespace MAM.API.Controllers
     [Route("uploadFiles/{fileName}")]
     public IActionResult UploadFiles(string fileName)
     {
-
         bool isUploaded = false;
 
-        try
+        for (int i = 0; i < Request.Form.Files.Count(); i++)
         {
-            for (int i = 0; i < Request.Form.Files.Count(); i++)
-            {
-                var file = Request.Form.Files[i];
-                //fileName = fileName + '_' + i;
-                var oFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                string _fileName = fileName + "_" + i + Path.GetExtension(oFileName);
-                var folderName = Path.Combine("Uploads", "Faults");
-                var pathToSave = _uploadStorage.GetDirectory("Faults");
+            var file = Request.Form.Files[i];
+            //fileName = fileName + '_' + i;
+            var oFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            string _fileName = fileName + "_" + i + Path.GetExtension(oFileName);
+            var folderName = Path.Combine("Uploads", "Faults");
+            var pathToSave = _uploadStorage.GetDirectory("Faults");
 
-                if (file.Length > 0)
+            if (file.Length > 0)
+            {
+                var fullPath = Path.Combine(pathToSave, _fileName);
+                var dbPath = Path.Combine(folderName, _fileName);
+                using (FileStream stream = new FileStream(fullPath, FileMode.Create))
                 {
-                    var fullPath = Path.Combine(pathToSave, _fileName);
-                    var dbPath = Path.Combine(folderName, _fileName);
-                    using (FileStream stream = new FileStream(fullPath, FileMode.Create))
-                    {
-                        file.CopyTo(stream);
-                    }
-                }
-                else
-                {
-                    return BadRequest();
+                    file.CopyTo(stream);
                 }
             }
-        }
-        catch (Exception ex)
-        {
-                log.Error(ex);
-                throw;
+            else
+            {
+                return BadRequest();
+            }
         }
 
         isUploaded = true;

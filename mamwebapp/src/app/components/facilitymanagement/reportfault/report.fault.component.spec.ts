@@ -8,8 +8,8 @@ describe('ReportFaultComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ReportFaultComponent ]
-    })
+    imports: [ReportFaultComponent]
+})
     .compileComponents();
   }));
 

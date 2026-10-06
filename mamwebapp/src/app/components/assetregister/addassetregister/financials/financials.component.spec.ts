@@ -17,8 +17,7 @@ describe('FinancialsComponent', () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      declarations: [FinancialsComponent],
-      imports: [
+    imports: [
         CommonModule,
         FormsModule,
         MatButtonModule,
@@ -26,10 +25,11 @@ describe('FinancialsComponent', () => {
         MatFormFieldModule,
         MatIconModule,
         MatInputModule,
-        MatSelectModule
-      ],
-      providers: [{ provide: Router, useValue: { navigate: jasmine.createSpy('navigate') } }]
-    })
+        MatSelectModule,
+        FinancialsComponent
+    ],
+    providers: [{ provide: Router, useValue: { navigate: jasmine.createSpy('navigate') } }]
+})
     .compileComponents();
   });
 

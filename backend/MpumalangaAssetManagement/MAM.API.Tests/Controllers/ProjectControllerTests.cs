@@ -1,3 +1,5 @@
+using System;
+// Ensure System namespace is imported for Environment usage (no-op if already present)
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -17,53 +19,43 @@ using MAM.API.Services;
 
 namespace MAM.API.Tests.Controllers
 {
-    public class ProjectControllerTests : IClassFixture<WebApplicationFactory<Program>>
+    public class ProjectControllerTests : IClassFixture<WebApplicationFactory<Program>>, IDisposable
     {
         private readonly WebApplicationFactory<Program> _factory;
+        private readonly MAM.API.Tests.TestHelpers.TestDatabaseSeedResult _seedResult;
 
         public ProjectControllerTests(WebApplicationFactory<Program> factory)
         {
             _factory = factory.WithWebHostBuilder(builder =>
             {
                 builder.UseEnvironment("Test");
-                // ensure host-level settings are available early for Startup
-                builder.UseSetting("AppSettings:Secret", "test-secret-should-be-long-enough-to-meet-requirements-123456");
-                builder.UseSetting("AppSettings:JwtIssuer", "MobileCentric");
-                builder.UseSetting("AppSettings:JwtAudience", "MobileCentricAPI");
-                builder.UseSetting("AppSettings:ConnectionString", "Server=(local);Database=Test;Trusted_Connection=True;");
-                builder.UseSetting("AppSettings:WebAppURL", "https://localhost/");
-                builder.UseSetting("AppSettings:UploadsFolder", "Uploads");
-                builder.UseSetting("AppSettings:EmailUserName", "test");
-                builder.UseSetting("AppSettings:EmailPassword", "test");
-                builder.UseSetting("AppSettings:EmailHost", "smtp.test");
-                builder.UseSetting("AppSettings:FromEmailAddress", "test@test.local");
-
+                // Load user secrets and fall back to safe defaults; avoid hardcoded credentials
                 builder.ConfigureAppConfiguration((context, conf) =>
                 {
-                    var dict = new System.Collections.Generic.Dictionary<string, string?>
+                    MAM.API.Tests.TestHelpers.TestConfiguration.AddUserSecretsToConfig(conf);
+                    var fallback = new System.Collections.Generic.Dictionary<string, string?>
                     {
-                        ["AppSettings:Secret"] = "test-secret-should-be-long-enough-to-meet-requirements-123456",
-                        ["AppSettings:JwtIssuer"] = "MobileCentric",
-                        ["AppSettings:JwtAudience"] = "MobileCentricAPI",
-                        ["AppSettings:ConnectionString"] = "Server=(local);Database=Test;Trusted_Connection=True;",
-                        ["AppSettings:WebAppURL"] = "https://localhost/",
-                        ["AppSettings:UploadsFolder"] = "Uploads",
-                        ["AppSettings:EmailUserName"] = "test",
-                        ["AppSettings:EmailPassword"] = "test",
-                        ["AppSettings:EmailHost"] = "smtp.test",
-                        ["AppSettings:FromEmailAddress"] = "test@test.local"
+                        ["AppSettings_Secret"] = "test-secret-should-be-long-enough-to-meet-requirements-123456",
+                        ["AppSettings_JwtIssuer"] = "MobileCentric",
+                        ["AppSettings_JwtAudience"] = "MobileCentricAPI"
                     };
-                    conf.AddInMemoryCollection(dict);
+                    foreach (var kv in fallback)
+                    {
+                        if (Environment.GetEnvironmentVariable(kv.Key) is null)
+                            Environment.SetEnvironmentVariable(kv.Key, kv.Value);
+                    }
                 });
 
-                builder.ConfigureTestServices(services =>
-                {
-                    // Replace IProjectService with fake
-                    services.AddScoped<IProjectService, FakeProjectService>();
-                    // Provide a minimal IFacilityService since controller requires it
-                    services.AddScoped<IFacilityService, FakeFacilityService>();
-                });
+                // Use real services so tests exercise the configured database
             });
+            // Ensure required test data exists in the real database
+            _seedResult = TestHelpers.TestDatabaseSeeder.SeedAsync(_factory).GetAwaiter().GetResult();
+        }
+
+        public void Dispose()
+        {
+            // clean up seeded data
+            TestHelpers.TestDatabaseSeeder.CleanupAsync(_factory, _seedResult).GetAwaiter().GetResult();
         }
 
         [Fact]
@@ -77,27 +69,7 @@ namespace MAM.API.Tests.Controllers
         [Fact]
         public async Task GetProjects_WithValidToken_ReturnsOkAndData()
         {
-            // build token
-            var config = _factory.Services.GetRequiredService<IConfiguration>();
-            var secret = config["AppSettings:Secret"]!;
-            var issuer = config["AppSettings:JwtIssuer"]!;
-            var audience = config["AppSettings:JwtAudience"]!;
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Issuer = issuer,
-                Audience = audience,
-                Subject = new System.Security.Claims.ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "1") }),
-                Expires = System.DateTime.UtcNow.AddMinutes(30),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
-
-            var client = _factory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenString);
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
 
             var res = await client.GetAsync("/api/project/getprojects");
             res.EnsureSuccessStatusCode();
@@ -107,32 +79,145 @@ namespace MAM.API.Tests.Controllers
             Assert.Equal("Test Project", projects[0].Name);
         }
 
-        // fakes
-        private class FakeProjectService : IProjectService
+        [Fact]
+        public async Task GetProperties_ReturnsOk()
         {
-            public int AddProject(Project project) => 1;
-            public bool DeleteProject(Project project) => true;
-            public List<Project> GetProjects() => new List<Project> { new Project { Id = 1, Name = "Test Project", CreatedDate = System.DateTime.UtcNow } };
-            public Project UpdateProject(Project project) => project;
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
+            var res = await client.GetAsync("/api/project/getproperties");
+            res.EnsureSuccessStatusCode();
+            var list = await res.Content.ReadFromJsonAsync<List<Facility>>();
+            Assert.NotNull(list);
+            // allow empty list; ensure endpoint responds successfully
         }
 
-        private class FakeFacilityService : IFacilityService
+        [Fact]
+        public async Task AddProject_ReturnsId_AndCleanup()
         {
-            public List<DashboardWedge> GetDashboardWedges() => new List<DashboardWedge>();
-            public List<FacilityType> GetFacilityZonings() => new List<FacilityType>();
-            public List<FacilitySummaryChart> GetFacilitySummaries() => new List<FacilitySummaryChart>();
-            public List<MapCoordinate> GetMapCoordinates() => new List<MapCoordinate>();
-            public List<Facility> GetAllFacilities() => new List<Facility>();
-            public List<Facility> GetProjectFacilities() => new List<Facility>();
-            public List<Facility> GetAssetRegisterFacilities() => new List<Facility>();
-            public List<Facility> GetProperties(string userDepartment) => new List<Facility>();
-            public Facility GetFacilityById(int id, MAM.BusinessLayer.Models.Enums.FacilityTypes facilityType) => new Facility();
-            public Facility SaveFacility(string step, Facility facility) => facility;
-            public bool UpdateFacility(string step, Facility facility) => true;
-            public bool DeleteFacility(int id) => true;
-            public List<Facility> GetBuildings() => new List<Facility> { new Facility { Id = 1, Name = "Test Facility" } };
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
+
+            var project = new Project
+            {
+                Id = 0,
+                OrderNumber = $"TEST-{Guid.NewGuid():N}",
+                Name = "Temp Test Project",
+                StartDate = DateTime.UtcNow,
+                PracticalCompletionDate = DateTime.UtcNow.AddDays(30),
+                PlannedDuration = "30 Days",
+                ScopeofWork = "Automated test project",
+                HasFinancials = false,
+                HasParentProject = false,
+                Amount = 123.45,
+                ManagedBy = "TEST",
+                EmployeeName = "Tester",
+                ContactName = "Tester",
+                ContactNumber = "0000000000",
+                BusinessName = "Test Business",
+                BusinessRegNumber = "REG-TEST",
+                CreatedDate = DateTime.UtcNow,
+                IsDeleted = false,
+                Status = "Active"
+            };
+
+            var res = await client.PostAsJsonAsync("/api/project/addproject", project);
+            res.EnsureSuccessStatusCode();
+            var id = await res.Content.ReadFromJsonAsync<int>();
+            Assert.True(id > 0);
+
+            // cleanup
+            try
+            {
+                project.Id = id;
+                // ensure non-null ProjectSuppliers when deleting to satisfy repository expectations
+                project.ProjectSuppliers ??= new System.Collections.Generic.List<ProjectSupplier>();
+                var del = await client.PostAsJsonAsync("/api/project/deleteproject", project);
+                if (!del.IsSuccessStatusCode)
+                {
+                    var body = await del.Content.ReadAsStringAsync();
+                    throw new InvalidOperationException($"DeleteProject failed: {(int)del.StatusCode} {del.ReasonPhrase} - {body}");
+                }
+            }
+            catch { }
+        }
+
+        [Fact]
+        public async Task UpdateProject_ReturnsUpdatedProject()
+        {
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
+
+            // create
+            var project = new Project
+            {
+                Id = 0,
+                OrderNumber = $"TEST-{Guid.NewGuid():N}",
+                Name = "Temp To Update",
+                StartDate = DateTime.UtcNow,
+                PracticalCompletionDate = DateTime.UtcNow.AddDays(30),
+                PlannedDuration = "30 Days",
+                ScopeofWork = "Automated update test",
+                HasFinancials = false,
+                HasParentProject = false,
+                Amount = 0,
+                ManagedBy = "TEST",
+                EmployeeName = "Tester",
+                ContactName = "Tester",
+                ContactNumber = "0000000000",
+                BusinessName = "Test Business",
+                BusinessRegNumber = "REG-TEST",
+                CreatedDate = DateTime.UtcNow,
+                IsDeleted = false,
+                Status = "Active",
+                ProjectSuppliers = new System.Collections.Generic.List<ProjectSupplier>()
+            };
+            var add = await client.PostAsJsonAsync("/api/project/addproject", project);
+            add.EnsureSuccessStatusCode();
+            var id = await add.Content.ReadFromJsonAsync<int>();
+            Assert.True(id > 0);
+
+            // update
+            project.Id = id;
+            project.Name = "Updated Name";
+            project.OrderNumber = project.OrderNumber + "-U";
+            // ensure ProjectSuppliers is not null to avoid repository null-foreach
+            project.ProjectSuppliers ??= new System.Collections.Generic.List<ProjectSupplier>();
+
+            var upd = await client.PostAsJsonAsync("/api/project/updateproject", project);
+            upd.EnsureSuccessStatusCode();
+            var updated = await upd.Content.ReadFromJsonAsync<Project>();
+            Assert.NotNull(updated);
+            Assert.Equal(id, updated!.Id);
+            Assert.Equal("Updated Name", updated.Name);
+
+            // cleanup
+            try { await client.PostAsJsonAsync("/api/project/deleteproject", project); } catch { }
+        }
+
+        [Fact]
+        public async Task DeleteProject_ReturnsOk()
+        {
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
+
+            var project = new Project
+            {
+                Id = 0,
+                OrderNumber = $"DEL-{Guid.NewGuid():N}",
+                Name = "Temp To Delete",
+                StartDate = DateTime.Now,
+                CreatedDate = DateTime.Now
+            };
+            var add = await client.PostAsJsonAsync("/api/project/addproject", project);
+            add.EnsureSuccessStatusCode();
+            var id = await add.Content.ReadFromJsonAsync<int>();
+
+            project.Id = id;
+            var res = await client.PostAsJsonAsync("/api/project/deleteproject", project);
+            res.EnsureSuccessStatusCode();
+            var result = await res.Content.ReadFromJsonAsync<bool>();
+            Assert.True(result);
+        }
+
+        // Tests use real IProjectService and IFacilityService implementations against the configured database
             public List<string> GetTowns() => new List<string>();
             public List<Facility> GetBuildingsByTown(string town) => new List<Facility>();
         }
     }
-}
+

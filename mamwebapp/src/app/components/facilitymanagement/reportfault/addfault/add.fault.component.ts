@@ -1,19 +1,34 @@
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild, inject } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FaultService } from 'src/app/services/facility-management/fault.service';
 import { ProjectService } from 'src/app/services/facility-management/project.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { Fault } from '../../../../models/fault.model';
 
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatAutocompleteTrigger, MatAutocomplete, MatOption } from '@angular/material/autocomplete';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
+import { TrackTicketComponent } from '../trackticket/track.ticket.component';
+
 @Component({
-  standalone: false,
-  selector: 'app-add-fault',
-  templateUrl: './add.fault.component.html',
-  styleUrls: ['./add.fault.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-add-fault',
+    templateUrl: './add.fault.component.html',
+    styleUrls: ['./add.fault.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatAutocompleteTrigger, MatAutocomplete, MatOption, MatError, MatIconButton, MatIcon, MatButton, MatProgressSpinner, MatCard, MatCardHeader, MatCardTitle, MatCardContent, TrackTicketComponent]
 })
 export class AddFaultComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private faultService = inject(FaultService);
+  private toastService = inject(ToastService);
+  private projectService = inject(ProjectService);
+  private dialog = inject(MatDialog);
+
 
   public fault: Fault;
   public attachments: File[] = [];
@@ -31,7 +46,7 @@ export class AddFaultComponent implements OnInit {
   public filteredTowns: any = [];
   public filteredBuildings: any = [];
   public buildings: any = [];
-  public enableBuilding: boolean = false;
+  public enableBuilding = false;
   @ViewChild('trackTicketDialog') trackTicketDialog: TemplateRef<unknown>;
   private trackTicketDialogRef: MatDialogRef<unknown> | null = null;
 
@@ -45,14 +60,8 @@ export class AddFaultComponent implements OnInit {
     return result;
   }
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private faultService: FaultService,
-    private toastService: ToastService,
-    private projectService: ProjectService,
-    private dialog: MatDialog
-  ) {
-      let now = new Date();
+  constructor() {
+      const now = new Date();
       const today = new Date(now.setHours(now.getHours() + 2));
       
     this.fault = {

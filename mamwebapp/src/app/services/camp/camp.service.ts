@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Camp } from 'src/app/models/camp.model';
@@ -9,14 +9,15 @@ import { cachedGet } from '../../helpers/http-cache';
     providedIn: 'root'
   })
   export class CampService {
+    private http = inject(HttpClient);
+
   
     private httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     };
-    constructor(private http: HttpClient) { }
     
-    getCamps(department: string): Observable<Array<Camp>> {
-      return this.http.get<Array<Camp>>(`${environment.apiUrl}/api/camp/getCamps/department`);
+    getCamps(department: string): Observable<Camp[]> {
+      return this.http.get<Camp[]>(`${environment.apiUrl}/api/camp/getCamps/department`);
     }
 
     startCamp(camp: Camp): Observable<Camp> {

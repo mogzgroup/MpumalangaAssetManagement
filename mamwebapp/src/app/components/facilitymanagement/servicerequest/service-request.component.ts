@@ -1,31 +1,45 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild, AfterViewInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ViewChild, AfterViewInit, TemplateRef, inject } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { Fault } from 'src/app/models/fault.model';
-import { Project } from 'src/app/models/project.model';
 import { User } from 'src/app/models/user.model';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { FaultService } from 'src/app/services/facility-management/fault.service';
 import { ToastService } from 'src/app/services/toast.service';
+import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { NgFor, NgIf, DatePipe } from '@angular/common';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions } from '@angular/material/card';
+import { ViewServiceRequestComponent } from './viewservicerequest/view-service-request.component';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-  standalone: false,
-  selector: 'app-service-request',
-  templateUrl: './service-request.component.html',
-  styleUrls: ['./service-request.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-service-request',
+    templateUrl: './service-request.component.html',
+    styleUrls: ['./service-request.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatFormField, MatLabel, MatIcon, MatPrefix, MatInput, MatTable, MatSort, NgFor, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, NgIf, MatIconButton, MatMenuTrigger, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatProgressBar, MatButton, MatPaginator, MatMenu, MatMenuItem, MatCard, MatCardHeader, MatCardTitle, MatCardContent, ViewServiceRequestComponent, MatCardActions, MatProgressSpinner, DatePipe]
 })
 export class ServiceRequestComponent implements OnInit, AfterViewInit {
+  private authenticationService = inject(AuthenticationService);
+  private faultService = inject(FaultService);
+  private toastService = inject(ToastService);
+  private dialog = inject(MatDialog);
+
 
   public showPrintDialog = false;
-  public loading: boolean = false;
+  public loading = false;
   public loadError = '';
   public deletingServiceRequest = false;
   public updatingServiceRequest = false;
-  public showdelete:boolean = false;
-  public serviceRequests: Array<Fault> = [];
+  public showdelete = false;
+  public serviceRequests: Fault[] = [];
   public selectedServiceRequest: Fault;
   public canCloseTicket = false;
   public showReportFaultDialog = false;
@@ -49,13 +63,6 @@ export class ServiceRequestComponent implements OnInit, AfterViewInit {
   @ViewChild('deleteServiceRequestDialog') deleteServiceRequestDialog: TemplateRef<unknown>;
   private serviceRequestDialogRef: MatDialogRef<unknown> | null = null;
   private deleteServiceRequestDialogRef: MatDialogRef<unknown> | null = null;
-
-  constructor(
-    private authenticationService: AuthenticationService,
-    private faultService: FaultService,
-    private toastService: ToastService,
-    private dialog: MatDialog
-  ) { }
 
   ngOnInit() {
     this.authenticationService.currentUser.pipe().subscribe(x => {

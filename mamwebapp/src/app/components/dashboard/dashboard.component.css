@@ -224,7 +224,8 @@
 
 .table-scroll {
     width: 100%;
-    overflow-x: auto;
+    max-height: clamp(180px, 35vh, 320px);
+    overflow: auto;
 }
 
 .dashboard-panel table {

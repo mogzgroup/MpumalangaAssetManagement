@@ -1,23 +1,41 @@
-import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProjectSupplier } from 'src/app/models/project-supplier';
 import { Project } from 'src/app/models/project.model';
-import { Supplier } from 'src/app/models/supplier';
 import { User } from 'src/app/models/user.model';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ProjectService } from 'src/app/services/facility-management/project.service';
 import { SupplierService } from 'src/app/services/facility-management/supplier.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { ToastService } from 'src/app/services/toast.service';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+
+import { MatOption } from '@angular/material/autocomplete';
+import { MatInput } from '@angular/material/input';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-  standalone: false,
-  selector: 'app-add-edit-project',
-  templateUrl: './add-edit-project.component.html',
-  styleUrls: ['./add-edit-project.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-add-edit-project',
+    templateUrl: './add-edit-project.component.html',
+    styleUrls: ['./add-edit-project.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatTabGroup, MatTab, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatError, MatInput, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, MatCheckbox, MatButton, MatIcon, MatIconButton, MatProgressSpinner]
 })
 export class AddEditProjectComponent implements OnInit {
+  private authenticationService = inject(AuthenticationService);
+  private formBuilder = inject(FormBuilder);
+  private supplierService = inject(SupplierService);
+  private sharedService = inject(SharedService);
+  private projectService = inject(ProjectService);
+  private toastService = inject(ToastService);
+
 
   @Input() project: Project;
   @Input() isViewOnly = false;
@@ -38,7 +56,7 @@ export class AddEditProjectComponent implements OnInit {
 
   public managedByForm: FormGroup;
   public supplierForm: FormGroup;
-  public projects: Array<Project> = [];
+  public projects: Project[] = [];
   public projectList: any[] = [];
   public suppliers: any[] = [];
   public supplierDropdownOptions: any[] = [];
@@ -69,11 +87,6 @@ export class AddEditProjectComponent implements OnInit {
     { field: 'contactName', header: 'Contact Name' },
     { field: 'contactNumber', header: 'Contact Number' }
   ];
-
-  constructor(private authenticationService: AuthenticationService, private formBuilder: FormBuilder,
-              private supplierService: SupplierService, private sharedService: SharedService,
-              private projectService: ProjectService, private toastService: ToastService) {
-  }
 
   ngOnInit() {
     this.mode = this.isViewOnly ? 'View' : 'Edit';

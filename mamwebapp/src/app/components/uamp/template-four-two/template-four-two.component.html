@@ -1,183 +1,197 @@
 <mat-card class="stepsdemo-content mt-5">
-    <mat-card-subtitle>Acquisition Plans: New leased accommodation requirements</mat-card-subtitle>
-    <mat-card-content>
-        <div class="table-actions">
-            <button mat-raised-button color="primary" matTooltip="Add Acquisition Plan"
-                (click)="openAddDialog()">
-                <mat-icon>add</mat-icon>Add Acquisition Plan
-            </button>
-        </div>
-        <div class="table-container">
-            <table class="acquisition-table">
-                <thead>
-                    <tr>
-                        <th>District/ Region</th>
-                        <th>Town</th>
-                        <th>Service Description</th>
-                        <th>Budget Type</th>
-                        <th>Extent Required (m²)</th>
-                        <th>Acquisition Type</th>
-                        <th>Status</th>
-                        <th>Cash Flow <small>(MTEF Year 1)</small></th>
-                        <th>Cash Flow <small>(MTEF Year 2)</small></th>
-                        <th>Cash Flow <small>(MTEF Year 3)</small></th>
-                        <th>Cash Flow <small>(MTEF Year 4)</small></th>
-                        <th>Cash Flow <small>(MTEF Year 5)</small></th>
-                        <th>Total Amount Required</th>
-                        <th>Required</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let acquisitionPlan of pagedAcquisitionPlans; let rowIndex = index">
-                        <td>{{ acquisitionPlan.districtRegion }}</td>
-                        <td>{{ acquisitionPlan.town }}</td>
-                        <td>{{ acquisitionPlan.serviceDescription }}</td>
-                        <td>{{ acquisitionPlan.budgetType }}</td>
-                        <td>{{ acquisitionPlan.extent }}</td>
-                        <td>{{ acquisitionPlan.acquisitionType }}</td>
-                        <td>{{ acquisitionPlan.status }}</td>
-                        <td>{{ acquisitionPlan.cashFlowYear1 | currency:'ZAR':'R' }}</td>
-                        <td>{{ acquisitionPlan.cashFlowYear2 | currency:'ZAR':'R' }}</td>
-                        <td>{{ acquisitionPlan.cashFlowYear3 | currency:'ZAR':'R' }}</td>
-                        <td>{{ acquisitionPlan.cashFlowYear4 | currency:'ZAR':'R' }}</td>
-                        <td>{{ acquisitionPlan.cashFlowYear5 | currency:'ZAR':'R' }}</td>
-                        <td>{{ calculateDbTotalAmountRequired(acquisitionPlan) | currency:'ZAR':'R' }}</td>
-                        <td>
-                            <mat-button-toggle-group [ngModel]="acquisitionPlan.reqiured"
-                                [ngModelOptions]="{standalone: true}"
-                                (change)="onReqiured(acquisitionPlan, $event, pageIndex * pageSize + rowIndex)"
-                                aria-label="Whether acquisition plan is required">
-                                <mat-button-toggle *ngFor="let option of requiredOptions" [value]="option.value">
-                                    {{ option.label }}
-                                </mat-button-toggle>
-                            </mat-button-toggle-group>
-                        </td>
-                        <td>
-                            <button mat-icon-button [matMenuTriggerFor]="planMenu"
-                                (click)="selectAcquisitionPlan(acquisitionPlan)" aria-label="Acquisition plan actions">
-                                <mat-icon>more_vert</mat-icon>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <mat-paginator [length]="acquisitionPlans.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 15]"
-            (page)="pageChanged($event)" showFirstLastButtons></mat-paginator>
-    </mat-card-content>
+  <mat-card-subtitle>Acquisition Plans: New leased accommodation requirements</mat-card-subtitle>
+  <mat-card-content>
+    <div class="table-actions">
+      <button mat-raised-button color="primary" matTooltip="Add Acquisition Plan"
+        (click)="openAddDialog()">
+        <mat-icon>add</mat-icon>Add Acquisition Plan
+      </button>
+    </div>
+    <div class="table-container">
+      <table class="acquisition-table">
+        <thead>
+          <tr>
+            <th>District/ Region</th>
+            <th>Town</th>
+            <th>Service Description</th>
+            <th>Budget Type</th>
+            <th>Extent Required (m²)</th>
+            <th>Acquisition Type</th>
+            <th>Status</th>
+            <th>Cash Flow <small>(MTEF Year 1)</small></th>
+            <th>Cash Flow <small>(MTEF Year 2)</small></th>
+            <th>Cash Flow <small>(MTEF Year 3)</small></th>
+            <th>Cash Flow <small>(MTEF Year 4)</small></th>
+            <th>Cash Flow <small>(MTEF Year 5)</small></th>
+            <th>Total Amount Required</th>
+            <th>Required</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (acquisitionPlan of pagedAcquisitionPlans; track acquisitionPlan; let rowIndex = $index) {
+            <tr>
+              <td>{{ acquisitionPlan.districtRegion }}</td>
+              <td>{{ acquisitionPlan.town }}</td>
+              <td>{{ acquisitionPlan.serviceDescription }}</td>
+              <td>{{ acquisitionPlan.budgetType }}</td>
+              <td>{{ acquisitionPlan.extent }}</td>
+              <td>{{ acquisitionPlan.acquisitionType }}</td>
+              <td>{{ acquisitionPlan.status }}</td>
+              <td>{{ acquisitionPlan.cashFlowYear1 | currency:'ZAR':'R' }}</td>
+              <td>{{ acquisitionPlan.cashFlowYear2 | currency:'ZAR':'R' }}</td>
+              <td>{{ acquisitionPlan.cashFlowYear3 | currency:'ZAR':'R' }}</td>
+              <td>{{ acquisitionPlan.cashFlowYear4 | currency:'ZAR':'R' }}</td>
+              <td>{{ acquisitionPlan.cashFlowYear5 | currency:'ZAR':'R' }}</td>
+              <td>{{ calculateDbTotalAmountRequired(acquisitionPlan) | currency:'ZAR':'R' }}</td>
+              <td>
+                <mat-button-toggle-group [ngModel]="acquisitionPlan.reqiured"
+                  [ngModelOptions]="{standalone: true}"
+                  (change)="onReqiured(acquisitionPlan, $event, pageIndex * pageSize + rowIndex)"
+                  aria-label="Whether acquisition plan is required">
+                  @for (option of requiredOptions; track option) {
+                    <mat-button-toggle [value]="option.value">
+                      {{ option.label }}
+                    </mat-button-toggle>
+                  }
+                </mat-button-toggle-group>
+              </td>
+              <td>
+                <button mat-icon-button [matMenuTriggerFor]="planMenu"
+                  (click)="selectAcquisitionPlan(acquisitionPlan)" aria-label="Acquisition plan actions">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <mat-paginator [length]="acquisitionPlans.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 15]"
+    (page)="pageChanged($event)" showFirstLastButtons></mat-paginator>
+  </mat-card-content>
 </mat-card>
 
 <mat-menu #planMenu="matMenu">
-    <button mat-menu-item (click)="update()"><mat-icon>edit</mat-icon><span>Update</span></button>
-    <button mat-menu-item (click)="confirmDelete()"><mat-icon>delete</mat-icon><span>Delete</span></button>
+  <button mat-menu-item (click)="update()"><mat-icon>edit</mat-icon><span>Update</span></button>
+  <button mat-menu-item (click)="confirmDelete()"><mat-icon>delete</mat-icon><span>Delete</span></button>
 </mat-menu>
 
 <ng-template #formDialog>
-    <mat-card class="acquisition-dialog">
-        <mat-card-header mat-dialog-title><mat-card-title>{{ dialogHeader }}</mat-card-title></mat-card-header>
-        <mat-card-content mat-dialog-content>
-            <form [formGroup]="acquisitionPlanForm" class="acquisition-form">
-                <mat-form-field appearance="outline">
-                    <mat-label>District/ Region</mat-label>
-                    <mat-select formControlName="districtRegion" placeholder="Please select">
-                        <mat-option *ngFor="let region of regions" [value]="region">{{ region.name }}</mat-option>
-                    </mat-select>
+  <mat-card class="acquisition-dialog">
+    <mat-card-header mat-dialog-title><mat-card-title>{{ dialogHeader }}</mat-card-title></mat-card-header>
+    <mat-card-content mat-dialog-content>
+      <form [formGroup]="acquisitionPlanForm" class="acquisition-form">
+        <mat-form-field appearance="outline">
+          <mat-label>District/ Region</mat-label>
+          <mat-select formControlName="districtRegion" placeholder="Please select">
+            @for (region of regions; track region) {
+              <mat-option [value]="region">{{ region.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status" placeholder="Please select">
+            @for (status of statuses; track status) {
+              <mat-option [value]="status">{{ status.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Acquisition Type</mat-label>
+          <mat-select formControlName="acquisitionType" placeholder="Please select">
+            @for (type of acquisitionTypes; track type) {
+              <mat-option [value]="type">{{ type.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Town</mat-label>
+          <input matInput formControlName="town">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Service Description</mat-label>
+          <input matInput formControlName="serviceDescription">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Budget Type</mat-label>
+          <input matInput formControlName="budgetType">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Extent Required (m²)</mat-label>
+          <input matInput type="number" min="0" step="0.01" formControlName="extent">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Cash Flow (MTEF Year 1)</mat-label>
+          <input matInput type="number" min="0" step="0.01" formControlName="cashFlowYear1"
+            (input)="calculateTotalAmountRequired()">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Cash Flow (MTEF Year 2)</mat-label>
+            <input matInput type="number" min="0" step="0.01" formControlName="cashFlowYear2"
+              (input)="calculateTotalAmountRequired()">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Cash Flow (MTEF Year 3)</mat-label>
+              <input matInput type="number" min="0" step="0.01" formControlName="cashFlowYear3"
+                (input)="calculateTotalAmountRequired()">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Cash Flow (MTEF Year 4)</mat-label>
+                <input matInput type="number" min="0" step="0.01" formControlName="cashFlowYear4"
+                  (input)="calculateTotalAmountRequired()">
                 </mat-form-field>
                 <mat-form-field appearance="outline">
-                    <mat-label>Status</mat-label>
-                    <mat-select formControlName="status" placeholder="Please select">
-                        <mat-option *ngFor="let status of statuses" [value]="status">{{ status.name }}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Acquisition Type</mat-label>
-                    <mat-select formControlName="acquisitionType" placeholder="Please select">
-                        <mat-option *ngFor="let type of acquisitionTypes" [value]="type">{{ type.name }}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Town</mat-label>
-                    <input matInput formControlName="town">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Service Description</mat-label>
-                    <input matInput formControlName="serviceDescription">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Budget Type</mat-label>
-                    <input matInput formControlName="budgetType">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Extent Required (m²)</mat-label>
-                    <input matInput type="number" min="0" step="0.01" formControlName="extent">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Cash Flow (MTEF Year 1)</mat-label>
-                    <input matInput type="number" min="0" step="0.01" formControlName="cashFlowYear1"
-                        (input)="calculateTotalAmountRequired()">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Cash Flow (MTEF Year 2)</mat-label>
-                    <input matInput type="number" min="0" step="0.01" formControlName="cashFlowYear2"
-                        (input)="calculateTotalAmountRequired()">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Cash Flow (MTEF Year 3)</mat-label>
-                    <input matInput type="number" min="0" step="0.01" formControlName="cashFlowYear3"
-                        (input)="calculateTotalAmountRequired()">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Cash Flow (MTEF Year 4)</mat-label>
-                    <input matInput type="number" min="0" step="0.01" formControlName="cashFlowYear4"
-                        (input)="calculateTotalAmountRequired()">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Cash Flow (MTEF Year 5)</mat-label>
-                    <input matInput type="number" min="0" step="0.01" formControlName="cashFlowYear5"
-                        (input)="calculateTotalAmountRequired()">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
+                  <mat-label>Cash Flow (MTEF Year 5)</mat-label>
+                  <input matInput type="number" min="0" step="0.01" formControlName="cashFlowYear5"
+                    (input)="calculateTotalAmountRequired()">
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
                     <mat-label>Total Amount Required</mat-label>
                     <input matInput type="number" formControlName="totalAmountRequired" readonly>
-                </mat-form-field>
-            </form>
-        </mat-card-content>
-        <mat-card-actions mat-dialog-actions align="end">
-            <button mat-button (click)="closeFormDialog()">Cancel</button>
-            <button mat-raised-button color="primary" *ngIf="!isEdit" (click)="addAcquisitionPlan()">Add</button>
-            <button mat-raised-button color="primary" *ngIf="isEdit" (click)="updateAcquisitionPlan()">Update</button>
-        </mat-card-actions>
-    </mat-card>
-</ng-template>
+                  </mat-form-field>
+                </form>
+              </mat-card-content>
+              <mat-card-actions mat-dialog-actions align="end">
+                <button mat-button (click)="closeFormDialog()">Cancel</button>
+                @if (!isEdit) {
+                  <button mat-raised-button color="primary" (click)="addAcquisitionPlan()">Add</button>
+                }
+                @if (isEdit) {
+                  <button mat-raised-button color="primary" (click)="updateAcquisitionPlan()">Update</button>
+                }
+              </mat-card-actions>
+            </mat-card>
+          </ng-template>
 
-<ng-template #deleteConfirmationDialog>
-    <mat-card class="confirmation-dialog">
-        <mat-card-header mat-dialog-title><mat-card-title>Confirmation</mat-card-title></mat-card-header>
-        <mat-card-content mat-dialog-content>Are you sure that you want to delete this acquisition plan?</mat-card-content>
-        <mat-card-actions mat-dialog-actions align="end">
-            <button mat-button (click)="closeDeleteConfirmation()">No</button>
-            <button mat-raised-button color="warn"
+          <ng-template #deleteConfirmationDialog>
+            <mat-card class="confirmation-dialog">
+              <mat-card-header mat-dialog-title><mat-card-title>Confirmation</mat-card-title></mat-card-header>
+              <mat-card-content mat-dialog-content>Are you sure that you want to delete this acquisition plan?</mat-card-content>
+              <mat-card-actions mat-dialog-actions align="end">
+                <button mat-button (click)="closeDeleteConfirmation()">No</button>
+                <button mat-raised-button color="warn"
                 (click)="deleteAcquisitionPlan()">Yes</button>
-        </mat-card-actions>
-    </mat-card>
-</ng-template>
+              </mat-card-actions>
+            </mat-card>
+          </ng-template>
 
-<ng-template #requiredConfirmationDialog>
-    <mat-card class="confirmation-dialog">
-        <mat-card-header mat-dialog-title><mat-card-title>Confirmation</mat-card-title></mat-card-header>
-        <mat-card-content mat-dialog-content>Are you sure that this property is still required?</mat-card-content>
-        <mat-card-actions mat-dialog-actions align="end">
-            <button mat-button (click)="cancelRequired()">No</button>
-            <button mat-raised-button color="primary" (click)="confirmRequired()">Yes</button>
-        </mat-card-actions>
-    </mat-card>
-</ng-template>
+          <ng-template #requiredConfirmationDialog>
+            <mat-card class="confirmation-dialog">
+              <mat-card-header mat-dialog-title><mat-card-title>Confirmation</mat-card-title></mat-card-header>
+              <mat-card-content mat-dialog-content>Are you sure that this property is still required?</mat-card-content>
+              <mat-card-actions mat-dialog-actions align="end">
+                <button mat-button (click)="cancelRequired()">No</button>
+                <button mat-raised-button color="primary" (click)="confirmRequired()">Yes</button>
+              </mat-card-actions>
+            </mat-card>
+          </ng-template>
 
-<div class="uamp-footer">
-    <button mat-button (click)="back()"><mat-icon>chevron_left</mat-icon>Back</button>
-    <div>
-        <button mat-button (click)="save()" class="ml-1">Save</button>
-        <button mat-raised-button color="primary" (click)="nextPage()">Next</button>
-    </div>
-</div>
+          <div class="uamp-footer">
+            <button mat-button (click)="back()"><mat-icon>chevron_left</mat-icon>Back</button>
+            <div>
+              <button mat-button (click)="save()" class="ml-1">Save</button>
+              <button mat-raised-button color="primary" (click)="nextPage()">Next</button>
+            </div>
+          </div>

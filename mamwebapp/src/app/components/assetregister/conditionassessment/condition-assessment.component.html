@@ -1,196 +1,246 @@
 <mat-tab-group [(selectedIndex)]="activeIndex">
-    <mat-tab label="Non Technical Condition Assessment">
-        <mat-expansion-panel expanded>
-            <mat-expansion-panel-header>
-                <mat-panel-title>New Condition Assessment</mat-panel-title>
-            </mat-expansion-panel-header>
+  <mat-tab label="Non Technical Condition Assessment">
+    <mat-expansion-panel expanded>
+      <mat-expansion-panel-header>
+        <mat-panel-title>New Condition Assessment</mat-panel-title>
+      </mat-expansion-panel-header>
 
-            <div class="assessment-files" *ngIf="mode !== 'View'">
-                <label for="condition-assessment-files">Choose supporting files</label>
-                <input id="condition-assessment-files" type="file" multiple
-                    (change)="onLandSelectFile($any($event.target).files)">
-                <ul class="file-list">
-                    <li *ngFor="let file of landFiles">
-                        <a target="_blank" rel="noopener" [href]="file.url">{{ file.name }}</a>
-                        <button mat-icon-button type="button" aria-label="Remove file"
-                            (click)="onLandRemoveFile(file)"><mat-icon>close</mat-icon></button>
-                    </li>
-                </ul>
+      @if (mode !== 'View') {
+        <div class="assessment-files">
+          <label for="condition-assessment-files">Choose supporting files</label>
+          <input id="condition-assessment-files" type="file" multiple
+            (change)="onLandSelectFile($any($event.target).files)">
+            <ul class="file-list">
+              @for (file of landFiles; track file) {
+                <li>
+                  <a target="_blank" rel="noopener" [href]="file.url">{{ file.name }}</a>
+                  <button mat-icon-button type="button" aria-label="Remove file"
+                    (click)="onLandRemoveFile(file)"><mat-icon>close</mat-icon></button>
+                  </li>
+                }
+              </ul>
             </div>
+          }
 
-            <div class="rating-grid">
-                <section class="rating-section">
-                    <h3>Required performance standard</h3>
-                    <mat-button-toggle-group aria-label="Required performance standard" [value]="pCount">
-                        <mat-button-toggle *ngFor="let rating of performanceRatings" [value]="rating.value"
-                            [matTooltip]="rating.description" (click)="pCount = rating.value; setRate()">
-                            {{ rating.label }}
-                        </mat-button-toggle>
-                    </mat-button-toggle-group>
-                </section>
-                <section class="rating-section">
-                    <h3>Accessibility Rating</h3>
-                    <mat-button-toggle-group aria-label="Accessibility rating" [value]="aCount">
-                        <mat-button-toggle *ngFor="let rating of accessibilityRatings" [value]="rating.value"
-                            [matTooltip]="rating.description" (click)="aCount = rating.value; setRate()">
-                            {{ rating.label }}
-                        </mat-button-toggle>
-                    </mat-button-toggle-group>
-                </section>
-                <section class="rating-section">
-                    <h3>Condition Rating</h3>
-                    <mat-button-toggle-group aria-label="Condition rating" [value]="cCount">
-                        <mat-button-toggle *ngFor="let rating of conditionRatings" [value]="rating.value"
-                            [matTooltip]="rating.description" (click)="cCount = rating.value; setRate()">
-                            {{ rating.label }}
-                        </mat-button-toggle>
-                    </mat-button-toggle-group>
-                </section>
-                <section class="rating-section">
-                    <h3>Suitability Index</h3>
-                    <mat-icon *ngFor="let rating of [1, 2, 3]" class="rating-star"
-                        [class.selected-star]="sCount >= rating"
-                        [matTooltip]="rating === 1 ? 'Not suitable' : rating === 2 ? 'Meets minimum suitability' : 'Fully suitable'"
-                        (click)="sCount = rating; setRate()">star</mat-icon>
-                </section>
-                <section class="rating-section">
-                    <h3>Operating Performance Index</h3>
-                    <mat-icon *ngFor="let rating of [1, 2, 3]" class="rating-star"
-                        [class.selected-star]="oCount >= rating"
-                        [matTooltip]="rating === 1 ? 'Below expected operating requirements' : rating === 2 ? 'Meets expected operating requirements' : 'Exceeds expected operating requirements'"
-                        (click)="oCount = rating; setRate()">star</mat-icon>
-                </section>
-                <section class="rating-section">
-                    <h3>Functional performance standard</h3>
-                    <mat-icon *ngFor="let rating of [1, 2, 3, 4, 5, 6, 7, 8, 9]" class="rating-star"
-                        [class.selected-star]="fCount >= rating"
-                        [matTooltip]="'Functional performance level ' + rating"
-                        (click)="fCount = rating; setRate()">star</mat-icon>
-                </section>
-            </div>
+          <div class="rating-grid">
+            <section class="rating-section">
+              <h3>Required performance standard</h3>
+              <mat-button-toggle-group aria-label="Required performance standard" [value]="pCount">
+                @for (rating of performanceRatings; track rating) {
+                  <mat-button-toggle [value]="rating.value"
+                    [matTooltip]="rating.description" (click)="pCount = rating.value; setRate()">
+                    {{ rating.label }}
+                  </mat-button-toggle>
+                }
+              </mat-button-toggle-group>
+            </section>
+            <section class="rating-section">
+              <h3>Accessibility Rating</h3>
+              <mat-button-toggle-group aria-label="Accessibility rating" [value]="aCount">
+                @for (rating of accessibilityRatings; track rating) {
+                  <mat-button-toggle [value]="rating.value"
+                    [matTooltip]="rating.description" (click)="aCount = rating.value; setRate()">
+                    {{ rating.label }}
+                  </mat-button-toggle>
+                }
+              </mat-button-toggle-group>
+            </section>
+            <section class="rating-section">
+              <h3>Condition Rating</h3>
+              <mat-button-toggle-group aria-label="Condition rating" [value]="cCount">
+                @for (rating of conditionRatings; track rating) {
+                  <mat-button-toggle [value]="rating.value"
+                    [matTooltip]="rating.description" (click)="cCount = rating.value; setRate()">
+                    {{ rating.label }}
+                  </mat-button-toggle>
+                }
+              </mat-button-toggle-group>
+            </section>
+            <section class="rating-section">
+              <h3>Suitability Index</h3>
+              @for (rating of [1, 2, 3]; track rating) {
+                <mat-icon class="rating-star"
+                  [class.selected-star]="sCount >= rating"
+                  [matTooltip]="rating === 1 ? 'Not suitable' : rating === 2 ? 'Meets minimum suitability' : 'Fully suitable'"
+                (click)="sCount = rating; setRate()">star</mat-icon>
+              }
+            </section>
+            <section class="rating-section">
+              <h3>Operating Performance Index</h3>
+              @for (rating of [1, 2, 3]; track rating) {
+                <mat-icon class="rating-star"
+                  [class.selected-star]="oCount >= rating"
+                  [matTooltip]="rating === 1 ? 'Below expected operating requirements' : rating === 2 ? 'Meets expected operating requirements' : 'Exceeds expected operating requirements'"
+                (click)="oCount = rating; setRate()">star</mat-icon>
+              }
+            </section>
+            <section class="rating-section">
+              <h3>Functional performance standard</h3>
+              @for (rating of [1, 2, 3, 4, 5, 6, 7, 8, 9]; track rating) {
+                <mat-icon class="rating-star"
+                  [class.selected-star]="fCount >= rating"
+                  [matTooltip]="'Functional performance level ' + rating"
+                (click)="fCount = rating; setRate()">star</mat-icon>
+              }
+            </section>
+          </div>
 
-            <div class="assessment-actions" *ngIf="mode !== 'View'">
-                <button mat-raised-button color="primary" type="button" [disabled]="isBusy"
-                    (click)="showdelete = false; saveConditionAssessment()">
-                    <mat-icon>save</mat-icon>Save
-                </button>
+          @if (mode !== 'View') {
+            <div class="assessment-actions">
+              <button mat-raised-button color="primary" type="button" [disabled]="isBusy"
+                (click)="showdelete = false; saveConditionAssessment()">
+                <mat-icon>save</mat-icon>Save
+              </button>
             </div>
+          }
         </mat-expansion-panel>
 
         <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>Condition Assessment History</mat-panel-title>
-            </mat-expansion-panel-header>
-            <div class="assessment-history" *ngIf="dataIsLoaded">
-                <mat-card *ngFor="let assessment of conditionAssessments" class="history-card">
-                    <mat-card-header>
-                        <div mat-card-avatar class="history-avatar" [style.backgroundColor]="assessment.color">
-                            <mat-icon>person</mat-icon>
-                        </div>
-                        <mat-card-title>{{ assessment.displayName }}</mat-card-title>
-                        <mat-card-subtitle>{{ assessment.date }}</mat-card-subtitle>
-                    </mat-card-header>
-                    <mat-card-content>
-                        <div *ngFor="let rate of assessment.rates" class="history-rating">
-                            <strong>{{ rate.name }}</strong>
-                            <span class="history-stars">
-                                <mat-icon *ngFor="let star of [1, 2, 3, 4, 5, 6, 7, 8, 9]"
-                                    [class.selected-star]="star <= rate.value"
-                                    [style.display]="star <= ratingDisplayCount(rate) ? 'inline-flex' : 'none'">
-                                    star
-                                </mat-icon>
-                            </span>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-                <p *ngIf="conditionAssessments.length === 0">No condition assessments recorded.</p>
-            </div>
-        </mat-expansion-panel>
-    </mat-tab>
-
-    <mat-tab label="Technical Condition Assessment">
-        <mat-expansion-panel expanded>
-            <mat-expansion-panel-header>
-                <mat-panel-title>New Technical Condition Assessment</mat-panel-title>
-            </mat-expansion-panel-header>
-
-            <mat-accordion multi>
-                <mat-expansion-panel *ngFor="let element of elements">
-                    <mat-expansion-panel-header><mat-panel-title>{{ element.title }}</mat-panel-title></mat-expansion-panel-header>
-                    <div class="assessment-files">
-                        <label>Supporting files</label>
-                        <input type="file" multiple (change)="onLandSelectFile($any($event.target).files)">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Condition Assessment History</mat-panel-title>
+          </mat-expansion-panel-header>
+          @if (dataIsLoaded) {
+            <div class="assessment-history">
+              @for (assessment of conditionAssessments; track assessment) {
+                <mat-card class="history-card">
+                  <mat-card-header>
+                    <div mat-card-avatar class="history-avatar" [style.backgroundColor]="assessment.color">
+                      <mat-icon>person</mat-icon>
                     </div>
-                    <div class="technical-rating" *ngFor="let subTitle of element.subTitles">
-                        <span>{{ subTitle.name }}</span>
-                        <span class="technical-stars">
-                            <mat-icon *ngFor="let rating of [1, 2, 3, 4, 5]" class="rating-star"
-                                [class.selected-star]="subTitle.identifier >= rating"
-                                [matTooltip]="technicalRatingLabels[rating - 1]"
-                                (click)="subTitle.identifier = rating; setRate()">star</mat-icon>
+                    <mat-card-title>{{ assessment.displayName }}</mat-card-title>
+                    <mat-card-subtitle>{{ assessment.date }}</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    @for (rate of assessment.rates; track rate) {
+                      <div class="history-rating">
+                        <strong>{{ rate.name }}</strong>
+                        <span class="history-stars">
+                          @for (star of [1, 2, 3, 4, 5, 6, 7, 8, 9]; track star) {
+                            <mat-icon
+                              [class.selected-star]="star <= rate.value"
+                              [style.display]="star <= ratingDisplayCount(rate) ? 'inline-flex' : 'none'">
+                              star
+                            </mat-icon>
+                          }
                         </span>
-                    </div>
-                </mat-expansion-panel>
-
-                <mat-expansion-panel>
-                    <mat-expansion-panel-header><mat-panel-title>Facility Management</mat-panel-title></mat-expansion-panel-header>
-                    <div class="assessment-files">
-                        <label>Supporting files</label>
-                        <input type="file" multiple (change)="onLandSelectFile($any($event.target).files)">
-                    </div>
-                    <div class="technical-rating"><span>Land condition eg- Grass overgrown</span>
-                        <mat-button-toggle-group multiple [(ngModel)]="lcValue" aria-label="Land condition">
-                            <mat-button-toggle *ngFor="let option of paymentOptions" [value]="option.value">{{ option.name }}</mat-button-toggle>
-                        </mat-button-toggle-group>
-                    </div>
-                    <div class="technical-rating"><span>Cleanliness of building</span>
-                        <mat-button-toggle-group multiple [(ngModel)]="cbValue" aria-label="Cleanliness of building">
-                            <mat-button-toggle *ngFor="let option of paymentOptions" [value]="option.value">{{ option.name }}</mat-button-toggle>
-                        </mat-button-toggle-group>
-                    </div>
-                    <div class="technical-rating"><span>Horticultural services</span>
-                        <mat-button-toggle-group multiple [(ngModel)]="hsValue" aria-label="Horticultural services">
-                            <mat-button-toggle *ngFor="let option of paymentOptions" [value]="option.value">{{ option.name }}</mat-button-toggle>
-                        </mat-button-toggle-group>
-                    </div>
-                </mat-expansion-panel>
-
-                <mat-expansion-panel>
-                    <mat-expansion-panel-header><mat-panel-title>Compliance with disability requirements</mat-panel-title></mat-expansion-panel-header>
-                    <div class="assessment-files">
-                        <label>Supporting files</label>
-                        <input type="file" multiple (change)="onLandSelectFile($any($event.target).files)">
-                    </div>
-                    <div class="technical-rating" *ngFor="let item of accessibilityChecks">
-                        <span>{{ item.label }}</span>
-                        <mat-button-toggle-group [value]="getCheckValue(item.key)" [attr.aria-label]="item.label"
-                            (change)="setCheckValue(item.key, $event.value)">
-                            <mat-button-toggle *ngFor="let option of stateOptions" [value]="option.value">{{ option.label }}</mat-button-toggle>
-                        </mat-button-toggle-group>
-                    </div>
-                </mat-expansion-panel>
-
-                <mat-expansion-panel>
-                    <mat-expansion-panel-header><mat-panel-title>Safety and Security Elements</mat-panel-title></mat-expansion-panel-header>
-                    <div class="assessment-files">
-                        <label>Supporting files</label>
-                        <input type="file" multiple (change)="onLandSelectFile($any($event.target).files)">
-                    </div>
-                    <div class="technical-rating" *ngFor="let item of safetyChecks">
-                        <span>{{ item.label }}</span>
-                        <mat-button-toggle-group [value]="getCheckValue(item.key)" [attr.aria-label]="item.label"
-                            (change)="setCheckValue(item.key, $event.value)">
-                            <mat-button-toggle *ngFor="let option of stateOptions" [value]="option.value">{{ option.label }}</mat-button-toggle>
-                        </mat-button-toggle-group>
-                    </div>
-                </mat-expansion-panel>
-            </mat-accordion>
-            <div class="assessment-actions" *ngIf="mode !== 'View'">
-                <button mat-raised-button color="primary" type="button" [disabled]="isBusy"
-                    (click)="showdelete = false; saveConditionAssessment()">
-                    <mat-icon>save</mat-icon>Save
-                </button>
+                      </div>
+                    }
+                  </mat-card-content>
+                </mat-card>
+              }
+              @if (conditionAssessments.length === 0) {
+                <p>No condition assessments recorded.</p>
+              }
             </div>
+          }
         </mat-expansion-panel>
-    </mat-tab>
+      </mat-tab>
+
+      <mat-tab label="Technical Condition Assessment">
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title>New Technical Condition Assessment</mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <mat-accordion multi>
+            @for (element of elements; track element) {
+              <mat-expansion-panel>
+                <mat-expansion-panel-header><mat-panel-title>{{ element.title }}</mat-panel-title></mat-expansion-panel-header>
+                <div class="assessment-files">
+                  <label>Supporting files</label>
+                  <input type="file" multiple (change)="onLandSelectFile($any($event.target).files)">
+                </div>
+                @for (subTitle of element.subTitles; track subTitle) {
+                  <div class="technical-rating">
+                    <span>{{ subTitle.name }}</span>
+                    <span class="technical-stars">
+                      @for (rating of [1, 2, 3, 4, 5]; track rating) {
+                        <mat-icon class="rating-star"
+                          [class.selected-star]="subTitle.identifier >= rating"
+                          [matTooltip]="technicalRatingLabels[rating - 1]"
+                        (click)="subTitle.identifier = rating; setRate()">star</mat-icon>
+                      }
+                    </span>
+                  </div>
+                }
+              </mat-expansion-panel>
+            }
+
+            <mat-expansion-panel>
+              <mat-expansion-panel-header><mat-panel-title>Facility Management</mat-panel-title></mat-expansion-panel-header>
+              <div class="assessment-files">
+                <label>Supporting files</label>
+                <input type="file" multiple (change)="onLandSelectFile($any($event.target).files)">
+              </div>
+              <div class="technical-rating"><span>Land condition eg- Grass overgrown</span>
+              <mat-button-toggle-group multiple [(ngModel)]="lcValue" aria-label="Land condition">
+                @for (option of paymentOptions; track option) {
+                  <mat-button-toggle [value]="option.value">{{ option.name }}</mat-button-toggle>
+                }
+              </mat-button-toggle-group>
+            </div>
+            <div class="technical-rating"><span>Cleanliness of building</span>
+            <mat-button-toggle-group multiple [(ngModel)]="cbValue" aria-label="Cleanliness of building">
+              @for (option of paymentOptions; track option) {
+                <mat-button-toggle [value]="option.value">{{ option.name }}</mat-button-toggle>
+              }
+            </mat-button-toggle-group>
+          </div>
+          <div class="technical-rating"><span>Horticultural services</span>
+          <mat-button-toggle-group multiple [(ngModel)]="hsValue" aria-label="Horticultural services">
+            @for (option of paymentOptions; track option) {
+              <mat-button-toggle [value]="option.value">{{ option.name }}</mat-button-toggle>
+            }
+          </mat-button-toggle-group>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header><mat-panel-title>Compliance with disability requirements</mat-panel-title></mat-expansion-panel-header>
+        <div class="assessment-files">
+          <label>Supporting files</label>
+          <input type="file" multiple (change)="onLandSelectFile($any($event.target).files)">
+        </div>
+        @for (item of accessibilityChecks; track item) {
+          <div class="technical-rating">
+            <span>{{ item.label }}</span>
+            <mat-button-toggle-group [value]="getCheckValue(item.key)" [attr.aria-label]="item.label"
+              (change)="setCheckValue(item.key, $event.value)">
+              @for (option of stateOptions; track option) {
+                <mat-button-toggle [value]="option.value">{{ option.label }}</mat-button-toggle>
+              }
+            </mat-button-toggle-group>
+          </div>
+        }
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header><mat-panel-title>Safety and Security Elements</mat-panel-title></mat-expansion-panel-header>
+        <div class="assessment-files">
+          <label>Supporting files</label>
+          <input type="file" multiple (change)="onLandSelectFile($any($event.target).files)">
+        </div>
+        @for (item of safetyChecks; track item) {
+          <div class="technical-rating">
+            <span>{{ item.label }}</span>
+            <mat-button-toggle-group [value]="getCheckValue(item.key)" [attr.aria-label]="item.label"
+              (change)="setCheckValue(item.key, $event.value)">
+              @for (option of stateOptions; track option) {
+                <mat-button-toggle [value]="option.value">{{ option.label }}</mat-button-toggle>
+              }
+            </mat-button-toggle-group>
+          </div>
+        }
+      </mat-expansion-panel>
+    </mat-accordion>
+    @if (mode !== 'View') {
+      <div class="assessment-actions">
+        <button mat-raised-button color="primary" type="button" [disabled]="isBusy"
+          (click)="showdelete = false; saveConditionAssessment()">
+          <mat-icon>save</mat-icon>Save
+        </button>
+      </div>
+    }
+  </mat-expansion-panel>
+</mat-tab>
 </mat-tab-group>

@@ -1,24 +1,39 @@
-import { Component, OnInit, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, TemplateRef, AfterViewInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, TemplateRef, AfterViewInit, inject } from '@angular/core';
+import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
 import { ToastService } from 'src/app/services/toast.service';
 import { first } from 'rxjs/operators';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UAMP } from '../../../models/uamp.model'
 import { Programme } from 'src/app/models/programme.model';
 import { OptimalSupportingAccommodation } from 'src/app/models/optimal-supporting-accommodation.model';
 import { UampService } from 'src/app/services/uamp/uamp.service';
 import { Router } from '@angular/router';
+import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent } from '@angular/material/card';
+import { MatFormField, MatLabel, MatError, MatHint } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+
+import { MatButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { CdkScrollable } from '@angular/cdk/scrolling';
 
 @Component({
-  standalone: false,
-  selector: 'app-template-one',
-  templateUrl: './template-one.component.html',
-  styleUrls: ['./template-one.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-template-one',
+    templateUrl: './template-one.component.html',
+    styleUrls: ['./template-one.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatFormField, MatLabel, MatInput, FormsModule, MatError, MatHint, MatButton, MatTooltip, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatMenuTrigger, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatPaginator, MatMenu, MatMenuItem, MatDialogTitle, CdkScrollable, MatDialogContent, ReactiveFormsModule, MatDialogActions]
 })
 export class TemplateOneComponent implements OnInit, AfterViewInit {
+  private router = inject(Router);
+  private formBuilder = inject(FormBuilder);
+  private toastService = inject(ToastService);
+  private uampService = inject(UampService);
+  private dialog = inject(MatDialog);
+
   programmes: Programme[] = [];
   dataSource = new MatTableDataSource<Programme>([]);
   displayedColumns = ['corporateObjective', 'outcomes', 'solution', 'rationale', 'actions'];
@@ -26,21 +41,21 @@ export class TemplateOneComponent implements OnInit, AfterViewInit {
   @ViewChild('programmeDialog') programmeDialog: TemplateRef<unknown>;
   private programmeDialogRef: MatDialogRef<unknown>;
   selectedProgramme: Programme;
-  userDepartment: string = "Public works, roads & transport";
+  userDepartment = "Public works, roads & transport";
   optimalSupportingAccommodation: OptimalSupportingAccommodation = {
     id: 0,
     supportingAccommodation: undefined,
     mission: undefined
   };
   programmeForm: FormGroup;
-  submitted: boolean = false;
+  submitted = false;
   showComfirmationDelete = false;
   isEdit = false;
-  dialogHeader: string = '';
+  dialogHeader = '';
   uamp: UAMP = { templeteOne: { id: 0, optimalSupportingAccommodation: this.optimalSupportingAccommodation, programmes: [] } };
   @Output() updatedUamp = new EventEmitter();
-  isLoading: boolean = false;
-  mode: string = 'Edit';
+  isLoading = false;
+  mode = 'Edit';
 
   get o() {
     return {
@@ -53,13 +68,7 @@ export class TemplateOneComponent implements OnInit, AfterViewInit {
     return this.programmeForm ? this.programmeForm.controls : {};
   }
 
-  constructor(
-    private router: Router,
-    private formBuilder: FormBuilder,
-    private toastService: ToastService,
-    private uampService: UampService,
-    private dialog: MatDialog
-  ) {
+  constructor() {
     this.uampService.uampChange.subscribe((value) => {
       if (value) {
         this.uamp = value;
@@ -136,7 +145,7 @@ export class TemplateOneComponent implements OnInit, AfterViewInit {
       rationaleChosenSolution: this.programmeForm.controls["rationaleChosenSolution"].value,
     };
 
-    var index = this.programmes.indexOf(this.selectedProgramme);
+    const index = this.programmes.indexOf(this.selectedProgramme);
     this.programmes[index] = programme;
     this.dataSource.data = this.programmes;
     this.isEdit = false;
@@ -155,13 +164,13 @@ export class TemplateOneComponent implements OnInit, AfterViewInit {
 
   deleteProgramme() {
     if (this.selectedProgramme.id == 0) {
-      var index = this.programmes.indexOf(this.selectedProgramme);
+      const index = this.programmes.indexOf(this.selectedProgramme);
       this.programmes.splice(index, 1);
     } else {
       this.uampService.deleteProgramme(this.selectedProgramme).pipe(first()).subscribe(isDeleted => {
         if (isDeleted) {
           this.toastService.showSuccess('Programme has been deleted successfully.');
-          var index = this.programmes.indexOf(this.selectedProgramme);
+          const index = this.programmes.indexOf(this.selectedProgramme);
           this.programmes.splice(index, 1);
         } else {
           this.toastService.showError('Unable to delete the programme. Please try again.');

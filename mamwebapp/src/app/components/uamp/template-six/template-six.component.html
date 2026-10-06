@@ -1,150 +1,162 @@
 <mat-card class="mt-5">
-    <mat-card-subtitle>Surrender Plan: Accommodation/ land identified to be relinquished to custodian</mat-card-subtitle>
-    <mat-card-content>
-        <div class="table-actions">
-            <button mat-raised-button color="primary" matTooltip="Add Surrender Plan"
-                (click)="openAddDialog()">
-                <mat-icon>add</mat-icon>Add Surrender Plan
-            </button>
-        </div>
-        <div class="table-container">
-            <table class="surrender-table">
-                <thead>
-                    <tr>
-                        <th>District</th>
-                        <th>Town</th>
-                        <th>Local Municipality</th>
-                        <th>Asset Type</th>
-                        <th>Current Street Address</th>
-                        <th>Property Description</th>
-                        <th>Allocated/ Lettable Space <small>(M²) 0000.00</small></th>
-                        <th>Extent of Land <small>(HA) 0000.0000</small></th>
-                        <th>Surrender Rationale</th>
-                        <th>Date of Proposed Hand-Over</th>
-                        <th>Contractual Obligations</th>
-                        <th>Relinquish</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let surrenderPlan of pagedSurrenderPlans">
-                        <td>{{ surrenderPlan.districtMunicipality }}</td>
-                        <td>{{ surrenderPlan.town }}</td>
-                        <td>{{ surrenderPlan.localAuthority }}</td>
-                        <td>{{ surrenderPlan.type }}</td>
-                        <td><input matInput [(ngModel)]="surrenderPlan.currentStreetAddress"
-                            [ngModelOptions]="{standalone: true}" aria-label="Current street address"></td>
-                        <td>{{ surrenderPlan.name }}</td>
-                        <td><input matInput type="number" min="0" step="0.01"
-                            [(ngModel)]="surrenderPlan.allocatedLettableSpace" [ngModelOptions]="{standalone: true}"
-                            aria-label="Allocated lettable space"></td>
-                        <td>{{ surrenderPlan.extent }}</td>
-                        <td><input matInput [(ngModel)]="surrenderPlan.surrenderRationale"
-                            [ngModelOptions]="{standalone: true}" aria-label="Surrender rationale"></td>
-                        <td>
-                            <mat-form-field appearance="outline">
-                                <input matInput [matDatepicker]="rowPicker" [(ngModel)]="surrenderPlan.proposedHandOverDate"
-                                    [ngModelOptions]="{standalone: true}" aria-label="Proposed hand-over date">
-                                <mat-datepicker-toggle matIconSuffix [for]="rowPicker"></mat-datepicker-toggle>
-                                <mat-datepicker #rowPicker></mat-datepicker>
-                            </mat-form-field>
-                        </td>
-                        <td><input matInput [(ngModel)]="surrenderPlan.contractualObligations"
-                            [ngModelOptions]="{standalone: true}" aria-label="Contractual obligations"></td>
-                        <td><mat-slide-toggle [(ngModel)]="surrenderPlan.relinquish"
-                            [ngModelOptions]="{standalone: true}"
-                            (change)="relinquishSurrenderPlan(surrenderPlan, $event)"
-                            aria-label="Relinquish property"></mat-slide-toggle></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <mat-paginator [length]="surrenderPlans.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 15]"
-            (page)="pageChanged($event)" showFirstLastButtons></mat-paginator>
+  <mat-card-subtitle>Surrender Plan: Accommodation/ land identified to be relinquished to custodian</mat-card-subtitle>
+  <mat-card-content>
+    <div class="table-actions">
+      <button mat-raised-button color="primary" matTooltip="Add Surrender Plan"
+        (click)="openAddDialog()">
+        <mat-icon>add</mat-icon>Add Surrender Plan
+      </button>
+    </div>
+    <div class="table-container">
+      <table class="surrender-table">
+        <thead>
+          <tr>
+            <th>District</th>
+            <th>Town</th>
+            <th>Local Municipality</th>
+            <th>Asset Type</th>
+            <th>Current Street Address</th>
+            <th>Property Description</th>
+            <th>Allocated/ Lettable Space <small>(M²) 0000.00</small></th>
+            <th>Extent of Land <small>(HA) 0000.0000</small></th>
+            <th>Surrender Rationale</th>
+            <th>Date of Proposed Hand-Over</th>
+            <th>Contractual Obligations</th>
+            <th>Relinquish</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (surrenderPlan of pagedSurrenderPlans; track surrenderPlan) {
+            <tr>
+              <td>{{ surrenderPlan.districtMunicipality }}</td>
+              <td>{{ surrenderPlan.town }}</td>
+              <td>{{ surrenderPlan.localAuthority }}</td>
+              <td>{{ surrenderPlan.type }}</td>
+              <td><input matInput [(ngModel)]="surrenderPlan.currentStreetAddress"
+              [ngModelOptions]="{standalone: true}" aria-label="Current street address"></td>
+              <td>{{ surrenderPlan.name }}</td>
+              <td><input matInput type="number" min="0" step="0.01"
+                [(ngModel)]="surrenderPlan.allocatedLettableSpace" [ngModelOptions]="{standalone: true}"
+              aria-label="Allocated lettable space"></td>
+              <td>{{ surrenderPlan.extent }}</td>
+              <td><input matInput [(ngModel)]="surrenderPlan.surrenderRationale"
+              [ngModelOptions]="{standalone: true}" aria-label="Surrender rationale"></td>
+              <td>
+                <mat-form-field appearance="outline">
+                  <input matInput [matDatepicker]="rowPicker" [(ngModel)]="surrenderPlan.proposedHandOverDate"
+                    [ngModelOptions]="{standalone: true}" aria-label="Proposed hand-over date">
+                    <mat-datepicker-toggle matIconSuffix [for]="rowPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #rowPicker></mat-datepicker>
+                  </mat-form-field>
+                </td>
+                <td><input matInput [(ngModel)]="surrenderPlan.contractualObligations"
+                [ngModelOptions]="{standalone: true}" aria-label="Contractual obligations"></td>
+                <td><mat-slide-toggle [(ngModel)]="surrenderPlan.relinquish"
+                  [ngModelOptions]="{standalone: true}"
+                  (change)="relinquishSurrenderPlan(surrenderPlan, $event)"
+                aria-label="Relinquish property"></mat-slide-toggle></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <mat-paginator [length]="surrenderPlans.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 15]"
+      (page)="pageChanged($event)" showFirstLastButtons></mat-paginator>
     </mat-card-content>
-</mat-card>
+  </mat-card>
 
-<ng-template #formDialog>
+  <ng-template #formDialog>
     <mat-card class="surrender-dialog">
-        <mat-card-header mat-dialog-title><mat-card-title>{{ dialogHeader }}</mat-card-title></mat-card-header>
-        <mat-card-content mat-dialog-content>
-            <form [formGroup]="newSurrenderPlanForm" class="surrender-form">
-                <mat-form-field appearance="outline">
-                    <mat-label>District</mat-label>
-                    <mat-select formControlName="district" placeholder="Please select" (selectionChange)="setLocalMunicipalities($event)">
-                        <mat-option *ngFor="let region of regions" [value]="region">{{ region.name }}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Local Municipality</mat-label>
-                    <mat-select formControlName="localMunicipality" placeholder="Please select">
-                        <mat-option *ngFor="let municipality of localMunicipalities" [value]="municipality">{{ municipality.name }}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Asset Type</mat-label>
-                    <mat-select formControlName="assetType" placeholder="Please select">
-                        <mat-option *ngFor="let type of assetTypes" [value]="type">{{ type.name }}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Town</mat-label>
-                    <input matInput formControlName="town">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Property Description</mat-label>
-                    <input matInput formControlName="propertyDescription">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Current Street Address</mat-label>
-                    <input matInput formControlName="currentStreetAddress">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Allocated Lettable Space</mat-label>
-                    <input matInput type="number" min="0" step="0.01" formControlName="allocatedLettableSpace">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Extent of Land</mat-label>
-                    <input matInput type="number" min="0" step="0.0001" formControlName="extentofLand">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Surrender Rationale</mat-label>
-                    <input matInput formControlName="surrenderRationale">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Contractual Obligations</mat-label>
-                    <input matInput formControlName="contractualObligations">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Proposed Hand-Over Date</mat-label>
-                    <input matInput [matDatepicker]="handoverPicker" formControlName="proposedHandOverDate">
-                    <mat-datepicker-toggle matIconSuffix [for]="handoverPicker"></mat-datepicker-toggle>
-                    <mat-datepicker #handoverPicker></mat-datepicker>
-                </mat-form-field>
-            </form>
-        </mat-card-content>
-        <mat-card-actions mat-dialog-actions align="end">
-            <button mat-button (click)="closeFormDialog()">Cancel</button>
-            <button mat-raised-button color="primary" *ngIf="!isEdit" (click)="addSurrenderPlan()">Add</button>
-            <button mat-raised-button color="primary" *ngIf="isEdit" (click)="updateOperationPlan()">Update</button>
-        </mat-card-actions>
+      <mat-card-header mat-dialog-title><mat-card-title>{{ dialogHeader }}</mat-card-title></mat-card-header>
+      <mat-card-content mat-dialog-content>
+        <form [formGroup]="newSurrenderPlanForm" class="surrender-form">
+          <mat-form-field appearance="outline">
+            <mat-label>District</mat-label>
+            <mat-select formControlName="district" placeholder="Please select" (selectionChange)="setLocalMunicipalities($event)">
+              @for (region of regions; track region) {
+                <mat-option [value]="region">{{ region.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Local Municipality</mat-label>
+            <mat-select formControlName="localMunicipality" placeholder="Please select">
+              @for (municipality of localMunicipalities; track municipality) {
+                <mat-option [value]="municipality">{{ municipality.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Asset Type</mat-label>
+            <mat-select formControlName="assetType" placeholder="Please select">
+              @for (type of assetTypes; track type) {
+                <mat-option [value]="type">{{ type.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Town</mat-label>
+            <input matInput formControlName="town">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Property Description</mat-label>
+            <input matInput formControlName="propertyDescription">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Current Street Address</mat-label>
+            <input matInput formControlName="currentStreetAddress">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Allocated Lettable Space</mat-label>
+            <input matInput type="number" min="0" step="0.01" formControlName="allocatedLettableSpace">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Extent of Land</mat-label>
+            <input matInput type="number" min="0" step="0.0001" formControlName="extentofLand">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Surrender Rationale</mat-label>
+            <input matInput formControlName="surrenderRationale">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Contractual Obligations</mat-label>
+            <input matInput formControlName="contractualObligations">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Proposed Hand-Over Date</mat-label>
+            <input matInput [matDatepicker]="handoverPicker" formControlName="proposedHandOverDate">
+            <mat-datepicker-toggle matIconSuffix [for]="handoverPicker"></mat-datepicker-toggle>
+            <mat-datepicker #handoverPicker></mat-datepicker>
+          </mat-form-field>
+        </form>
+      </mat-card-content>
+      <mat-card-actions mat-dialog-actions align="end">
+        <button mat-button (click)="closeFormDialog()">Cancel</button>
+        @if (!isEdit) {
+          <button mat-raised-button color="primary" (click)="addSurrenderPlan()">Add</button>
+        }
+        @if (isEdit) {
+          <button mat-raised-button color="primary" (click)="updateOperationPlan()">Update</button>
+        }
+      </mat-card-actions>
     </mat-card>
-</ng-template>
+  </ng-template>
 
-<ng-template #relinquishConfirmationDialog>
+  <ng-template #relinquishConfirmationDialog>
     <mat-card class="confirmation-dialog">
-        <mat-card-header mat-dialog-title><mat-card-title>Confirm relinquishment</mat-card-title></mat-card-header>
-        <mat-card-content mat-dialog-content>Are you sure that you want to relinquish this property?</mat-card-content>
-        <mat-card-actions mat-dialog-actions align="end">
-            <button mat-button (click)="cancelRelinquish()">Cancel</button>
-            <button mat-raised-button color="warn" (click)="confirmRelinquish()">Confirm</button>
-        </mat-card-actions>
+      <mat-card-header mat-dialog-title><mat-card-title>Confirm relinquishment</mat-card-title></mat-card-header>
+      <mat-card-content mat-dialog-content>Are you sure that you want to relinquish this property?</mat-card-content>
+      <mat-card-actions mat-dialog-actions align="end">
+        <button mat-button (click)="cancelRelinquish()">Cancel</button>
+        <button mat-raised-button color="warn" (click)="confirmRelinquish()">Confirm</button>
+      </mat-card-actions>
     </mat-card>
-</ng-template>
+  </ng-template>
 
-<div class="uamp-footer">
+  <div class="uamp-footer">
     <button mat-button (click)="back()"><mat-icon>chevron_left</mat-icon>Back</button>
     <div>
-        <button mat-button (click)="save()" class="ml-1">Save</button>
-        <button mat-raised-button color="primary" (click)="nextPage()">Next</button>
+      <button mat-button (click)="save()" class="ml-1">Save</button>
+      <button mat-raised-button color="primary" (click)="nextPage()">Next</button>
     </div>
-</div>
+  </div>

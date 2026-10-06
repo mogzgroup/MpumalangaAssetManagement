@@ -1,17 +1,22 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ToastService } from '../../services/toast.service';
+import { AsyncPipe } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { MatIconButton } from '@angular/material/button';
 
 @Component({
-  standalone: false,
-  selector: 'app-toast-container',
-  templateUrl: './toast-container.component.html',
-  styleUrls: ['./toast-container.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-toast-container',
+    templateUrl: './toast-container.component.html',
+    styleUrls: ['./toast-container.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatIcon, MatIconButton, AsyncPipe]
 })
 export class ToastContainerComponent {
+  private toastService = inject(ToastService);
+
   readonly messages$: ToastService['messages$'];
 
-  constructor(private toastService: ToastService) {
+  constructor() {
     this.messages$ = this.toastService.messages$;
   }
 

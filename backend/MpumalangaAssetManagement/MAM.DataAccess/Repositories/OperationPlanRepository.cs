@@ -1,19 +1,16 @@
 ﻿
 using MAM.DataAccess.Interfaces;
 using MAM.DataAccess.Tables;
-using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace MAM.DataAccess.Repositories
 {
     public class OperationPlanRepository : IOperationPlanRepository, IDisposable
     {
-        bool disposed = false;
-        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+        // No unmanaged resources; provide no-op Dispose for callers that use 'using'
+        public void Dispose() { }
         private string _connectionString { get; set; }
 
         public OperationPlanRepository(string connectionString)
@@ -28,6 +25,17 @@ namespace MAM.DataAccess.Repositories
                 db.OperationPlans.Add(operationPlan);
                 db.SaveChanges();
                 return operationPlan.Id;
+            }
+        }
+
+        public void AddOperationPlans(List<OperationPlan> operationPlans)
+        {
+            if (operationPlans == null || operationPlans.Count == 0)
+                return;
+            using (var db = new DataContext(_connectionString))
+            {
+                db.OperationPlans.AddRange(operationPlans);
+                db.SaveChanges();
             }
         }
 
@@ -67,28 +75,6 @@ namespace MAM.DataAccess.Repositories
             }
         }
 
-        public void Dispose()
-        {
-            // Dispose of unmanaged resources.
-            Dispose(true);
-            // Suppress finalization.
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                handle.Dispose();
-                // Free any other managed objects here.
-                //
-            }
-
-            disposed = true;
-        }        
+        // Dispose implemented as no-op above
     }
 }

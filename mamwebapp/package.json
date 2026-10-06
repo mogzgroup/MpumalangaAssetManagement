@@ -47,14 +47,19 @@
     "@angular/cli": "~22.2.1",
     "@angular/compiler-cli": "~22.2.1",
     "@angular/language-service": "~22.2.1",
+    "@eslint/js": "^10.0.1",
     "@types/jasmine": "~3.3.8",
     "@types/node": "^24.19.1",
+    "angular-eslint": "^22.5.0",
+    "eslint": "^10.12.0",
     "jasmine-core": "^7.0.2",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "^6.4.4",
     "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "^5.1.0",
     "karma-jasmine-html-reporter": "^2.3.0",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.71.1"
   }
 }

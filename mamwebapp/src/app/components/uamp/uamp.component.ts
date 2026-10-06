@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ChangeDetectionStrategy, TemplateRef } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ChangeDetectionStrategy, TemplateRef, inject } from '@angular/core';
+import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { User } from 'src/app/models/user.model';
 import { first } from 'rxjs/operators';
 import { UAMP } from 'src/app/models/uamp.model';
@@ -11,19 +11,64 @@ import { ToastService } from 'src/app/services/toast.service';
 import { UampService } from '../../services/uamp/uamp.service';
 import { TempleteTwoPointOne } from 'src/app/models/templetes/templete-two-point-one.model';
 import { Router } from '@angular/router';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { NgIf, NgTemplateOutlet, DatePipe } from '@angular/common';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { CdkScrollable } from '@angular/cdk/scrolling';
 
 @Component({
-  standalone: false,
-  selector: 'app-uamp',
-  templateUrl: './uamp.component.html',
-  styleUrls: ['./uamp.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
+    selector: 'app-uamp',
+    templateUrl: './uamp.component.html',
+    styleUrls: ['./uamp.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [
+        MatButton,
+        MatIcon,
+        MatCard,
+        MatCardContent,
+        MatTable,
+        MatSort,
+        MatColumnDef,
+        MatHeaderCellDef,
+        MatHeaderCell,
+        MatSortHeader,
+        MatCellDef,
+        MatCell,
+        MatIconButton,
+        MatMenuTrigger,
+        MatHeaderRowDef,
+        MatHeaderRow,
+        MatRowDef,
+        MatRow,
+        MatNoDataRow,
+        NgIf,
+        MatProgressBar,
+        NgTemplateOutlet,
+        MatPaginator,
+        MatMenu,
+        MatMenuItem,
+        MatCardHeader,
+        MatDialogTitle,
+        MatCardTitle,
+        CdkScrollable,
+        MatDialogContent,
+        DatePipe,
+    ],
 })
 export class UampComponent implements OnInit, OnDestroy, AfterViewInit {
+  private router = inject(Router);
+  private toastService = inject(ToastService);
+  uampService = inject(UampService);
+  private authenticationService = inject(AuthenticationService);
+  private dialog = inject(MatDialog);
+
   templeteTwoPointOne: TempleteTwoPointOne;
   properties: any[] = [];
-  generatingUamp: boolean = false;
-  value: number = 0;
+  generatingUamp = false;
+  value = 0;
   uamps: UAMP[] = [];
   loadingUamps = false;
   uampLoadError = '';
@@ -35,21 +80,15 @@ export class UampComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   umapTemplete: any[];
-  leasedPropertyCount: Number = 0;
-  activeIndex: number = 0;
-  stateOwnedPropertyCount: Number = 0;
-  showDialog: Boolean = false;
-  showUAMP: Boolean = false;
+  leasedPropertyCount = 0;
+  activeIndex = 0;
+  stateOwnedPropertyCount = 0;
+  showDialog = false;
+  showUAMP = false;
   currentUser: User;
   uamp: UAMP;
   templateOne: any;
-  constructor(
-    private router: Router,
-    private toastService: ToastService,
-    public uampService: UampService,
-    private authenticationService: AuthenticationService,
-    private dialog: MatDialog
-  ) {
+  constructor() {
     this.startCounter();
     this.dataSource.sortingDataAccessor = (item, property) => {
       if (property === 'creator') {
@@ -152,7 +191,7 @@ export class UampComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
-  getUamp(id: Number) {
+  getUamp(id: number) {
     this.uampService.getuampwithtemplateone(id).subscribe(
       (response) => {
         this.uamp = response;
@@ -178,7 +217,7 @@ export class UampComponent implements OnInit, OnDestroy, AfterViewInit {
 
   startUamp() {
     this.openProgressDialog();
-    let uamp: UAMP = {
+    const uamp: UAMP = {
       id: 0,
       status: 'New',
       fileReference: this.makeId(8),
@@ -295,10 +334,10 @@ export class UampComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   makeId(length) {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;

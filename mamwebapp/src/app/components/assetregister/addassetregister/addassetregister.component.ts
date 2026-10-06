@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { PageEvent } from '@angular/material/paginator';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable, TimeoutError, defer, from, of } from 'rxjs';
 import { concatMap, finalize, first, map, tap, timeout, toArray } from 'rxjs/operators';
 import { Facility } from 'src/app/models/facility.model';
@@ -11,16 +11,37 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { Router } from '@angular/router';
 import { ToastService } from 'src/app/services/toast.service';
+import { NgClass } from '@angular/common';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MatInput } from '@angular/material/input';
+import { MatFormField, MatSuffix, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { PrintSectionDirective } from '../../../common/print-section/print-section.directive';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 
 @Component({
-  standalone: false,
-  selector: 'app-addassetregister',
-  templateUrl: './addassetregister.component.html',
-  styleUrls: ['./addassetregister.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-addassetregister',
+    templateUrl: './addassetregister.component.html',
+    styleUrls: ['./addassetregister.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatProgressSpinner, MatButton, MatIcon, MatProgressBar, MatTabGroup, MatTab, FormsModule, ReactiveFormsModule, MatIconButton, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatInput, NgClass, MatFormField, MatSelect, MatOption, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, PrintSectionDirective, MatLabel, MatMenuTrigger, MatMenu, MatMenuItem, MatPaginator]
 })
 
 export class AddassetregisterComponent implements OnInit {
+  private router = inject(Router);
+  private sharedService = inject(SharedService);
+  private authenticationService = inject(AuthenticationService);
+  facilityService = inject(FacilityService);
+  private formBuilder = inject(FormBuilder);
+  private toastService = inject(ToastService);
+
   @Output() newAsset = new EventEmitter<any>();
   @Input() selectedAsset: any;
   improvements = [];
@@ -35,10 +56,10 @@ export class AddassetregisterComponent implements OnInit {
   uploadedFinanceFiles: any[] = [];
   uploadedLandFiles: any[] = [];
   myfile: any[] = [];
-  landIsSubmitted: boolean = false;
-  improvementIsSubmitted: boolean = false;
-  financeIsSubmitted: boolean = false;
-  isSubmitted: boolean = false;
+  landIsSubmitted = false;
+  improvementIsSubmitted = false;
+  financeIsSubmitted = false;
+  isSubmitted = false;
   selectedImprovement: any;
   selectedDeedsOffice: any;
   generalInformation: {
@@ -54,12 +75,12 @@ export class AddassetregisterComponent implements OnInit {
   uploadingFiles = false;
   fileSelectionError = '';
   incomeLeaseStatuses: any[];
-  showHiredPropertyLink:boolean = false;
+  showHiredPropertyLink = false;
   facilityTypes: any[];
   natureOfLeases: any[];
-  showDialog: boolean = false;
-  titleDeedIsInvalid: boolean = false;
-  activeIndex: number = 0;
+  showDialog = false;
+  titleDeedIsInvalid = false;
+  activeIndex = 0;
   landForm: FormGroup;
   financialForm: FormGroup;
   improvementForm: FormGroup;
@@ -84,7 +105,7 @@ export class AddassetregisterComponent implements OnInit {
   landRemainders: any[];
   howAcquireds: any[];
   //vestedTypes: any[];
-  value5: string = 'Disabled';
+  value5 = 'Disabled';
   aFSs: any[];
   howAcquired: any = {
     name: undefined
@@ -95,11 +116,11 @@ export class AddassetregisterComponent implements OnInit {
   functionalPerformanceRatings: any[];
   ownershipCategories: any;
   errorMsg: string;
-  mode: string = "Add";
-  isViewOnly: boolean = false;
+  mode = "Add";
+  isViewOnly = false;
   province: { name: 'Mpumalanga', code: 'MP', factor: 6 };
   registrationDivision: { name: 'Mpumalanga', code: 'M', factor: 4 };
-  savingLand: boolean = false;
+  savingLand = false;
   private pendingFinalAsset: Facility | null = null;
   improvementCols = [
     { field: 'buildingName', header: 'Building Name' },
@@ -111,14 +132,13 @@ export class AddassetregisterComponent implements OnInit {
   ];
 
   facility: any;
-  filesAreLoaded:boolean = false;
+  filesAreLoaded = false;
   finance: {};
   improvement: {}
   currentUser: User;
 
   formattedAmount;
  amount;
-  constructor(private router: Router,private sharedService: SharedService, private authenticationService: AuthenticationService, public facilityService: FacilityService, private formBuilder: FormBuilder, private toastService: ToastService) { }
 
   ngOnInit() {
     this.currentUser = this.authenticationService.currentUserValue;
@@ -246,7 +266,7 @@ export class AddassetregisterComponent implements OnInit {
     if (e != undefined) {
       if (e.value != undefined) {
         if (e.value.factor == 1) {
-          let _magisterialDistricts =  [    
+          const _magisterialDistricts =  [    
             { name: 'Barberton', code: 'B', factor: 1 },  
             { name: 'Nelspruit', code: 'N', factor: 2 },
             { name: 'Lydenburg', code: 'L', factor: 3 },
@@ -254,7 +274,7 @@ export class AddassetregisterComponent implements OnInit {
             { name: 'Nsikazi', code: 'NS', factor: 5 },            
             { name: 'Whiteriver', code: 'W', factor: 6 },         
           ];
-          let _localAuthorities = [
+          const _localAuthorities = [
             { name: 'Bushbuckridge', code: 'B', factor: 1 },
             { name: 'Mbombela', code: 'M', factor: 2 },
             { name: 'Nkomazi', code: 'N', factor: 3 },
@@ -263,7 +283,7 @@ export class AddassetregisterComponent implements OnInit {
           this.magisterialDistricts = _magisterialDistricts;
           this.localAuthorities = _localAuthorities;
         } else if (e.value.factor == 2) {
-          let _magisterialDistricts = [
+          const _magisterialDistricts = [
             { name: 'Amersfoort', code: 'A', factor: 1 },
             { name: 'Belfast', code: 'BE', factor: 2 },
             { name: 'Balfour', code: 'BE', factor: 3 },
@@ -278,7 +298,7 @@ export class AddassetregisterComponent implements OnInit {
             { name: 'Volksrust', code: 'V', factor: 12 },                  
             { name: 'Wakkerstroom', code: 'W', factor: 13 },
           ];
-          let _localAuthorities = [
+          const _localAuthorities = [
             { name: 'Albert Luthuli', code: 'AL', factor: 1 },
             { name: 'Dipaleseng', code: 'D', factor: 2 },
             { name: 'Govan Mbeki', code: 'GM', factor: 3 },
@@ -291,7 +311,7 @@ export class AddassetregisterComponent implements OnInit {
           this.magisterialDistricts = _magisterialDistricts;
           this.localAuthorities = _localAuthorities;
         } else if(e.value.factor == 3) {
-          let _magisterialDistricts = [
+          const _magisterialDistricts = [
             { name: 'Belfast', code: 'B', factor: 1 },
             { name: 'Delmas', code: 'D', factor: 2 },
             { name: 'Ermelo', code: 'E', factor: 3 },
@@ -306,7 +326,7 @@ export class AddassetregisterComponent implements OnInit {
             { name: 'Witbank', code: 'W', factor: 12 },
           ];
           
-          let _localAuthorities = [
+          const _localAuthorities = [
             { name: 'Dr. J.S. Moroka', code: 'JSM', factor: 1 },
             { name: 'eMalahleni', code: 'M', factor: 2 },
             { name: 'eMakhazeni', code: 'MK', factor: 3},           
@@ -320,14 +340,14 @@ export class AddassetregisterComponent implements OnInit {
           this.localAuthorities = _localAuthorities;
         }
         else {
-          let _magisterialDistricts = [     
+          const _magisterialDistricts = [     
             { name: 'Bushbuckridge', code: 'B', factor: 1 },
             { name: 'Lydenburg', code: 'L', factor: 2 },
             { name: 'Mhala', code: 'M', factor: 3 },
             { name: 'Pilgrims Rest 2', code: 'PR', factor: 4 },
           ];
 
-          let _localAuthorities = [
+          const _localAuthorities = [
             { name: 'Bushbuckridge', code: 'B', factor: 1 },
             { name: 'Thaba Chweu', code: 'TC', factor: 2 },            
           ];          
@@ -572,7 +592,7 @@ export class AddassetregisterComponent implements OnInit {
     if (isLandSave) {
       if (this.facility.land != undefined && this.facility.land != null) {
         let userDepartments = null;
-        let departments = this.landForm.controls["userDepartment"].value != undefined ? this.landForm.controls["userDepartment"].value : [];
+        const departments = this.landForm.controls["userDepartment"].value != undefined ? this.landForm.controls["userDepartment"].value : [];
         if(this.isArray(departments)){
           departments.forEach(element => {
             if(userDepartments == null)
@@ -1013,7 +1033,7 @@ export class AddassetregisterComponent implements OnInit {
     const incomeLeaseStatus = this.findOption(this.incomeLeaseStatuses, this.facility.land.landUseManagementDetail.incomeLeaseStatus);
     const natureOfLease = this.findOption(this.natureOfLeases, this.facility.land.leaseStatus.natureOfLease);
     const vat = this.vats.find(item => item.name === this.facility.land.leaseStatus.vat);
-    let _districtMunicipality = {
+    const _districtMunicipality = {
       value: districtMunicipality
     };
     this.setDistrictMunicipality(_districtMunicipality);
@@ -1210,9 +1230,9 @@ export class AddassetregisterComponent implements OnInit {
   validateTitleDeed(e){
     this.titleDeedIsInvalid = false;
     const titleDeeed = this.landForm.controls["titleDeedNumber"].value;
-    var firstNumbers = titleDeeed.substring(1, 5);
-    var specialCharacter = titleDeeed.substring(5, 6);
-    var lastNumbers = titleDeeed.substring(6, 10);
+    const firstNumbers = titleDeeed.substring(1, 5);
+    const specialCharacter = titleDeeed.substring(5, 6);
+    const lastNumbers = titleDeeed.substring(6, 10);
     const firstLetter = titleDeeed.substring(0, 1).charAt(0);
     if(!firstLetter.match(/[a-z]/i))
     {
@@ -1230,7 +1250,7 @@ export class AddassetregisterComponent implements OnInit {
 
   AddImprovement() {
     //if (this.improvementForm.valid) {
-      let improvement = {
+      const improvement = {
         id: 0,
         buildingName: this.improvementForm.controls["buildingName"].value,
         type: this.improvementForm.controls["type"].value != undefined ? this.improvementForm.controls["type"].value.name : null,
@@ -1250,10 +1270,10 @@ export class AddassetregisterComponent implements OnInit {
   }
 
   makeId(length) {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;

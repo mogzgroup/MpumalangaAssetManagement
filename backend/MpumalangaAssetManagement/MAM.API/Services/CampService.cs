@@ -8,21 +8,19 @@ using Microsoft.Extensions.Options;
 
 namespace MAM.API.Services
 {
-    public class CampService: ICampService
+    public class CampService : ICampService
     {
-        private readonly AppSettings _appSettings;
+        private readonly MAM.BusinessLayer.Interfaces.ICampRepository _campRepository;
 
-        public CampService(IOptions<AppSettings> appSettings)
+        public CampService(MAM.BusinessLayer.Interfaces.ICampRepository campRepository)
         {
-            _appSettings = appSettings.Value;
+            _campRepository = campRepository;
         }
 
-        public List<Camp> GetCamps(string department) {
-            using (var _campRepository = new CampRepository(_appSettings))
-            {
-                return _campRepository.GetCamps(department);
-            }
-        }            
+        public List<Camp> GetCamps(string department)
+        {
+            return _campRepository.GetCamps(department);
+        }
     }
 
     public interface ICampService

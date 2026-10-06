@@ -33,80 +33,40 @@ namespace MAM.API.Controllers
         [Route("getprojects")]
         public IActionResult GetProjects()
         {
-            try
-            {
-                List<Project> projects = _projectService.GetProjects();
-                return Ok(projects);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            List<Project> projects = _projectService.GetProjects();
+            return Ok(projects);
         }
 
         [HttpGet]
         [Route("getproperties")]
         public IActionResult GetProperties()
         {
-            try
-            {
-                List<Facility> facilities = _facilityService.GetBuildings();
-                return Ok(facilities);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            List<Facility> facilities = _facilityService.GetBuildings();
+            return Ok(facilities);
         }
 
         [HttpPost]
         [Route("addproject")]
         public IActionResult AddProject([FromBody] Project project)
         {
-            try
-            {
-                int id = _projectService.AddProject(project);
-                return Ok(id);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            int id = _projectService.AddProject(project);
+            return Ok(id);
         }
 
         [HttpPost]
         [Route("updateproject")]
         public IActionResult UpdateProject([FromBody] Project project)
         {
-            try
-            {
-                project = _projectService.UpdateProject(project);
-                return Ok(project);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            project = _projectService.UpdateProject(project);
+            return Ok(project);
         }
 
         [HttpPost]
         [Route("deleteproject")]
         public IActionResult DeletProject([FromBody]Project project)
         {
-            try
-            {
-                bool isUpdated = _projectService.DeleteProject(project);
-                return Ok(isUpdated);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            bool isUpdated = _projectService.DeleteProject(project);
+            return Ok(isUpdated);
         }
     }
 }

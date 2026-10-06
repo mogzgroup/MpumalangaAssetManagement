@@ -8,11 +8,13 @@ namespace MAM.BusinessLayer.Interfaces
 {
     public interface IUserRepository
     {
-        bool AddUser(User user);
+        User AddUser(User user);
         bool UpdateUser(User user);
-        List<User> GetUsers(AppSettings appSettings);
-        User Login(string username, string password, AppSettings appSettings);
+        bool DeleteUser(User user);
+        List<User> GetUsers();
+        User Login(string username, string password);
         bool ResetPassword(string username, string adminPassword);
-        bool ChangePassword(string username, string oldPassword, string newPassword);
+        bool ForgotPassword(string username, string adminPassword);
+        bool ChangePassword(string username, string newPassword, string oldPassword);
     }
 }

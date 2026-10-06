@@ -1,29 +1,42 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/services/toast.service';
-import { PageEvent } from '@angular/material/paginator';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { UAMP } from 'src/app/models/uamp.model';
 import { Property } from 'src/app/models/property.model';
 import { UampService } from '../../../services/uamp/uamp.service';
-import { TempleteTwoPointOne } from 'src/app/models/templetes/templete-two-point-one.model';
 import { AddMunicipalUtilityServicesComponent } from './add-municipal-utility-services/add-municipal-utility-services';
 import { Router } from '@angular/router';
 import { SharedService } from 'src/app/services/shared.service';
 import { first } from 'rxjs/operators';
+import { MatCard, MatCardSubtitle, MatCardContent } from '@angular/material/card';
+
+import { MatInput } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
-  standalone: false,
-  selector: 'app-template-two-one',
-  templateUrl: './template-two-one.component.html',
-  styleUrls: ['./template-two-one.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-template-two-one',
+    templateUrl: './template-two-one.component.html',
+    styleUrls: ['./template-two-one.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatCard, MatCardSubtitle, MatCardContent, MatInput, FormsModule, MatSelect, MatOption, MatPaginator, MatButton, MatIcon]
 })
 export class TemplateTwoOneComponent implements OnInit {
-  properties: Array<Property> = [];
-  pagedProperties: Array<Property> = [];
+  private uampService = inject(UampService);
+  private toastService = inject(ToastService);
+  private sharedService = inject(SharedService);
+  private dialog = inject(MatDialog);
+  private router = inject(Router);
+
+  properties: Property[] = [];
+  pagedProperties: Property[] = [];
   pageIndex = 0;
   pageSize = 5;
-  submitted: boolean = false;
+  submitted = false;
   municipalUtilityServices: any[];
   operationalCosts: any[];
   conditionRatings: any[];
@@ -33,13 +46,9 @@ export class TemplateTwoOneComponent implements OnInit {
   accessibilities: any[];
   requiredPerformanceStandards: any[];
   uamp: UAMP;
-  isLoading: boolean = false;
+  isLoading = false;
 
-  constructor(private uampService: UampService,
-    private toastService: ToastService,
-    private sharedService: SharedService,
-    private dialog: MatDialog,
-    private router: Router) {
+  constructor() {
 
     this.uampService.uampChange.subscribe((value) => {
       if (value) {

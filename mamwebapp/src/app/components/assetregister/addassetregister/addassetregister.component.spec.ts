@@ -21,29 +21,28 @@ describe('AddassetregisterComponent', () => {
     ]);
 
     TestBed.configureTestingModule({
-      declarations: [AddassetregisterComponent],
-      imports: [ReactiveFormsModule],
-      providers: [
+    imports: [ReactiveFormsModule, AddassetregisterComponent],
+    providers: [
         { provide: AuthenticationService, useValue: { currentUserValue: { id: 7, roleId: 2 } } },
         { provide: FacilityService, useValue: facilityService },
         {
-          provide: SharedService,
-          useValue: {
-            getDepartments: () => [],
-            getAssetTypes: () => [],
-            getDistricts: () => []
-          }
+            provide: SharedService,
+            useValue: {
+                getDepartments: () => [],
+                getAssetTypes: () => [],
+                getDistricts: () => []
+            }
         },
         { provide: Router, useValue: {} },
         {
-          provide: ToastService,
-          useValue: {
-            ...jasmine.createSpyObj('ToastService', ['showSuccess', 'showError', 'showWarning', 'showInfo']),
-            getApiErrorMessage: () => 'The server could not complete the request. Please try again later.'
-          }
+            provide: ToastService,
+            useValue: {
+                ...jasmine.createSpyObj('ToastService', ['showSuccess', 'showError', 'showWarning', 'showInfo']),
+                getApiErrorMessage: () => 'The server could not complete the request. Please try again later.'
+            }
         }
-      ]
-    })
+    ]
+})
       .overrideComponent(AddassetregisterComponent, { set: { template: '' } });
   });
 

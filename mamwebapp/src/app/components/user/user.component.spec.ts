@@ -1,4 +1,5 @@
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { TestBed } from '@angular/core/testing';
 import { of, Subject, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { User } from '../../models/user.model';
@@ -45,7 +46,14 @@ describe('UserComponent', () => {
     dialogRef = jasmine.createSpyObj<MatDialogRef<unknown>>('MatDialogRef', ['close', 'afterClosed']);
     dialogRef.afterClosed.and.returnValue(dialogClosed);
     dialog.open.and.returnValue(dialogRef);
-    component = new UserComponent(userService, toastService, dialog);
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: UserService, useValue: userService },
+        { provide: ToastService, useValue: toastService },
+        { provide: MatDialog, useValue: dialog }
+      ]
+    });
+    component = TestBed.runInInjectionContext(() => new UserComponent());
     component.ngOnInit();
   });
 

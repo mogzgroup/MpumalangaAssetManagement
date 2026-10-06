@@ -1,6 +1,6 @@
 export class CurrentUtlisation {
-    id: Number;
-    userId: Number;
+    id: number;
+    userId: number;
     post: string;
     requiredSpace: string;
     allocatedSpace: string;

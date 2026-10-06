@@ -1,15 +1,23 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, TemplateRef, ViewChild, inject } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { AddFaultComponent } from './addfault/add.fault.component';
+import { TrackTicketComponent } from './trackticket/track.ticket.component';
 
 @Component({
-  standalone: false,
-  selector: 'app-report-fault',
-  templateUrl: './report.fault.component.html',
-  styleUrls: ['./report.fault.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-report-fault',
+    templateUrl: './report.fault.component.html',
+    styleUrls: ['./report.fault.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatCard, MatCardHeader, MatCardTitle, MatIconButton, MatIcon, MatCardContent, AddFaultComponent, TrackTicketComponent, MatCardActions, MatButton]
 })
 export class ReportFaultComponent implements OnInit, AfterViewInit {
+  private formBuilder = inject(FormBuilder);
+  private dialog = inject(MatDialog);
+
   public showDialog = false;
   public submitted = false;
   public isSuccessful = false;
@@ -26,8 +34,6 @@ export class ReportFaultComponent implements OnInit, AfterViewInit {
   private reportFaultDialogRef: MatDialogRef<unknown> | null = null;
   private trackTicketDialogRef: MatDialogRef<unknown> | null = null;
   private reportFaultChoiceDialogRef: MatDialogRef<unknown> | null = null;
-
-  constructor(private formBuilder: FormBuilder, private dialog: MatDialog) {}
 
   ngOnInit() {
     this.buildForm();

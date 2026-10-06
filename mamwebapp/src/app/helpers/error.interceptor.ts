@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
@@ -8,12 +8,10 @@ import { AuthenticationService } from '../services/authentication.service';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-    private redirectingToLogin = false;
+    private authenticationService = inject(AuthenticationService);
+    private router = inject(Router);
 
-    constructor(
-        private authenticationService: AuthenticationService,
-        private router: Router
-    ) { }
+    private redirectingToLogin = false;
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(request).pipe(catchError((error: HttpErrorResponse) => {

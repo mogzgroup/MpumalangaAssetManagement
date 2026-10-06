@@ -1,5 +1,5 @@
-import { Component, OnInit, TemplateRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild, ChangeDetectionStrategy, inject } from '@angular/core';
+import { MatDialog, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
 import { TimeoutError } from 'rxjs';
 import { finalize, first, timeout } from 'rxjs/operators';
 import { FacilityService } from '../../services/facility/facility.service';
@@ -9,16 +9,30 @@ import { ToastService } from 'src/app/services/toast.service';
 import { mapConfig } from 'src/app/shared/map/map-config';
 import { MapMarkerData, validCoordinates } from 'src/app/shared/map/map-marker.model';
 import { MapCoordinate } from 'src/app/models/map-oordinate.model';
+import { MatIcon } from '@angular/material/icon';
+import { MatCard, MatCardContent, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle } from '@angular/material/card';
+
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatButton } from '@angular/material/button';
+import { MapLibreMapComponent } from '../../shared/map/maplibre-map.component';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { AddassetregisterComponent } from '../assetregister/addassetregister/addassetregister.component';
 
 
 @Component({
-  standalone: false,
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-dashboard',
+    templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatIcon, MatCard, MatCardContent, MatProgressSpinner, MatButton, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MapLibreMapComponent, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatDialogTitle, CdkScrollable, MatDialogContent, AddassetregisterComponent]
 })
 export class DashboardComponent implements OnInit {
+  private facilityService = inject(FacilityService);
+  private dialog = inject(MatDialog);
+  private toastService = inject(ToastService);
+  private changeDetector = inject(ChangeDetectorRef);
+
   @ViewChild('assetDialog') assetDialog: TemplateRef<{
     $implicit: { header: string; asset: any };
   }>;
@@ -37,11 +51,6 @@ export class DashboardComponent implements OnInit {
   markers: MapMarkerData[] = [];
   center: [number, number] = mapConfig.defaultCenter;
 
-  constructor(
-    private facilityService: FacilityService,
-    private dialog: MatDialog,
-    private toastService: ToastService) { }
-
   ngOnInit() {
     this.loadMapLocations();
     this.loadZonings();
@@ -51,12 +60,19 @@ export class DashboardComponent implements OnInit {
   loadWedges(): void {
     this.loadingWedges = true;
     this.wedgesLoadError = '';
-    this.facilityService.getDashboardWedges().pipe(first()).subscribe(wedges => {
-      this.loadingWedges = false;
+    this.facilityService.getDashboardWedges().pipe(
+      first(),
+      timeout(30000),
+      finalize(() => {
+        this.loadingWedges = false;
+        this.changeDetector.markForCheck();
+      })
+    ).subscribe(wedges => {
       this.setDashboardWedges(wedges);
     }, error => {
-      this.loadingWedges = false;
-      this.wedgesLoadError = this.toastService.getApiErrorMessage(error);
+      this.wedgesLoadError = error instanceof TimeoutError
+        ? 'Dashboard totals are taking too long to load.'
+        : this.toastService.getApiErrorMessage(error);
       this.toastService.showError(this.wedgesLoadError);
     });
   }
@@ -69,6 +85,7 @@ export class DashboardComponent implements OnInit {
       timeout(30000),
       finalize(() => {
         this.loadingZonings = false;
+        this.changeDetector.markForCheck();
       })
     ).subscribe(zonings => {
       if (!Array.isArray(zonings)) {
@@ -94,7 +111,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  private setDashboardWedges(wedges: Array<DashboardWedge>): void {
+  private setDashboardWedges(wedges: DashboardWedge[]): void {
     if (!Array.isArray(wedges)) {
       this.setWedgesLoadError('Dashboard totals could not be loaded because the server returned invalid data.');
       return;
@@ -133,7 +150,10 @@ export class DashboardComponent implements OnInit {
   }
 
   private loadMapLocations(): void {
-    this.facilityService.getMapCoordinates().pipe(first()).subscribe(mapCoordinates => {
+    this.facilityService.getMapCoordinates().pipe(
+      first(),
+      finalize(() => this.changeDetector.markForCheck())
+    ).subscribe(mapCoordinates => {
       if (!Array.isArray(mapCoordinates)) {
         this.mapLoadError = 'Map locations could not be loaded.';
         return;

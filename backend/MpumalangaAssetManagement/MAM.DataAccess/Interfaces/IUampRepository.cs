@@ -1,7 +1,6 @@
 ﻿using MAM.DataAccess.Tables;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MAM.DataAccess.Interfaces
 {
@@ -12,5 +11,6 @@ namespace MAM.DataAccess.Interfaces
         void DeleteUamp(UserImmovableAssetManagementPlan userImmovableAssetManagementPlan);
         List<UserImmovableAssetManagementPlan> GetUamps(string department);
         UserImmovableAssetManagementPlan GetUamp(int id);
+        UserImmovableAssetManagementPlan GetUampWithTemplateOne(int id);
     }
 }

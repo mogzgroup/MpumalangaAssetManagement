@@ -1,34 +1,50 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild, AfterViewInit, TemplateRef } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, ChangeDetectionStrategy, ViewChild, AfterViewInit, TemplateRef, inject } from '@angular/core';
+import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { Project } from 'src/app/models/project.model';
 import { User } from 'src/app/models/user.model';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ProjectService } from 'src/app/services/facility-management/project.service';
 import { ToastService } from 'src/app/services/toast.service';
+import { NgIf, NgFor } from '@angular/common';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
+import { AddEditProjectComponent } from './addeditproject/add-edit-project.component';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-  standalone: false,
-  selector: 'app-project',
-  templateUrl: './project.component.html',
-  styleUrls: ['./project.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-project',
+    templateUrl: './project.component.html',
+    styleUrls: ['./project.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [NgIf, MatButton, MatIcon, MatFormField, MatLabel, MatPrefix, MatInput, MatTable, MatSort, NgFor, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatIconButton, MatMenuTrigger, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatProgressBar, MatPaginator, MatMenu, MatMenuItem, MatCard, MatCardHeader, MatCardTitle, MatCardContent, AddEditProjectComponent, MatDialogTitle, CdkScrollable, MatDialogContent, MatDialogActions, MatProgressSpinner]
 })
 export class ProjectComponent implements OnInit, AfterViewInit {
+  private authenticationService = inject(AuthenticationService);
+  private projectService = inject(ProjectService);
+  private toastService = inject(ToastService);
+  private dialog = inject(MatDialog);
+
 
   public dialogHeader = '';
   public project: Project;
-  public isSuccessful: boolean = false;
-  public loading: boolean = false;
+  public isSuccessful = false;
+  public loading = false;
   public loadError = '';
   public deletingProject = false;
-  public projects: Array<any> = [];
-  public projectsInProgress: number = 0;
-  public serviceRequestsLogged: number = 0;
-  public completedRequests: number = 0;
-  public awaitingSignOff: number = 0;
+  public projects: any[] = [];
+  public projectsInProgress = 0;
+  public serviceRequestsLogged = 0;
+  public completedRequests = 0;
+  public awaitingSignOff = 0;
   public currentUser: User;
   @ViewChild('projectDialog') projectDialog: TemplateRef<unknown>;
   @ViewChild('deleteProjectDialog') deleteProjectDialog: TemplateRef<unknown>;
@@ -44,14 +60,6 @@ export class ProjectComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<any>([]);
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-
-
-  constructor(
-    private authenticationService: AuthenticationService,
-    private projectService: ProjectService,
-    private toastService: ToastService,
-    private dialog: MatDialog
-  ) { }
 
   ngOnInit() {
     this.authenticationService.currentUser.pipe().subscribe(x => {

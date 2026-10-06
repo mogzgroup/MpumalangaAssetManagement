@@ -1,83 +1,45 @@
 ﻿using MAM.BusinessLayer.Interfaces;
 using MAM.BusinessLayer.Model;
 using MAM.BusinessLayer.Models;
-using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MAM.BusinessLayer.Repositories
 {
-    public class HiringRegisterRepository: IHiringRegisterRepository,  IDisposable
+    public class HiringRegisterRepository: IHiringRegisterRepository
     {
         private AppSettings appSettings { get; set; }
-        // Flag: Has Dispose already been called?
-        bool disposed = false;
-        // Instantiate a SafeHandle instance.
-        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+        private readonly MAM.DataAccess.Interfaces.IHiredPropertyRepository _hiredPropertyDataAccess;
 
-        public HiringRegisterRepository(AppSettings settings)
+        public HiringRegisterRepository(AppSettings settings, MAM.DataAccess.Interfaces.IHiredPropertyRepository hiredPropertyDataAccess)
         {
             appSettings = settings;
+            _hiredPropertyDataAccess = hiredPropertyDataAccess;
         }
         public List<HiredProperty> GetHiredProperties()
         {
             HiredProperty hiredProperty = new HiredProperty();
-            using (var dataAccess = new DataAccess.Repositories.HiredPropertyRepository(appSettings.ConnectionString)) {
-                List<HiredProperty> properties = hiredProperty.ConvertToHiredProperties(dataAccess.GetHiredProperties());
-                return properties;
-            };  
+            List<HiredProperty> properties = hiredProperty.ConvertToHiredProperties(_hiredPropertyDataAccess.GetHiredProperties());
+            return properties;
         }
         public bool UpdateHiredProperty(HiredProperty hiredProperty)
         {
-            using (var dataAccess = new DataAccess.Repositories.HiredPropertyRepository(appSettings.ConnectionString))
-            {
-                dataAccess.UpdateHiredProperty(hiredProperty.ConvertToHiredPropertyTable(hiredProperty));
-                return true;
-            };
+            _hiredPropertyDataAccess.UpdateHiredProperty(hiredProperty.ConvertToHiredPropertyTable(hiredProperty));
+            return true;
         }
 
         public bool DeleteHiredProperty(HiredProperty hiredProperty)
         {
-            using (var dataAccess = new DataAccess.Repositories.HiredPropertyRepository(appSettings.ConnectionString))
-            {
-                dataAccess.DeleteHiredProperty(hiredProperty.ConvertToHiredPropertyTable(hiredProperty));
-                return true;
-            };
+            _hiredPropertyDataAccess.DeleteHiredProperty(hiredProperty.ConvertToHiredPropertyTable(hiredProperty));
+            return true;
         }
 
         public int AddHiredProperty(HiredProperty hiredProperty)
         {
-            using (var dataAccess = new DataAccess.Repositories.HiredPropertyRepository(appSettings.ConnectionString))
-            {
-                return dataAccess.AddHiredProperty(hiredProperty.ConvertToHiredPropertyTable(hiredProperty));
-                
-            };
+            return _hiredPropertyDataAccess.AddHiredProperty(hiredProperty.ConvertToHiredPropertyTable(hiredProperty));
         }
 
-        public void Dispose()
-        {
-            // Dispose of unmanaged resources.
-            Dispose(true);
-            // Suppress finalization.
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                handle.Dispose();
-                // Free any other managed objects here.
-                //
-            }
-
-            disposed = true;
-        }
+        // Business-layer repository does not own unmanaged resources; data-access layer handles disposal.
     }
 }

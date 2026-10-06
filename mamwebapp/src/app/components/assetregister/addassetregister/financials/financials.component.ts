@@ -1,16 +1,24 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+
+import { MatOption } from '@angular/material/autocomplete';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
-  standalone: false,
-  selector: 'app-financials',
-  templateUrl: './financials.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrls: ['./financials.component.css']
+    selector: 'app-financials',
+    templateUrl: './financials.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./financials.component.css'],
+    imports: [MatCard, MatCardHeader, MatCardTitle, MatCardSubtitle, MatCardContent, MatFormField, MatLabel, MatSelect, FormsModule, MatOption, MatCardActions, MatButton, MatIcon]
 })
 export class FinancialsComponent implements OnInit {
+  private router = inject(Router);
 
-  constructor(private router: Router) { }
   classes: any[];
 
     vagons: any[] = [];

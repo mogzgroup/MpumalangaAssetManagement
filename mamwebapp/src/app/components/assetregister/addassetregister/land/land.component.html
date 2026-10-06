@@ -1,39 +1,45 @@
 <div class="stepsdemo-content asset-step-page">
-    <mat-card class="asset-step-card">
-        <mat-card-header>
-            <mat-card-title>Personal Information</mat-card-title>
-            <mat-card-subtitle>Enter your personal information</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content class="personal-information-form asset-step-grid">
-            <mat-form-field appearance="outline">
-                <mat-label>Firstname</mat-label>
-                <input matInput #firstname="ngModel" id="firstname" type="text" required
-                    [(ngModel)]="personalInformation.firstname">
-                <mat-error *ngIf="(firstname.invalid && submitted) || (firstname.dirty && firstname.invalid)">
-                    Firstname is required.
+  <mat-card class="asset-step-card">
+    <mat-card-header>
+      <mat-card-title>Personal Information</mat-card-title>
+      <mat-card-subtitle>Enter your personal information</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content class="personal-information-form asset-step-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Firstname</mat-label>
+        <input matInput #firstname="ngModel" id="firstname" type="text" required
+          [(ngModel)]="personalInformation.firstname">
+          @if ((firstname.invalid && submitted) || (firstname.dirty && firstname.invalid)) {
+            <mat-error>
+              Firstname is required.
+            </mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Lastname</mat-label>
+          <input matInput #lastname="ngModel" id="lastname" type="text" required
+            [(ngModel)]="personalInformation.lastname">
+            @if ((lastname.invalid && submitted) || (lastname.dirty && lastname.invalid)) {
+              <mat-error>
+                Lastname is required.
+              </mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Age</mat-label>
+            <input matInput #age="ngModel" id="age" type="number" required
+              [(ngModel)]="personalInformation.age">
+              @if ((age.invalid && submitted) || (age.dirty && age.invalid)) {
+                <mat-error>
+                  Age is required.
                 </mat-error>
+              }
             </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Lastname</mat-label>
-                <input matInput #lastname="ngModel" id="lastname" type="text" required
-                    [(ngModel)]="personalInformation.lastname">
-                <mat-error *ngIf="(lastname.invalid && submitted) || (lastname.dirty && lastname.invalid)">
-                    Lastname is required.
-                </mat-error>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Age</mat-label>
-                <input matInput #age="ngModel" id="age" type="number" required
-                    [(ngModel)]="personalInformation.age">
-                <mat-error *ngIf="(age.invalid && submitted) || (age.dirty && age.invalid)">
-                    Age is required.
-                </mat-error>
-            </mat-form-field>
-        </mat-card-content>
-        <mat-card-actions class="asset-step-actions" align="end">
+          </mat-card-content>
+          <mat-card-actions class="asset-step-actions" align="end">
             <button mat-raised-button color="primary" type="button" (click)="nextPage()">
-                <span>Next</span><mat-icon>arrow_forward</mat-icon>
+              <span>Next</span><mat-icon>arrow_forward</mat-icon>
             </button>
-        </mat-card-actions>
-    </mat-card>
-</div>
+          </mat-card-actions>
+        </mat-card>
+      </div>

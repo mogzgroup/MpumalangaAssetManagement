@@ -16,18 +16,18 @@ describe('LandComponent', () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      declarations: [LandComponent],
-      imports: [
+    imports: [
         CommonModule,
         FormsModule,
         MatButtonModule,
         MatCardModule,
         MatFormFieldModule,
         MatIconModule,
-        MatInputModule
-      ],
-      providers: [{ provide: Router, useValue: { navigate: jasmine.createSpy('navigate') } }]
-    })
+        MatInputModule,
+        LandComponent
+    ],
+    providers: [{ provide: Router, useValue: { navigate: jasmine.createSpy('navigate') } }]
+})
     .compileComponents();
   });
 

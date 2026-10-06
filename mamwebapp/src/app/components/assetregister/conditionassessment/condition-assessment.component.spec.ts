@@ -8,8 +8,8 @@ describe('ViewPropertyComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ConditionAssessmentComponent ]
-    })
+    imports: [ConditionAssessmentComponent]
+})
     .compileComponents();
   }));
 

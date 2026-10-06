@@ -3,7 +3,7 @@ import { User } from "./user.model";
 export class ConditionAssessment {
     id: number;
     facilityId: number;
-    rates: Array<Rate>;
+    rates: Rate[];
     createdDate: Date;
     createdBy: number;
     modifiedDate: Date;

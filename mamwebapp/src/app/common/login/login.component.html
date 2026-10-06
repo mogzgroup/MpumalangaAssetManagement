@@ -1,64 +1,76 @@
 <div class="login-body">
-    <div class="mobile-banner">
-        <img src="../../../assets/images/logo.png" alt="Mpumalanga Asset Management">
+  <img class="login-background" src="../../../assets/images/bg-login.jpg"
+    alt="" aria-hidden="true" fetchpriority="high" decoding="async">
+  <div class="mobile-banner">
+    <img src="../../../assets/images/logo.png" alt="Mpumalanga Asset Management">
+  </div>
+  <div class="login-panel">
+    <div class="logo">
+      <img src="../../../assets/images/logo.png" alt="Mpumalanga Asset Management">
     </div>
-    <div class="login-panel">
-        <div class="logo">
-            <img src="../../../assets/images/logo.png" alt="Mpumalanga Asset Management">
+  </div>
+  <div class="login-card">
+    <div class="top-border"></div>
+    <div class="login-content">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <h1>Login</h1>
+        <p>Welcome, please use the form to sign-in.</p>
+        <div class="username-container">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Username</mat-label>
+            <input matInput formControlName="username" autocomplete="username">
+            @if (submitted && f.username.errors?.required) {
+              <mat-error>Username is required.</mat-error>
+            }
+          </mat-form-field>
         </div>
-    </div>
-    <div class="login-card">
-        <div class="top-border"></div>
-        <div class="login-content">
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-                <h1>Login</h1>
-                <p>Welcome, please use the form to sign-in.</p>
-                <div class="username-container">
-                    <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>Username</mat-label>
-                        <input matInput formControlName="username" autocomplete="username">
-                        <mat-error *ngIf="submitted && f.username.errors?.required">Username is required.</mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="password-container">
-                    <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>Password</mat-label>
-                        <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" autocomplete="current-password">
-                        <button mat-button matSuffix type="button" class="password-visibility"
-                            (click)="hidePassword = !hidePassword"
-                            [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'">
-                            {{ hidePassword ? 'Show' : 'Hide' }}
-                        </button>
-                        <mat-error *ngIf="submitted && f.password.errors?.required">Password is required.</mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="forgetpassword-container">
-                    <button mat-button type="button" (click)="openForgotPasswordDialog()" class="forget-password">Forgot Password?</button>
-                </div>
-                <div class="login-submit-container">
-                    <button mat-flat-button color="primary" class="login-submit" type="submit" [disabled]="loading">
-                        <mat-spinner *ngIf="loading" diameter="18" aria-label="Signing in"></mat-spinner>
-                        <span *ngIf="!loading">Sign In</span>
-                    </button>
-                </div>
-            </form>
+        <div class="password-container">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Password</mat-label>
+            <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" autocomplete="current-password">
+            <button mat-button matSuffix type="button" class="password-visibility"
+              (click)="hidePassword = !hidePassword"
+              [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'">
+              {{ hidePassword ? 'Show' : 'Hide' }}
+            </button>
+            @if (submitted && f.password.errors?.required) {
+              <mat-error>Password is required.</mat-error>
+            }
+          </mat-form-field>
         </div>
+        <div class="forgetpassword-container">
+          <button mat-button type="button" (click)="openForgotPasswordDialog()" class="forget-password">Forgot Password?</button>
+        </div>
+        <div class="login-submit-container">
+          <button mat-flat-button color="primary" class="login-submit" type="submit" [disabled]="loading">
+            @if (loading) {
+              <mat-spinner diameter="18" aria-label="Signing in"></mat-spinner>
+            }
+            @if (!loading) {
+              <span>Sign In</span>
+            }
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
 </div>
 
 <ng-template #forgotPasswordDialog>
-    <h2 mat-dialog-title>Forgot Password</h2>
-    <form [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordSubmit()">
-        <mat-dialog-content>
-            <mat-form-field appearance="outline" class="dialog-field">
-                <mat-label>Username</mat-label>
-                <input matInput formControlName="username" autocomplete="username" required>
-                <mat-error *ngIf="forgotPasswordSubmitted && ff.username.errors?.required">This field is required.</mat-error>
-            </mat-form-field>
-        </mat-dialog-content>
-        <mat-dialog-actions align="end">
-            <button mat-button type="button" mat-dialog-close>Cancel</button>
-            <button mat-flat-button color="primary" type="submit" [disabled]="forgotPasswordLoading">Submit</button>
-        </mat-dialog-actions>
-    </form>
+  <h2 mat-dialog-title>Forgot Password</h2>
+  <form [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordSubmit()">
+    <mat-dialog-content>
+      <mat-form-field appearance="outline" class="dialog-field">
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="username" autocomplete="username" required>
+        @if (forgotPasswordSubmitted && ff.username.errors?.required) {
+          <mat-error>This field is required.</mat-error>
+        }
+      </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button type="button" mat-dialog-close>Cancel</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="forgotPasswordLoading">Submit</button>
+    </mat-dialog-actions>
+  </form>
 </ng-template>

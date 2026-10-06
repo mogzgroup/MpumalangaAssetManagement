@@ -1,8 +1,8 @@
 import { MunicipalUtilityService } from "./municipal-utility-service.model";
 
 export class Property{
-    id: Number;
-    userImmovableAssetManagementPlanId: Number;
+    id: number;
+    userImmovableAssetManagementPlanId: number;
     userDepartmentCode?: string;
     fileReferenceNo: string;
     serialNo: string;
@@ -24,9 +24,9 @@ export class Property{
     rentalRate?: number;
     rentalPM?: number;
     rentalPA?: number;
-    municipalUtilityServices?: Array<MunicipalUtilityService>
+    municipalUtilityServices?: MunicipalUtilityService[]
     MunicipalUtilityServiceTotal?: number;
-    propertyRatesTaxes?: Number;
+    propertyRatesTaxes?: number;
     operationalCosts?: number;
     requiredPerformanceStandard: string;
     accessibility: string;

@@ -57,7 +57,13 @@ namespace MAM.DataAccess
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(_connectionString, o => o.CommandTimeout(280));
+            // Configure SQL Server with a reasonable command timeout and transient retry policy
+            optionsBuilder.UseSqlServer(_connectionString, o =>
+            {
+                o.CommandTimeout(280);
+                // Enable a small transient retry policy to reduce failures from transient network/SQL blips
+                o.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null);
+            });
         }
     }
 }

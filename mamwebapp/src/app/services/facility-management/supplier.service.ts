@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ProjectSupplier } from 'src/app/models/project-supplier';
 import { Supplier } from 'src/app/models/supplier';
@@ -10,15 +10,15 @@ import { cachedGet } from '../../helpers/http-cache';
     providedIn: 'root'
 })
 export class SupplierService {
+    private http = inject(HttpClient);
 
-    constructor(private http: HttpClient) { }
 
-    getSuppliers(): Observable<Array<Supplier>> {
-        return cachedGet<Array<Supplier>>(this.http, `${environment.apiUrl}/api/supplier/getsuppliers`);
+    getSuppliers(): Observable<Supplier[]> {
+        return cachedGet<Supplier[]>(this.http, `${environment.apiUrl}/api/supplier/getsuppliers`);
     }
 
-    linkProjectSuppliers(suppliers: Array<ProjectSupplier>) {
-        return this.http.post<Array<ProjectSupplier>>(`${environment.apiUrl}/api/supplier/addsuppliers`, suppliers);
+    linkProjectSuppliers(suppliers: ProjectSupplier[]) {
+        return this.http.post<ProjectSupplier[]>(`${environment.apiUrl}/api/supplier/addsuppliers`, suppliers);
     }
 
     addSupplier(supplier: Supplier) {

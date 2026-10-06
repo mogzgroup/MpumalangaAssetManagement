@@ -1,246 +1,308 @@
 <mat-card class="mt-5 uamp-property-card leased-properties">
-    <mat-card-subtitle class="property-section-title">Leased assets currently occupied or allocated to users</mat-card-subtitle>
-    <mat-card-content>
-        <div class="table-actions">
-            <button mat-raised-button color="primary" matTooltip="Add Property" type="button"
-                (click)="openAddDialog()">
-                <mat-icon>add</mat-icon>Add Property
-            </button>
-        </div>
-        <div class="table-container">
-            <table class="property-table">
-                <thead>
-                    <tr>
-                        <th>Serial No.</th><th>User Dept Code</th><th>File Reference No.</th><th>District</th>
-                        <th>Town</th><th>Local Municipality</th><th>Asset Description</th><th>Old Street Address</th>
-                        <th>Current Street Address</th><th>Property Description</th><th>Asset Type</th>
-                        <th>No. of Parking Bays Allocated</th><th>Lettable Space (M²)</th><th>Extent of Land (HA)</th>
-                        <th>Rental PM</th><th>Rental PA</th><th>Operational Cost</th><th>Lease Start Date</th>
-                        <th>Lease End Date</th><th>Rental Rate/M²</th><th>Required Performance Standard</th>
-                        <th>Accessibility</th><th>Condition Rating</th><th>Suitability Index</th>
-                        <th>Operating Performance Index</th><th>Functional Performance Index</th><th>Lease Term</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let property of pagedProperties">
-                        <td>{{ property.serialNo }}</td>
-                        <td>{{ property.userDepartmentCode }}</td>
-                        <td>{{ property.fileReferenceNo }}</td>
-                        <td>
-                            <mat-form-field appearance="outline">
-                                <mat-select [(ngModel)]="property.districtObj" [ngModelOptions]="{standalone: true}"
-                                    (selectionChange)="setLocalMunicipalities($event, property)" aria-label="District">
-                                    <mat-option *ngFor="let region of regions" [value]="region">{{ region.name }}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </td>
-                        <td>{{ property.town }}</td>
-                        <td>
-                            <mat-form-field appearance="outline">
-                                <mat-select [(ngModel)]="property.localMunicipalityObj" [ngModelOptions]="{standalone: true}"
-                                    (selectionChange)="localMunicipalitiesChanged($event, property)" aria-label="Local Municipality">
-                                    <mat-option *ngFor="let municipality of localMunicipalities" [value]="municipality">
-                                        {{ municipality.name }}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </td>
-                        <td>{{ property.assetDescription }}</td>
-                        <td>{{ property.oldStreetAddress }}</td>
-                        <td>{{ property.currentStreetAddress }}</td>
-                        <td>{{ property.propertyDescription }}</td>
-                        <td>{{ property.assetType }}</td>
-                        <td><input matInput type="number" [(ngModel)]="property.noofParkingBays"
-                            [ngModelOptions]="{standalone: true}" aria-label="Parking bays allocated"></td>
-                        <td><input matInput type="number" [(ngModel)]="property.lettableSpace"
-                            [ngModelOptions]="{standalone: true}" aria-label="Lettable space"></td>
-                        <td>{{ property.extentofLand }}</td>
-                        <td><input matInput type="number" [(ngModel)]="property.rentalPM"
-                            [ngModelOptions]="{standalone: true}" aria-label="Rental per month"></td>
-                        <td><input matInput type="number" [(ngModel)]="property.rentalPA"
-                            [ngModelOptions]="{standalone: true}" aria-label="Rental per annum"></td>
-                        <td><input matInput type="number" [(ngModel)]="property.operationalCosts"
-                            [ngModelOptions]="{standalone: true}" aria-label="Operational cost"></td>
-                        <td><input matInput [matDatepicker]="leaseStartPicker" [(ngModel)]="property.leaseStartDate"
-                            [ngModelOptions]="{standalone: true}" aria-label="Lease start date">
-                            <mat-datepicker-toggle matIconSuffix [for]="leaseStartPicker"></mat-datepicker-toggle>
-                            <mat-datepicker #leaseStartPicker></mat-datepicker>
-                        </td>
-                        <td><input matInput [matDatepicker]="leaseEndPicker" [(ngModel)]="property.leaseEndDate"
-                            [ngModelOptions]="{standalone: true}" aria-label="Lease end date">
-                            <mat-datepicker-toggle matIconSuffix [for]="leaseEndPicker"></mat-datepicker-toggle>
-                            <mat-datepicker #leaseEndPicker></mat-datepicker>
-                        </td>
-                        <td><input matInput type="number" [(ngModel)]="property.rentalRate"
-                            [ngModelOptions]="{standalone: true}" aria-label="Rental rate"></td>
-                        <td>
-                            <mat-form-field appearance="outline">
-                                <mat-select [(ngModel)]="property.requiredPerformanceStandardObj"
-                                    [ngModelOptions]="{standalone: true}"
-                                    (selectionChange)="onRequiredPerformanceStandardChange(property, $event)"
-                                    aria-label="Required Performance Standard">
-                                    <mat-option *ngFor="let item of requiredPerformanceStandards" [value]="item">{{ item.name }}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </td>
-                        <td>
-                            <mat-form-field appearance="outline">
-                                <mat-select [(ngModel)]="property.accessibilityObj" [ngModelOptions]="{standalone: true}"
-                                    aria-label="Accessibility">
-                                    <mat-option *ngFor="let item of accessibilities" [value]="item">{{ item.name }}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </td>
-                        <td>
-                            <mat-form-field appearance="outline">
-                                <mat-select [(ngModel)]="property.conditionRatingObj" [ngModelOptions]="{standalone: true}"
-                                    (selectionChange)="conditionRatingCahnged(property, $event)" aria-label="Condition Rating">
-                                    <mat-option *ngFor="let item of conditionRatings" [value]="item">{{ item.name }}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </td>
-                        <td>
-                            <mat-form-field appearance="outline">
-                                <mat-select [(ngModel)]="property.suitabilityIndexObj" [ngModelOptions]="{standalone: true}"
-                                    (selectionChange)="onSuitabilityIndexChange(property, $event)" aria-label="Suitability Index">
-                                    <mat-option *ngFor="let item of suitabilityIndexs" [value]="item">{{ item.name }}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </td>
-                        <td>
-                            <mat-form-field appearance="outline">
-                                <mat-select [(ngModel)]="property.operatingPerformanceIndexObj"
-                                    [ngModelOptions]="{standalone: true}"
-                                    (selectionChange)="onOperatingPerformanceIndexChange(property, $event)"
-                                    aria-label="Operating Performance Index">
-                                    <mat-option *ngFor="let item of operatingPerformanceIndexs" [value]="item">{{ item.name }}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </td>
-                        <td>
-                            <mat-form-field appearance="outline">
-                                <mat-select [(ngModel)]="property.functionalPerformanceIndexObj"
-                                    [ngModelOptions]="{standalone: true}"
-                                    (selectionChange)="onFunctionalPerformanceChange(property, $event)"
-                                    aria-label="Functional Performance Index">
-                                    <mat-option *ngFor="let item of functionalPerformanceIndexs" [value]="item">{{ item.name }}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </td>
-                        <td><input matInput [(ngModel)]="property.leaseTerm" [ngModelOptions]="{standalone: true}"
-                            aria-label="Lease term"></td>
-                    </tr>
-                    <tr *ngIf="pagedProperties.length === 0">
-                        <td colspan="27" class="property-empty-state">No data found</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <mat-paginator [length]="properties.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 15]"
-            (page)="pageChanged($event)" showFirstLastButtons></mat-paginator>
-    </mat-card-content>
+  <mat-card-subtitle class="property-section-title">Leased assets currently occupied or allocated to users</mat-card-subtitle>
+  <mat-card-content>
+    <div class="table-actions">
+      <button mat-raised-button color="primary" matTooltip="Add Property" type="button"
+        (click)="openAddDialog()">
+        <mat-icon>add</mat-icon>Add Property
+      </button>
+    </div>
+    <div class="table-container">
+      <table class="property-table">
+        <thead>
+          <tr>
+            <th>Serial No.</th><th>User Dept Code</th><th>File Reference No.</th><th>District</th>
+            <th>Town</th><th>Local Municipality</th><th>Asset Description</th><th>Old Street Address</th>
+            <th>Current Street Address</th><th>Property Description</th><th>Asset Type</th>
+            <th>No. of Parking Bays Allocated</th><th>Lettable Space (M²)</th><th>Extent of Land (HA)</th>
+            <th>Rental PM</th><th>Rental PA</th><th>Operational Cost</th><th>Lease Start Date</th>
+            <th>Lease End Date</th><th>Rental Rate/M²</th><th>Required Performance Standard</th>
+            <th>Accessibility</th><th>Condition Rating</th><th>Suitability Index</th>
+            <th>Operating Performance Index</th><th>Functional Performance Index</th><th>Lease Term</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (property of pagedProperties; track property) {
+            <tr>
+              <td>{{ property.serialNo }}</td>
+              <td>{{ property.userDepartmentCode }}</td>
+              <td>{{ property.fileReferenceNo }}</td>
+              <td>
+                <mat-form-field appearance="outline">
+                  <mat-select [(ngModel)]="property.districtObj" [ngModelOptions]="{standalone: true}"
+                    (selectionChange)="setLocalMunicipalities($event, property)" aria-label="District">
+                    @for (region of regions; track region) {
+                      <mat-option [value]="region">{{ region.name }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <td>{{ property.town }}</td>
+              <td>
+                <mat-form-field appearance="outline">
+                  <mat-select [(ngModel)]="property.localMunicipalityObj" [ngModelOptions]="{standalone: true}"
+                    (selectionChange)="localMunicipalitiesChanged($event, property)" aria-label="Local Municipality">
+                    @for (municipality of localMunicipalities; track municipality) {
+                      <mat-option [value]="municipality">
+                        {{ municipality.name }}
+                      </mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <td>{{ property.assetDescription }}</td>
+              <td>{{ property.oldStreetAddress }}</td>
+              <td>{{ property.currentStreetAddress }}</td>
+              <td>{{ property.propertyDescription }}</td>
+              <td>{{ property.assetType }}</td>
+              <td><input matInput type="number" [(ngModel)]="property.noofParkingBays"
+              [ngModelOptions]="{standalone: true}" aria-label="Parking bays allocated"></td>
+              <td><input matInput type="number" [(ngModel)]="property.lettableSpace"
+              [ngModelOptions]="{standalone: true}" aria-label="Lettable space"></td>
+              <td>{{ property.extentofLand }}</td>
+              <td><input matInput type="number" [(ngModel)]="property.rentalPM"
+              [ngModelOptions]="{standalone: true}" aria-label="Rental per month"></td>
+              <td><input matInput type="number" [(ngModel)]="property.rentalPA"
+              [ngModelOptions]="{standalone: true}" aria-label="Rental per annum"></td>
+              <td><input matInput type="number" [(ngModel)]="property.operationalCosts"
+              [ngModelOptions]="{standalone: true}" aria-label="Operational cost"></td>
+              <td><input matInput [matDatepicker]="leaseStartPicker" [(ngModel)]="property.leaseStartDate"
+                [ngModelOptions]="{standalone: true}" aria-label="Lease start date">
+                <mat-datepicker-toggle matIconSuffix [for]="leaseStartPicker"></mat-datepicker-toggle>
+                <mat-datepicker #leaseStartPicker></mat-datepicker>
+              </td>
+              <td><input matInput [matDatepicker]="leaseEndPicker" [(ngModel)]="property.leaseEndDate"
+                [ngModelOptions]="{standalone: true}" aria-label="Lease end date">
+                <mat-datepicker-toggle matIconSuffix [for]="leaseEndPicker"></mat-datepicker-toggle>
+                <mat-datepicker #leaseEndPicker></mat-datepicker>
+              </td>
+              <td><input matInput type="number" [(ngModel)]="property.rentalRate"
+              [ngModelOptions]="{standalone: true}" aria-label="Rental rate"></td>
+              <td>
+                <mat-form-field appearance="outline">
+                  <mat-select [(ngModel)]="property.requiredPerformanceStandardObj"
+                    [ngModelOptions]="{standalone: true}"
+                    (selectionChange)="onRequiredPerformanceStandardChange(property, $event)"
+                    aria-label="Required Performance Standard">
+                    @for (item of requiredPerformanceStandards; track item) {
+                      <mat-option [value]="item">{{ item.name }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline">
+                  <mat-select [(ngModel)]="property.accessibilityObj" [ngModelOptions]="{standalone: true}"
+                    aria-label="Accessibility">
+                    @for (item of accessibilities; track item) {
+                      <mat-option [value]="item">{{ item.name }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline">
+                  <mat-select [(ngModel)]="property.conditionRatingObj" [ngModelOptions]="{standalone: true}"
+                    (selectionChange)="conditionRatingCahnged(property, $event)" aria-label="Condition Rating">
+                    @for (item of conditionRatings; track item) {
+                      <mat-option [value]="item">{{ item.name }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline">
+                  <mat-select [(ngModel)]="property.suitabilityIndexObj" [ngModelOptions]="{standalone: true}"
+                    (selectionChange)="onSuitabilityIndexChange(property, $event)" aria-label="Suitability Index">
+                    @for (item of suitabilityIndexs; track item) {
+                      <mat-option [value]="item">{{ item.name }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline">
+                  <mat-select [(ngModel)]="property.operatingPerformanceIndexObj"
+                    [ngModelOptions]="{standalone: true}"
+                    (selectionChange)="onOperatingPerformanceIndexChange(property, $event)"
+                    aria-label="Operating Performance Index">
+                    @for (item of operatingPerformanceIndexs; track item) {
+                      <mat-option [value]="item">{{ item.name }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline">
+                  <mat-select [(ngModel)]="property.functionalPerformanceIndexObj"
+                    [ngModelOptions]="{standalone: true}"
+                    (selectionChange)="onFunctionalPerformanceChange(property, $event)"
+                    aria-label="Functional Performance Index">
+                    @for (item of functionalPerformanceIndexs; track item) {
+                      <mat-option [value]="item">{{ item.name }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <td><input matInput [(ngModel)]="property.leaseTerm" [ngModelOptions]="{standalone: true}"
+              aria-label="Lease term"></td>
+            </tr>
+          }
+          @if (pagedProperties.length === 0) {
+            <tr>
+              <td colspan="27" class="property-empty-state">No data found</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <mat-paginator [length]="properties.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 15]"
+    (page)="pageChanged($event)" showFirstLastButtons></mat-paginator>
+  </mat-card-content>
 </mat-card>
 
 <ng-template #formDialog>
-    <mat-card class="property-dialog">
-        <mat-card-header mat-dialog-title><mat-card-title>{{ dialogHeader }}</mat-card-title></mat-card-header>
-        <mat-card-content mat-dialog-content>
-            <form [formGroup]="propertyForm" class="property-form">
-                <mat-form-field appearance="outline">
-                    <mat-label>District / Region</mat-label>
-                    <mat-select formControlName="district" (selectionChange)="setLocalMunicipalities($event)" required>
-                        <mat-option *ngFor="let region of regions" [value]="region">{{ region.name }}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="p.district.hasError('required') && (submitted || p.district.touched)">District is required.</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Local Municipality</mat-label>
-                    <mat-select formControlName="localMunicipality" required>
-                        <mat-option *ngFor="let municipality of localMunicipalities" [value]="municipality">{{ municipality.name }}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="p.localMunicipality.hasError('required') && (submitted || p.localMunicipality.touched)">Local municipality is required.</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Asset Type</mat-label>
-                    <mat-select formControlName="assetType" required>
-                        <mat-option *ngFor="let item of types" [value]="item">{{ item.name }}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="p.assetType.hasError('required') && (submitted || p.assetType.touched)">Asset type is required.</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Required Performance Standard</mat-label>
-                    <mat-select formControlName="requiredPerformanceStandard" required>
-                        <mat-option *ngFor="let item of requiredPerformanceStandards" [value]="item">{{ item.name }}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="p.requiredPerformanceStandard.hasError('required') && (submitted || p.requiredPerformanceStandard.touched)">This field is required.</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Property Description</mat-label><input matInput formControlName="propertyDescription" required>
-                    <mat-error *ngIf="p.propertyDescription.hasError('required') && (submitted || p.propertyDescription.touched)">Property description is required.</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Asset Description</mat-label><input matInput formControlName="assetDescription" required>
-                    <mat-error *ngIf="p.assetDescription.hasError('required') && (submitted || p.assetDescription.touched)">Asset description is required.</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Old Street Address</mat-label><input matInput formControlName="oldStreetAddress"></mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Current Street Address</mat-label><input matInput formControlName="currentStreetAddress"></mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Town</mat-label><input matInput formControlName="town" required>
-                    <mat-error *ngIf="p.town.hasError('required') && (submitted || p.town.touched)">Town is required.</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Extent of Land</mat-label><input matInput type="number" formControlName="extentofLand"></mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Parking Bays Allocated</mat-label><input matInput type="number" formControlName="noofParkingBaysAllocated"></mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Suitability Index</mat-label>
-                    <mat-select formControlName="suitabilityIndex"><mat-option *ngFor="let item of suitabilityIndexs" [value]="item">{{ item.name }}</mat-option></mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Lease Start Date</mat-label>
-                    <input matInput [matDatepicker]="formLeaseStartPicker" formControlName="leaseStartDate" required>
-                    <mat-datepicker-toggle matIconSuffix [for]="formLeaseStartPicker"></mat-datepicker-toggle>
-                    <mat-datepicker #formLeaseStartPicker></mat-datepicker>
-                    <mat-error *ngIf="p.leaseStartDate.hasError('required') && (submitted || p.leaseStartDate.touched)">Lease start date is required.</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Lease End Date</mat-label>
-                    <input matInput [matDatepicker]="formLeaseEndPicker" formControlName="leaseEndDate" required>
-                    <mat-datepicker-toggle matIconSuffix [for]="formLeaseEndPicker"></mat-datepicker-toggle>
-                    <mat-datepicker #formLeaseEndPicker></mat-datepicker>
-                    <mat-error *ngIf="p.leaseEndDate.hasError('required') && (submitted || p.leaseEndDate.touched)">Lease end date is required.</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Accessibility</mat-label>
-                    <mat-select formControlName="accessibility"><mat-option *ngFor="let item of accessibilities" [value]="item">{{ item.name }}</mat-option></mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Condition Rating</mat-label>
-                    <mat-select formControlName="conditionRating"><mat-option *ngFor="let item of conditionRatings" [value]="item">{{ item.name }}</mat-option></mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Lettable Space</mat-label><input matInput type="number" formControlName="lettableSpace"></mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Rental Rate / M²</mat-label><input matInput type="number" formControlName="rentalRate"></mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Functional Performance Index</mat-label>
-                    <mat-select formControlName="functionalPerformanceIndex"><mat-option *ngFor="let item of functionalPerformanceIndexs" [value]="item">{{ item.name }}</mat-option></mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Operating Performance Index</mat-label>
-                    <mat-select formControlName="operatingPerformanceIndex"><mat-option *ngFor="let item of operatingPerformanceIndexs" [value]="item">{{ item.name }}</mat-option></mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Lease Term</mat-label><input matInput formControlName="leaseTerm"></mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Rental PM</mat-label><input matInput type="number" formControlName="rentalPM"></mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Rental PA</mat-label><input matInput type="number" formControlName="rentalPA"></mat-form-field>
-                <mat-form-field appearance="outline"><mat-label>Operational Costs</mat-label><input matInput type="number" formControlName="operationalCosts"></mat-form-field>
-            </form>
-        </mat-card-content>
-        <mat-card-actions mat-dialog-actions align="end">
-            <button mat-button type="button" (click)="closeFormDialog()" [disabled]="isSavingProperty">Cancel</button>
-            <button mat-raised-button color="primary" type="button" *ngIf="!isEdit" (click)="addProperty()"
-                [disabled]="propertyForm.invalid || isSavingProperty">
-                <mat-spinner *ngIf="isSavingProperty" diameter="18"></mat-spinner>
-                {{ isSavingProperty ? 'Adding...' : 'Add' }}
-            </button>
-            <button mat-raised-button color="primary" type="button" *ngIf="isEdit" (click)="onUpdate()"
-                [disabled]="propertyForm.invalid || isSavingProperty">Update</button>
-        </mat-card-actions>
-    </mat-card>
+  <mat-card class="property-dialog">
+    <mat-card-header mat-dialog-title><mat-card-title>{{ dialogHeader }}</mat-card-title></mat-card-header>
+    <mat-card-content mat-dialog-content>
+      <form [formGroup]="propertyForm" class="property-form">
+        <mat-form-field appearance="outline">
+          <mat-label>District / Region</mat-label>
+          <mat-select formControlName="district" (selectionChange)="setLocalMunicipalities($event)" required>
+            @for (region of regions; track region) {
+              <mat-option [value]="region">{{ region.name }}</mat-option>
+            }
+          </mat-select>
+          @if (p.district.hasError('required') && (submitted || p.district.touched)) {
+            <mat-error>District is required.</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Local Municipality</mat-label>
+          <mat-select formControlName="localMunicipality" required>
+            @for (municipality of localMunicipalities; track municipality) {
+              <mat-option [value]="municipality">{{ municipality.name }}</mat-option>
+            }
+          </mat-select>
+          @if (p.localMunicipality.hasError('required') && (submitted || p.localMunicipality.touched)) {
+            <mat-error>Local municipality is required.</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Asset Type</mat-label>
+          <mat-select formControlName="assetType" required>
+            @for (item of types; track item) {
+              <mat-option [value]="item">{{ item.name }}</mat-option>
+            }
+          </mat-select>
+          @if (p.assetType.hasError('required') && (submitted || p.assetType.touched)) {
+            <mat-error>Asset type is required.</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Required Performance Standard</mat-label>
+          <mat-select formControlName="requiredPerformanceStandard" required>
+            @for (item of requiredPerformanceStandards; track item) {
+              <mat-option [value]="item">{{ item.name }}</mat-option>
+            }
+          </mat-select>
+          @if (p.requiredPerformanceStandard.hasError('required') && (submitted || p.requiredPerformanceStandard.touched)) {
+            <mat-error>This field is required.</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Property Description</mat-label><input matInput formControlName="propertyDescription" required>
+        @if (p.propertyDescription.hasError('required') && (submitted || p.propertyDescription.touched)) {
+          <mat-error>Property description is required.</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Asset Description</mat-label><input matInput formControlName="assetDescription" required>
+      @if (p.assetDescription.hasError('required') && (submitted || p.assetDescription.touched)) {
+        <mat-error>Asset description is required.</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Old Street Address</mat-label><input matInput formControlName="oldStreetAddress"></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Current Street Address</mat-label><input matInput formControlName="currentStreetAddress"></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Town</mat-label><input matInput formControlName="town" required>
+    @if (p.town.hasError('required') && (submitted || p.town.touched)) {
+      <mat-error>Town is required.</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field appearance="outline"><mat-label>Extent of Land</mat-label><input matInput type="number" formControlName="extentofLand"></mat-form-field>
+  <mat-form-field appearance="outline"><mat-label>Parking Bays Allocated</mat-label><input matInput type="number" formControlName="noofParkingBaysAllocated"></mat-form-field>
+  <mat-form-field appearance="outline"><mat-label>Suitability Index</mat-label>
+  <mat-select formControlName="suitabilityIndex">@for (item of suitabilityIndexs; track item) {
+    <mat-option [value]="item">{{ item.name }}</mat-option>
+  }</mat-select>
+</mat-form-field>
+<mat-form-field appearance="outline">
+  <mat-label>Lease Start Date</mat-label>
+  <input matInput [matDatepicker]="formLeaseStartPicker" formControlName="leaseStartDate" required>
+  <mat-datepicker-toggle matIconSuffix [for]="formLeaseStartPicker"></mat-datepicker-toggle>
+  <mat-datepicker #formLeaseStartPicker></mat-datepicker>
+  @if (p.leaseStartDate.hasError('required') && (submitted || p.leaseStartDate.touched)) {
+    <mat-error>Lease start date is required.</mat-error>
+  }
+</mat-form-field>
+<mat-form-field appearance="outline">
+  <mat-label>Lease End Date</mat-label>
+  <input matInput [matDatepicker]="formLeaseEndPicker" formControlName="leaseEndDate" required>
+  <mat-datepicker-toggle matIconSuffix [for]="formLeaseEndPicker"></mat-datepicker-toggle>
+  <mat-datepicker #formLeaseEndPicker></mat-datepicker>
+  @if (p.leaseEndDate.hasError('required') && (submitted || p.leaseEndDate.touched)) {
+    <mat-error>Lease end date is required.</mat-error>
+  }
+</mat-form-field>
+<mat-form-field appearance="outline"><mat-label>Accessibility</mat-label>
+<mat-select formControlName="accessibility">@for (item of accessibilities; track item) {
+  <mat-option [value]="item">{{ item.name }}</mat-option>
+}</mat-select>
+</mat-form-field>
+<mat-form-field appearance="outline"><mat-label>Condition Rating</mat-label>
+<mat-select formControlName="conditionRating">@for (item of conditionRatings; track item) {
+  <mat-option [value]="item">{{ item.name }}</mat-option>
+}</mat-select>
+</mat-form-field>
+<mat-form-field appearance="outline"><mat-label>Lettable Space</mat-label><input matInput type="number" formControlName="lettableSpace"></mat-form-field>
+<mat-form-field appearance="outline"><mat-label>Rental Rate / M²</mat-label><input matInput type="number" formControlName="rentalRate"></mat-form-field>
+<mat-form-field appearance="outline"><mat-label>Functional Performance Index</mat-label>
+<mat-select formControlName="functionalPerformanceIndex">@for (item of functionalPerformanceIndexs; track item) {
+  <mat-option [value]="item">{{ item.name }}</mat-option>
+}</mat-select>
+</mat-form-field>
+<mat-form-field appearance="outline"><mat-label>Operating Performance Index</mat-label>
+<mat-select formControlName="operatingPerformanceIndex">@for (item of operatingPerformanceIndexs; track item) {
+  <mat-option [value]="item">{{ item.name }}</mat-option>
+}</mat-select>
+</mat-form-field>
+<mat-form-field appearance="outline"><mat-label>Lease Term</mat-label><input matInput formControlName="leaseTerm"></mat-form-field>
+<mat-form-field appearance="outline"><mat-label>Rental PM</mat-label><input matInput type="number" formControlName="rentalPM"></mat-form-field>
+<mat-form-field appearance="outline"><mat-label>Rental PA</mat-label><input matInput type="number" formControlName="rentalPA"></mat-form-field>
+<mat-form-field appearance="outline"><mat-label>Operational Costs</mat-label><input matInput type="number" formControlName="operationalCosts"></mat-form-field>
+</form>
+</mat-card-content>
+<mat-card-actions mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="closeFormDialog()" [disabled]="isSavingProperty">Cancel</button>
+  @if (!isEdit) {
+    <button mat-raised-button color="primary" type="button" (click)="addProperty()"
+      [disabled]="propertyForm.invalid || isSavingProperty">
+      @if (isSavingProperty) {
+        <mat-spinner diameter="18"></mat-spinner>
+      }
+      {{ isSavingProperty ? 'Adding...' : 'Add' }}
+    </button>
+  }
+  @if (isEdit) {
+    <button mat-raised-button color="primary" type="button" (click)="onUpdate()"
+    [disabled]="propertyForm.invalid || isSavingProperty">Update</button>
+  }
+</mat-card-actions>
+</mat-card>
 </ng-template>
 
 <div class="uamp-footer">
-    <button mat-button (click)="back()"><mat-icon>chevron_left</mat-icon>Back</button>
-    <div>
-        <button mat-button (click)="save()" class="ml-1">Save</button>
-        <button mat-raised-button color="primary" (click)="nextPage()">Next</button>
-    </div>
+  <button mat-button (click)="back()"><mat-icon>chevron_left</mat-icon>Back</button>
+  <div>
+    <button mat-button (click)="save()" class="ml-1">Save</button>
+    <button mat-raised-button color="primary" (click)="nextPage()">Next</button>
+  </div>
 </div>

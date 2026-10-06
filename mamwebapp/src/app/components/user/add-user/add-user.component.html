@@ -1,60 +1,82 @@
 <header mat-dialog-title class="user-dialog-heading">
-    <span class="user-dialog-icon" aria-hidden="true">
-        <mat-icon>{{isEditMode ? 'manage_accounts' : 'person_add'}}</mat-icon>
-    </span>
-    <span class="user-dialog-copy">
-        <span class="user-dialog-title">{{isEditMode ? 'Update user' : 'Add user'}}</span>
-        <span>{{isEditMode ? 'Update the account details and access.' : 'Enter the account details and assign access.'}}</span>
-    </span>
+  <span class="user-dialog-icon" aria-hidden="true">
+    <mat-icon>{{isEditMode ? 'manage_accounts' : 'person_add'}}</mat-icon>
+  </span>
+  <span class="user-dialog-copy">
+    <span class="user-dialog-title">{{isEditMode ? 'Update user' : 'Add user'}}</span>
+    <span>{{isEditMode ? 'Update the account details and access.' : 'Enter the account details and assign access.'}}</span>
+  </span>
 </header>
 
 <form [formGroup]="addUserForm" (ngSubmit)="onSubmit()" class="user-dialog-form">
-    <mat-dialog-content class="user-dialog-content">
-        <div class="user-form-grid">
-            <mat-form-field appearance="outline">
-                <mat-label>Name</mat-label>
-                <input matInput formControlName="name" autocomplete="given-name" required>
-                <mat-error *ngIf="f.name.touched && f.name.hasError('required')">Enter the user's first name.</mat-error>
-            </mat-form-field>
+  <mat-dialog-content class="user-dialog-content">
+    <div class="user-form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" autocomplete="given-name" required>
+        @if (f.name.touched && f.name.hasError('required')) {
+          <mat-error>Enter the user's first name.</mat-error>
+        }
+      </mat-form-field>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Surname</mat-label>
-                <input matInput formControlName="surname" autocomplete="family-name" required>
-                <mat-error *ngIf="f.surname.touched && f.surname.hasError('required')">Enter the user's surname.</mat-error>
-            </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Surname</mat-label>
+        <input matInput formControlName="surname" autocomplete="family-name" required>
+        @if (f.surname.touched && f.surname.hasError('required')) {
+          <mat-error>Enter the user's surname.</mat-error>
+        }
+      </mat-form-field>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Email address</mat-label>
-                <input matInput formControlName="email" type="email" autocomplete="email" required>
-                <mat-error *ngIf="f.email.touched && f.email.hasError('required')">Enter an email address.</mat-error>
-                <mat-error *ngIf="f.email.touched && f.email.hasError('email')">Enter a valid email address.</mat-error>
-                <mat-error *ngIf="f.email.touched && f.email.hasError('duplicate')">A user with this email address already exists.</mat-error>
-            </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Email address</mat-label>
+        <input matInput formControlName="email" type="email" autocomplete="email" required>
+        @if (f.email.touched && f.email.hasError('required')) {
+          <mat-error>Enter an email address.</mat-error>
+        }
+        @if (f.email.touched && f.email.hasError('email')) {
+          <mat-error>Enter a valid email address.</mat-error>
+        }
+        @if (f.email.touched && f.email.hasError('duplicate')) {
+          <mat-error>A user with this email address already exists.</mat-error>
+        }
+      </mat-form-field>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Role</mat-label>
-                <mat-select formControlName="role" (selectionChange)="setRole($event.value)" required>
-                    <mat-option *ngFor="let role of roles" [value]="role">{{role.name}}</mat-option>
-                </mat-select>
-                <mat-error *ngIf="f.role.touched && f.role.hasError('required')">Select a role.</mat-error>
-            </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Role</mat-label>
+        <mat-select formControlName="role" (selectionChange)="setRole($event.value)" required>
+          @for (role of roles; track role) {
+            <mat-option [value]="role">{{role.name}}</mat-option>
+          }
+        </mat-select>
+        @if (f.role.touched && f.role.hasError('required')) {
+          <mat-error>Select a role.</mat-error>
+        }
+      </mat-form-field>
 
-            <mat-form-field appearance="outline" class="user-department-field" *ngIf="selectedRole === 7">
-                <mat-label>Department</mat-label>
-                <mat-select formControlName="department">
-                    <mat-option *ngFor="let department of departments" [value]="department">{{department.name}}</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
+      @if (selectedRole === 7) {
+        <mat-form-field appearance="outline" class="user-department-field">
+          <mat-label>Department</mat-label>
+          <mat-select formControlName="department">
+            @for (department of departments; track department) {
+              <mat-option [value]="department">{{department.name}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+    </div>
 
-    </mat-dialog-content>
+  </mat-dialog-content>
 
-    <mat-dialog-actions align="end" class="user-dialog-actions">
-        <button mat-button type="button" [disabled]="saving" (click)="dialogRef.close()">Cancel</button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="saving || addUserForm.invalid">
-            <mat-spinner *ngIf="saving" diameter="18" aria-label="Saving user"></mat-spinner>
-            <mat-icon *ngIf="!saving">{{isEditMode ? 'save' : 'person_add'}}</mat-icon>
-            <span>{{isEditMode ? 'Save changes' : 'Add user'}}</span>
-        </button>
-    </mat-dialog-actions>
+  <mat-dialog-actions align="end" class="user-dialog-actions">
+    <button mat-button type="button" [disabled]="saving" (click)="dialogRef.close()">Cancel</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="saving || addUserForm.invalid">
+      @if (saving) {
+        <mat-spinner diameter="18" aria-label="Saving user"></mat-spinner>
+      }
+      @if (!saving) {
+        <mat-icon>{{isEditMode ? 'save' : 'person_add'}}</mat-icon>
+      }
+      <span>{{isEditMode ? 'Save changes' : 'Add user'}}</span>
+    </button>
+  </mat-dialog-actions>
 </form>

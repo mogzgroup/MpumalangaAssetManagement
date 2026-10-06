@@ -1,8 +1,8 @@
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild, inject } from '@angular/core';
 import { ToastService } from 'src/app/services/toast.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
-import { FormArray, FormControl, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
+import { FormArray, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { FormGroup } from '@angular/forms';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -14,15 +14,63 @@ import { SharedService } from 'src/app/services/shared.service';
 import { User } from 'src/app/models/user.model';
 import { Router } from '@angular/router';
 import { first } from 'rxjs/operators';
+import { MatCard, MatCardSubtitle, MatCardContent, MatCardHeader, MatCardTitle, MatCardActions } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+
+import { MatFormField, MatSuffix, MatLabel, MatError } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatInput } from '@angular/material/input';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-  standalone: false,
-  selector: 'app-template-two-two',
-  templateUrl: './template-two-two.component.html',
-  styleUrls: ['./template-two-two.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
+    selector: 'app-template-two-two',
+    templateUrl: './template-two-two.component.html',
+    styleUrls: ['./template-two-two.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [
+    MatCard,
+    MatCardSubtitle,
+    MatCardContent,
+    MatButton,
+    MatTooltip,
+    MatIcon,
+    MatFormField,
+    MatSelect,
+    FormsModule,
+    MatOption,
+    MatInput,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatSuffix,
+    MatDatepicker,
+    MatPaginator,
+    MatCardHeader,
+    MatDialogTitle,
+    MatCardTitle,
+    CdkScrollable,
+    MatDialogContent,
+    ReactiveFormsModule,
+    MatLabel,
+    MatError,
+    MatCardActions,
+    MatDialogActions,
+    MatProgressSpinner
+],
 })
 export class TemplateTwoTwoComponent implements OnInit {
+  private toastService = inject(ToastService);
+  private router = inject(Router);
+  private uampService = inject(UampService);
+  private sharedService = inject(SharedService);
+  private formBuilder = inject(FormBuilder);
+  private authenticationService = inject(AuthenticationService);
+  private dialog = inject(MatDialog);
+
   properties: Property[] = [];
   pagedProperties: Property[] = [];
   pageIndex = 0;
@@ -31,7 +79,7 @@ export class TemplateTwoTwoComponent implements OnInit {
   leasedFacilities: Facility[];
   stateOwnedFacilitiesExtentTotal = 0;
   leasedFacilitiesExtentTotal = 0;
-  submitted: boolean = false;
+  submitted = false;
   propertyForm: FormGroup;
   uamp: UAMP;
   conditionRatings: any[];
@@ -44,12 +92,12 @@ export class TemplateTwoTwoComponent implements OnInit {
   localMunicipalities: any[];
   types: any[];
   currentUser: User;
-  displayDialog: boolean = false;
-  dialogHeader: string = '';
-  isLoading: boolean = false;
+  displayDialog = false;
+  dialogHeader = '';
+  isLoading = false;
   isSavingProperty = false;
-  isViewOnly: boolean = false;
-  isEdit: boolean = false;
+  isViewOnly = false;
+  isEdit = false;
 
   @ViewChild('formDialog') private formDialogTemplate: TemplateRef<unknown>;
   openAddDialog() {
@@ -58,7 +106,7 @@ export class TemplateTwoTwoComponent implements OnInit {
     this.openFormDialog();
   }
 
-  constructor(private toastService: ToastService, private router: Router, private uampService: UampService, private sharedService: SharedService, private formBuilder: FormBuilder, private authenticationService: AuthenticationService, private dialog: MatDialog) {
+  constructor() {
     this.uampService.uampChange.subscribe((value) => {
       if (value) {
         this.properties = [];

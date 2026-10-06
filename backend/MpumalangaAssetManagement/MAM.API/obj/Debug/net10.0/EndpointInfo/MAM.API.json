@@ -637,6 +637,18 @@
         }
       }
     },
+    "/api/health/db": {
+      "get": {
+        "tags": [
+          "HealthDb"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/hiringregister": {
       "get": {
         "tags": [
@@ -4082,6 +4094,9 @@
     },
     {
       "name": "Health"
+    },
+    {
+      "name": "HealthDb"
     },
     {
       "name": "HiringRegister"

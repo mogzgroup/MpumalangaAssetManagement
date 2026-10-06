@@ -1,7 +1,6 @@
 ﻿using MAM.DataAccess.Tables;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MAM.DataAccess.Interfaces
 {
@@ -9,6 +8,7 @@ namespace MAM.DataAccess.Interfaces
     {
         int AddProjectSupplier(ProjectSupplier projectSupplier);
         void UpdateProjectSupplier(ProjectSupplier projectSupplier);
+        void DeleteProjectSupplierById(int projectId);
         List<ProjectSupplier> GetProjectSuppliers();
         ProjectSupplier GetProjectSupplierById(int id);
     }

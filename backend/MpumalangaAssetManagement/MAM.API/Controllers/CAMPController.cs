@@ -24,16 +24,8 @@ namespace MAM.API.Controllers
         [Route("getcamps/{department}")]
         public IActionResult GetCamps(string department)
         {
-            try
-            {
-                var result = _campService.GetCamps(department);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            var result = _campService.GetCamps(department);
+            return Ok(result);
         }
     }
 }

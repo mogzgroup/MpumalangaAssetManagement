@@ -9,5 +9,6 @@ namespace MAM.BusinessLayer.Interfaces
     {
         List<LeasedProperty> GetLeasedProperties();
         bool DeleteLeasedProperty(LeasedProperty leasedProperty);
+        LeasedProperty GetLeasedPropertyDetails(LeasedProperty leasedProperty);
     }
 }

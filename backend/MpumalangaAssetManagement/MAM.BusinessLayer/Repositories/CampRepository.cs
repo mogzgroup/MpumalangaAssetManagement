@@ -1,59 +1,27 @@
 ﻿using MAM.BusinessLayer.Models;
-using Microsoft.Win32.SafeHandles;
-using System;
+using MAM.BusinessLayer.Interfaces;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace MAM.BusinessLayer.Repositories
 {
-    public class CampRepository : IDisposable
+    // Thin business-layer repository that delegates to data-access repository via DI.
+    public class CampRepository : ICampRepository
     {
-        private AppSettings appSettings { get; set; }
-        // Flag: Has Dispose already been called?
-        bool disposed = false;
-        // Instantiate a SafeHandle instance.
-        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+        private readonly MAM.DataAccess.Interfaces.ICampRepository _dataAccess;
 
-        public CampRepository(AppSettings settings)
+        public CampRepository(MAM.DataAccess.Interfaces.ICampRepository dataAccess)
         {
-            appSettings = settings;
+            _dataAccess = dataAccess;
         }
 
         public List<Camp> GetCamps(string department)
         {
-            Camp camp = new Camp();
-            List<Camp> camps = new List<Camp>();
-            using (var dataAccess = new DataAccess.Repositories.CampRepository(appSettings.ConnectionString))
-            {
-                var uamps = camp.ConvertToCamps(dataAccess.GetCamps(department));
-                camps.AddRange(uamps);
-                return camps;
-            }
-        }
-
-        public void Dispose()
-        {
-            // Dispose of unmanaged resources.
-            Dispose(true);
-            // Suppress finalization.
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                handle.Dispose();
-                // Free any other managed objects here.
-                //
-            }
-
-            disposed = true;
+            var camp = new Camp();
+            var camps = new List<Camp>();
+            var data = _dataAccess.GetCamps(department);
+            var uamps = camp.ConvertToCamps(data);
+            camps.AddRange(uamps);
+            return camps;
         }
     }
 }

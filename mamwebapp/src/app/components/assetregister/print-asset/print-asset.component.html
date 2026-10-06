@@ -1,372 +1,374 @@
 <button mat-raised-button color="primary" printSectionId="componentID" [useExistingCss]="true" ngxPrint
-    class="print-action">Print</button>
+class="print-action">Print</button>
 <br><br>
 <div id="componentID" style="font-size: 12px">
 
-    <h3>General</h3>
-    <hr>
+  <h3>General</h3>
+  <hr>
     <div>
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                File Reference: {{selectedFacility.fileReference}}
-            </div>
-            <div class="print-grid-item span-4">
-                Property Code: {{selectedFacility.clientCode}}
-            </div>
-            <div class="print-grid-item span-3">
-                deeds Office: {{selectedFacility.deedsOffice}}
-            </div>
-            <div class="print-grid-item span-3">
-                Asset Class: {{selectedFacility.class}}
-            </div>
+      <div class="print-grid">
+        <div class="print-grid-item span-2">
+          File Reference: {{selectedFacility.fileReference}}
         </div>
-
-        <div class="print-grid" style="font-size: 12px">
-            <div class="print-grid-item span-2">
-                Asset Type: {{selectedFacility.type}}
-            </div>
-            <div class="print-grid-item span-4">
-                Survey: {{selectedFacility.survey}}
-            </div>
-            <div class="print-grid-item span-3">
-
-            </div>
-            <div class="print-grid-item span-3">
-
-            </div>
+        <div class="print-grid-item span-4">
+          Property Code: {{selectedFacility.clientCode}}
         </div>
+        <div class="print-grid-item span-3">
+          deeds Office: {{selectedFacility.deedsOffice}}
+        </div>
+        <div class="print-grid-item span-3">
+          Asset Class: {{selectedFacility.class}}
+        </div>
+      </div>
+
+      <div class="print-grid" style="font-size: 12px">
+        <div class="print-grid-item span-2">
+          Asset Type: {{selectedFacility.type}}
+        </div>
+        <div class="print-grid-item span-4">
+          Survey: {{selectedFacility.survey}}
+        </div>
+        <div class="print-grid-item span-3">
+
+        </div>
+        <div class="print-grid-item span-3">
+
+        </div>
+      </div>
     </div>
 
     <br><br><br><br>
     <h3>Geographical Location</h3>
     <hr>
-    <div>
+      <div>
         <div class="print-grid">
+          <div class="print-grid-item span-2">
+            Province: {{selectedFacility.land.geographicalLocation.province}}
+          </div>
+          <div class="print-grid-item span-4">
+            Town: {{selectedFacility.land.geographicalLocation.town}}
+          </div>
+          <div class="print-grid-item span-3">
+            Suburb: {{selectedFacility.land.geographicalLocation.suburb}}
+          </div>
+          <div class="print-grid-item span-3">
+            Street Name: {{selectedFacility.land.geographicalLocation.streetName}}
+          </div>
+        </div>
+
+        <div class="print-grid">
+          <div class="print-grid-item span-2">
+            Street Number: {{selectedFacility.land.geographicalLocation.streetNumber}}
+          </div>
+          <div class="print-grid-item span-4">
+            District Municipality: {{selectedFacility.land.geographicalLocation.districtMunicipality}}
+          </div>
+          <div class="print-grid-item span-3">
+            region: {{selectedFacility.land.geographicalLocation.region}}
+          </div>
+          <div class="print-grid-item span-3">
+            Local Authority: {{selectedFacility.land.geographicalLocation.localAuthority}}
+          </div>
+        </div>
+        <div class="print-grid">
+          <div class="print-grid-item span-2">
+            Latitude: {{selectedFacility.land.geographicalLocation.latitude}}
+          </div>
+          <div class="print-grid-item span-4">
+            Longitude: {{selectedFacility.land.geographicalLocation.longitude}}
+          </div>
+          <div class="print-grid-item span-3">
+            Magisterial District: {{selectedFacility.land.geographicalLocation.magisterialDistrict}}
+          </div>
+          <div class="print-grid-item span-3">
+
+          </div>
+        </div>
+      </div>
+      <br><br><br><br>
+      <h3>Property Description</h3>
+      <hr>
+        <div>
+          <div class="print-grid">
             <div class="print-grid-item span-2">
+              Registration Division: {{selectedFacility.land.propertyDescription.registrationDivision}}
+            </div>
+            <div class="print-grid-item span-4">
+              Township Name: {{selectedFacility.land.propertyDescription.townshipName}}
+            </div>
+            <div class="print-grid-item span-3">
+              Land Parcel: {{selectedFacility.land.propertyDescription.landParcel}}
+            </div>
+            <div class="print-grid-item span-3">
+              Land Portion: {{selectedFacility.land.propertyDescription.landPortion}}
+            </div>
+          </div>
+
+          <div class="print-grid">
+            <div class="print-grid-item span-2">
+              Old Description: {{selectedFacility.land.propertyDescription.oldDescription}}
+            </div>
+            <div class="print-grid-item span-4">
+              Land Remainder: {{selectedFacility.land.propertyDescription.landRemainder}}
+            </div>
+            <div class="print-grid-item span-3">
+              SG Diagram Number: {{selectedFacility.land.propertyDescription.sGDiagramNumber}}
+            </div>
+            <div class="print-grid-item span-3">
+              Extent: {{selectedFacility.land.propertyDescription.extent}}
+            </div>
+          </div>
+          <div class="print-grid">
+            <div class="print-grid-item span-2">
+              LPI Code: {{selectedFacility.land.propertyDescription.LPICode}}
+            </div>
+            <div class="print-grid-item span-4">
+              Acquired: {{selectedFacility.land.propertyDescription.acquired}}
+            </div>
+            <div class="print-grid-item span-3">
+
+            </div>
+            <div class="print-grid-item span-3">
+
+            </div>
+          </div>
+        </div>
+
+
+        <br><br><h3>Geographical Location</h3>
+        <hr>
+          <div>
+            <div class="print-grid">
+              <div class="print-grid-item span-2">
                 Province: {{selectedFacility.land.geographicalLocation.province}}
-            </div>
-            <div class="print-grid-item span-4">
+              </div>
+              <div class="print-grid-item span-4">
                 Town: {{selectedFacility.land.geographicalLocation.town}}
-            </div>
-            <div class="print-grid-item span-3">
+              </div>
+              <div class="print-grid-item span-3">
                 Suburb: {{selectedFacility.land.geographicalLocation.suburb}}
-            </div>
-            <div class="print-grid-item span-3">
+              </div>
+              <div class="print-grid-item span-3">
                 Street Name: {{selectedFacility.land.geographicalLocation.streetName}}
+              </div>
             </div>
-        </div>
 
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
+            <div class="print-grid">
+              <div class="print-grid-item span-2">
                 Street Number: {{selectedFacility.land.geographicalLocation.streetNumber}}
-            </div>
-            <div class="print-grid-item span-4">
+              </div>
+              <div class="print-grid-item span-4">
                 District Municipality: {{selectedFacility.land.geographicalLocation.districtMunicipality}}
-            </div>
-            <div class="print-grid-item span-3">
+              </div>
+              <div class="print-grid-item span-3">
                 region: {{selectedFacility.land.geographicalLocation.region}}
-            </div>
-            <div class="print-grid-item span-3">
+              </div>
+              <div class="print-grid-item span-3">
                 Local Authority: {{selectedFacility.land.geographicalLocation.localAuthority}}
+              </div>
             </div>
-        </div>
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
+            <div class="print-grid">
+              <div class="print-grid-item span-2">
                 Latitude: {{selectedFacility.land.geographicalLocation.latitude}}
-            </div>
-            <div class="print-grid-item span-4">
+              </div>
+              <div class="print-grid-item span-4">
                 Longitude: {{selectedFacility.land.geographicalLocation.longitude}}
-            </div>
-            <div class="print-grid-item span-3">
+              </div>
+              <div class="print-grid-item span-3">
                 Magisterial District: {{selectedFacility.land.geographicalLocation.magisterialDistrict}}
-            </div>
-            <div class="print-grid-item span-3">
+              </div>
+              <div class="print-grid-item span-3">
 
+              </div>
             </div>
-        </div>
-    </div>
-    <br><br><br><br>
-    <h3>Property Description</h3>
-    <hr>
-    <div>
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                Registration Division: {{selectedFacility.land.propertyDescription.registrationDivision}}
-            </div>
-            <div class="print-grid-item span-4">
-                Township Name: {{selectedFacility.land.propertyDescription.townshipName}}
-            </div>
-            <div class="print-grid-item span-3">
-                Land Parcel: {{selectedFacility.land.propertyDescription.landParcel}}
-            </div>
-            <div class="print-grid-item span-3">
-                Land Portion: {{selectedFacility.land.propertyDescription.landPortion}}
-            </div>
-        </div>
+          </div>
 
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                Old Description: {{selectedFacility.land.propertyDescription.oldDescription}}
-            </div>
-            <div class="print-grid-item span-4">
-                Land Remainder: {{selectedFacility.land.propertyDescription.landRemainder}}
-            </div>
-            <div class="print-grid-item span-3">
-                SG Diagram Number: {{selectedFacility.land.propertyDescription.sGDiagramNumber}}
-            </div>
-            <div class="print-grid-item span-3">
-                Extent: {{selectedFacility.land.propertyDescription.extent}}
-            </div>
-        </div>
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                LPI Code: {{selectedFacility.land.propertyDescription.LPICode}}
-            </div>
-            <div class="print-grid-item span-4">
-                Acquired: {{selectedFacility.land.propertyDescription.acquired}}
-            </div>
-            <div class="print-grid-item span-3">
+          <br><br><h3>Land Use Management Detail</h3>
+          <hr>
+            <div>
+              <div class="print-grid">
+                <div class="print-grid-item span-2">
+                  Nature Of Lease: {{selectedFacility.land.leaseStatus.natureOfLease}}
+                </div>
+                <div class="print-grid-item span-4">
+                  ID Number Company Registration Number: {{selectedFacility.land.leaseStatus.iDNumberCompanyRegistrationNumber}}
+                </div>
+                <div class="print-grid-item span-3">
+                  PO Box: {{selectedFacility.land.leaseStatus.pOBox}}
+                </div>
+                <div class="print-grid-item span-3">
+                  Contact Number: {{selectedFacility.land.leaseStatus.contactNumber}}
+                </div>
+              </div>
 
-            </div>
-            <div class="print-grid-item span-3">
+              <div class="print-grid">
+                <div class="print-grid-item span-2">
+                  Capacity Of Contact Person: {{selectedFacility.land.leaseStatus.capacityofContactPerson}}
+                </div>
+                <div class="print-grid-item span-4">
+                  Contact Person: {{selectedFacility.land.leaseStatus.contactPerson}}
+                </div>
+                <div class="print-grid-item span-3">
+                  Postal Code: {{selectedFacility.land.leaseStatus.postalCode}}
+                </div>
+                <div class="print-grid-item span-3">
+                  Lease Status Town: {{selectedFacility.land.leaseStatus.leaseStatusTown}}
+                </div>
+              </div>
+              <div class="print-grid">
+                <div class="print-grid-item span-2">
+                  Rental Amount: {{selectedFacility.land.leaseStatus.rentalAmount}}
+                </div>
+                <div class="print-grid-item span-4">
+                  Termination Date: {{selectedFacility.land.leaseStatus.terminationDate}}
+                </div>
+                <div class="print-grid-item span-3">
+                  Starting Date: {{selectedFacility.land.leaseStatus.startingDate}}
+                </div>
+                <div class="print-grid-item span-3">
+                  Occupation Date: {{selectedFacility.land.leaseStatus.occupationDate}}
+                </div>
+              </div>
 
+              <div class="print-grid">
+                <div class="print-grid-item span-2">
+                  Escalation: {{selectedFacility.land.leaseStatus.escalation}}
+                </div>
+                <div class="print-grid-item span-4">
+                  Vat: {{selectedFacility.land.leaseStatus.vat}}
+                </div>
+                <div class="print-grid-item span-3">
+                  Lease Number: {{selectedFacility.land.leaseStatus.leaseNumber}}
+                </div>
+                <div class="print-grid-item span-3">
+                  Other Charges: {{selectedFacility.land.leaseStatus.otherCharges}}
+                </div>
+              </div>
             </div>
-        </div>
-    </div>
 
+            <br><br><h3>Finance</h3>
+            <hr>
+              <div>
+                <div class="print-grid">
+                  <div class="print-grid-item span-2">
+                    Land Use Class: {{selectedFacility.finance.landUseClass}}
+                  </div>
+                  <div class="print-grid-item span-4">
+                    Nature Of Asset: {{selectedFacility.finance.natureofAsset}}
+                  </div>
+                  <div class="print-grid-item span-3">
 
-    <br><br><h3>Geographical Location</h3>
-    <hr>
-    <div>
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                Province: {{selectedFacility.land.geographicalLocation.province}}
-            </div>
-            <div class="print-grid-item span-4">
-                Town: {{selectedFacility.land.geographicalLocation.town}}
-            </div>
-            <div class="print-grid-item span-3">
-                Suburb: {{selectedFacility.land.geographicalLocation.suburb}}
-            </div>
-            <div class="print-grid-item span-3">
-                Street Name: {{selectedFacility.land.geographicalLocation.streetName}}
-            </div>
-        </div>
+                  </div>
+                  <div class="print-grid-item span-3">
 
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                Street Number: {{selectedFacility.land.geographicalLocation.streetNumber}}
-            </div>
-            <div class="print-grid-item span-4">
-                District Municipality: {{selectedFacility.land.geographicalLocation.districtMunicipality}}
-            </div>
-            <div class="print-grid-item span-3">
-                region: {{selectedFacility.land.geographicalLocation.region}}
-            </div>
-            <div class="print-grid-item span-3">
-                Local Authority: {{selectedFacility.land.geographicalLocation.localAuthority}}
-            </div>
-        </div>
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                Latitude: {{selectedFacility.land.geographicalLocation.latitude}}
-            </div>
-            <div class="print-grid-item span-4">
-                Longitude: {{selectedFacility.land.geographicalLocation.longitude}}
-            </div>
-            <div class="print-grid-item span-3">
-                Magisterial District: {{selectedFacility.land.geographicalLocation.magisterialDistrict}}
-            </div>
-            <div class="print-grid-item span-3">
+                  </div>
+                </div>
+              </div>
 
-            </div>
-        </div>
-    </div>
+              <br><br><h3>Valuation</h3>
+              <hr>
+                <div>
+                  <div class="print-grid">
+                    <div class="print-grid-item span-2">
+                      Municipal Valuation Date: {{selectedFacility.finance.valuation.municipalValuationDate}}
+                    </div>
+                    <div class="print-grid-item span-4">
+                      Non Municipal Valuation Date: {{selectedFacility.finance.valuation.nonMunicipalValuationDate}}
+                    </div>
+                    <div class="print-grid-item span-3">
+                      Municipal Valuation: {{selectedFacility.finance.valuation.municipalValuation}}
+                    </div>
+                    <div class="print-grid-item span-3">
+                      Non Municipal Valuation: {{selectedFacility.finance.valuation.nonMunicipalValuation}}
+                    </div>
+                  </div>
 
-    <br><br><h3>Land Use Management Detail</h3>
-    <hr>
-    <div>
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                Nature Of Lease: {{selectedFacility.land.leaseStatus.natureOfLease}}
-            </div>
-            <div class="print-grid-item span-4">
-                ID Number Company Registration Number: {{selectedFacility.land.leaseStatus.iDNumberCompanyRegistrationNumber}}
-            </div>
-            <div class="print-grid-item span-3">
-                PO Box: {{selectedFacility.land.leaseStatus.pOBox}}
-            </div>
-            <div class="print-grid-item span-3">
-                Contact Number: {{selectedFacility.land.leaseStatus.contactNumber}}
-            </div>
-        </div>
+                  <div class="print-grid">
+                    <div class="print-grid-item span-2">
+                      Propety Rates Account: {{selectedFacility.finance.valuation.propetyRatesAccount}}
+                    </div>
+                    <div class="print-grid-item span-4">
+                      Value: {{selectedFacility.finance.valuation.value}}
+                    </div>
+                    <div class="print-grid-item span-3">
+                      Account No For Service: {{selectedFacility.finance.valuation.accountNoForService}}
+                    </div>
+                    <div class="print-grid-item span-3">
+                      Person Institution Resposible: {{selectedFacility.finance.valuation.personInstitutionResposible}}
+                    </div>
+                  </div>
+                </div>
 
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                Capacity Of Contact Person: {{selectedFacility.land.leaseStatus.capacityofContactPerson}}
-            </div>
-            <div class="print-grid-item span-4">
-                Contact Person: {{selectedFacility.land.leaseStatus.contactPerson}}
-            </div>
-            <div class="print-grid-item span-3">
-                Postal Code: {{selectedFacility.land.leaseStatus.postalCode}}
-            </div>
-            <div class="print-grid-item span-3">
-                Lease Status Town: {{selectedFacility.land.leaseStatus.leaseStatusTown}}
-            </div>
-        </div>
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                Rental Amount: {{selectedFacility.land.leaseStatus.rentalAmount}}
-            </div>
-            <div class="print-grid-item span-4">
-                Termination Date: {{selectedFacility.land.leaseStatus.terminationDate}}
-            </div>
-            <div class="print-grid-item span-3">
-                Starting Date: {{selectedFacility.land.leaseStatus.startingDate}}
-            </div>
-            <div class="print-grid-item span-3">
-                Occupation Date: {{selectedFacility.land.leaseStatus.occupationDate}}
-            </div>
-        </div>
+                <h3>Secondary Information Note</h3>
+                <hr>
+                  <div>
+                    <div class="print-grid">
+                      <div class="print-grid-item span-2">
+                        Addition Cash: {{selectedFacility.finance.secondaryInformationNote.additionCash}}
+                      </div>
+                      <div class="print-grid-item span-4">
+                        Addition Non Cash: {{selectedFacility.finance.secondaryInformationNote.additionNonCash}}
+                      </div>
+                      <div class="print-grid-item span-3">
+                        Addition: {{selectedFacility.finance.secondaryInformationNote.addition}}
+                      </div>
+                      <div class="print-grid-item span-3">
+                        Disposal: {{selectedFacility.finance.secondaryInformationNote.disposal}}
+                      </div>
+                    </div>
 
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                Escalation: {{selectedFacility.land.leaseStatus.escalation}}
-            </div>
-            <div class="print-grid-item span-4">
-                Vat: {{selectedFacility.land.leaseStatus.vat}}
-            </div>
-            <div class="print-grid-item span-3">
-                Lease Number: {{selectedFacility.land.leaseStatus.leaseNumber}}
-            </div>
-            <div class="print-grid-item span-3">
-                Other Charges: {{selectedFacility.land.leaseStatus.otherCharges}}
-            </div>
-        </div>
-    </div>
+                    <div class="print-grid">
+                      <div class="print-grid-item span-2">
+                        Closing Balance: {{selectedFacility.finance.secondaryInformationNote.closingBalance}}
+                      </div>
+                      <div class="print-grid-item span-4">
 
-    <br><br><h3>Finance</h3>
-    <hr>
-    <div>
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                Land Use Class: {{selectedFacility.finance.landUseClass}}
-            </div>
-            <div class="print-grid-item span-4">
-                Nature Of Asset: {{selectedFacility.finance.natureofAsset}}
-            </div>
-            <div class="print-grid-item span-3">
+                      </div>
+                      <div class="print-grid-item span-3">
 
-            </div>
-            <div class="print-grid-item span-3">
+                      </div>
+                      <div class="print-grid-item span-3">
 
-            </div>
-        </div>
-    </div>
+                      </div>
+                    </div>
+                  </div>
 
-    <br><br><h3>Valuation</h3>
-    <hr>
-    <div>
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                Municipal Valuation Date: {{selectedFacility.finance.valuation.municipalValuationDate}}
-            </div>
-            <div class="print-grid-item span-4">
-                Non Municipal Valuation Date: {{selectedFacility.finance.valuation.nonMunicipalValuationDate}}
-            </div>
-            <div class="print-grid-item span-3">
-                Municipal Valuation: {{selectedFacility.finance.valuation.municipalValuation}}
-            </div>
-            <div class="print-grid-item span-3">
-                Non Municipal Valuation: {{selectedFacility.finance.valuation.nonMunicipalValuation}}
-            </div>
-        </div>
-
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                Propety Rates Account: {{selectedFacility.finance.valuation.propetyRatesAccount}}
-            </div>
-            <div class="print-grid-item span-4">
-                Value: {{selectedFacility.finance.valuation.value}}
-            </div>
-            <div class="print-grid-item span-3">
-                Account No For Service: {{selectedFacility.finance.valuation.accountNoForService}}
-            </div>
-            <div class="print-grid-item span-3">
-                Person Institution Resposible: {{selectedFacility.finance.valuation.personInstitutionResposible}}
-            </div>
-        </div>
-    </div>
-
-    <h3>Secondary Information Note</h3>
-    <hr>
-    <div>
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                Addition Cash: {{selectedFacility.finance.secondaryInformationNote.additionCash}}
-            </div>
-            <div class="print-grid-item span-4">
-                Addition Non Cash: {{selectedFacility.finance.secondaryInformationNote.additionNonCash}}
-            </div>
-            <div class="print-grid-item span-3">
-                Addition: {{selectedFacility.finance.secondaryInformationNote.addition}}
-            </div>
-            <div class="print-grid-item span-3">
-                Disposal: {{selectedFacility.finance.secondaryInformationNote.disposal}}
-            </div>
-        </div>
-
-        <div class="print-grid">
-            <div class="print-grid-item span-2">
-                Closing Balance: {{selectedFacility.finance.secondaryInformationNote.closingBalance}}
-            </div>
-            <div class="print-grid-item span-4">
-
-            </div>
-            <div class="print-grid-item span-3">
-
-            </div>
-            <div class="print-grid-item span-3">
-
-            </div>
-        </div>
-    </div>
-
-    <h3>Improvement</h3>
-    <div class="border">
-        <table class="improvements-table">
-            <thead>
-                <tr>
-                    <th>Building Name</th>
-                    <th>Type</th>
-                    <th>Size</th>
-                    <th>Potential Use</th>
-                    <th>Site Coverag</th>
-                    <th>Level of Utilization</th>
-                    <th>Extent Of Building</th>
-                    <th>Condition Rating</th>
-                    <th>Usable Area</th>
-                    <th>Functional Performance Rating</th>
-                    <th>Comment</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let item of selectedFacility.improvements">
-                    <td>{{item.buildingName}}</td>
-                    <td>{{item.type}}</td>
-                    <td>{{item.size}}</td>
-                    <td>{{item.potentialUse}}</td>
-                    <td>{{item.siteCoverag}}</td>
-                    <td>{{item.levelofUtilization}}</td>
-                    <td>{{item.extentOfBuilding}}</td>
-                    <td>{{item.conditionRating}}</td>
-                    <td>{{item.usableArea}}</td>
-                    <td>{{item.functionalPerformanceRating}}</td>
-                    <td>{{item.comment}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+                  <h3>Improvement</h3>
+                  <div class="border">
+                    <table class="improvements-table">
+                      <thead>
+                        <tr>
+                          <th>Building Name</th>
+                          <th>Type</th>
+                          <th>Size</th>
+                          <th>Potential Use</th>
+                          <th>Site Coverag</th>
+                          <th>Level of Utilization</th>
+                          <th>Extent Of Building</th>
+                          <th>Condition Rating</th>
+                          <th>Usable Area</th>
+                          <th>Functional Performance Rating</th>
+                          <th>Comment</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (item of selectedFacility.improvements; track item) {
+                          <tr>
+                            <td>{{item.buildingName}}</td>
+                            <td>{{item.type}}</td>
+                            <td>{{item.size}}</td>
+                            <td>{{item.potentialUse}}</td>
+                            <td>{{item.siteCoverag}}</td>
+                            <td>{{item.levelofUtilization}}</td>
+                            <td>{{item.extentOfBuilding}}</td>
+                            <td>{{item.conditionRating}}</td>
+                            <td>{{item.usableArea}}</td>
+                            <td>{{item.functionalPerformanceRating}}</td>
+                            <td>{{item.comment}}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
 

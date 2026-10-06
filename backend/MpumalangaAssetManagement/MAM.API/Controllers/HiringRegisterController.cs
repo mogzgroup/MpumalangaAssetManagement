@@ -31,64 +31,32 @@ namespace MAM.API.Controllers
         [Route("gethiredproperties")]
         public IActionResult GetHiredProperties()
         {
-            try
-            {
-                List<HiredProperty> properties = _hiringRegisterService.GetHiredProperties();
-                return Ok(properties);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            List<HiredProperty> properties = _hiringRegisterService.GetHiredProperties();
+            return Ok(properties);
         }
 
         [HttpPost]
         [Route("addhiredproperty")]
         public IActionResult AddHiredProperty([FromBody] HiredProperty hiredProperty)
         {
-            try
-            {
-                int id = _hiringRegisterService.AddHiredProperty(hiredProperty);
-                return Ok(id);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            int id = _hiringRegisterService.AddHiredProperty(hiredProperty);
+            return Ok(id);
         }
 
         [HttpPost]
         [Route("updatehiredproperty")]
         public IActionResult UpdateHiredProperty([FromBody] HiredProperty hiredProperty)
         {
-            try
-            {
-                bool isUpdated = _hiringRegisterService.UpdateHiredProperty(hiredProperty);
-                return Ok(isUpdated);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            bool isUpdated = _hiringRegisterService.UpdateHiredProperty(hiredProperty);
+            return Ok(isUpdated);
         }
 
         [HttpPost]
         [Route("deletehiredproperty")]
         public IActionResult DeletHiredProperty([FromBody]HiredProperty hiredProperty)
         {
-            try
-            {
-                bool isUpdated = _hiringRegisterService.DeleteHiredProperty(hiredProperty);
-                return Ok(isUpdated);
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error", ex);
-                throw;
-            }
+            bool isUpdated = _hiringRegisterService.DeleteHiredProperty(hiredProperty);
+            return Ok(isUpdated);
         }
     }
 }

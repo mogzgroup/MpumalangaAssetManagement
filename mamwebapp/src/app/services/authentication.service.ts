@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -9,10 +9,13 @@ import { User } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
+    private http = inject(HttpClient);
+    private router = inject(Router);
+
     private currentUserSubject: BehaviorSubject<User>;
     public currentUser: Observable<User>;
 
-    constructor(private http: HttpClient, private router: Router) {
+    constructor() {
         let storedUser: User = null;
         try {
             storedUser = JSON.parse(localStorage.getItem('currentUser')) as User;

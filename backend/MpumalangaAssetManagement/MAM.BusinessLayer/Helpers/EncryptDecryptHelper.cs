@@ -56,39 +56,92 @@ namespace MAM.BusinessLayer.Helpers
 
         public static string Decrypt(string cipherText)
         {
-            // Get the complete stream of bytes that represent:
-            // [32 bytes of Salt] + [32 bytes of IV] + [n bytes of CipherText]
-            var cipherTextBytesWithSaltAndIv = Convert.FromBase64String(cipherText);
-            // Get the saltbytes by extracting the first 32 bytes from the supplied cipherText bytes.
-            var saltStringBytes = cipherTextBytesWithSaltAndIv.Take(Keysize / 8).ToArray();
-            // Get the IV bytes by extracting the next 32 bytes from the supplied cipherText bytes.
-            var ivStringBytes = cipherTextBytesWithSaltAndIv.Skip(Keysize / 8).Take(Keysize / 8).ToArray();
-            // Get the actual cipher text bytes by removing the first 64 bytes from the cipherText string.
-            var cipherTextBytes = cipherTextBytesWithSaltAndIv.Skip((Keysize / 8) * 2).Take(cipherTextBytesWithSaltAndIv.Length - ((Keysize / 8) * 2)).ToArray();
+            if (string.IsNullOrWhiteSpace(cipherText))
+                return null;
 
-            using (var password = new Rfc2898DeriveBytes(PassPhrase, saltStringBytes, DerivationIterations))
+            try
             {
-                var keyBytes = password.GetBytes(Keysize / 8);
-                using (var symmetricKey = new RijndaelManaged())
+                // Expect: [16 bytes of Salt] + [16 bytes of IV] + [n bytes of CipherText]
+                var cipherTextBytesWithSaltAndIv = Convert.FromBase64String(cipherText);
+
+                var minExpected = (Keysize / 8) * 2; // salt + iv
+                if (cipherTextBytesWithSaltAndIv == null || cipherTextBytesWithSaltAndIv.Length <= minExpected)
                 {
-                    symmetricKey.BlockSize = 128;
-                    symmetricKey.Mode = CipherMode.CBC;
-                    symmetricKey.Padding = PaddingMode.PKCS7;
-                    using (var decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes))
+                    // malformed / truncated ciphertext stored in DB
+                    // record a lightweight metric/log (no secrets). Use Trace to keep it low-volume.
+                    System.Diagnostics.Trace.TraceWarning("Decrypt: malformed ciphertext detected (too short or null)");
+                    return null;
+                }
+
+                // Get the salt bytes (first 16 bytes)
+                var saltStringBytes = cipherTextBytesWithSaltAndIv.Take(Keysize / 8).ToArray();
+                // Get the IV bytes (next 16 bytes)
+                var ivStringBytes = cipherTextBytesWithSaltAndIv.Skip(Keysize / 8).Take(Keysize / 8).ToArray();
+                // Get the actual cipher text bytes after salt+iv
+                var cipherTextBytes = cipherTextBytesWithSaltAndIv.Skip((Keysize / 8) * 2).Take(cipherTextBytesWithSaltAndIv.Length - ((Keysize / 8) * 2)).ToArray();
+
+                using (var password = new Rfc2898DeriveBytes(PassPhrase, saltStringBytes, DerivationIterations))
+                {
+                    var keyBytes = password.GetBytes(Keysize / 8);
+                    using (var symmetricKey = new RijndaelManaged())
                     {
-                        using (var memoryStream = new MemoryStream(cipherTextBytes))
+                        symmetricKey.BlockSize = 128;
+                        symmetricKey.Mode = CipherMode.CBC;
+                        symmetricKey.Padding = PaddingMode.PKCS7;
+
+                        // Defensive: ensure IV is correct length
+                        if (ivStringBytes == null || ivStringBytes.Length != (Keysize / 8))
                         {
-                            using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
+                            System.Diagnostics.Trace.TraceWarning("Decrypt: iv length mismatch detected");
+                            return null;
+                        }
+
+                        try
+                        {
+                            using (var decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes))
                             {
-                                var plainTextBytes = new byte[cipherTextBytes.Length];
-                                var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
-                                memoryStream.Close();
-                                cryptoStream.Close();
-                                return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
+                                using (var memoryStream = new MemoryStream(cipherTextBytes))
+                                {
+                                    using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
+                                    {
+                                        var plainTextBytes = new byte[cipherTextBytes.Length];
+                                        var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+                                        memoryStream.Close();
+                                        cryptoStream.Close();
+                                        return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
+                                    }
+                                }
                             }
+                        }
+                        catch (Exception ex)
+                        {
+                            // Catch any exception during creation of decryptor or reading and treat as invalid ciphertext
+                            System.Diagnostics.Trace.TraceWarning($"Decrypt: decryption failed - {ex.Message}");
+                            return null;
                         }
                     }
                 }
+            }
+            catch (FormatException)
+            {
+                // Not valid base64 - treat as invalid credentials instead of throwing
+                return null;
+            }
+            catch (CryptographicException)
+            {
+                // Decryption failed (bad key/iv/ciphertext) - treat as invalid credentials
+                return null;
+            }
+            catch (ArgumentException)
+            {
+                // Any other argument issues (e.g. CreateTransform) - treat as invalid
+                return null;
+            }
+            catch (Exception ex)
+            {
+                // Defensive catch-all to ensure no exception escapes decryption - log minimal info
+                System.Diagnostics.Trace.TraceWarning($"Decrypt: unexpected error - {ex.Message}");
+                return null;
             }
         }
 

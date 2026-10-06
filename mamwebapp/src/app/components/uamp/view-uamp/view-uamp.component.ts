@@ -1,30 +1,34 @@
 import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { StrategicAssessment } from 'src/app/models/strategic-assessment.model';
 import { UAMP } from 'src/app/models/uamp.model';
+import { MatButton } from '@angular/material/button';
+import { PrintSectionDirective } from '../../../common/print-section/print-section.directive';
+import { MatIcon } from '@angular/material/icon';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
 
 @Component({
-  standalone: false,
-  selector: 'app-view-uamp',
-  templateUrl: './view-uamp.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrls: ['./view-uamp.component.css']
+    selector: 'app-view-uamp',
+    templateUrl: './view-uamp.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./view-uamp.component.css'],
+    imports: [MatButton, PrintSectionDirective, MatIcon, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, DecimalPipe, CurrencyPipe, DatePipe]
 })
 export class ViewUampComponent implements OnInit {
-  activeIndex: number = 0;
+  activeIndex = 0;
   municipalUtilityServices: any[] = [];
   @Input() uamp: UAMP;
 
   constructor() { }
 
   ngOnInit() {
-    let df = this.uamp;
+    const df = this.uamp;
     if(this.uamp.templeteTwoPointTwo.properties){
       this.municipalUtilityServices = this.getMunicipalUtilityServices(this.uamp.templeteTwoPointTwo.properties);
     }
   }
 
   newCapitalWorksT41RequiredBudget() {
-    let amount: number = 0;
+    const amount = 0;
     if (this.uamp.templeteFourPointOne) {
       /*this.uamp.templeteFourPointOne.forEach(acquisitionPlan=> {
         amount = amount + acquisitionPlan.totalAmountRequired;
@@ -34,8 +38,8 @@ export class ViewUampComponent implements OnInit {
   }
 
   mtefAllocatoion(year: number, mtefAllocatoion: string, previousYearMtefAllocatoion: string, templete: string) {
-    let amount: number = 0;
-    let arraryList = this.getTempleteDate(templete);
+    let amount = 0;
+    const arraryList = this.getTempleteDate(templete);
     arraryList.forEach(element => {
       if (element[previousYearMtefAllocatoion]) {
         if (year === 1) {
@@ -52,7 +56,7 @@ export class ViewUampComponent implements OnInit {
   }
 
   amountRequired(year: number, mtefAllocatoion: string, amountRequired: string, templete: string) {
-    let amount: number = 0;
+    let amount = 0;
 
     if (this.uamp[templete]) {
       amount = (4 / 100 * this.uamp.templeteSeven[mtefAllocatoion]) + this.uamp.templeteSeven[mtefAllocatoion];
@@ -62,8 +66,8 @@ export class ViewUampComponent implements OnInit {
   }
 
   shortfall(year: number, mtefAllocatoion: string, amountRequired: string, templete: string) {
-    let amount: number = 0;
-    let name = "shortfall" + mtefAllocatoion + year;
+    let amount = 0;
+    const name = "shortfall" + mtefAllocatoion + year;
 
     if (this.uamp[templete]) {
       amount = this.uamp.templeteSeven[mtefAllocatoion] - this.uamp.templeteSeven[amountRequired];
@@ -73,17 +77,17 @@ export class ViewUampComponent implements OnInit {
   }
 
   totalCurrentCosts(year: number, startWith: string, containStr: string) {
-    let amount: number = 0;
+    let amount = 0;
 
-    for (var propertyName in this.uamp.templeteSeven) {
+    for (const propertyName in this.uamp.templeteSeven) {
       if (propertyName && propertyName != 'undefined') {
         let _property = propertyName.startsWith(startWith);
         if (_property && containStr) {
-          var splitted = containStr.split(" ");
+          const splitted = containStr.split(" ");
           _property = propertyName.includes(splitted[0]) || propertyName.includes(splitted[1]) ? true : false;
         }
 
-        let property = propertyName.endsWith(year.toString());
+        const property = propertyName.endsWith(year.toString());
         if (_property && property) {
           if (_property && containStr) {
             amount = amount + this.uamp.templeteSeven[propertyName];
@@ -111,12 +115,12 @@ export class ViewUampComponent implements OnInit {
   }
 
   totalCapitalWorksAndRecurrentCosts(year: number, startWith: string) {
-    let amount: number = 0;
+    let amount = 0;
 
-    for (var propertyName in this.uamp.templeteSeven) {
+    for (const propertyName in this.uamp.templeteSeven) {
       if (propertyName && propertyName != 'undefined') {
-        let _property = propertyName.startsWith(startWith);
-        let property = propertyName.endsWith(year.toString());
+        const _property = propertyName.startsWith(startWith);
+        const property = propertyName.endsWith(year.toString());
         if (_property && property)
           amount = amount + this.uamp.templeteSeven[propertyName];
       }
@@ -129,7 +133,7 @@ export class ViewUampComponent implements OnInit {
   }
 
   mtefAllocatoionMUS(year: number, mtefAllocatoion: string, previousYearMtefAllocatoion: string, value: number) {
-    let amount: number = 0;
+    let amount = 0;
     if (year === 1) {
       amount = amount + value;
     }
@@ -142,7 +146,7 @@ export class ViewUampComponent implements OnInit {
   }
 
   amountRequiredMUS(year: number, mtefAllocatoion: string, amountRequired: string, value?: number) {
-    let amount: number = 0;
+    let amount = 0;
 
     if (mtefAllocatoion) {
       amount = (4 / 100 * this.uamp.templeteSeven[mtefAllocatoion]) + this.uamp.templeteSeven[mtefAllocatoion];
@@ -152,8 +156,8 @@ export class ViewUampComponent implements OnInit {
   }
 
   shortfallMUS(year: number, mtefAllocatoion: string, amountRequired: string, value?: number) {
-    let amount: number = 0;
-    let name = "shortfall" + mtefAllocatoion + year;
+    let amount = 0;
+    const name = "shortfall" + mtefAllocatoion + year;
 
     if (mtefAllocatoion && amountRequired) {
       amount = this.uamp.templeteSeven[mtefAllocatoion] - this.uamp.templeteSeven[amountRequired];
@@ -169,11 +173,11 @@ export class ViewUampComponent implements OnInit {
     properties.forEach(property => {
       if (property.municipalUtilityServices) {
         property.municipalUtilityServices.forEach(ele => {
-          let _municipalUtilityServices = municipalUtilityServices.filter(m => m.name == ele.name);
+          const _municipalUtilityServices = municipalUtilityServices.filter(m => m.name == ele.name);
           if (_municipalUtilityServices.length > 0) {
             _municipalUtilityServices[0].totalCost = _municipalUtilityServices[0].totalCost + ele.cost;
           } else {
-            let municipalUtilityService = {
+            const municipalUtilityService = {
               name: ele.name,
               totalCost: ele.cost
             };
@@ -187,7 +191,7 @@ export class ViewUampComponent implements OnInit {
   }
 
   shortfallCapitalCosts(year: number) {
-    let amount: number = 0;
+    let amount = 0;
     const mtefAllocatoion = 'totalCapitalCostsmtefAllocatoion' + year;
     const shortfall = 'totalCapitalCostsshortfall' + year;
     amount = this.uamp.templeteSeven[shortfall] / this.uamp.templeteSeven[mtefAllocatoion];
@@ -199,7 +203,7 @@ export class ViewUampComponent implements OnInit {
   }
 
   shorfallCapitalWorksAndRecurrentCosts(year: number) {
-    let amount: number = 0;
+    let amount = 0;
     const mtefAllocatoion = 'totalCapitalCostsAndRecurrentCostsmtefAllocatoion' + year;
     const shortfall = 'totalCapitalCostsAndRecurrentCostsshortfall' + year;
     amount = this.uamp.templeteSeven[shortfall] / this.uamp.templeteSeven[mtefAllocatoion] ;

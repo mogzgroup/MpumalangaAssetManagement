@@ -1,9 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit, ChangeDetectionStrategy, TemplateRef } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit, ChangeDetectionStrategy, TemplateRef, inject } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { first } from 'rxjs/operators';
 import { LeasedProperty } from 'src/app/models/leased-property.model';
 import { User } from 'src/app/models/user.model';
@@ -14,24 +14,42 @@ import { ToastService } from 'src/app/services/toast.service';
 import { OpenStreetMapGeocodingService } from 'src/app/services/openstreetmap-geocoding.service';
 import { mapConfig } from 'src/app/shared/map/map-config';
 import { MapMarkerData, validCoordinates } from 'src/app/shared/map/map-marker.model';
+import { MapLibreMapComponent } from '../../shared/map/maplibre-map.component';
+import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions } from '@angular/material/card';
+import { LeasedPropertyComponent } from './leasedproperty/leased-property.component';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-  standalone: false,
-  selector: 'app-lease-management',
-  templateUrl: './lease-management.component.html',
-  styleUrls: ['./lease-management.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-lease-management',
+    templateUrl: './lease-management.component.html',
+    styleUrls: ['./lease-management.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MapLibreMapComponent, MatFormField, MatLabel, MatIcon, MatPrefix, MatInput, MatButton, MatMenuTrigger, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatIconButton, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatProgressBar, MatPaginator, MatMenu, MatMenuItem, MatCard, MatCardHeader, MatCardTitle, MatCardContent, LeasedPropertyComponent, MatCardActions, MatProgressSpinner]
 })
 export class LeaseManagementComponent implements OnInit, AfterViewInit {
-  @Input() leasedProperties: Array<LeasedProperty>;
+  private leasedPropertiesService = inject(LeasedPropertiesService);
+  private sharedService = inject(SharedService);
+  private authenticationService = inject(AuthenticationService);
+  private datePipe = inject(DatePipe);
+  private toastService = inject(ToastService);
+  private geocodingService = inject(OpenStreetMapGeocodingService);
+  private dialog = inject(MatDialog);
+
+  @Input() leasedProperties: LeasedProperty[];
   @ViewChild('exportLP') myDiv: ElementRef<HTMLElement>;
-  showLMDDialog: boolean = false;
+  showLMDDialog = false;
   loading = false;
   loadError = '';
   deletingLeasedProperty = false;
-  dataIsLoaded: boolean = false;
-  showComfirmaDelete: boolean = false;
-  doExport: boolean = false;
+  dataIsLoaded = false;
+  showComfirmaDelete = false;
+  doExport = false;
   isBusy: boolean;
   dialogHeader = '';
   center: [number, number] = mapConfig.defaultCenter;
@@ -59,15 +77,7 @@ export class LeaseManagementComponent implements OnInit, AfterViewInit {
   private leasedPropertyDialogRef: MatDialogRef<unknown> | null = null;
   private deletePropertyDialogRef: MatDialogRef<unknown> | null = null;
 
-  constructor(
-    private leasedPropertiesService: LeasedPropertiesService,
-    private sharedService: SharedService,
-    private authenticationService: AuthenticationService,
-    private datePipe: DatePipe,
-    private toastService: ToastService,
-    private geocodingService: OpenStreetMapGeocodingService,
-    private dialog: MatDialog
-  ) {
+  constructor() {
     this.selectedLeasedProperty = this.sharedService.initLeasedProperty();
     this.authenticationService.currentUser.subscribe(x => {
       this.currentUser = x;
@@ -141,7 +151,7 @@ export class LeaseManagementComponent implements OnInit, AfterViewInit {
   }
 
   monthDiff(d1: Date, d2: Date) {
-    var months;
+    let months;
     months = (d2.getFullYear() - d1.getFullYear()) * 12;
     months -= d1.getMonth();
     months += d2.getMonth();
@@ -180,7 +190,7 @@ export class LeaseManagementComponent implements OnInit, AfterViewInit {
       this.deletePropertyDialogRef?.close();
     }
   }
-  selectProperty(leasedProperty: LeasedProperty, index: Number) {
+  selectProperty(leasedProperty: LeasedProperty, index: number) {
     this.selectedLeasedProperty = leasedProperty;
     this.index = index;
   }
@@ -252,8 +262,8 @@ export class LeaseManagementComponent implements OnInit, AfterViewInit {
 
   saveAsExcelFile(buffer: any, fileName: string): void {
     import('file-saver').then(FileSaver => {
-      let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-      let EXCEL_EXTENSION = '.xlsx';
+      const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+      const EXCEL_EXTENSION = '.xlsx';
       const data: Blob = new Blob([buffer], {
         type: EXCEL_TYPE
       });
@@ -283,7 +293,7 @@ export class LeaseManagementComponent implements OnInit, AfterViewInit {
     this.leasedPropertiesService.getLeasedPropertyDetails(this.selectedLeasedProperty).pipe(first()).subscribe(leasedProperty => {
       this.selectedLeasedProperty = leasedProperty;
       this.doExport = true;
-      let el: HTMLElement = this.myDiv.nativeElement;
+      const el: HTMLElement = this.myDiv.nativeElement;
       el.click();
     });
   }

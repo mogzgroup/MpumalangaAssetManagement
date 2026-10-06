@@ -12,15 +12,15 @@ import { TempleteTwoPointOne } from "./templetes/templete-two-point-one.model";
 import { TempleteTwoPointTwo } from "./templetes/templete-two-point-two.model";
 
 export class UAMP {
-    id?: Number;    
+    id?: number;    
     status?: string;
     fileReference?: string;
-    optimalSupportingAccommodationId?: Number;
+    optimalSupportingAccommodationId?: number;
     department?: string;
     createdDate?: Date;
-    userId?: Number;
+    userId?: number;
     modifiedDate?: Date;
-    modifiedBy?: Number;
+    modifiedBy?: number;
     user?: User;
     templeteOne?: TempleteOne;
     templeteTwoPointOne?: TempleteTwoPointOne;

@@ -1,4 +1,5 @@
 import { HttpErrorResponse, HttpHandler, HttpRequest } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { throwError } from 'rxjs';
 import { AuthenticationService } from '../services/authentication.service';
@@ -13,7 +14,13 @@ describe('ErrorInterceptor', () => {
       url: '/dashboard',
       navigate: jasmine.createSpy('navigate').and.returnValue(Promise.resolve(true))
     } as unknown as Router;
-    const interceptor = new ErrorInterceptor(authenticationService, router);
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: AuthenticationService, useValue: authenticationService },
+        { provide: Router, useValue: router }
+      ]
+    });
+    const interceptor = TestBed.runInInjectionContext(() => new ErrorInterceptor());
     const handler: HttpHandler = {
       handle: () => throwError(() => new HttpErrorResponse({ status: 401 }))
     };
@@ -35,7 +42,13 @@ describe('ErrorInterceptor', () => {
       url: '/login',
       navigate: jasmine.createSpy('navigate')
     } as unknown as Router;
-    const interceptor = new ErrorInterceptor(authenticationService, router);
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: AuthenticationService, useValue: authenticationService },
+        { provide: Router, useValue: router }
+      ]
+    });
+    const interceptor = TestBed.runInInjectionContext(() => new ErrorInterceptor());
     const handler: HttpHandler = {
       handle: () => throwError(() => new HttpErrorResponse({ status: 401 }))
     };

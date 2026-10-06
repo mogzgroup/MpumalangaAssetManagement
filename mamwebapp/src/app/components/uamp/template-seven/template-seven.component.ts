@@ -1,34 +1,51 @@
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild, inject } from '@angular/core';
 import { ToastService } from 'src/app/services/toast.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { MtefBudgetPeriod } from 'src/app/models/mtef-budget-period.model';
 import { UAMP } from 'src/app/models/uamp.model';
 import { SharedService } from 'src/app/services/shared.service';
 import { UampService } from 'src/app/services/uamp/uamp.service';
+import { MatCard, MatCardSubtitle, MatCardContent, MatCardHeader, MatCardTitle, MatCardActions } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { CurrencyPipe } from '@angular/common';
+import { MatInput } from '@angular/material/input';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
 
 @Component({
-  standalone: false,
-  selector: 'app-template-seven',
-  templateUrl: './template-seven.component.html',
-  styleUrls: ['./template-seven.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-template-seven',
+    templateUrl: './template-seven.component.html',
+    styleUrls: ['./template-seven.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatCard, MatCardSubtitle, MatCardContent, MatButton, MatTooltip, MatIcon, MatInput, FormsModule, MatPaginator, MatCardHeader, MatDialogTitle, MatCardTitle, CdkScrollable, MatDialogContent, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatCardActions, MatDialogActions, CurrencyPipe]
 })
 export class TemplateSevenComponent implements OnInit {
+  private toastService = inject(ToastService);
+  private sharedService = inject(SharedService);
+  private router = inject(Router);
+  private uampService = inject(UampService);
+  private formBuilder = inject(FormBuilder);
+  private dialog = inject(MatDialog);
+
   uamp: UAMP;
   municipalUtilityServices: any;
   budgetPeriodForm: FormGroup;
-  showFields: boolean = false;
+  showFields = false;
   groups: any[];
   mtefBudgetPeriods: MtefBudgetPeriod[];
-  displayDialog: boolean = false;
-  dialogHeader: string = '';
-  isEdit: boolean = false;
-  mode: string = 'Edit';
-  year1Allocation: number = 0;
+  displayDialog = false;
+  dialogHeader = '';
+  isEdit = false;
+  mode = 'Edit';
+  year1Allocation = 0;
   pageIndex = 0;
   pageSize = 5;
   pagedBudgetPeriods: MtefBudgetPeriod[] = [];
@@ -41,7 +58,7 @@ export class TemplateSevenComponent implements OnInit {
     this.openFormDialog();
   }
 
-  constructor(private toastService: ToastService, private sharedService: SharedService, private router: Router, private uampService: UampService, private formBuilder: FormBuilder, private dialog: MatDialog) {
+  constructor() {
     this.uampService.uampChange.subscribe((value) => {
       if (value) {
         this.uamp = value;
@@ -98,7 +115,7 @@ export class TemplateSevenComponent implements OnInit {
 
   onKeydown(event,  mtefBudgetPeriod: MtefBudgetPeriod) {
     if (!isNaN(event)) {
-      var index = this.mtefBudgetPeriods.findIndex(b => b.title == mtefBudgetPeriod.title);
+      const index = this.mtefBudgetPeriods.findIndex(b => b.title == mtefBudgetPeriod.title);
       this.uamp.templeteSeven.mtefBudgetPeriods[index].year1Allocation = Number(event);
       this.mtefBudgetPeriods =  this.sharedService.calculateBudgetPeriods(this.uamp).templeteSeven.mtefBudgetPeriods;
       this.onSort();
@@ -106,13 +123,13 @@ export class TemplateSevenComponent implements OnInit {
   }
 
   umapTempleteValidate() {
-    let isValid: boolean = true;
+    const isValid = true;
 
     return isValid;
   }
 
   newCapitalWorksT41RequiredBudget() {
-    let amount: number = 0;
+    const amount = 0;
     if (this.uamp.templeteFourPointOne) {
       /*this.uamp.templeteFourPointOne.forEach(acquisitionPlan=> {
         amount = amount + acquisitionPlan.totalAmountRequired;
@@ -122,8 +139,8 @@ export class TemplateSevenComponent implements OnInit {
   }
 
   mtefAllocatoion(year: number, mtefAllocatoion: string, previousYearMtefAllocatoion: string, templete: string) {
-    let amount: number = 0;
-    let arraryList = this.getTempleteDate(templete);
+    let amount = 0;
+    const arraryList = this.getTempleteDate(templete);
     arraryList.forEach(element => {
       if (element[previousYearMtefAllocatoion]) {
         if (year === 1) {
@@ -140,7 +157,7 @@ export class TemplateSevenComponent implements OnInit {
   }
 
   amountRequired(year: number, mtefAllocatoion: string, amountRequired: string, templete: string) {
-    let amount: number = 0;
+    let amount = 0;
 
     if (this.uamp[templete]) {
       amount = (4 / 100 * this.uamp.templeteSeven[mtefAllocatoion]) + this.uamp.templeteSeven[mtefAllocatoion];
@@ -150,8 +167,8 @@ export class TemplateSevenComponent implements OnInit {
   }
 
   shortfall(year: number, mtefAllocatoion: string, amountRequired: string, templete: string) {
-    let amount: number = 0;
-    let name = "shortfall" + mtefAllocatoion + year;
+    let amount = 0;
+    const name = "shortfall" + mtefAllocatoion + year;
 
     if (this.uamp[templete]) {
       amount = this.uamp.templeteSeven[mtefAllocatoion] - this.uamp.templeteSeven[amountRequired];
@@ -161,17 +178,17 @@ export class TemplateSevenComponent implements OnInit {
   }
 
   totalCurrentCosts(year: number, startWith: string, containStr: string) {
-    let amount: number = 0;
+    let amount = 0;
 
-    for (var propertyName in this.uamp.templeteSeven) {
+    for (const propertyName in this.uamp.templeteSeven) {
       if (propertyName && propertyName != 'undefined') {
         let _property = propertyName.startsWith(startWith);
         if (_property && containStr) {
-          var splitted = containStr.split(" ");
+          const splitted = containStr.split(" ");
           _property = propertyName.includes(splitted[0]) || propertyName.includes(splitted[1]) ? true : false;
         }
 
-        let property = propertyName.endsWith(year.toString());
+        const property = propertyName.endsWith(year.toString());
         if (_property && property) {
           if (!Number.isNaN(Number(this.uamp.templeteSeven[propertyName]))) {
             if (_property && containStr) {
@@ -202,12 +219,12 @@ export class TemplateSevenComponent implements OnInit {
   }
 
   totalCapitalWorksAndRecurrentCosts(year: number, startWith: string) {
-    let amount: number = 0;
+    let amount = 0;
 
-    for (var propertyName in this.uamp.templeteSeven) {
+    for (const propertyName in this.uamp.templeteSeven) {
       if (propertyName && propertyName != 'undefined') {
-        let _property = propertyName.startsWith(startWith);
-        let property = propertyName.endsWith(year.toString());
+        const _property = propertyName.startsWith(startWith);
+        const property = propertyName.endsWith(year.toString());
         if (_property && property) {
           if (!Number.isNaN(Number(this.uamp.templeteSeven[propertyName]))) {
             amount = amount + this.uamp.templeteSeven[propertyName];
@@ -223,7 +240,7 @@ export class TemplateSevenComponent implements OnInit {
   }
 
   shorfallCapitalWorksAndRecurrentCosts(year: number) {
-    let amount: number = 0;
+    let amount = 0;
     const mtefAllocatoion = 'totalCapitalCostsAndRecurrentCostsmtefAllocatoion' + year;
     const shortfall = 'totalCapitalCostsAndRecurrentCostsshortfall' + year;
     amount = this.uamp.templeteSeven[shortfall] / this.uamp.templeteSeven[mtefAllocatoion];
@@ -235,7 +252,7 @@ export class TemplateSevenComponent implements OnInit {
   }
 
   shortfallCapitalCosts(year: number) {
-    let amount: number = 0;
+    let amount = 0;
     const mtefAllocatoion = 'totalCapitalCostsmtefAllocatoion' + year;
     const shortfall = 'totalCapitalCostsshortfall' + year;
     amount = this.uamp.templeteSeven[shortfall] / this.uamp.templeteSeven[mtefAllocatoion];
@@ -247,7 +264,7 @@ export class TemplateSevenComponent implements OnInit {
   }
 
   mtefAllocatoionMUS(year: number, mtefAllocatoion: string, previousYearMtefAllocatoion: string, value: number) {
-    let amount: number = 0;
+    let amount = 0;
     if (year === 1) {
       amount = amount + value;
     }
@@ -260,7 +277,7 @@ export class TemplateSevenComponent implements OnInit {
   }
 
   amountRequiredMUS(year: number, mtefAllocatoion: string, amountRequired: string) {
-    let amount: number = 0;
+    let amount = 0;
 
     if (mtefAllocatoion) {
       amount = (4 / 100 * this.uamp.templeteSeven[mtefAllocatoion]) + this.uamp.templeteSeven[mtefAllocatoion];
@@ -270,8 +287,8 @@ export class TemplateSevenComponent implements OnInit {
   }
 
   shortfallMUS(year: number, mtefAllocatoion: string, amountRequired: string) {
-    let amount: number = 0;
-    let name = "shortfall" + mtefAllocatoion + year;
+    let amount = 0;
+    const name = "shortfall" + mtefAllocatoion + year;
 
     if (mtefAllocatoion && amountRequired) {
       amount = this.uamp.templeteSeven[mtefAllocatoion] - this.uamp.templeteSeven[amountRequired];
@@ -287,11 +304,11 @@ export class TemplateSevenComponent implements OnInit {
     properties.forEach(property => {
       if (property.municipalUtilityServices) {
         property.municipalUtilityServices.forEach(ele => {
-          let _municipalUtilityServices = municipalUtilityServices.filter(m => m.name == ele.name);
+          const _municipalUtilityServices = municipalUtilityServices.filter(m => m.name == ele.name);
           if (_municipalUtilityServices.length > 0) {
             _municipalUtilityServices[0].totalCost = _municipalUtilityServices[0].totalCost + ele.cost;
           } else {
-            let municipalUtilityService = {
+            const municipalUtilityService = {
               name: ele.name,
               totalCost: ele.cost
             };

@@ -1,123 +1,149 @@
 <mat-card class="service-request-card">
-    <mat-card-content class="form-body">
-        <div class="request-grid">
-            <div class="detail">
-                <span class="detail-label">Facility Name</span>
-                <span>{{ selectedServiceRequest.facilityName }}</span>
-            </div>
-            <div class="detail">
-                <span class="detail-label">Date Logged</span>
-                <span>{{ selectedServiceRequest.createdDate | date:'d MMMM yyyy' }}</span>
-            </div>
-            <div class="detail">
-                <div class="control-heading">
-                    <span class="detail-label">Supplier</span>
-                    <mat-checkbox [(ngModel)]="supplierCheckbox" [ngModelOptions]="{standalone: true}"
-                        (change)="onSupplierCheckboxChange($event)" aria-label="Assign a supplier"></mat-checkbox>
-                </div>
-                <mat-form-field appearance="outline">
-                    <mat-label>Supplier</mat-label>
-                    <mat-select [(ngModel)]="supplier" [ngModelOptions]="{standalone: true}"
-                        [disabled]="!showSupplier" (selectionChange)="onSupplierChange($event)">
-                        <mat-option *ngFor="let option of suppliers" [value]="option">{{ option.name }}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-
-            <div class="detail">
-                <span class="detail-label">Exact Location of Issue</span>
-                <span>{{ selectedServiceRequest.propertyDescription }}</span>
-            </div>
-            <div class="detail">
-                <span class="detail-label">Name &amp; Surname</span>
-                <span>{{ selectedServiceRequest.contactName }}</span>
-            </div>
-            <div class="detail">
-                <div class="control-heading">
-                    <span class="detail-label">Project</span>
-                    <mat-checkbox [(ngModel)]="projectCheckbox" [ngModelOptions]="{standalone: true}"
-                        (change)="onProjectCheckboxChange($event)" aria-label="Assign a project"></mat-checkbox>
-                </div>
-                <mat-form-field appearance="outline">
-                    <mat-label>Project</mat-label>
-                    <mat-select [(ngModel)]="project" [ngModelOptions]="{standalone: true}"
-                        [disabled]="!showProject" (selectionChange)="onProjectChange($event)">
-                        <mat-option *ngFor="let option of projects" [value]="option">{{ option.name }}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-
-            <div class="detail">
-                <span class="detail-label">Description of the issue</span>
-                <span>{{ selectedServiceRequest.incidentDescription }}</span>
-            </div>
-            <div class="detail">
-                <span class="detail-label">Contact Number</span>
-                <span>{{ selectedServiceRequest.contactNumber }}</span>
-            </div>
+  <mat-card-content class="form-body">
+    <div class="request-grid">
+      <div class="detail">
+        <span class="detail-label">Facility Name</span>
+        <span>{{ selectedServiceRequest.facilityName }}</span>
+      </div>
+      <div class="detail">
+        <span class="detail-label">Date Logged</span>
+        <span>{{ selectedServiceRequest.createdDate | date:'d MMMM yyyy' }}</span>
+      </div>
+      <div class="detail">
+        <div class="control-heading">
+          <span class="detail-label">Supplier</span>
+          <mat-checkbox [(ngModel)]="supplierCheckbox" [ngModelOptions]="{standalone: true}"
+          (change)="onSupplierCheckboxChange($event)" aria-label="Assign a supplier"></mat-checkbox>
         </div>
+        <mat-form-field appearance="outline">
+          <mat-label>Supplier</mat-label>
+          <mat-select [(ngModel)]="supplier" [ngModelOptions]="{standalone: true}"
+            [disabled]="!showSupplier" (selectionChange)="onSupplierChange($event)">
+            @for (option of suppliers; track option) {
+              <mat-option [value]="option">{{ option.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-        <div class="request-grid secondary-grid">
-            <section class="notes-section">
-                <mat-form-field appearance="outline" class="note-input">
-                    <mat-label>Note</mat-label>
-                    <input matInput [(ngModel)]="note" [ngModelOptions]="{standalone: true}" autocomplete="off">
-                </mat-form-field>
-                <button mat-raised-button color="primary" type="button" (click)="onAddNote()">Add Note</button>
-                <mat-list>
-                    <mat-list-item *ngFor="let item of selectedServiceRequest.faultNotes">
-                        <div matListItemTitle>{{ item.createdDate | date:'d MMMM yyyy h:mm a' }}</div>
-                        <div matListItemLine>{{ item.comment }}</div>
-                    </mat-list-item>
-                </mat-list>
-            </section>
-
-            <section class="attachments-section">
-                <h3>Attachments</h3>
-                <ul>
-                    <li *ngFor="let file of attachments">
-                        <a target="_blank" rel="noopener" [href]="file.url">{{ file.name }}</a>
-                    </li>
-                </ul>
-            </section>
-
-            <section class="documents-section">
-                <h3>Completion certificate</h3>
-                <mat-checkbox [(ngModel)]="selectedServiceRequest.hasCompletionCertificate"
-                    [ngModelOptions]="{standalone: true}" (change)="onCompletionCertificateChange($event)">
-                    Completion certificate received
-                </mat-checkbox>
-                <div *ngIf="selectedServiceRequest.hasCompletionCertificate" class="document-upload">
-                    <input type="file" accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                        (change)="onChooseCompletionCertificate($event)" aria-label="Upload completion certificate">
-                    <button mat-button type="button" *ngIf="completionCertificate"
-                        (click)="onRemoveCompletionCertificate(null)">Remove selected file</button>
-                    <a *ngIf="showCompletionCertificateUrl" target="_blank" rel="noopener"
-                        [href]="completionCertificateUrl()">View completion certificate</a>
-                </div>
-
-                <h3>Contract invoice</h3>
-                <mat-checkbox [(ngModel)]="selectedServiceRequest.hasContractInvoice"
-                    [ngModelOptions]="{standalone: true}" (change)="onContractInvoiceChange($event)">
-                    Contract invoice received
-                </mat-checkbox>
-                <div *ngIf="selectedServiceRequest.hasContractInvoice" class="document-upload">
-                    <input type="file" accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                        (change)="onChooseContractInvoice($event)" aria-label="Upload contract invoice">
-                    <button mat-button type="button" *ngIf="contractInvoice"
-                        (click)="onRemoveContractInvoice(null)">Remove selected file</button>
-                    <a *ngIf="showContractInvoiceUrl" target="_blank" rel="noopener"
-                        [href]="contractInvoiceUrl()">View contract invoice</a>
-                </div>
-            </section>
+      <div class="detail">
+        <span class="detail-label">Exact Location of Issue</span>
+        <span>{{ selectedServiceRequest.propertyDescription }}</span>
+      </div>
+      <div class="detail">
+        <span class="detail-label">Name &amp; Surname</span>
+        <span>{{ selectedServiceRequest.contactName }}</span>
+      </div>
+      <div class="detail">
+        <div class="control-heading">
+          <span class="detail-label">Project</span>
+          <mat-checkbox [(ngModel)]="projectCheckbox" [ngModelOptions]="{standalone: true}"
+          (change)="onProjectCheckboxChange($event)" aria-label="Assign a project"></mat-checkbox>
         </div>
-    </mat-card-content>
+        <mat-form-field appearance="outline">
+          <mat-label>Project</mat-label>
+          <mat-select [(ngModel)]="project" [ngModelOptions]="{standalone: true}"
+            [disabled]="!showProject" (selectionChange)="onProjectChange($event)">
+            @for (option of projects; track option) {
+              <mat-option [value]="option">{{ option.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-    <mat-card-actions align="end">
-        <button mat-button *ngIf="isUpdated" type="button" (click)="onCancel()">Close</button>
-        <button mat-raised-button color="primary" *ngIf="!showCloseTicket() && selectedServiceRequest.status !== 'Close'"
-            type="button" (click)="onSubmit(); activeIndex = 2">Submit</button>
-        <button mat-raised-button color="warn" *ngIf="showCloseTicket() && selectedServiceRequest.status !== 'Close'"
-            type="button" (click)="onCloseicket()">Close This Ticket</button>
-    </mat-card-actions>
-</mat-card>
+      <div class="detail">
+        <span class="detail-label">Description of the issue</span>
+        <span>{{ selectedServiceRequest.incidentDescription }}</span>
+      </div>
+      <div class="detail">
+        <span class="detail-label">Contact Number</span>
+        <span>{{ selectedServiceRequest.contactNumber }}</span>
+      </div>
+    </div>
+
+    <div class="request-grid secondary-grid">
+      <section class="notes-section">
+        <mat-form-field appearance="outline" class="note-input">
+          <mat-label>Note</mat-label>
+          <input matInput [(ngModel)]="note" [ngModelOptions]="{standalone: true}" autocomplete="off">
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="button" (click)="onAddNote()">Add Note</button>
+        <mat-list>
+          @for (item of selectedServiceRequest.faultNotes; track item) {
+            <mat-list-item>
+              <div matListItemTitle>{{ item.createdDate | date:'d MMMM yyyy h:mm a' }}</div>
+              <div matListItemLine>{{ item.comment }}</div>
+            </mat-list-item>
+          }
+        </mat-list>
+      </section>
+
+      <section class="attachments-section">
+        <h3>Attachments</h3>
+        <ul>
+          @for (file of attachments; track file) {
+            <li>
+              <a target="_blank" rel="noopener" [href]="file.url">{{ file.name }}</a>
+            </li>
+          }
+        </ul>
+      </section>
+
+      <section class="documents-section">
+        <h3>Completion certificate</h3>
+        <mat-checkbox [(ngModel)]="selectedServiceRequest.hasCompletionCertificate"
+          [ngModelOptions]="{standalone: true}" (change)="onCompletionCertificateChange($event)">
+          Completion certificate received
+        </mat-checkbox>
+        @if (selectedServiceRequest.hasCompletionCertificate) {
+          <div class="document-upload">
+            <input type="file" accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              (change)="onChooseCompletionCertificate($event)" aria-label="Upload completion certificate">
+              @if (completionCertificate) {
+                <button mat-button type="button"
+                (click)="onRemoveCompletionCertificate(null)">Remove selected file</button>
+              }
+              @if (showCompletionCertificateUrl) {
+                <a target="_blank" rel="noopener"
+                [href]="completionCertificateUrl()">View completion certificate</a>
+              }
+            </div>
+          }
+
+          <h3>Contract invoice</h3>
+          <mat-checkbox [(ngModel)]="selectedServiceRequest.hasContractInvoice"
+            [ngModelOptions]="{standalone: true}" (change)="onContractInvoiceChange($event)">
+            Contract invoice received
+          </mat-checkbox>
+          @if (selectedServiceRequest.hasContractInvoice) {
+            <div class="document-upload">
+              <input type="file" accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                (change)="onChooseContractInvoice($event)" aria-label="Upload contract invoice">
+                @if (contractInvoice) {
+                  <button mat-button type="button"
+                  (click)="onRemoveContractInvoice(null)">Remove selected file</button>
+                }
+                @if (showContractInvoiceUrl) {
+                  <a target="_blank" rel="noopener"
+                  [href]="contractInvoiceUrl()">View contract invoice</a>
+                }
+              </div>
+            }
+          </section>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        @if (isUpdated) {
+          <button mat-button type="button" (click)="onCancel()">Close</button>
+        }
+        @if (!showCloseTicket() && selectedServiceRequest.status !== 'Close') {
+          <button mat-raised-button color="primary"
+          type="button" (click)="onSubmit(); activeIndex = 2">Submit</button>
+        }
+        @if (showCloseTicket() && selectedServiceRequest.status !== 'Close') {
+          <button mat-raised-button color="warn"
+          type="button" (click)="onCloseicket()">Close This Ticket</button>
+        }
+      </mat-card-actions>
+    </mat-card>

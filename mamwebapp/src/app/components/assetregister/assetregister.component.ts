@@ -1,38 +1,55 @@
-import { Component, OnInit, Input, ViewChild, AfterViewInit, ChangeDetectionStrategy, TemplateRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, AfterViewInit, ChangeDetectionStrategy, TemplateRef, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { first } from 'rxjs/operators';
 import { FacilityService } from '../../services/facility/facility.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { Facility } from 'src/app/models/facility.model';
 import { User } from 'src/app/models/user.model';
 import { ToastService } from '../../services/toast.service';
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCardActions } from '@angular/material/card';
+import { DatePipe } from '@angular/common';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { AddassetregisterComponent } from './addassetregister/addassetregister.component';
+import { PrintAssetComponent } from './print-asset/print-asset.component';
+import { ConditionAssessmentComponent } from './conditionassessment/condition-assessment.component';
 
 @Component({
-  standalone: false,
-  selector: 'app-assetregister',
-  templateUrl: './assetregister.component.html',
-  styleUrls: ['./assetregister.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-assetregister',
+    templateUrl: './assetregister.component.html',
+    styleUrls: ['./assetregister.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatCard, MatCardContent, MatButton, MatIcon, MatFormField, MatLabel, MatPrefix, MatInput, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatIconButton, MatTooltip, MatMenuTrigger, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatProgressSpinner, MatPaginator, MatMenu, MatMenuContent, MatMenuItem, MatCardHeader, MatCardTitle, AddassetregisterComponent, PrintAssetComponent, MatCardActions, ConditionAssessmentComponent, DatePipe]
 })
 export class AssetregisterComponent implements OnInit, AfterViewInit {
+  private authenticationService = inject(AuthenticationService);
+  facilityService = inject(FacilityService);
+  private toastService = inject(ToastService);
+  private dialog = inject(MatDialog);
+
   loading = true;
-  showPrintDialog: boolean= false;
-  dialogHeader:string = '';  
-  printDialogHeader: string = '';
-  showdelete: boolean = false;
+  showPrintDialog= false;
+  dialogHeader = '';  
+  printDialogHeader = '';
+  showdelete = false;
   @Input() selectedAsset: any
   facility: Facility;
   newCaptured = 0;
   awaitingAppoval = 0;
   awaitingVerification = 0;
   deleting = false;
-  showDialog: boolean = false;
-  showConditionAssessment: boolean = false;
-  mode: string = 'Add'; 
+  showDialog = false;
+  showConditionAssessment = false;
+  mode = 'Add'; 
   error = '';
   cols = [
     { field: 'fileReference', header: 'File Reference' },
@@ -54,17 +71,10 @@ export class AssetregisterComponent implements OnInit, AfterViewInit {
   private printDialogRef: MatDialogRef<unknown> | null = null;
   private deleteDialogRef: MatDialogRef<unknown> | null = null;
   private conditionAssessmentDialogRef: MatDialogRef<unknown> | null = null;
-  landTotal: number = 0;
-  buildingTotal:number = 0;
-  nonResidentialBuildingTotal:number = 0;
+  landTotal = 0;
+  buildingTotal = 0;
+  nonResidentialBuildingTotal = 0;
   currentUser: User;
-  
-  constructor(
-    private authenticationService: AuthenticationService,
-    public facilityService: FacilityService,
-    private toastService: ToastService,
-    private dialog: MatDialog
-  ) { }
 
   ngOnInit() {
     this.authenticationService.currentUser.pipe().subscribe(x => {
@@ -189,7 +199,7 @@ export class AssetregisterComponent implements OnInit, AfterViewInit {
     if (!this.facility || this.deleting) {
       return;
     }
-    let facility = this.facility;
+    const facility = this.facility;
     this.deleting = true;
     if (this.deleteDialogRef) {
       this.deleteDialogRef.disableClose = true;

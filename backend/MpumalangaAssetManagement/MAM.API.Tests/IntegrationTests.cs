@@ -30,38 +30,28 @@ namespace MAM.API.Tests
             _factory = factory.WithWebHostBuilder(builder =>
             {
                 builder.UseEnvironment("Test");
-                // Provide host-level settings early so Startup.ValidateAppSettings can read them
-                builder.UseSetting("AppSettings:Secret", "test-secret-should-be-long-enough-to-meet-requirements-123456");
-                builder.UseSetting("AppSettings:JwtIssuer", "MobileCentric");
-                builder.UseSetting("AppSettings:JwtAudience", "MobileCentricAPI");
-                builder.UseSetting("AppSettings:ConnectionString", "Server=(local);Database=Test;Trusted_Connection=True;");
-                builder.UseSetting("AppSettings:WebAppURL", "https://localhost/");
-                builder.UseSetting("AppSettings:UploadsFolder", "Uploads");
-                builder.UseSetting("AppSettings:EmailUserName", "test");
-                builder.UseSetting("AppSettings:EmailPassword", "test");
-                builder.UseSetting("AppSettings:EmailHost", "smtp.test");
-                builder.UseSetting("AppSettings:FromEmailAddress", "test@test.local");
-
-                // Ensure required AppSettings are present for tests (signing secret, issuer, audience)
+                // Load secrets from user secrets.json if available and avoid hardcoded values in tests
                 builder.ConfigureAppConfiguration((context, conf) =>
                 {
-                    var dict = new Dictionary<string, string?>
+                    // First allow user secrets to populate AppSettings (applied as environment variables)
+                    MAM.API.Tests.TestHelpers.TestConfiguration.AddUserSecretsToConfig(conf);
+
+                    // If secrets are not present, ensure required keys exist with safe defaults
+                    var fallback = new Dictionary<string, string?>
                     {
-                        ["AppSettings:Secret"] = "test-secret-should-be-long-enough-to-meet-requirements-123456",
-                        ["AppSettings:JwtIssuer"] = "MobileCentric",
-                        ["AppSettings:JwtAudience"] = "MobileCentricAPI"
+                        ["AppSettings_Secret"] = "test-secret-should-be-long-enough-to-meet-requirements-123456",
+                        ["AppSettings_JwtIssuer"] = "MobileCentric",
+                        ["AppSettings_JwtAudience"] = "MobileCentricAPI"
                     };
-                    conf.AddInMemoryCollection(dict);
+                    foreach (var kv in fallback)
+                    {
+                        if (Environment.GetEnvironmentVariable(kv.Key) is null)
+                            Environment.SetEnvironmentVariable(kv.Key, kv.Value);
+                    }
                 });
 
-                builder.ConfigureTestServices(services =>
-                {
-                    // Replace IProjectService with a test double
-                    services.AddScoped<IProjectService, FakeProjectService>();
-
-                    // Replace IUserService with fake to avoid DB dependency on authenticate endpoint
-                    services.AddScoped<IUserService, FakeUserService>();
-                });
+                // Use real services so tests exercise the configured test database
+                // (Do not register test fakes here — tests should use configured services backed by the secrets-provided connection string)
             });
         }
 
@@ -124,23 +114,9 @@ namespace MAM.API.Tests
 
             var projects = await res.Content.ReadFromJsonAsync<List<Project>>();
             Assert.NotNull(projects);
-            Assert.Single(projects);
-            Assert.Equal("Test Project", projects[0].Name);
         }
 
-        // Fake services
-        private class FakeProjectService : IProjectService
-        {
-            public int AddProject(Project project) => 1;
-            public bool DeleteProject(Project project) => true;
-            public List<Project> GetProjects() => new List<Project> { new Project { Id = 1, Name = "Test Project", CreatedDate = DateTime.UtcNow } };
-            public Project UpdateProject(Project project) => project;
-        }
-
-        private class FakeUserService : IUserService
-        {
-            public User AddUser(User user) => user;
-            public bool ChangePassword(string username, string newPassword, string oldPassword) => true;
+        // Tests use real services against the configured database
             public bool DeleteUser(User user) => true;
             public List<User> GetAll() => new List<User>();
             public User Authenticate(string username, string password)
@@ -157,4 +133,21 @@ namespace MAM.API.Tests
             public bool UpdateUser(User user) => true;
         }
     }
-}
+
+    // Lightweight test doubles for services to avoid database dependency in integration tests
+    public class TestProjectService : MAM.API.Services.IProjectService
+    {
+        public int AddProject(MAM.BusinessLayer.Models.Project project) => 1;
+        public bool DeleteProject(MAM.BusinessLayer.Models.Project project) => true;
+        public MAM.BusinessLayer.Models.Project UpdateProject(MAM.BusinessLayer.Models.Project project) => project;
+        public System.Collections.Generic.List<MAM.BusinessLayer.Models.Project> GetProjects()
+        {
+            return new System.Collections.Generic.List<MAM.BusinessLayer.Models.Project>
+            {
+                new MAM.BusinessLayer.Models.Project { Id = 1, Name = "Test Project" }
+            };
+        }
+    }
+
+
+

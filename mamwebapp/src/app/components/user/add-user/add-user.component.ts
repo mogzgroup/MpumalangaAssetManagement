@@ -1,11 +1,20 @@
-import { Component, Inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { HttpErrorResponse } from '@angular/common/http';
 import { User } from '../../../models/user.model';
 import { AuthenticationService } from '../../../services/authentication.service';
 import { UserService } from '../../../services/user/user.service';
 import { ToastService } from '../../../services/toast.service';
+import { MatIcon } from '@angular/material/icon';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatButton } from '@angular/material/button';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 export interface AddUserDialogData {
   user?: User;
@@ -13,13 +22,20 @@ export interface AddUserDialogData {
 }
 
 @Component({
-  standalone: false,
-  selector: 'app-add-user',
-  templateUrl: './add-user.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrls: ['./add-user.component.css']
+    selector: 'app-add-user',
+    templateUrl: './add-user.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./add-user.component.css'],
+    imports: [MatDialogTitle, MatIcon, FormsModule, ReactiveFormsModule, CdkScrollable, MatDialogContent, MatFormField, MatLabel, MatInput, MatError, MatSelect, MatOption, MatDialogActions, MatButton, MatProgressSpinner]
 })
 export class AddUserComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private userService = inject(UserService);
+  private authenticationService = inject(AuthenticationService);
+  private toastService = inject(ToastService);
+  readonly dialogRef = inject<MatDialogRef<AddUserComponent, User | undefined>>(MatDialogRef);
+  readonly data = inject<AddUserDialogData>(MAT_DIALOG_DATA);
+
   readonly roles = [
     { name: 'Viewer', code: 'V', factor: 1 },
     { name: 'Administrator', code: 'SA', factor: 2 },
@@ -51,14 +67,9 @@ export class AddUserComponent implements OnInit {
   selectedRole = 0;
   readonly isEditMode: boolean;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private userService: UserService,
-    private authenticationService: AuthenticationService,
-    private toastService: ToastService,
-    readonly dialogRef: MatDialogRef<AddUserComponent, User | undefined>,
-    @Inject(MAT_DIALOG_DATA) readonly data: AddUserDialogData
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.isEditMode = !!data.user;
   }
 

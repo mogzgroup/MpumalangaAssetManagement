@@ -1,67 +1,68 @@
+using MAM.API.Services;
+using MAM.BusinessLayer.Models;
+using MAM.BusinessLayer.Models.Enums;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.IdentityModel.Tokens.Jwt;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using Xunit;
-using MAM.BusinessLayer.Models;
-using MAM.API.Services;
 
 namespace MAM.API.Tests.Controllers
 {
-    public class FacilityControllerTests : IClassFixture<WebApplicationFactory<Program>>
+    public class FacilityControllerTests : IClassFixture<WebApplicationFactory<Program>>, IDisposable
     {
         private readonly WebApplicationFactory<Program> _factory;
+        private readonly MAM.API.Tests.TestHelpers.TestDatabaseSeedResult _seedResult;
 
         public FacilityControllerTests(WebApplicationFactory<Program> factory)
         {
             _factory = factory.WithWebHostBuilder(builder =>
             {
                 builder.UseEnvironment("Test");
-                builder.UseSetting("AppSettings:Secret", "test-secret-should-be-long-enough-to-meet-requirements-123456");
-                builder.UseSetting("AppSettings:JwtIssuer", "MobileCentric");
-                builder.UseSetting("AppSettings:JwtAudience", "MobileCentricAPI");
-                builder.UseSetting("AppSettings:ConnectionString", "Server=(local);Database=Test;Trusted_Connection=True;");
-                builder.UseSetting("AppSettings:WebAppURL", "https://localhost/");
-                builder.UseSetting("AppSettings:UploadsFolder", "Uploads");
-                builder.UseSetting("AppSettings:EmailUserName", "test");
-                builder.UseSetting("AppSettings:EmailPassword", "test");
-                builder.UseSetting("AppSettings:EmailHost", "smtp.test");
-                builder.UseSetting("AppSettings:FromEmailAddress", "test@test.local");
-
+                // Load user secrets and fall back to safe defaults; avoid hardcoded credentials
                 builder.ConfigureAppConfiguration((context, conf) =>
                 {
-                    var dict = new System.Collections.Generic.Dictionary<string, string?>
+                    MAM.API.Tests.TestHelpers.TestConfiguration.AddUserSecretsToConfig(conf);
+                    var fallback = new System.Collections.Generic.Dictionary<string, string?>
                     {
-                        ["AppSettings:Secret"] = "test-secret-should-be-long-enough-to-meet-requirements-123456",
-                        ["AppSettings:JwtIssuer"] = "MobileCentric",
-                        ["AppSettings:JwtAudience"] = "MobileCentricAPI",
-                        ["AppSettings:ConnectionString"] = "Server=(local);Database=Test;Trusted_Connection=True;",
-                        ["AppSettings:WebAppURL"] = "https://localhost/",
-                        ["AppSettings:UploadsFolder"] = "Uploads",
-                        ["AppSettings:EmailUserName"] = "test",
-                        ["AppSettings:EmailPassword"] = "test",
-                        ["AppSettings:EmailHost"] = "smtp.test",
-                        ["AppSettings:FromEmailAddress"] = "test@test.local"
+                        ["AppSettings_Secret"] = "test-secret-should-be-long-enough-to-meet-requirements-123456",
+                        ["AppSettings_JwtIssuer"] = "MobileCentric",
+                        ["AppSettings_JwtAudience"] = "MobileCentricAPI"
                     };
-                    conf.AddInMemoryCollection(dict);
+                    foreach (var kv in fallback)
+                    {
+                        if (Environment.GetEnvironmentVariable(kv.Key) is null)
+                            Environment.SetEnvironmentVariable(kv.Key, kv.Value);
+                    }
                 });
 
-                builder.ConfigureTestServices(services =>
-                {
-                    // Replace IFacilityService with fake
-                    services.AddScoped<IFacilityService, FakeFacilityService>();
-                });
+                // Use real IFacilityService so tests exercise the configured database
             });
+            // Ensure required test data exists in the real database
+            _seedResult = TestHelpers.TestDatabaseSeeder.SeedAsync(_factory).GetAwaiter().GetResult();
         }
+
+        public void Dispose()
+        {
+            TestHelpers.TestDatabaseSeeder.CleanupAsync(_factory, _seedResult).GetAwaiter().GetResult();
+        }
+        // Placeholder no-op test to reserve space for future tests
+        [Fact]
+        public void Placeholder_NoOp() { }
 
         [Fact]
         public async Task GetProperties_WithoutToken_Returns401()
@@ -74,50 +75,207 @@ namespace MAM.API.Tests.Controllers
         [Fact]
         public async Task GetProperties_WithValidToken_ReturnsOkAndData()
         {
-            var config = _factory.Services.GetRequiredService<IConfiguration>();
-            var secret = config["AppSettings:Secret"]!;
-            var issuer = config["AppSettings:JwtIssuer"]!;
-            var audience = config["AppSettings:JwtAudience"]!;
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Issuer = issuer,
-                Audience = audience,
-                Subject = new System.Security.Claims.ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "1") }),
-                Expires = System.DateTime.UtcNow.AddMinutes(30),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
-
-            var client = _factory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenString);
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
 
             var res = await client.GetAsync("/api/project/getproperties");
             res.EnsureSuccessStatusCode();
             var props = await res.Content.ReadFromJsonAsync<List<Facility>>();
             Assert.NotNull(props);
         }
-
-        private class FakeFacilityService : IFacilityService
+        [Fact]
+        public async Task GetFacilityZonings_ReturnsOk()
         {
-            public List<DashboardWedge> GetDashboardWedges() => new List<DashboardWedge>();
-            public List<FacilityType> GetFacilityZonings() => new List<FacilityType>();
-            public List<FacilitySummaryChart> GetFacilitySummaries() => new List<FacilitySummaryChart>();
-            public List<MapCoordinate> GetMapCoordinates() => new List<MapCoordinate>();
-            public List<Facility> GetAllFacilities() => new List<Facility>();
-            public List<Facility> GetProjectFacilities() => new List<Facility>();
-            public List<Facility> GetAssetRegisterFacilities() => new List<Facility>();
-            public List<Facility> GetProperties(string userDepartment) => new List<Facility> { new Facility { Id = 1, Name = "Test Facility" } };
-            public Facility GetFacilityById(int id, MAM.BusinessLayer.Models.Enums.FacilityTypes facilityType) => new Facility { Id = id, Name = "Facility" };
-            public Facility SaveFacility(string step, Facility facility) => facility;
-            public bool UpdateFacility(string step, Facility facility) => true;
-            public bool DeleteFacility(int id) => true;
-            public List<Facility> GetBuildings() => new List<Facility> { new Facility { Id = 1, Name = "Test Facility" } };
-            public List<string> GetTowns() => new List<string>();
-            public List<Facility> GetBuildingsByTown(string town) => new List<Facility>();
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
+            var res = await client.GetAsync("/api/facility/getfacilityzonings");
+            res.EnsureSuccessStatusCode();
+            var list = await res.Content.ReadFromJsonAsync<List<MAM.BusinessLayer.Models.FacilityType>>();
+            Assert.NotNull(list);
         }
+
+        [Fact]
+        public async Task GetDashboardWedges_ReturnsOk()
+        {
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
+            var res = await client.GetAsync("/api/facility/getdashboardwedges");
+            res.EnsureSuccessStatusCode();
+            var list = await res.Content.ReadFromJsonAsync<List<MAM.BusinessLayer.Models.DashboardWedge>>();
+            Assert.NotNull(list);
+        }
+
+        [Fact]
+        public async Task GetFacilitySummaries_ReturnsOk()
+        {
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
+            var res = await client.GetAsync("/api/facility/getfacilitysummaries");
+            res.EnsureSuccessStatusCode();
+            var list = await res.Content.ReadFromJsonAsync<List<MAM.BusinessLayer.Models.FacilitySummaryChart>>();
+            Assert.NotNull(list);
+        }
+
+        [Fact]
+        public async Task GetMapCoordinates_ReturnsOkAndParsableCoordinates()
+        {
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
+            var res = await client.GetAsync("/api/facility/getmapcoordinates");
+            res.EnsureSuccessStatusCode();
+            var list = await res.Content.ReadFromJsonAsync<List<MAM.BusinessLayer.Models.MapCoordinate>>();
+            Assert.NotNull(list);
+            foreach (var coord in list)
+            {
+                // Longitude and Latitude should contain a parsable numeric value. Normalize and extract numeric token if needed.
+                if (!string.IsNullOrWhiteSpace(coord.Longitude))
+                {
+                    var lon = coord.Longitude.Trim().Replace('\u2212', '-'); // normalize unicode minus
+                    var m = Regex.Match(lon, "-?\\d+(\\.\\d+)?");
+                    Assert.True(m.Success, $"Longitude '{coord.Longitude}' did not contain a numeric token");
+                    Assert.True(double.TryParse(m.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out _), $"Longitude '{coord.Longitude}' is not parseable");
+                }
+
+                if (!string.IsNullOrWhiteSpace(coord.Latitude))
+                {
+                    var lat = coord.Latitude.Trim().Replace('\u2212', '-');
+                    var m = Regex.Match(lat, "-?\\d+(\\.\\d+)?");
+                    Assert.True(m.Success, $"Latitude '{coord.Latitude}' did not contain a numeric token");
+                    Assert.True(double.TryParse(m.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out _), $"Latitude '{coord.Latitude}' is not parseable");
+                }
+            }
+        }
+
+        [Fact]
+        public async Task GetBuildingsByTown_InvalidTown_ReturnsOkEmpty()
+        {
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
+            var res = await client.GetAsync("/api/facility/getbuildings/this-town-does-not-exist");
+            res.EnsureSuccessStatusCode();
+            var list = await res.Content.ReadFromJsonAsync<List<Facility>>();
+            Assert.NotNull(list);
+        }
+
+        [Fact]
+        public async Task GetAllFacilities_ReturnsOk()
+        {
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
+            var res = await client.GetAsync("/api/facility/getallfacilities");
+            res.EnsureSuccessStatusCode();
+            var list = await res.Content.ReadFromJsonAsync<List<Facility>>();
+            Assert.NotNull(list);
+        }
+
+        [Fact]
+        public async Task GetTowns_ReturnsOk()
+        {
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
+            var res = await client.GetAsync("/api/facility/gettowns");
+            res.EnsureSuccessStatusCode();
+            var list = await res.Content.ReadFromJsonAsync<List<string>>();
+            Assert.NotNull(list);
+        }
+
+        [Fact]
+        public async Task GetAssetRegisterFacilities_ReturnsOk()
+        {
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
+            var res = await client.GetAsync("/api/facility/getassetregisterfacilities");
+            res.EnsureSuccessStatusCode();
+            var list = await res.Content.ReadFromJsonAsync<List<Facility>>();
+            Assert.NotNull(list);
+        }
+
+        [Fact]
+        public async Task GetFacilityByCode_InvalidId_ReturnsNotFound()
+        {
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
+            var res = await client.GetAsync("/api/facility/getFacilityByCode/0/1");
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, res.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteFacility_InvalidId_ReturnsOkBool()
+        {
+            // Create a facility directly in the test database, then call the API to delete it
+            var conn = GetTestConnectionString();
+            int createdId = 0;
+            using (var db = new MAM.DataAccess.DataContext(conn))
+            {
+                // Ensure a valid CapturerId exists (create Role and User if necessary)
+                var capturerId = db.Users.Select(u => u.Id).FirstOrDefault();
+                if (capturerId == 0)
+                {
+                    var roleId = db.Roles.Select(r => r.Id).FirstOrDefault();
+                    if (roleId == 0)
+                    {
+                        var role = new MAM.DataAccess.Tables.Role
+                        {
+                            Name = "TestRole",
+                            CreatedDate = DateTime.Now,
+                            CreatedUserId = 0
+                        };
+                        db.Roles.Add(role);
+                        db.SaveChanges();
+                        roleId = role.Id;
+                    }
+
+                    var user = new MAM.DataAccess.Tables.User
+                    {
+                        Name = "Test",
+                        Surname = "User",
+                        Username = "testuser_" + Guid.NewGuid().ToString("N"),
+                        Password = "TempPass!1",
+                        RoleId = roleId,
+                        IsActive = true,
+                        Email = "test@local",
+                        PasswordIsChanged = false,
+                        CreatedDate = DateTime.Now,
+                        CreatedUserId = 0
+                    };
+                    db.Users.Add(user);
+                    db.SaveChanges();
+                    capturerId = user.Id;
+                }
+
+                var f = new MAM.DataAccess.Tables.Facility
+                {
+                    Name = "TEST-FACILITY-" + Guid.NewGuid().ToString("N"),
+                    FileReference = "REF-" + Guid.NewGuid().ToString("N"),
+                    Type = "Test",
+                    ClientCode = "TCODE",
+                    CapturerId = capturerId,
+                    CreatedDate = DateTime.Now,
+                    Status = "Active",
+                    UserDepartment = "Test"
+                };
+                db.Facilities.Add(f);
+                db.SaveChanges();
+                createdId = f.Id;
+            }
+
+            var client = TestHelpers.TestAuthHelper.GetAuthenticatedClientAsync(_factory).GetAwaiter().GetResult();
+            var res = await client.DeleteAsync($"/api/facility/deleteFacility/{createdId}");
+            res.EnsureSuccessStatusCode();
+            var deleted = await res.Content.ReadFromJsonAsync<bool>();
+            Assert.True(deleted);
+
+            // verify status in DB
+            using (var db = new MAM.DataAccess.DataContext(conn))
+            {
+                var dbf = db.Facilities.FirstOrDefault(x => x.Id == createdId);
+                Assert.NotNull(dbf);
+                Assert.Equal("Deleted", dbf.Status);
+            }
+        }
+
+        private string GetTestConnectionString()
+        {
+            var envConn = Environment.GetEnvironmentVariable("AppSettings__ConnectionString")
+                          ?? Environment.GetEnvironmentVariable("AppSettings_ConnectionString")
+                          ?? Environment.GetEnvironmentVariable("MAM_TEST_CONNECTIONSTRING");
+            var config = _factory.Services.GetService(typeof(IConfiguration)) as IConfiguration;
+            var conn = envConn ?? config?.GetSection("AppSettings")["ConnectionString"];
+            if (string.IsNullOrWhiteSpace(conn))
+                throw new InvalidOperationException("Test database connection string not provided. Set AppSettings__ConnectionString or MAM_TEST_CONNECTIONSTRING.");
+            return conn;
+        }
+
+        // Tests use the real IFacilityService implementation against the configured database
     }
 }

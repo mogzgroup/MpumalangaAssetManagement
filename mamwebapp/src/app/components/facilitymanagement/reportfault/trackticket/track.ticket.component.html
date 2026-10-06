@@ -1,29 +1,33 @@
 <div>
-    <form [formGroup]="trackFaultForm" style="height: auto;">
-        <div class="form-body">
-            <div class="formgrid grid">
-                <mat-form-field appearance="outline" class="reference-field">
-                    <mat-label>Enter your reference number</mat-label>
-                    <input matInput [(ngModel)]="referenceNumber" formControlName="referenceNumber" autocomplete="off">
-                    <mat-error *ngIf="submitted && f.referenceNumber.errors?.required">
-                        This field is required.
-                    </mat-error>
-                </mat-form-field>
-            </div>     
-        </div>
-    </form>
-    <br/>
-    <div style="text-align: center;">        
-        <button type="button" (click)="onSearch()" mat-raised-button color="primary">Search</button>
+  <form [formGroup]="trackFaultForm" style="height: auto;">
+    <div class="form-body">
+      <div class="formgrid grid">
+        <mat-form-field appearance="outline" class="reference-field">
+          <mat-label>Enter your reference number</mat-label>
+          <input matInput [(ngModel)]="referenceNumber" formControlName="referenceNumber" autocomplete="off">
+          @if (submitted && f.referenceNumber.errors?.required) {
+            <mat-error>
+              This field is required.
+            </mat-error>
+          }
+        </mat-form-field>
+      </div>
     </div>
-    <br/>
-    <div *ngIf="ticketisFound">
-        <p class="success">
-            Reference: {{referenceNumber}}
-            <br/>
-            Your fault status is <b>{{status}}</b> 
-        </p>
+  </form>
+  <br/>
+  <div style="text-align: center;">
+    <button type="button" (click)="onSearch()" mat-raised-button color="primary">Search</button>
+  </div>
+  <br/>
+  @if (ticketisFound) {
+    <div>
+      <p class="success">
+        Reference: {{referenceNumber}}
+        <br/>
+        Your fault status is <b>{{status}}</b>
+      </p>
     </div>
+  }
 
 </div>
 

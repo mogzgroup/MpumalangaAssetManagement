@@ -1,8 +1,8 @@
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild, inject } from '@angular/core';
 import { ToastService } from 'src/app/services/toast.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
+import { FormGroup, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UampService } from 'src/app/services/uamp/uamp.service';
 import { SurrenderPlan } from 'src/app/models/surrender-plan.model';
 import { UAMP } from 'src/app/models/uamp.model';
@@ -11,17 +11,36 @@ import { Property } from 'src/app/models/property.model';
 import { Router } from '@angular/router';
 import { SharedService } from 'src/app/services/shared.service';
 import { first } from 'rxjs/operators';
+import { MatCard, MatCardSubtitle, MatCardContent, MatCardHeader, MatCardTitle, MatCardActions } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+
+import { MatInput } from '@angular/material/input';
+import { MatFormField, MatSuffix, MatLabel } from '@angular/material/form-field';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
 
 @Component({
-  standalone: false,
-  selector: 'app-template-six',
-  templateUrl: './template-six.component.html',
-  styleUrls: ['./template-six.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-template-six',
+    templateUrl: './template-six.component.html',
+    styleUrls: ['./template-six.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatCard, MatCardSubtitle, MatCardContent, MatButton, MatTooltip, MatIcon, MatInput, FormsModule, MatFormField, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, MatSlideToggle, MatPaginator, MatCardHeader, MatDialogTitle, MatCardTitle, CdkScrollable, MatDialogContent, ReactiveFormsModule, MatLabel, MatSelect, MatOption, MatCardActions, MatDialogActions]
 })
 export class TemplateSixComponent implements OnInit {
-  surrenderPlans: Array<SurrenderPlan> = [];
-  pagedSurrenderPlans: Array<SurrenderPlan> = [];
+  private router = inject(Router);
+  private sharedService = inject(SharedService);
+  private uampService = inject(UampService);
+  private formBuilder = inject(FormBuilder);
+  private toastService = inject(ToastService);
+  private dialog = inject(MatDialog);
+
+  surrenderPlans: SurrenderPlan[] = [];
+  pagedSurrenderPlans: SurrenderPlan[] = [];
   pageIndex = 0;
   pageSize = 5;
   pendingRelinquishPlan: SurrenderPlan | null = null;
@@ -30,11 +49,11 @@ export class TemplateSixComponent implements OnInit {
   regions: any[];
   newSurrenderPlanForm: FormGroup;
   uamp: UAMP;
-  displayDialog: boolean = false;
-  dialogHeader: string = '';
-  isEdit: boolean = false;
-  mode: string = 'Edit';
-  isLoading: boolean = false;
+  displayDialog = false;
+  dialogHeader = '';
+  isEdit = false;
+  mode = 'Edit';
+  isLoading = false;
 
   @ViewChild('formDialog') private formDialogTemplate: TemplateRef<unknown>;
   @ViewChild('relinquishConfirmationDialog') private relinquishConfirmationTemplate: TemplateRef<unknown>;
@@ -44,7 +63,7 @@ export class TemplateSixComponent implements OnInit {
     this.openFormDialog();
   }
 
-  constructor(private router: Router, private sharedService: SharedService, private uampService: UampService, private formBuilder: FormBuilder, private toastService: ToastService, private dialog: MatDialog) {
+  constructor() {
     this.uampService.uampChange.subscribe((value) => {
       if (value) {
         this.uamp = value;

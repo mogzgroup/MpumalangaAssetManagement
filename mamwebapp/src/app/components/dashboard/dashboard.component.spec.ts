@@ -1,4 +1,6 @@
 import { MatDialog } from '@angular/material/dialog';
+import { ChangeDetectorRef } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { NEVER, of } from 'rxjs';
 import { DashboardWedge } from '../../models/dashboard-wedge.model';
 import { FacilityService } from '../../services/facility/facility.service';
@@ -9,6 +11,7 @@ describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let facilityService: jasmine.SpyObj<FacilityService>;
   let toastService: jasmine.SpyObj<ToastService>;
+  let changeDetector: jasmine.SpyObj<ChangeDetectorRef>;
 
   beforeEach(() => {
     facilityService = jasmine.createSpyObj<FacilityService>('FacilityService', [
@@ -17,6 +20,7 @@ describe('DashboardComponent', () => {
       'getDashboardWedges'
     ]);
     toastService = jasmine.createSpyObj<ToastService>('ToastService', ['getApiErrorMessage', 'showError']);
+    changeDetector = jasmine.createSpyObj<ChangeDetectorRef>('ChangeDetectorRef', ['markForCheck']);
     const dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
 
     facilityService.getMapCoordinates.and.returnValue(of([]));
@@ -27,7 +31,15 @@ describe('DashboardComponent', () => {
       { name: 'Land', total: 30 }
     ] as DashboardWedge[]));
 
-    component = new DashboardComponent(facilityService, dialog, toastService);
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: FacilityService, useValue: facilityService },
+        { provide: MatDialog, useValue: dialog },
+        { provide: ToastService, useValue: toastService },
+        { provide: ChangeDetectorRef, useValue: changeDetector }
+      ]
+    });
+    component = TestBed.runInInjectionContext(() => new DashboardComponent());
   });
 
   it('loads dashboard sections independently without requesting unused summaries', () => {
@@ -42,6 +54,7 @@ describe('DashboardComponent', () => {
     expect(component.nonResidentialBuildings.total).toBe(10);
     expect(component.dwellings.total).toBe(20);
     expect(component.land.total).toBe(30);
+    expect(changeDetector.markForCheck).toHaveBeenCalledTimes(3);
     expect(toastService.showError).not.toHaveBeenCalled();
   });
 
@@ -55,6 +68,20 @@ describe('DashboardComponent', () => {
     expect(component.loadingZonings).toBe(false);
     expect(component.zoningsLoadError).toBe('Zoning information is taking too long to load.');
     expect(toastService.showError).toHaveBeenCalledWith(component.zoningsLoadError);
+
+    jasmine.clock().uninstall();
+  });
+
+  it('ends the dashboard totals loading state and offers retry when its request times out', () => {
+    jasmine.clock().install();
+    facilityService.getDashboardWedges.and.returnValue(NEVER);
+
+    component.loadWedges();
+    jasmine.clock().tick(30001);
+
+    expect(component.loadingWedges).toBe(false);
+    expect(component.wedgesLoadError).toBe('Dashboard totals are taking too long to load.');
+    expect(toastService.showError).toHaveBeenCalledWith(component.wedgesLoadError);
 
     jasmine.clock().uninstall();
   });

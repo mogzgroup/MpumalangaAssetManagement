@@ -1,6 +1,7 @@
 ﻿using MAM.BusinessLayer.Models;
 using MAM.BusinessLayer.Models.Templetes;
 using MAM.BusinessLayer.Repositories;
+using MAM.BusinessLayer.Interfaces;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -32,181 +33,67 @@ namespace MAM.API.Services
     public class UAMPService : IUAMPService
     {
         private readonly AppSettings _appSettings;
+        private readonly MAM.BusinessLayer.Interfaces.IUserImmovableAssetManagementPlanRepository _uampRepository;
 
-        public UAMPService(IOptions<AppSettings> appSettings)
+        public UAMPService(IOptions<AppSettings> appSettings, MAM.BusinessLayer.Interfaces.IUserImmovableAssetManagementPlanRepository uampRepository)
         {
             _appSettings = appSettings.Value;
+            _uampRepository = uampRepository;
         }
 
         public bool DeleteOperationPlan(OperationPlan operationPlan)
         {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.DeleteOperationPlan(operationPlan);
-            }
+            return _uampRepository.DeleteOperationPlan(operationPlan);
         }
 
         public bool DeleteProgramme(Programme programme)
         {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.DeleteProgramme(programme);
-            }
+            return _uampRepository.DeleteProgramme(programme);
         }
 
         public bool DeleteAcquisitionPlan(AcquisitionPlan acquisitionPlan)
         {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.DeleteAcquisitionPlan(acquisitionPlan);
-            }
+            return _uampRepository.DeleteAcquisitionPlan(acquisitionPlan);
         }
 
         public bool DeleteProperty(Property property)
         {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.DeleteProperty(property);
-            }
+            return _uampRepository.DeleteProperty(property);
         }
 
         public bool DeleteStrategicAssessment(StrategicAssessment strategicAssessment)
         {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.DeleteStrategicAssessment(strategicAssessment);
-            }
+            return _uampRepository.DeleteStrategicAssessment(strategicAssessment);
         }
 
         public bool DeleteSurrenderPlan(SurrenderPlan surrenderPlan)
         {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.DeleteSurrenderPlan(surrenderPlan);
-            }
+            return _uampRepository.DeleteSurrenderPlan(surrenderPlan);
         }
 
-        public UserImmovableAssetManagementPlan GetUamp(int id) {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.GetUamp(id);
-            }
-        }
+        public UserImmovableAssetManagementPlan GetUamp(int id) => _uampRepository.GetUamp(id);
 
-        public List<UserImmovableAssetManagementPlan> GetUserImmovableAssetManagementPlans(string department) {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.GetUserImmovableAssetManagementPlans(department);
-            }
-        }
+        public List<UserImmovableAssetManagementPlan> GetUserImmovableAssetManagementPlans(string department) => _uampRepository.GetUserImmovableAssetManagementPlans(department);
 
-        public UserImmovableAssetManagementPlan SaveUserImmovableAssetManagementPlan(UserImmovableAssetManagementPlan userImmovableAssetManagementPlan) {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.SaveUserImmovableAssetManagementPlan(userImmovableAssetManagementPlan);
-            }
-        }
-        public UserImmovableAssetManagementPlan StartUserImmovableAssetManagementPlan(UserImmovableAssetManagementPlan userImmovableAssetManagementPlan) {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.StartUserImmovableAssetManagementPlan(userImmovableAssetManagementPlan);
-            }
-        }
+        public UserImmovableAssetManagementPlan SaveUserImmovableAssetManagementPlan(UserImmovableAssetManagementPlan userImmovableAssetManagementPlan) => _uampRepository.SaveUserImmovableAssetManagementPlan(userImmovableAssetManagementPlan);
 
-        public TempleteOne GetUAMPTempleteOne(int uampId)
-        {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.GetUAMPTempleteOne(uampId);
-            }
-        }
+        public UserImmovableAssetManagementPlan StartUserImmovableAssetManagementPlan(UserImmovableAssetManagementPlan userImmovableAssetManagementPlan) => _uampRepository.StartUserImmovableAssetManagementPlan(userImmovableAssetManagementPlan);
 
-        public TempleteTwoPointOne GetUAMPTempleteTwoPointOne(int uampId)
-        {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.GetUAMPTempleteTwoPointOne(uampId);
-            }
-        }
+        public TempleteOne GetUAMPTempleteOne(int uampId) => _uampRepository.GetUAMPTempleteOne(uampId);
+        public TempleteTwoPointOne GetUAMPTempleteTwoPointOne(int uampId) => _uampRepository.GetUAMPTempleteTwoPointOne(uampId);
+        public TempleteTwoPointTwo GetUAMPTempleteTwoPointTwo(int uampId) => _uampRepository.GetUAMPTempleteTwoPointTwo(uampId);
+        public TempleteThree GetUAMPTempleteThree(int uampId) => _uampRepository.GetUAMPTempleteThree(uampId);
+        public TempleteFourPointOne GetUAMPTempleteFourPointOne(int uampId) => _uampRepository.GetUAMPTempleteFourPointOne(uampId);
+        public TempleteFourPointTwo GetUAMPTempleteFourPointTwo(int uampId) => _uampRepository.GetUAMPTempleteFourPointTwo(uampId);
+        public TempleteFivePointOne GetUAMPTempleteFivePointOne(int uampId) => _uampRepository.GetUAMPTempleteFivePointOne(uampId);
+        public TempleteFivePointTwo GetUAMPTempleteFivePointTwo(int uampId) => _uampRepository.GetUAMPTempleteFivePointTwo(uampId);
 
-        public TempleteTwoPointTwo GetUAMPTempleteTwoPointTwo(int uampId)
-        {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.GetUAMPTempleteTwoPointTwo(uampId);
-            }
-        }
+        public TempleteFivePointThree GetUAMPTempleteFivePointThree(int uampId) => _uampRepository.GetUAMPTempleteFivePointThree(uampId);
 
-        public TempleteThree GetUAMPTempleteThree(int uampId)
-        {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.GetUAMPTempleteThree(uampId);
-            }
-        }
+        public TempleteSix GetUAMPTempleteSix(int uampId) => _uampRepository.GetUAMPTempleteSix(uampId);
 
-        public TempleteFourPointOne GetUAMPTempleteFourPointOne(int uampId)
-        {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.GetUAMPTempleteFourPointOne(uampId);
-            }
-        }
+        public TempleteSeven GetUAMPTempleteSeven(int uampId) => _uampRepository.GetUAMPTempleteSeven(uampId);
 
-        public TempleteFourPointTwo GetUAMPTempleteFourPointTwo(int uampId)
-        {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.GetUAMPTempleteFourPointTwo(uampId);
-            }
-        }
-
-        public TempleteFivePointOne GetUAMPTempleteFivePointOne(int uampId)
-        {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.GetUAMPTempleteFivePointOne(uampId);
-            }
-        }
-
-        public TempleteFivePointTwo GetUAMPTempleteFivePointTwo(int uampId)
-        {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.GetUAMPTempleteFivePointTwo(uampId);
-            }
-        }
-
-        public TempleteFivePointThree GetUAMPTempleteFivePointThree(int uampId)
-        {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.GetUAMPTempleteFivePointThree(uampId);
-            }
-        }
-
-        public TempleteSix GetUAMPTempleteSix(int uampId)
-        {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.GetUAMPTempleteSix(uampId);
-            }
-        }
-
-        public TempleteSeven GetUAMPTempleteSeven(int uampId)
-        {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.GetUAMPTempleteSeven(uampId);
-            }
-        }
-
-        public UserImmovableAssetManagementPlan GetUampWithTemplateOne(int id)
-        {
-            using (var _userImmovableAssetManagementPlan = new UserImmovableAssetManagementPlanRepository(_appSettings))
-            {
-                return _userImmovableAssetManagementPlan.GetUampWithTemplateOne(id);
-            }
-        }
+        public UserImmovableAssetManagementPlan GetUampWithTemplateOne(int id) => _uampRepository.GetUampWithTemplateOne(id);
     }
 }

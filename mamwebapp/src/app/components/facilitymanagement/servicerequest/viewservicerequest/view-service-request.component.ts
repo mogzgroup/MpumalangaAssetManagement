@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output, ChangeDetectionStrategy, inject } from '@angular/core';
 import { FaultNote } from 'src/app/models/fault-note.model';
 import { Fault } from 'src/app/models/fault.model';
 import { Project } from 'src/app/models/project.model';
@@ -9,49 +9,66 @@ import { ProjectService } from 'src/app/services/facility-management/project.ser
 import { SupplierService } from 'src/app/services/facility-management/supplier.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { ToastService } from 'src/app/services/toast.service';
+import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { DatePipe } from '@angular/common';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatInput } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
+import { MatList, MatListItem, MatListItemTitle, MatListItemLine } from '@angular/material/list';
 
 @Component({
-  standalone: false,
-  selector: 'app-view-service-request',
-  templateUrl: './view-service-request.component.html',
-  styleUrls: ['./view-service-request.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-view-service-request',
+    templateUrl: './view-service-request.component.html',
+    styleUrls: ['./view-service-request.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatCard, MatCardContent, MatCheckbox, FormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatInput, MatButton, MatList, MatListItem, MatListItemTitle, MatListItemLine, MatCardActions, DatePipe]
 })
 export class ViewServiceRequestComponent implements OnInit {
+  private authenticationService = inject(AuthenticationService);
+  private sharedService = inject(SharedService);
+  private toastService = inject(ToastService);
+  private projectService = inject(ProjectService);
+  private supplierService = inject(SupplierService);
+  private faultService = inject(FaultService);
+
 
   @Input() canCloseTicket: boolean;
   @Input() selectedServiceRequest: Fault;
-  @Output('closeServiceRequest') closeServiceRequest = new EventEmitter<any>();
+  @Output() closeServiceRequest = new EventEmitter<any>();
 
-  public checked: boolean = true;
-  public supplierCheckbox: boolean = false;
-  public projectCheckbox: boolean = false;
-  public isUpdated: boolean = false;
-  public note: string = '';
+  public checked = true;
+  public supplierCheckbox = false;
+  public projectCheckbox = false;
+  public isUpdated = false;
+  public note = '';
   public showSupplier = true;
   public showClose = false;
   public projects: any[] = [];
   public showProject = true;
-  public loading: boolean = false;
-  public isViewOnly: boolean = false;
-  public serviceRequests: Array<Project> = [];
+  public loading = false;
+  public isViewOnly = false;
+  public serviceRequests: Project[] = [];
   public errorMsg: string;
   public currentUser: User;
   public showDialog: boolean;
-  public showAssets: boolean = false;
+  public showAssets = false;
   public suppliers: any[] = [];
   public supplier: any = {};
   public project: any = {};
   public completionCertificate: any;
   public contractInvoice: any;
-  public ticketHasCompletionCertificate: boolean = false;
-  public ticketHasContractInvoice: boolean = false;
+  public ticketHasCompletionCertificate = false;
+  public ticketHasContractInvoice = false;
   public attachments: any = [];
   public showCompletionCertificateUrl = false;
   public showContractInvoiceUrl = false;
-  public error: boolean = false;
-  public submitted: boolean = false;
-  public activeIndex: number = 0;
+  public error = false;
+  public submitted = false;
+  public activeIndex = 0;
 
   get f() {
     return {
@@ -63,10 +80,6 @@ export class ViewServiceRequestComponent implements OnInit {
   get s() {
     return this.f;
   }
-
-  constructor(private authenticationService: AuthenticationService, private sharedService: SharedService,
-    private toastService: ToastService, private projectService: ProjectService,
-    private supplierService: SupplierService, private faultService: FaultService) { }
 
   ngOnInit() {
     this.getFiles(this.selectedServiceRequest.referenceNo + '_' + this.selectedServiceRequest.id);
@@ -243,8 +256,8 @@ export class ViewServiceRequestComponent implements OnInit {
   getFiles(fileReference: string) {
     this.faultService.getFiles(fileReference).pipe().subscribe(files => {
       for (let i = 0; i < files.length; i++) {
-        let name = files[i].split('\\').pop();
-        let url = '/Uploads/Faults/' + name;
+        const name = files[i].split('\\').pop();
+        const url = '/Uploads/Faults/' + name;
 
         if (name.includes('Contract')) {
           this.selectedServiceRequest.contractInvoiceUrl = url;

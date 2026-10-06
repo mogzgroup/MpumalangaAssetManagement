@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -12,31 +13,42 @@ using System.Collections.Generic;
 
 namespace MAM.API.Tests.Controllers
 {
-    public class CAMPControllerTests : IClassFixture<WebApplicationFactory<Program>>
+    public class CAMPControllerTests : IClassFixture<WebApplicationFactory<Program>>, IDisposable
     {
         private readonly WebApplicationFactory<Program> _factory;
+        private readonly MAM.API.Tests.TestHelpers.TestDatabaseSeedResult _seedResult;
 
         public CAMPControllerTests(WebApplicationFactory<Program> factory)
         {
             _factory = factory.WithWebHostBuilder(builder =>
             {
                 builder.UseEnvironment("Test");
-                builder.UseSetting("AppSettings:Secret", "test-secret-should-be-long-enough-to-meet-requirements-123456");
-                builder.UseSetting("AppSettings:JwtIssuer", "MobileCentric");
-                builder.UseSetting("AppSettings:JwtAudience", "MobileCentricAPI");
-                builder.UseSetting("AppSettings:ConnectionString", "Server=(local);Database=Test;Trusted_Connection=True;");
-                builder.UseSetting("AppSettings:WebAppURL", "https://localhost/");
-                builder.UseSetting("AppSettings:UploadsFolder", "Uploads");
-                builder.UseSetting("AppSettings:EmailUserName", "test");
-                builder.UseSetting("AppSettings:EmailPassword", "test");
-                builder.UseSetting("AppSettings:EmailHost", "smtp.test");
-                builder.UseSetting("AppSettings:FromEmailAddress", "test@test.local");
-
-                builder.ConfigureTestServices(services =>
+                // Load user secrets and fall back to safe defaults; avoid hardcoded credentials
+                builder.ConfigureAppConfiguration((context, conf) =>
                 {
-                    services.AddScoped<ICampService, FakeCampService>();
+                    MAM.API.Tests.TestHelpers.TestConfiguration.AddUserSecretsToConfig(conf);
+                    var fallback = new System.Collections.Generic.Dictionary<string, string?>
+                    {
+                        ["AppSettings_Secret"] = "test-secret-should-be-long-enough-to-meet-requirements-123456",
+                        ["AppSettings_JwtIssuer"] = "MobileCentric",
+                        ["AppSettings_JwtAudience"] = "MobileCentricAPI"
+                    };
+                    foreach (var kv in fallback)
+                    {
+                        if (Environment.GetEnvironmentVariable(kv.Key) is null)
+                            Environment.SetEnvironmentVariable(kv.Key, kv.Value);
+                    }
                 });
+
+                // Use real services so tests exercise the database using the provided connection string
             });
+            // Ensure required test data exists in the real database
+            _seedResult = TestHelpers.TestDatabaseSeeder.SeedAsync(_factory).GetAwaiter().GetResult();
+        }
+
+        public void Dispose()
+        {
+            TestHelpers.TestDatabaseSeeder.CleanupAsync(_factory, _seedResult).GetAwaiter().GetResult();
         }
 
         [Fact]
@@ -48,27 +60,45 @@ namespace MAM.API.Tests.Controllers
             var camps = await res.Content.ReadFromJsonAsync<List<Camp>>()!;
             Assert.NotNull(camps);
             Assert.Single(camps);
-            Assert.Equal(1, camps[0].Id);
+            Assert.True(camps[0].Id > 0);
         }
 
-        private class FakeCampService : ICampService
+        [Fact]
+        public async Task GetCamps_NonExistentDepartment_ReturnsEmptyCollection()
         {
-            public List<Camp> GetCamps(string department) => new List<Camp>
-            {
-                new Camp
-                {
-                    Id = 1,
-                    Status = "Active",
-                    FileReference = "REF",
-                    OptimalSupportingAccommodationId = null,
-                    UserId = 0,
-                    CreatedDate = System.DateTime.UtcNow,
-                    ModifiedBy = 0,
-                    ModifiedDate = System.DateTime.UtcNow,
-                    Department = department,
-                    User = null
-                }
-            };
+            var client = _factory.CreateClient();
+            var res = await client.GetAsync("/api/camp/getcamps/department-does-not-exist");
+            res.EnsureSuccessStatusCode();
+            var camps = await res.Content.ReadFromJsonAsync<List<Camp>>()!;
+            Assert.NotNull(camps);
+            Assert.Empty(camps);
         }
+
+        [Fact]
+        public async Task GetCamps_WhenServiceThrows_ReturnsServerError()
+        {
+            // Create a factory that replaces ICampService with a throwing implementation
+            var factory = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddScoped<MAM.API.Services.ICampService, ThrowingCampService>();
+                });
+            });
+
+            var client = factory.CreateClient();
+            var res = await client.GetAsync("/api/camp/getcamps/test");
+            Assert.Equal(System.Net.HttpStatusCode.InternalServerError, res.StatusCode);
+        }
+
+        private class ThrowingCampService : MAM.API.Services.ICampService
+        {
+            public int AddCamp(MAM.BusinessLayer.Models.Camp camp) => throw new System.Exception("boom");
+            public System.Collections.Generic.List<MAM.BusinessLayer.Models.Camp> GetCamps(string department) => throw new System.Exception("boom");
+            public bool UpdateCamp(MAM.BusinessLayer.Models.Camp camp) => throw new System.Exception("boom");
+            public bool DeleteCamp(MAM.BusinessLayer.Models.Camp camp) => throw new System.Exception("boom");
+        }
+
+        // Tests now use the real ICampService implementation and the configured test database
     }
 }

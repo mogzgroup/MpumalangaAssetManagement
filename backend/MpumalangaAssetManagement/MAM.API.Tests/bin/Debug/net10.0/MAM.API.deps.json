@@ -12,6 +12,7 @@
           "Microsoft.AspNetCore.Authentication.JwtBearer": "10.0.0",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "8.0.0",
           "Microsoft.Data.SqlClient": "7.1.1",
+          "Microsoft.OpenApi": "2.7.5",
           "Newtonsoft.Json": "13.0.4",
           "Swashbuckle.AspNetCore": "10.2.3",
           "log4net": "3.3.0"

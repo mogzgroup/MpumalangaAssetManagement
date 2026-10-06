@@ -1,7 +1,6 @@
 ﻿using MAM.DataAccess.Tables;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MAM.DataAccess.Interfaces
 {
@@ -11,5 +10,7 @@ namespace MAM.DataAccess.Interfaces
         void UpdateUser(User user);
         List<User> GetUsers();
         User GetUser(string username);
+        User GetUserByEmail(string email);
+        User GetUser(int id);
     }
 }

@@ -1,5 +1,5 @@
 ﻿using MAM.BusinessLayer.Models;
-using MAM.BusinessLayer.Repositories;
+using MAM.BusinessLayer.Interfaces;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -17,28 +17,16 @@ namespace MAM.API.Services
     }
     public class HiringRegisterService : IHiringRegisterService
     {
-        private readonly AppSettings _appSettings;
+        private readonly IHiringRegisterRepository _hiringRegisterRepository;
 
-        public HiringRegisterService(IOptions<AppSettings> appSettings)
+        public HiringRegisterService(IOptions<AppSettings> appSettings, IHiringRegisterRepository hiringRegisterRepository)
         {
-            _appSettings = appSettings.Value;
+            _hiringRegisterRepository = hiringRegisterRepository;
         }
 
-        public List<HiredProperty> GetHiredProperties() {
-            using var _hiringRegisterRepository = new HiringRegisterRepository(_appSettings);
-            return _hiringRegisterRepository.GetHiredProperties();
-        }
-        public bool UpdateHiredProperty(HiredProperty hiredProperty) {
-            using var _hiringRegisterRepository = new HiringRegisterRepository(_appSettings);
-            return _hiringRegisterRepository.UpdateHiredProperty(hiredProperty);
-        }
-        public bool DeleteHiredProperty(HiredProperty hiredProperty) {
-            using var _hiringRegisterRepository = new HiringRegisterRepository(_appSettings);
-            return _hiringRegisterRepository.DeleteHiredProperty(hiredProperty);
-        }
-        public int AddHiredProperty(HiredProperty hiredProperty) {
-            using var _hiringRegisterRepository = new HiringRegisterRepository(_appSettings);
-            return _hiringRegisterRepository.AddHiredProperty(hiredProperty);
-        }
+        public List<HiredProperty> GetHiredProperties() => _hiringRegisterRepository.GetHiredProperties();
+        public bool UpdateHiredProperty(HiredProperty hiredProperty) => _hiringRegisterRepository.UpdateHiredProperty(hiredProperty);
+        public bool DeleteHiredProperty(HiredProperty hiredProperty) => _hiringRegisterRepository.DeleteHiredProperty(hiredProperty);
+        public int AddHiredProperty(HiredProperty hiredProperty) => _hiringRegisterRepository.AddHiredProperty(hiredProperty);
     }
 }

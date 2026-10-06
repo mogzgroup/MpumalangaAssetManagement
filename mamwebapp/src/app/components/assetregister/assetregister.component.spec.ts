@@ -1,4 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { of, Subject, throwError } from 'rxjs';
 import { Facility } from '../../models/facility.model';
@@ -34,12 +35,15 @@ describe('AssetregisterComponent', () => {
     dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
     facilityService.getAssetRegisterfacilities.and.returnValue(of([facility]));
 
-    component = new AssetregisterComponent(
-      { currentUser: of({ id: 1, roleId: 2 }) } as AuthenticationService,
-      facilityService,
-      toastService,
-      dialog
-    );
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: AuthenticationService, useValue: { currentUser: of({ id: 1, roleId: 2 }) } },
+        { provide: FacilityService, useValue: facilityService },
+        { provide: ToastService, useValue: toastService },
+        { provide: MatDialog, useValue: dialog }
+      ]
+    });
+    component = TestBed.runInInjectionContext(() => new AssetregisterComponent());
   });
 
   it('keeps loading active while the table request is pending', () => {

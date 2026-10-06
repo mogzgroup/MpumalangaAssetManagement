@@ -1,15 +1,17 @@
 <mat-card class="mt-5">
-    <mat-card-content>
-        <nav mat-tab-nav-bar [tabPanel]="templatePanel" aria-label="UAMP templates">
-            <a mat-tab-link *ngFor="let template of templates"
-                [routerLink]="template.routerLink"
-                routerLinkActive #routeActive="routerLinkActive"
-                [active]="routeActive.isActive">
-                {{ template.label }}
-            </a>
-        </nav>
-        <mat-tab-nav-panel #templatePanel>
-            <router-outlet></router-outlet>
-        </mat-tab-nav-panel>
-    </mat-card-content>
+  <mat-card-content>
+    <nav mat-tab-nav-bar [tabPanel]="templatePanel" aria-label="UAMP templates">
+      @for (template of templates; track template) {
+        <a mat-tab-link
+          [routerLink]="template.routerLink"
+          routerLinkActive #routeActive="routerLinkActive"
+          [active]="routeActive.isActive">
+          {{ template.label }}
+        </a>
+      }
+    </nav>
+    <mat-tab-nav-panel #templatePanel>
+      <router-outlet></router-outlet>
+    </mat-tab-nav-panel>
+  </mat-card-content>
 </mat-card>

@@ -18,7 +18,7 @@ export class Fault {
     contractInvoiceUrl?: string;
     supplierId?: number;
     projectId?: number;
-    faultNotes: Array<FaultNote>;
+    faultNotes: FaultNote[];
     status: string;
     statusColor?: string;
     isDeleted: boolean;

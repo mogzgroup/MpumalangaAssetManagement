@@ -38,8 +38,10 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Error(ex);
-                throw;
+                // Ensure the exception is visible in systemd/journalctl in addition to log4net DB appender
+                try { Console.Error.WriteLine(ex.ToString()); } catch { }
+                try { log.Error("Authenticate error", ex); } catch { }
+                return StatusCode(500, new { message = "Internal server error" });
             }
         }
 
@@ -47,48 +49,24 @@ namespace MAM.API.Controllers
         [Route("getall")]
         public IActionResult GetAll()
         {
-            try
-            {
-                List<User> users = _userService.GetAll();
-                return Ok(users);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);                
-                throw;
-            }
+            List<User> users = _userService.GetAll();
+            return Ok(users);
         }
 
         [HttpPost]
         [Route("adduser")]
         public IActionResult AddUser([FromBody]User user)
         {
-            try
-            {
-                User newuser = _userService.AddUser(user);
-                return Ok(newuser);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            User newuser = _userService.AddUser(user);
+            return Ok(newuser);
         }
 
         [HttpPost]
         [Route("updateUser")]
         public IActionResult UpdateUser([FromBody]User user)
         {
-            try
-            {
-                bool isUpdated = _userService.UpdateUser(user);
-                return Ok(isUpdated);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            bool isUpdated = _userService.UpdateUser(user);
+            return Ok(isUpdated);
         }
 
         [AllowAnonymous]
@@ -106,8 +84,9 @@ namespace MAM.API.Controllers
             }
             catch (Exception ex)
             {
-                log.Error(ex);
-                throw;
+                try { Console.Error.WriteLine(ex.ToString()); } catch { }
+                try { log.Error("Login error", ex); } catch { }
+                return StatusCode(500, new { message = "Internal server error" });
             }
         }
 
@@ -115,119 +94,63 @@ namespace MAM.API.Controllers
         [Route("resetpassword/{username}/{password}")]
         public IActionResult ResetPassword(string username, string password)
         {
-            try
-            {
-                bool isReset = _userService.ResetPassword(username, password);
-                return Ok(isReset);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            bool isReset = _userService.ResetPassword(username, password);
+            return Ok(isReset);
         }
 
         [HttpPost]
         [Route("resetpassword")]
         public IActionResult ResetPassword([FromBody] AuthenticateModel model)
         {
-            try
-            {
-                bool isReset = _userService.ResetPassword(model.Username, model.Password);
-                return Ok(isReset);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            bool isReset = _userService.ResetPassword(model.Username, model.Password);
+            return Ok(isReset);
         }
 
         [HttpGet]
         [Route("forgotpassword/{username}/{password}")]
         public IActionResult ForgotPassword(string username, string password)
         {
-            try
-            {
-                bool isReset = _userService.ForgotPassword(username, password);
-                return Ok(isReset);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            bool isReset = _userService.ForgotPassword(username, password);
+            return Ok(isReset);
         }
 
         [HttpPost]
         [Route("forgotpassword")]
         public IActionResult ForgotPassword([FromBody] AuthenticateModel model)
         {
-            try
-            {
-                bool isReset = _userService.ForgotPassword(model.Username, model.Password);
-                return Ok(isReset);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            bool isReset = _userService.ForgotPassword(model.Username, model.Password);
+            return Ok(isReset);
         }
 
         [HttpGet]
         [Route("changepassword/{username}/{newPassword}/{oldPassword}")]
         public IActionResult ChangePassword(string username, string newPassword, string oldPassword)
         {
-            try
-            {
-                bool isChanged = _userService.ChangePassword(username, newPassword, oldPassword);
-                if (!isChanged)
-                    return BadRequest(new { message = "Old password is incorrect" });
-                return Ok(isChanged);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }            
+            bool isChanged = _userService.ChangePassword(username, newPassword, oldPassword);
+            if (!isChanged)
+                return BadRequest(new { message = "Old password is incorrect" });
+            return Ok(isChanged);
         }
 
         [HttpPost]
         [Route("changepassword")]
         public IActionResult ChangePassword([FromBody] PasswordChangeModel model)
         {
-            try
-            {
-                bool isChanged = _userService.ChangePassword(
-                    model.Username,
-                    model.NewPassword,
-                    model.OldPassword);
-                if (!isChanged)
-                    return BadRequest(new { message = "Old password is incorrect" });
-                return Ok(isChanged);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            bool isChanged = _userService.ChangePassword(
+                model.Username,
+                model.NewPassword,
+                model.OldPassword);
+            if (!isChanged)
+                return BadRequest(new { message = "Old password is incorrect" });
+            return Ok(isChanged);
         }
 
         [HttpPost]
         [Route("deleteUser")]
         public IActionResult DeletUser([FromBody] User user)
         {
-            try
-            {
-                bool isUpdated = _userService.DeleteUser(user);
-                return Ok(isUpdated);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            bool isUpdated = _userService.DeleteUser(user);
+            return Ok(isUpdated);
         }
     }
 }

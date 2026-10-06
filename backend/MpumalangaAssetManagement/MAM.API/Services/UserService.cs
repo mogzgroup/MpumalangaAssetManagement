@@ -30,85 +30,61 @@ namespace MAM.API.Services
     public class UserService : IUserService
     {
         private readonly AppSettings _appSettings;
+        private readonly IUserRepository _userRepository;
 
-        public UserService(IOptions<AppSettings> appSettings)
+        public UserService(IOptions<AppSettings> appSettings, IUserRepository userRepository)
         {
             _appSettings = appSettings.Value;
+            _userRepository = userRepository;
         }
 
         public User Authenticate(string username, string password)
         {
-            using (var _userRepository = new UserRepository(_appSettings))
+            var user = _userRepository.Login(username, password);
+
+            // return null if user not found
+            if (user == null)
+                return null;
+
+            // authentication successful so generate jwt token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_appSettings.Secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                var user = _userRepository.Login(username, password);
-
-                // return null if user not found
-                if (user == null)
-                    return null;
-
-                // authentication successful so generate jwt token
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.UTF8.GetBytes(_appSettings.Secret);
-                var tokenDescriptor = new SecurityTokenDescriptor
+                Issuer = _appSettings.JwtIssuer,
+                Audience = _appSettings.JwtAudience,
+                Subject = new ClaimsIdentity(new Claim[]
                 {
-                    Issuer = _appSettings.JwtIssuer,
-                    Audience = _appSettings.JwtAudience,
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
-                    }),
-                    Expires = DateTime.UtcNow.AddDays(7),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                user.Token = tokenHandler.WriteToken(token);
+                new Claim(ClaimTypes.Name, user.Id.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            user.Token = tokenHandler.WriteToken(token);
 
-                return user.WithoutPassword();
-            }
-            
+            return user.WithoutPassword();
         }
 
         public List<User> GetAll()
         {
-            using var _userRepository = new UserRepository(_appSettings);
             return _userRepository.GetUsers();
         }
 
         public bool ChangePassword(string username, string newPassword, string oldPassword)
         {
-            using var _userRepository = new UserRepository(_appSettings);
             return _userRepository.ChangePassword(username, newPassword, oldPassword);
         }
 
-        public bool ResetPassword(string username, string newPassword)
-        {
-            using var _userRepository = new UserRepository(_appSettings);
-            return _userRepository.ResetPassword(username, newPassword);
-        }
+        public bool ResetPassword(string username, string newPassword) => _userRepository.ResetPassword(username, newPassword);
 
-        public bool ForgotPassword(string username, string newPassword)
-        {
-            using var _userRepository = new UserRepository(_appSettings);
-            return _userRepository.ForgotPassword(username, newPassword);
-        }
+        public bool ForgotPassword(string username, string newPassword) => _userRepository.ForgotPassword(username, newPassword);
 
-        public bool UpdateUser(User user)
-        {
-            using var _userRepository = new UserRepository(_appSettings);
-            return _userRepository.UpdateUser(user);
-        }
+        public bool UpdateUser(User user) => _userRepository.UpdateUser(user);
 
-        public bool DeleteUser(User user)
-        {
-            using var _userRepository = new UserRepository(_appSettings);
-            return _userRepository.DeleteUser(user);
-        }
+        public bool DeleteUser(User user) => _userRepository.DeleteUser(user);
 
-        public User AddUser(User user)
-        {
-            using var _userRepository = new UserRepository(_appSettings);
-            return _userRepository.AddUser(user);
-        }
+        public User AddUser(User user) => _userRepository.AddUser(user);
 
     }
 }

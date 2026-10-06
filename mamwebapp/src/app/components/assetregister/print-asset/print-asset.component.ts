@@ -1,15 +1,17 @@
 import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { Facility } from 'src/app/models/facility.model';
+import { MatButton } from '@angular/material/button';
+import { PrintSectionDirective } from '../../../common/print-section/print-section.directive';
+
 
 @Component({
-  standalone: false,
-  selector: 'app-print-asset',
-  templateUrl: './print-asset.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrls: ['./print-asset.component.css']
+    selector: 'app-print-asset',
+    templateUrl: './print-asset.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./print-asset.component.css'],
+    imports: [MatButton, PrintSectionDirective]
 })
 export class PrintAssetComponent implements OnInit {
-  activeIndex: number = 0;
+  activeIndex = 0;
   @Input() selectedFacility;
 
   constructor() { }

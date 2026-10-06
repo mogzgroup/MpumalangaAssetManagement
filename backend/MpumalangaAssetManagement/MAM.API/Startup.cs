@@ -31,7 +31,7 @@ namespace MAM.API
             services.AddControllers()
                 .AddNewtonsoftJson();
 
-            // Swagger
+            // Swagger - register without modifying global service collection during options creation
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -69,6 +69,8 @@ namespace MAM.API
             var appSettings = appSettingsSection.Get<AppSettings>() ?? new AppSettings();
             ValidateAppSettings(appSettings);
             services.Configure<AppSettings>(appSettingsSection);
+            // Register AppSettings instance so it can be injected directly where required
+            services.AddSingleton(appSettings);
             var key = Encoding.UTF8.GetBytes(appSettings.Secret);
             services.AddSingleton<UploadStorage>();
 
@@ -121,6 +123,88 @@ namespace MAM.API
             services.AddScoped<ISupplierService, SupplierService>();
             services.AddScoped<ICampService, CampService>();
 
+            // Data access repositories - inject with configured connection string
+            services.AddScoped<MAM.DataAccess.Interfaces.ICampRepository>(sp =>
+                new MAM.DataAccess.Repositories.CampRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.IUampRepository>(sp =>
+                new MAM.DataAccess.Repositories.UampRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.IStrategicAssessmentRepository>(sp =>
+                new MAM.DataAccess.Repositories.StrategicAssessmentRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.IAcquisitionPlanRepository>(sp =>
+                new MAM.DataAccess.Repositories.AcquisitionPlanRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.IOperationPlanRepository>(sp =>
+                new MAM.DataAccess.Repositories.OperationPlanRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.ISurrenderPlanRepository>(sp =>
+                new MAM.DataAccess.Repositories.SurrenderPlanRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.IMtefBudgetPeriodRepository>(sp =>
+                new MAM.DataAccess.Repositories.MtefBudgetPeriodRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.IProgrammeRepository>(sp =>
+                new MAM.DataAccess.Repositories.ProgrammeRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.IPropertyRepository>(sp =>
+                new MAM.DataAccess.Repositories.PropertyRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.IFacility>(sp =>
+                new MAM.DataAccess.Repositories.FacilityRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.IUser>(sp =>
+                new MAM.DataAccess.Repositories.UserRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.IOptimalSupportingAccommodationRepository>(sp =>
+                new MAM.DataAccess.Repositories.OptimalSupportingAccommodationRepository(appSettings.ConnectionString));
+
+            // Additional DataAccess registrations required by BusinessLayer repositories
+            services.AddScoped<MAM.DataAccess.Interfaces.IFault>(sp =>
+                new MAM.DataAccess.Repositories.FaultRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.IFaultNote>(sp =>
+                new MAM.DataAccess.Repositories.FaultNoteRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.IHiredPropertyRepository>(sp =>
+                new MAM.DataAccess.Repositories.HiredPropertyRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.IProject>(sp =>
+                new MAM.DataAccess.Repositories.ProjectRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.IProjectSupplier>(sp =>
+                new MAM.DataAccess.Repositories.ProjectSupplierRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.ISupplier>(sp =>
+                new MAM.DataAccess.Repositories.SupplierRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.ILeaseManegement>(sp =>
+                new MAM.DataAccess.Repositories.LeaseManegementRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.ILandUseManagementDetailRepository>(sp =>
+                new MAM.DataAccess.Repositories.LandUseManagementDetailRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.ILand>(sp =>
+                new MAM.DataAccess.Repositories.LandRepository(appSettings.ConnectionString));
+            services.AddScoped<MAM.DataAccess.Interfaces.IConditionAssessment>(sp =>
+                new MAM.DataAccess.Repositories.ConditionAssessmentRepository(appSettings.ConnectionString));
+
+            // Business-layer repositories that adapt data-access types to business models
+            services.AddScoped<MAM.BusinessLayer.Interfaces.ICampRepository>(sp =>
+                new MAM.BusinessLayer.Repositories.CampRepository(sp.GetRequiredService<MAM.DataAccess.Interfaces.ICampRepository>()));
+            services.AddScoped<MAM.BusinessLayer.Interfaces.IFacilityRepository>(sp =>
+                new MAM.BusinessLayer.Repositories.FacilityRepository(sp.GetRequiredService<AppSettings>()));
+            services.AddScoped<MAM.BusinessLayer.Interfaces.IFaultRepository>(sp =>
+                new MAM.BusinessLayer.Repositories.FaultRepository(sp.GetRequiredService<AppSettings>(), sp.GetRequiredService<MAM.DataAccess.Interfaces.IFault>(), sp.GetRequiredService<MAM.DataAccess.Interfaces.IFaultNote>()));
+            services.AddScoped<MAM.BusinessLayer.Interfaces.IHiringRegisterRepository>(sp =>
+                new MAM.BusinessLayer.Repositories.HiringRegisterRepository(sp.GetRequiredService<AppSettings>(), sp.GetRequiredService<MAM.DataAccess.Interfaces.IHiredPropertyRepository>()));
+            services.AddScoped<MAM.BusinessLayer.Interfaces.IProjectRepository>(sp =>
+                new MAM.BusinessLayer.Repositories.ProjectRepository(sp.GetRequiredService<AppSettings>(), sp.GetRequiredService<MAM.DataAccess.Interfaces.IProject>(), sp.GetRequiredService<MAM.DataAccess.Interfaces.IProjectSupplier>()));
+            services.AddScoped<MAM.BusinessLayer.Interfaces.ISupplierRepository>(sp =>
+                new MAM.BusinessLayer.Repositories.SupplierRepository(sp.GetRequiredService<AppSettings>(), sp.GetRequiredService<MAM.DataAccess.Interfaces.ISupplier>()));
+            services.AddScoped<MAM.BusinessLayer.Interfaces.ILeaseManagementRepository>(sp =>
+                new MAM.BusinessLayer.Repositories.LeaseManagementRepository(sp.GetRequiredService<AppSettings>(), sp.GetRequiredService<MAM.DataAccess.Interfaces.ILeaseManegement>(), sp.GetRequiredService<MAM.DataAccess.Interfaces.ILandUseManagementDetailRepository>(), sp.GetRequiredService<MAM.DataAccess.Interfaces.ILand>()));
+            services.AddScoped<MAM.BusinessLayer.Interfaces.IConditionAssessmentRepository>(sp =>
+                new MAM.BusinessLayer.Repositories.ConditionAssessmentRepository(sp.GetRequiredService<AppSettings>(), sp.GetRequiredService<MAM.DataAccess.Interfaces.IConditionAssessment>()));
+            services.AddScoped<MAM.BusinessLayer.Interfaces.IUserRepository>(sp =>
+                (MAM.BusinessLayer.Interfaces.IUserRepository)new MAM.BusinessLayer.Repositories.UserRepository(sp.GetRequiredService<AppSettings>(), sp.GetRequiredService<MAM.DataAccess.Interfaces.IUser>()));
+            services.AddScoped<MAM.BusinessLayer.Interfaces.IUserImmovableAssetManagementPlanRepository>(sp =>
+                new MAM.BusinessLayer.Repositories.UserImmovableAssetManagementPlanRepository(
+                    sp.GetRequiredService<AppSettings>(),
+                    sp.GetRequiredService<MAM.DataAccess.Interfaces.IUampRepository>(),
+                    sp.GetRequiredService<MAM.DataAccess.Interfaces.IStrategicAssessmentRepository>(),
+                    sp.GetRequiredService<MAM.DataAccess.Interfaces.IAcquisitionPlanRepository>(),
+                    sp.GetRequiredService<MAM.DataAccess.Interfaces.IOperationPlanRepository>(),
+                    sp.GetRequiredService<MAM.DataAccess.Interfaces.ISurrenderPlanRepository>(),
+                    sp.GetRequiredService<MAM.DataAccess.Interfaces.IMtefBudgetPeriodRepository>(),
+                    sp.GetRequiredService<MAM.DataAccess.Interfaces.IProgrammeRepository>(),
+                    sp.GetRequiredService<MAM.DataAccess.Interfaces.IPropertyRepository>(),
+                    sp.GetRequiredService<MAM.DataAccess.Interfaces.IFacility>(),
+                    sp.GetRequiredService<MAM.DataAccess.Interfaces.IUser>(),
+                    sp.GetRequiredService<MAM.DataAccess.Interfaces.IOptimalSupportingAccommodationRepository>()));
+
             // File upload limits
             services.Configure<FormOptions>(options =>
             {
@@ -140,10 +224,15 @@ namespace MAM.API
             // Configure logging (load log4net once at startup)
             try
             {
-                // Provide the log4net ADO appender with the application's connection string
-                // from AppSettings so log4net uses the same database as the app.
-                var settings = Configuration.GetSection("AppSettings").Get<AppSettings>() ?? new AppSettings();
-                Controllers.BaseController.SetLog4NetConfiguration(settings.ConnectionString);
+                // Do not attempt to configure log4net's ADO appender when running tests.
+                // Tests run with environment "Test" via WebApplicationFactory.UseEnvironment("Test").
+                if (!env.IsEnvironment("Test"))
+                {
+                    // Provide the log4net ADO appender with the application's connection string
+                    // from AppSettings so log4net uses the same database as the app.
+                    var settings = Configuration.GetSection("AppSettings").Get<AppSettings>() ?? new AppSettings();
+                    Controllers.BaseController.SetLog4NetConfiguration(settings.ConnectionString);
+                }
             }
             catch
             {

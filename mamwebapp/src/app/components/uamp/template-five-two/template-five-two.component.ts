@@ -1,24 +1,41 @@
-import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, TemplateRef, ViewChild, inject } from '@angular/core';
 import { ToastService } from 'src/app/services/toast.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
+import { FormGroup, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UampService } from 'src/app/services/uamp/uamp.service';
 import { OperationPlan } from 'src/app/models/operation-plan.model';
 import { UAMP } from 'src/app/models/uamp.model';
 import { Router } from '@angular/router';
 import { SharedService } from 'src/app/services/shared.service';
 import { first } from 'rxjs/operators';
+import { MatCard, MatCardSubtitle, MatCardContent, MatCardHeader, MatCardTitle, MatCardActions } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { CurrencyPipe } from '@angular/common';
+import { MatInput } from '@angular/material/input';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 
 @Component({
-  standalone: false,
-  selector: 'app-template-five-two',
-  templateUrl: './template-five-two.component.html',
-  styleUrls: ['./template-five-two.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-template-five-two',
+    templateUrl: './template-five-two.component.html',
+    styleUrls: ['./template-five-two.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatCard, MatCardSubtitle, MatCardContent, MatButton, MatTooltip, MatIcon, MatInput, FormsModule, MatSelect, MatOption, MatPaginator, MatCardHeader, MatDialogTitle, MatCardTitle, CdkScrollable, MatDialogContent, ReactiveFormsModule, MatFormField, MatLabel, MatCardActions, MatDialogActions, CurrencyPipe]
 })
 export class TemplateFiveTwoComponent implements OnInit {
-  operationPlans: Array<OperationPlan> = [];
+  private router = inject(Router);
+  private sharedService = inject(SharedService);
+  private uampService = inject(UampService);
+  private formBuilder = inject(FormBuilder);
+  private toastService = inject(ToastService);
+  private dialog = inject(MatDialog);
+
+  operationPlans: OperationPlan[] = [];
   operationPlanForm: FormGroup;
   newOperationPlanForm: FormGroup;
   prioities: any[];
@@ -26,14 +43,14 @@ export class TemplateFiveTwoComponent implements OnInit {
   regions: any[];
   localMunicipalities: any[];
   uamp: UAMP;
-  displayDialog: boolean = false;
-  dialogHeader: string = '';
-  isEdit: boolean = false;
-  mode: string = 'Edit';
-  isLoading: boolean = false;
+  displayDialog = false;
+  dialogHeader = '';
+  isEdit = false;
+  mode = 'Edit';
+  isLoading = false;
   pageIndex = 0;
   pageSize = 5;
-  pagedOperationPlans: Array<OperationPlan> = [];
+  pagedOperationPlans: OperationPlan[] = [];
 
   @ViewChild('formDialog') private formDialogTemplate: TemplateRef<unknown>;
   openAddDialog() {
@@ -43,7 +60,7 @@ export class TemplateFiveTwoComponent implements OnInit {
     this.openFormDialog();
   }
 
-  constructor(private router: Router, private sharedService: SharedService, private uampService: UampService, private formBuilder: FormBuilder, private toastService: ToastService, private dialog: MatDialog) {
+  constructor() {
     this.uampService.uampChange.subscribe((value) => {
       if (value) {
         this.uamp = value;
@@ -102,11 +119,11 @@ export class TemplateFiveTwoComponent implements OnInit {
 
   calculateDbTotalAmountRequired(operationPlan: OperationPlan) {
     let total = 0;
-    let year1 = operationPlan.cashFlowYear1;
-    let year2 = operationPlan.cashFlowYear2;
-    let year3 = operationPlan.cashFlowYear3;
-    let year4 = operationPlan.cashFlowYear4;
-    let year5 = operationPlan.cashFlowYear5;
+    const year1 = operationPlan.cashFlowYear1;
+    const year2 = operationPlan.cashFlowYear2;
+    const year3 = operationPlan.cashFlowYear3;
+    const year4 = operationPlan.cashFlowYear4;
+    const year5 = operationPlan.cashFlowYear5;
 
     if (year1)
       total = total + year1;

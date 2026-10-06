@@ -1,117 +1,77 @@
 ﻿using MAM.BusinessLayer.Interfaces;
 using MAM.BusinessLayer.Model;
 using MAM.BusinessLayer.Models;
-using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MAM.BusinessLayer.Repositories
 {
-    public class FaultRepository: IFaultRepository,  IDisposable
+    public class FaultRepository: IFaultRepository
     {
         private AppSettings appSettings { get; set; }
-        // Flag: Has Dispose already been called?
-        bool disposed = false;
-        // Instantiate a SafeHandle instance.
-        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+        private readonly MAM.DataAccess.Interfaces.IFault _faultDataAccess;
+        private readonly MAM.DataAccess.Interfaces.IFaultNote _faultNoteDataAccess;
 
-        public FaultRepository(AppSettings settings)
+        public FaultRepository(AppSettings settings, MAM.DataAccess.Interfaces.IFault faultDataAccess, MAM.DataAccess.Interfaces.IFaultNote faultNoteDataAccess)
         {
             appSettings = settings;
+            _faultDataAccess = faultDataAccess;
+            _faultNoteDataAccess = faultNoteDataAccess;
         }
         public List<Fault> GetFaults()
         {
             Fault Fault = new Fault();
-            using (var dataAccess = new DataAccess.Repositories.FaultRepository(appSettings.ConnectionString)) {
-                List<Fault> properties = Fault.ConvertToFaults(dataAccess.GetFaults());
-                return properties;
-            };  
+            List<Fault> properties = Fault.ConvertToFaults(_faultDataAccess.GetFaults());
+            return properties;
         }
 
         public Fault GetFaultByReferenceNo(string referenceNo)
         {
             Fault Fault = new Fault();
-            using (var dataAccess = new DataAccess.Repositories.FaultRepository(appSettings.ConnectionString))
-            {
-                Fault fault = Fault.ConvertToFault(dataAccess.GetFaultByReferenceNo(referenceNo));
-                return fault;
-            };
+            Fault fault = Fault.ConvertToFault(_faultDataAccess.GetFaultByReferenceNo(referenceNo));
+            return fault;
         }
 
         public bool UpdateFault(Fault fault)
         {
-            using (var dataAccess = new DataAccess.Repositories.FaultRepository(appSettings.ConnectionString))
-            {
-                dataAccess.UpdateFault(fault.ConvertToFaultTable(fault));
-                DeleteFaultNotesByFaultId(fault.Id);
-                AddFaultNote(fault.FaultNotes);
-                return true;
-            };
+            _faultDataAccess.UpdateFault(fault.ConvertToFaultTable(fault));
+            DeleteFaultNotesByFaultId(fault.Id);
+            AddFaultNote(fault.FaultNotes);
+            return true;
         }
 
         public bool DeleteFault(Fault fault)
         {
-            using (var dataAccess = new DataAccess.Repositories.FaultRepository(appSettings.ConnectionString))
-            {
-                dataAccess.UpdateFault(fault.ConvertToFaultTable(fault));
-                return true;
-            };
+            _faultDataAccess.UpdateFault(fault.ConvertToFaultTable(fault));
+            return true;
         }
 
         public int AddFault(Fault fault)
         {
-            using (var dataAccess = new DataAccess.Repositories.FaultRepository(appSettings.ConnectionString))
-            {
-                return dataAccess.AddFault(fault.ConvertToFaultTable(fault));                
-            };
+            return _faultDataAccess.AddFault(fault.ConvertToFaultTable(fault));
         }
 
         public List<FaultNote> AddFaultNote(List<FaultNote> faultNotes)
         {
-            using (var dataAccess = new DataAccess.Repositories.FaultNoteRepository(appSettings.ConnectionString))
+            // Handle null or empty lists gracefully to avoid NullReferenceException when callers pass null
+            if (faultNotes == null || faultNotes.Count == 0)
+                return new List<FaultNote>();
+
+            FaultNote faultNote = new FaultNote();
+            foreach (var item in faultNotes)
             {
-                FaultNote faultNote = new FaultNote();
-                foreach (var item in faultNotes)
-                {
-                    item.Id = 0;
-                    dataAccess.AddFaultNote(faultNote.ConvertToFaultNoteTable(item));
-                }
-                return faultNotes;
-            };
+                item.Id = 0;
+                _faultNoteDataAccess.AddFaultNote(faultNote.ConvertToFaultNoteTable(item));
+            }
+            return faultNotes;
         }
 
         public void DeleteFaultNotesByFaultId(int faultId)
         {
-            using (var dataAccess = new DataAccess.Repositories.FaultNoteRepository(appSettings.ConnectionString))
-            {
-                dataAccess.DeleteFaultNotesByFaultId(faultId);
-            };
+            _faultNoteDataAccess.DeleteFaultNotesByFaultId(faultId);
         }
 
-        public void Dispose()
-        {
-            // Dispose of unmanaged resources.
-            Dispose(true);
-            // Suppress finalization.
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                handle.Dispose();
-                // Free any other managed objects here.
-                //
-            }
-
-            disposed = true;
-        }
+        // Business-layer repository does not hold unmanaged resources; rely on data-access layer for disposals.
     }
 }

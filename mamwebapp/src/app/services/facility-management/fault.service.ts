@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Fault } from 'src/app/models/fault.model';
 import { environment } from 'src/environments/environment';
@@ -9,11 +9,11 @@ import { cachedGet } from '../../helpers/http-cache';
     providedIn: 'root'
 })
 export class FaultService {
+    private http = inject(HttpClient);
 
-    constructor(private http: HttpClient) { }
 
-    getFaults(): Observable<Array<Fault>> {
-        return cachedGet<Array<Fault>>(this.http, `${environment.apiUrl}/api/fault/getfaults`);
+    getFaults(): Observable<Fault[]> {
+        return cachedGet<Fault[]>(this.http, `${environment.apiUrl}/api/fault/getfaults`);
     }
 
     addFault(fault: Fault) {
@@ -43,7 +43,7 @@ export class FaultService {
             formData.append('file', files, files.name);
         }
 
-        let header = new HttpHeaders({
+        const header = new HttpHeaders({
             'enctype': 'multipart/form-data',
             'Accept': 'application/json'
           });

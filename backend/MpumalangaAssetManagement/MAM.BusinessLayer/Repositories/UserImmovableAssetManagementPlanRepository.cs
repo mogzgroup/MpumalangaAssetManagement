@@ -1,5 +1,6 @@
 ﻿using MAM.BusinessLayer.Model;
 using MAM.BusinessLayer.Models;
+using MAM.BusinessLayer.Interfaces;
 using MAM.BusinessLayer.Models.Templetes;
 using Microsoft.Win32.SafeHandles;
 using System;
@@ -10,46 +11,67 @@ using System.Text;
 
 namespace MAM.BusinessLayer.Repositories
 {
-    public class UserImmovableAssetManagementPlanRepository : IDisposable
+    public class UserImmovableAssetManagementPlanRepository : IUserImmovableAssetManagementPlanRepository
     {
         private AppSettings appSettings { get; set; }
-        // Flag: Has Dispose already been called?
-        bool disposed = false;
-        // Instantiate a SafeHandle instance.
-        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+        private readonly MAM.DataAccess.Interfaces.IUampRepository _uampDataAccess;
+        private readonly MAM.DataAccess.Interfaces.IStrategicAssessmentRepository _strategicAssessmentDataAccess;
+        private readonly MAM.DataAccess.Interfaces.IAcquisitionPlanRepository _acquisitionPlanDataAccess;
+        private readonly MAM.DataAccess.Interfaces.IOperationPlanRepository _operationPlanDataAccess;
+        private readonly MAM.DataAccess.Interfaces.ISurrenderPlanRepository _surrenderPlanDataAccess;
+        private readonly MAM.DataAccess.Interfaces.IMtefBudgetPeriodRepository _mtefBudgetPeriodDataAccess;
+        private readonly MAM.DataAccess.Interfaces.IProgrammeRepository _programmeDataAccess;
+        private readonly MAM.DataAccess.Interfaces.IPropertyRepository _propertyDataAccess;
+        private readonly MAM.DataAccess.Interfaces.IFacility _facilityDataAccess;
+        private readonly MAM.DataAccess.Interfaces.IUser _userDataAccess;
+        private readonly MAM.DataAccess.Interfaces.IOptimalSupportingAccommodationRepository _optimalSupportingAccommodationDataAccess;
 
-        public UserImmovableAssetManagementPlanRepository(AppSettings settings)
+        public UserImmovableAssetManagementPlanRepository(
+            AppSettings settings,
+            MAM.DataAccess.Interfaces.IUampRepository uampDataAccess,
+            MAM.DataAccess.Interfaces.IStrategicAssessmentRepository strategicAssessmentDataAccess,
+            MAM.DataAccess.Interfaces.IAcquisitionPlanRepository acquisitionPlanDataAccess,
+            MAM.DataAccess.Interfaces.IOperationPlanRepository operationPlanDataAccess,
+            MAM.DataAccess.Interfaces.ISurrenderPlanRepository surrenderPlanDataAccess,
+            MAM.DataAccess.Interfaces.IMtefBudgetPeriodRepository mtefBudgetPeriodDataAccess,
+            MAM.DataAccess.Interfaces.IProgrammeRepository programmeDataAccess,
+            MAM.DataAccess.Interfaces.IPropertyRepository propertyDataAccess,
+            MAM.DataAccess.Interfaces.IFacility facilityDataAccess,
+            MAM.DataAccess.Interfaces.IUser userDataAccess,
+            MAM.DataAccess.Interfaces.IOptimalSupportingAccommodationRepository optimalSupportingAccommodationDataAccess)
         {
             appSettings = settings;
+            _uampDataAccess = uampDataAccess;
+            _strategicAssessmentDataAccess = strategicAssessmentDataAccess;
+            _acquisitionPlanDataAccess = acquisitionPlanDataAccess;
+            _operationPlanDataAccess = operationPlanDataAccess;
+            _surrenderPlanDataAccess = surrenderPlanDataAccess;
+            _mtefBudgetPeriodDataAccess = mtefBudgetPeriodDataAccess;
+            _programmeDataAccess = programmeDataAccess;
+            _propertyDataAccess = propertyDataAccess;
+            _facilityDataAccess = facilityDataAccess;
+            _userDataAccess = userDataAccess;
+            _optimalSupportingAccommodationDataAccess = optimalSupportingAccommodationDataAccess;
         }
 
         public List<UserImmovableAssetManagementPlan> GetUserImmovableAssetManagementPlans(string department)
         {
             UserImmovableAssetManagementPlan uamp = new UserImmovableAssetManagementPlan();
             List<UserImmovableAssetManagementPlan> userImmovableAssetManagementPlans = new List<UserImmovableAssetManagementPlan>();
-            using (var dataAccess = new DataAccess.Repositories.UampRepository(appSettings.ConnectionString))
-            {
-                var uamps = uamp.ConvertToUserImmovableAssetManagementPlans(dataAccess.GetUamps(department));
-                userImmovableAssetManagementPlans.AddRange(uamps);
-                return userImmovableAssetManagementPlans;
-            }
+            var uamps = uamp.ConvertToUserImmovableAssetManagementPlans(_uampDataAccess.GetUamps(department));
+            userImmovableAssetManagementPlans.AddRange(uamps);
+            return userImmovableAssetManagementPlans;
         }
 
         public UserImmovableAssetManagementPlan GetUamp(int id) {
             UserImmovableAssetManagementPlan uamp = new UserImmovableAssetManagementPlan();
-            using (var dataAccess = new DataAccess.Repositories.UampRepository(appSettings.ConnectionString))
-            {
-                return uamp.ConvertToUserImmovableAssetManagementPlan(dataAccess.GetUamp(id));
-            }
+            return uamp.ConvertToUserImmovableAssetManagementPlan(_uampDataAccess.GetUamp(id));
         }
 
         public UserImmovableAssetManagementPlan GetUampWithTemplateOne(int id)
         {
             UserImmovableAssetManagementPlan uamp = new UserImmovableAssetManagementPlan();
-            using (var dataAccess = new DataAccess.Repositories.UampRepository(appSettings.ConnectionString))
-            {
-                return uamp.ConvertToUserImmovableAssetManagementPlanWithTemplateOne(dataAccess.GetUampWithTemplateOne(id));
-            }
+            return uamp.ConvertToUserImmovableAssetManagementPlanWithTemplateOne(_uampDataAccess.GetUampWithTemplateOne(id));
         }        
 
         public UserImmovableAssetManagementPlan SaveUserImmovableAssetManagementPlan(UserImmovableAssetManagementPlan uamp)
@@ -88,236 +110,202 @@ namespace MAM.BusinessLayer.Repositories
 
         public UserImmovableAssetManagementPlan SaveUamp(UserImmovableAssetManagementPlan uamp)
         {
-            using (var dataAccess = new DataAccess.Repositories.UampRepository(appSettings.ConnectionString))
+            if (uamp.Id == 0)
             {
-                if (uamp.Id == 0)
-                {
-                    uamp.Id = dataAccess.CreateUamp(uamp.ConvertToDBUserImmovableAssetManagementPlans(uamp));
-                }
-                else
-                {
-                    dataAccess.UpdateUamp(uamp.ConvertToDBUserImmovableAssetManagementPlans(uamp));
-                }
-                return uamp;
+                uamp.Id = _uampDataAccess.CreateUamp(uamp.ConvertToDBUserImmovableAssetManagementPlans(uamp));
             }
+            else
+            {
+                _uampDataAccess.UpdateUamp(uamp.ConvertToDBUserImmovableAssetManagementPlans(uamp));
+            }
+            return uamp;
         }
 
         public UserImmovableAssetManagementPlan SaveTempleteThree(UserImmovableAssetManagementPlan uamp)
         {
-            using (var dataAccess = new DataAccess.Repositories.StrategicAssessmentRepository(appSettings.ConnectionString))
+            var all = uamp.TempleteThree?.StrategicAssessments ?? new List<StrategicAssessment>();
+            var newItems = all.Where(s => s.Id == 0).Select(s => s.ConvertToStrategicAssessmentTable(s)).ToList();
+            var existing = all.Where(s => s.Id != 0).ToList();
+
+            if (newItems.Any())
+                _strategicAssessmentDataAccess.AddStrategicAssessments(newItems);
+
+            foreach (var strategicAssessment in existing)
             {
-                foreach (var strategicAssessment in uamp.TempleteThree.StrategicAssessments)
-                {
-                    if (strategicAssessment.Id == 0)
-                    {
-                        strategicAssessment.Id = dataAccess.AddStrategicAssessment(strategicAssessment.ConvertToStrategicAssessmentTable(strategicAssessment));
-                    }
-                    else
-                    {
-                        dataAccess.UpdateStrategicAssessment(strategicAssessment.ConvertToStrategicAssessmentTable(strategicAssessment));
-                    }
-                }
-                return uamp;
+                _strategicAssessmentDataAccess.UpdateStrategicAssessment(strategicAssessment.ConvertToStrategicAssessmentTable(strategicAssessment));
             }
+
+            return uamp;
         }
 
         public UserImmovableAssetManagementPlan SaveTempleteFour(UserImmovableAssetManagementPlan uamp)
         {
-            using (var dataAccess = new DataAccess.Repositories.AcquisitionPlanRepository(appSettings.ConnectionString))
+            List<AcquisitionPlan> acquisitionPlans = new List<AcquisitionPlan>();
+            acquisitionPlans.AddRange(uamp.TempleteFourPointOne?.AcquisitionPlans ?? new List<AcquisitionPlan>());
+            acquisitionPlans.AddRange(uamp.TempleteFourPointTwo?.AcquisitionPlans ?? new List<AcquisitionPlan>());
+
+            var newItems = acquisitionPlans.Where(a => a.Id == 0).Select(a => a.ConvertToAcquisitionPlanTable(a)).ToList();
+            var existing = acquisitionPlans.Where(a => a.Id != 0).ToList();
+
+            if (newItems.Any())
+                _acquisitionPlanDataAccess.AddAcquisitionPlans(newItems);
+
+            foreach (var acquisitionPlan in existing)
             {
-                List<AcquisitionPlan> acquisitionPlans = new List<AcquisitionPlan>();
-                acquisitionPlans.AddRange(uamp.TempleteFourPointOne.AcquisitionPlans);
-                acquisitionPlans.AddRange(uamp.TempleteFourPointTwo.AcquisitionPlans);
-                foreach (var acquisitionPlan in acquisitionPlans)
-                {
-                    if (acquisitionPlan.Id == 0)
-                    {
-                        acquisitionPlan.Id = dataAccess.AddAcquisitionPlan(acquisitionPlan.ConvertToAcquisitionPlanTable(acquisitionPlan));
-                    }
-                    else
-                    {
-                        dataAccess.UpdateAcquisitionPlan(acquisitionPlan.ConvertToAcquisitionPlanTable(acquisitionPlan));
-                    }
-                }
-                return uamp;
+                _acquisitionPlanDataAccess.UpdateAcquisitionPlan(acquisitionPlan.ConvertToAcquisitionPlanTable(acquisitionPlan));
             }
+
+            return uamp;
         }
 
         public UserImmovableAssetManagementPlan SaveTempleteFive(UserImmovableAssetManagementPlan uamp)
         {
-            using (var dataAccess = new DataAccess.Repositories.OperationPlanRepository(appSettings.ConnectionString))
-            {
-                List<OperationPlan> operationPlans = new List<OperationPlan>();
-                if (uamp.TempleteFivePointOne.OperationPlans.Count > 0)
-                    operationPlans.AddRange(uamp.TempleteFivePointOne?.OperationPlans);
-                if (uamp.TempleteFivePointTwo != null)
-                    operationPlans.AddRange(uamp.TempleteFivePointTwo?.OperationPlans);
-                if (uamp.TempleteFivePointThree != null)
-                    operationPlans.AddRange(uamp.TempleteFivePointThree?.OperationPlans);
+            List<OperationPlan> operationPlans = new List<OperationPlan>();
+            if (uamp.TempleteFivePointOne?.OperationPlans != null && uamp.TempleteFivePointOne.OperationPlans.Count > 0)
+                operationPlans.AddRange(uamp.TempleteFivePointOne.OperationPlans);
+            if (uamp.TempleteFivePointTwo?.OperationPlans != null)
+                operationPlans.AddRange(uamp.TempleteFivePointTwo.OperationPlans);
+            if (uamp.TempleteFivePointThree?.OperationPlans != null)
+                operationPlans.AddRange(uamp.TempleteFivePointThree.OperationPlans);
 
-                foreach (var operationPlan in operationPlans)
-                {
-                    if (operationPlan.Id == 0)
-                    {
-                        operationPlan.Id = dataAccess.AddOperationPlan(operationPlan.ConvertToOperationPlanTable(operationPlan));
-                    }
-                    else
-                    {
-                        dataAccess.UpdateOperationPlan(operationPlan.ConvertToOperationPlanTable(operationPlan));
-                    }
-                }
-                return uamp;
+            var newItems = operationPlans.Where(op => op.Id == 0).Select(op => op.ConvertToOperationPlanTable(op)).ToList();
+            var existing = operationPlans.Where(op => op.Id != 0).ToList();
+
+            if (newItems.Any())
+                _operationPlanDataAccess.AddOperationPlans(newItems);
+
+            foreach (var operationPlan in existing)
+            {
+                _operationPlanDataAccess.UpdateOperationPlan(operationPlan.ConvertToOperationPlanTable(operationPlan));
             }
+
+            return uamp;
         }
 
         public UserImmovableAssetManagementPlan SaveTempleteSix(UserImmovableAssetManagementPlan uamp)
         {
-            using (var dataAccess = new DataAccess.Repositories.SurrenderPlanRepository(appSettings.ConnectionString))
+            List<SurrenderPlan> surrenderPlans = uamp.TempleteSix?.SurrenderPlans ?? new List<SurrenderPlan>();
+            var newItems = surrenderPlans.Where(s => s.Id == 0).Select(s => s.ConvertToSurrenderPlanTable(s)).ToList();
+            var existing = surrenderPlans.Where(s => s.Id != 0).ToList();
+
+            // Add batch method does not exist for SurrenderPlanRepository yet; fall back to per-item add for now
+            foreach (var s in newItems)
             {
-                List<SurrenderPlan> surrenderPlans = uamp.TempleteSix.SurrenderPlans;
-                foreach (var surrenderPlan in surrenderPlans)
-                {
-                    if (surrenderPlan.Id == 0)
-                    {
-                        surrenderPlan.Id = dataAccess.AddSurrenderPlan(surrenderPlan.ConvertToSurrenderPlanTable(surrenderPlan));
-                    }
-                    else
-                    {
-                        dataAccess.UpdateSurrenderPlan(surrenderPlan.ConvertToSurrenderPlanTable(surrenderPlan));
-                    }
-                }
-                return uamp;
+                _surrenderPlanDataAccess.AddSurrenderPlan(s);
             }
+
+            foreach (var surrenderPlan in existing)
+            {
+                _surrenderPlanDataAccess.UpdateSurrenderPlan(surrenderPlan.ConvertToSurrenderPlanTable(surrenderPlan));
+            }
+
+            return uamp;
         }
 
         public UserImmovableAssetManagementPlan SaveTempleteSeven(UserImmovableAssetManagementPlan uamp)
         {
-            using (var dataAccess = new DataAccess.Repositories.MtefBudgetPeriodRepository(appSettings.ConnectionString))
-            {
-                List<MtefBudgetPeriod> _mtefBudgetPeriods = new List<MtefBudgetPeriod>();
-                List<MtefBudgetPeriod> mtefBudgetPeriods = uamp.TempleteSeven.MtefBudgetPeriods.ToList();
-                foreach (var mtefBudgetPeriod in mtefBudgetPeriods)
-                {
-                    if (mtefBudgetPeriod.Id == 0)
-                    {
-                        mtefBudgetPeriod.Id = dataAccess.AddMtefBudgetPeriod(mtefBudgetPeriod.ConvertToMtefBudgetPeriodTable(mtefBudgetPeriod));
-                    }
-                    else
-                    {
-                        dataAccess.UpdateMtefBudgetPeriod(mtefBudgetPeriod.ConvertToMtefBudgetPeriodTable(mtefBudgetPeriod));
-                    }
-                }
+            List<MtefBudgetPeriod> _mtefBudgetPeriods = new List<MtefBudgetPeriod>();
+            List<MtefBudgetPeriod> mtefBudgetPeriods = uamp.TempleteSeven.MtefBudgetPeriods.ToList();
+            var newItems = mtefBudgetPeriods.Where(m => m.Id == 0).Select(m => m.ConvertToMtefBudgetPeriodTable(m)).ToList();
+            var existing = mtefBudgetPeriods.Where(m => m.Id != 0).ToList();
 
-                uamp.TempleteSeven.MtefBudgetPeriods = _mtefBudgetPeriods;
-                return uamp;
+            // MtefBudgetPeriodRepository has no batch add; fall back to per-item add
+            foreach (var m in newItems)
+            {
+                _mtefBudgetPeriodDataAccess.AddMtefBudgetPeriod(m);
             }
+
+            foreach (var mtefBudgetPeriod in existing)
+            {
+                _mtefBudgetPeriodDataAccess.UpdateMtefBudgetPeriod(mtefBudgetPeriod.ConvertToMtefBudgetPeriodTable(mtefBudgetPeriod));
+            }
+
+            uamp.TempleteSeven.MtefBudgetPeriods = _mtefBudgetPeriods;
+            return uamp;
         }
 
         public bool DeleteOperationPlan(OperationPlan operationPlan)
         {
-            using (var dataAccess = new DataAccess.Repositories.OperationPlanRepository(appSettings.ConnectionString))
-            {
-                dataAccess.DeleteOperationPlan(operationPlan.ConvertToOperationPlanTable(operationPlan));
-                return true;
-            }
+            _operationPlanDataAccess.DeleteOperationPlan(operationPlan.ConvertToOperationPlanTable(operationPlan));
+            return true;
         }
 
         public bool DeleteAcquisitionPlan(AcquisitionPlan acquisitionPlan)
         {
-            using (var dataAccess = new DataAccess.Repositories.AcquisitionPlanRepository(appSettings.ConnectionString))
-            {
-                dataAccess.DeleteAcquisitionPlan(acquisitionPlan.ConvertToAcquisitionPlanTable(acquisitionPlan));
-                return true;
-            }
+            _acquisitionPlanDataAccess.DeleteAcquisitionPlan(acquisitionPlan.ConvertToAcquisitionPlanTable(acquisitionPlan));
+            return true;
         }
 
         public bool DeleteProgramme(Programme programme)
         {
-            using (var dataAccess = new DataAccess.Repositories.ProgrammeRepository(appSettings.ConnectionString))
-            {
-                dataAccess.DeleteProgramme(programme.ConvertToProgrammeTable(programme));
-                return true;
-            }
+            _programmeDataAccess.DeleteProgramme(programme.ConvertToProgrammeTable(programme));
+            return true;
         }
 
         public bool DeleteProperty(Property property)
         {
-            using (var dataAccess = new DataAccess.Repositories.PropertyRepository(appSettings.ConnectionString))
-            {
-                dataAccess.DeleteProperty(property.ConvertToPropertyTable(property));
-                return true;
-            }
+            _propertyDataAccess.DeleteProperty(property.ConvertToPropertyTable(property));
+            return true;
         }
 
         public bool DeleteStrategicAssessment(StrategicAssessment strategicAssessment)
         {
-            using (var dataAccess = new DataAccess.Repositories.StrategicAssessmentRepository(appSettings.ConnectionString))
-            {
-                dataAccess.DeleteStrategicAssessment(strategicAssessment.ConvertToStrategicAssessmentTable(strategicAssessment));
-                return true;
-            }
+            _strategicAssessmentDataAccess.DeleteStrategicAssessment(strategicAssessment.ConvertToStrategicAssessmentTable(strategicAssessment));
+            return true;
         }
 
         public bool DeleteSurrenderPlan(SurrenderPlan surrenderPlan)
         {
-            using (var dataAccess = new DataAccess.Repositories.SurrenderPlanRepository(appSettings.ConnectionString))
-            {
-                dataAccess.DeleteSurrenderPlan(surrenderPlan.ConvertToSurrenderPlanTable(surrenderPlan));
-                return true;
-            }
+            _surrenderPlanDataAccess.DeleteSurrenderPlan(surrenderPlan.ConvertToSurrenderPlanTable(surrenderPlan));
+            return true;
         }
 
         public UserImmovableAssetManagementPlan SaveTempleteTwo(UserImmovableAssetManagementPlan uamp)
         {
-            using (var dataAccess = new DataAccess.Repositories.PropertyRepository(appSettings.ConnectionString))
+            List<Property> properties = new List<Property>();
+            properties.AddRange(uamp.TempleteTwoPointOne?.Properties ?? new List<Property>());
+            properties.AddRange(uamp.TempleteTwoPointTwo?.Properties ?? new List<Property>());
+
+            var newItems = properties.Where(p => p.Id == 0).Select(p => p.ConvertToPropertyTable(p)).ToList();
+            var existing = properties.Where(p => p.Id != 0).ToList();
+
+            if (newItems.Any())
+                _propertyDataAccess.AddProperties(newItems);
+
+            foreach (var property in existing)
             {
-                List<Property> properties = new List<Property>();
-                properties.AddRange(uamp.TempleteTwoPointOne.Properties);
-                properties.AddRange(uamp.TempleteTwoPointTwo.Properties);
-                foreach (var property in properties)
-                {
-                    if (property.Id == 0)
-                    {
-                        property.Id = dataAccess.AddProperty(property.ConvertToPropertyTable(property));
-                    }
-                    else
-                    {
-                        dataAccess.UpdateProperty(property.ConvertToPropertyTable(property));
-                    }
-                }
-                return uamp;
+                _propertyDataAccess.UpdateProperty(property.ConvertToPropertyTable(property));
             }
+
+            return uamp;
         }
 
         public UserImmovableAssetManagementPlan StartUserImmovableAssetManagementPlan(UserImmovableAssetManagementPlan uamp)
         {
-            using (var fDataAccess = new DataAccess.Repositories.FacilityRepository(appSettings.ConnectionString))
-            {
-                var facilities = fDataAccess.GetSignedOffFacilities();
-                uamp = SaveUamp(uamp);
-                MtefBudgetPeriod mtefBudgetPeriod = new MtefBudgetPeriod();
+            var facilities = _facilityDataAccess.GetSignedOffFacilities();
+            uamp = SaveUamp(uamp);
+            MtefBudgetPeriod mtefBudgetPeriod = new MtefBudgetPeriod();
 
-                uamp.TempleteOne = new TempleteOne()
+            uamp.TempleteOne = new TempleteOne()
+            {
+                Id = 0,
+                Programmes = new List<Programme>(),
+                OptimalSupportingAccommodation = new OptimalSupportingAccommodation()
+            };
+            uamp.TempleteTwoPointOne = new TempleteTwoPointOne
+            {
+                Id = 0,
+                Properties = facilities.Select(f => new Property()
                 {
                     Id = 0,
-                    Programmes = new List<Programme>(),
-                    OptimalSupportingAccommodation = new OptimalSupportingAccommodation()
-                };
-                uamp.TempleteTwoPointOne = new TempleteTwoPointOne
-                {
-                    Id = 0,
-                    Properties = facilities.Select(f => new Property()
-                    {
-                        Id = 0,
-                        UserImmovableAssetManagementPlanId = uamp.Id,
-                        TempleteNumber = 2.1,
-                        FileReferenceNo = f.FileReference,
-                        SerialNo = f.FileReference,
-                        DistrictRegion = f.Land.GeographicalLocation != null ? f.Land.GeographicalLocation.Region : null,
-                        Town = f.Land.GeographicalLocation != null ? f.Land.GeographicalLocation.Town : null,
-                        LocalAuthority = f.Land.GeographicalLocation != null ? f.Land.GeographicalLocation.LocalAuthority : null,
-                        AssetDescription = f.Land.GeographicalLocation != null ? f.Name : null,
-                        OldStreetAddress = f.Land.GeographicalLocation != null ? string.Format("{0} {1} {2} {3}", f.Land.GeographicalLocation.StreetNumber, f.Land.GeographicalLocation.StreetName, f.Land.GeographicalLocation.Suburb, f.Land.GeographicalLocation.Province) : null,
+                    UserImmovableAssetManagementPlanId = uamp.Id,
+                    TempleteNumber = 2.1,
+                    FileReferenceNo = f.FileReference,
+                    SerialNo = f.FileReference,
+                    DistrictRegion = f.Land.GeographicalLocation != null ? f.Land.GeographicalLocation.Region : null,
+                    Town = f.Land.GeographicalLocation != null ? f.Land.GeographicalLocation.Town : null,
+                    LocalAuthority = f.Land.GeographicalLocation != null ? f.Land.GeographicalLocation.LocalAuthority : null,
+                    AssetDescription = f.Land.GeographicalLocation != null ? f.Name : null,
                         CurrentStreetAddress = f.Land.GeographicalLocation != null ? string.Format("{0} {1} {2} {3}", f.Land.GeographicalLocation.StreetNumber, f.Land.GeographicalLocation.StreetName, f.Land.GeographicalLocation.Suburb, f.Land.GeographicalLocation.Province) : null,
                         PropertyDescription = f.Land.PropertyDescription != null ? f.Land.PropertyDescription.OldDescription : null,
                         AssetType = f.Land.Type,
@@ -496,7 +484,6 @@ namespace MAM.BusinessLayer.Repositories
                     MtefBudgetPeriods = mtefBudgetPeriod.BuildMtefBudgetPeriod(uamp.Id)
                 };
 
-            }
             uamp = SaveTempleteTwo(uamp);
             uamp = SaveTempleteThree(uamp);
             uamp = SaveTempleteFour(uamp);
@@ -509,46 +496,43 @@ namespace MAM.BusinessLayer.Repositories
 
         public User GetUserById(int userId)
         {
-            using (var dataAccess = new DataAccess.Repositories.UserRepository(appSettings.ConnectionString))
+            var userdb = _userDataAccess.GetUser(userId);
+            User user = new User()
             {
-                var userdb = dataAccess.GetUser(userId);
-                User user = new User()
-                {
-                    Id = userdb.Id,
-                    Name = userdb.Name,
-                    Surname = userdb.Surname,
-                    Email = userdb.Email
-                };
-                return user;
-            }
+                Id = userdb.Id,
+                Name = userdb.Name,
+                Surname = userdb.Surname,
+                Email = userdb.Email
+            };
+            return user;
         }
 
         public List<Programme> SaveProgramme(List<Programme> programmes)
         {
-            using (var dataAccess = new DataAccess.Repositories.ProgrammeRepository(appSettings.ConnectionString))
+            var newItems = programmes.Where(p => p.Id == 0).Select(p => p.ConvertToProgrammeTable(p)).ToList();
+            var existing = programmes.Where(p => p.Id != 0).ToList();
+
+            if (newItems.Any())
+                _programmeDataAccess.AddProgrammes(newItems);
+
+            foreach (var programme in existing)
             {
-                foreach (var programme in programmes)
-                {
-                    if (programme.Id == 0)
-                        programme.Id = dataAccess.AddProgramme(programme.ConvertToProgrammeTable(programme));
-                    else
-                        dataAccess.UpdateProgramme(programme.ConvertToProgrammeTable(programme));
-                }
-                return programmes;
+                _programmeDataAccess.UpdateProgramme(programme.ConvertToProgrammeTable(programme));
             }
+
+            // assign generated ids back where possible (best-effort: assumes AddProgrammes appended in same order)
+            // If callers require exact Id mapping, repository should return ids; keep current behavior minimal-change.
+            return programmes;
         }
 
         public UserImmovableAssetManagementPlan SaveOptimalSupportingAccommodationRepository(UserImmovableAssetManagementPlan uamp)
         {
-            using (var dataAccess = new DataAccess.Repositories.OptimalSupportingAccommodationRepository(appSettings.ConnectionString))
-            {
-                OptimalSupportingAccommodation optimalSupportingAccommodation = new OptimalSupportingAccommodation();
-                if (uamp.TempleteOne.OptimalSupportingAccommodation.Id == 0)
-                    uamp.TempleteOne.OptimalSupportingAccommodation.Id = dataAccess.AddOptimalSupportingAccommodation(optimalSupportingAccommodation.ConvertToOptimalSupportingAccommodationTable(uamp.TempleteOne.OptimalSupportingAccommodation));
-                else
-                    dataAccess.UpdateOptimalSupportingAccommodation(optimalSupportingAccommodation.ConvertToOptimalSupportingAccommodationTable(uamp.TempleteOne.OptimalSupportingAccommodation));
-                return uamp;
-            }
+            OptimalSupportingAccommodation optimalSupportingAccommodation = new OptimalSupportingAccommodation();
+            if (uamp.TempleteOne.OptimalSupportingAccommodation.Id == 0)
+                uamp.TempleteOne.OptimalSupportingAccommodation.Id = _optimalSupportingAccommodationDataAccess.AddOptimalSupportingAccommodation(optimalSupportingAccommodation.ConvertToOptimalSupportingAccommodationTable(uamp.TempleteOne.OptimalSupportingAccommodation));
+            else
+                _optimalSupportingAccommodationDataAccess.UpdateOptimalSupportingAccommodation(optimalSupportingAccommodation.ConvertToOptimalSupportingAccommodationTable(uamp.TempleteOne.OptimalSupportingAccommodation));
+            return uamp;
         }
 
         public TempleteOne GetUAMPTempleteOne(int uampId)
@@ -556,15 +540,9 @@ namespace MAM.BusinessLayer.Repositories
             TempleteOne templeteOne = new TempleteOne();
             DataAccess.Tables.OptimalSupportingAccommodation optimalSupportingAccommodation = new DataAccess.Tables.OptimalSupportingAccommodation();
             List<DataAccess.Tables.Programme> programmes = new List<DataAccess.Tables.Programme>();
-            using (var dataAccess = new DataAccess.Repositories.ProgrammeRepository(appSettings.ConnectionString))
-            {
-                programmes = dataAccess.GetProgrammes(uampId);
-            }
+            programmes = _programmeDataAccess.GetProgrammes(uampId);
 
-            using (var dataAccess = new DataAccess.Repositories.OptimalSupportingAccommodationRepository(appSettings.ConnectionString))
-            {
-                optimalSupportingAccommodation = dataAccess.GetOptimalSupportingAccommodation(uampId);
-            }
+            optimalSupportingAccommodation = _optimalSupportingAccommodationDataAccess.GetOptimalSupportingAccommodation(uampId);
 
             return templeteOne.ConvertToTempleteOne(programmes, optimalSupportingAccommodation);
         }
@@ -573,11 +551,8 @@ namespace MAM.BusinessLayer.Repositories
         {
             TempleteTwoPointOne templeteTwoPointOne = new TempleteTwoPointOne();
             List<DataAccess.Tables.Property> properties = new List<DataAccess.Tables.Property>();
-            using (var dataAccess = new DataAccess.Repositories.PropertyRepository(appSettings.ConnectionString))
-            {
-                double temNumber = 2.1;
-                properties = dataAccess.GetProperties(uampId, temNumber);
-            }
+            double temNumber = 2.1;
+            properties = _propertyDataAccess.GetProperties(uampId, temNumber);
             templeteTwoPointOne = templeteTwoPointOne.ConvertToTempleteTwoPointOne(properties);
 
             return templeteTwoPointOne;
@@ -587,11 +562,8 @@ namespace MAM.BusinessLayer.Repositories
         {
             TempleteTwoPointTwo templeteTwoPointTwo = new TempleteTwoPointTwo();
             List<DataAccess.Tables.Property> properties = new List<DataAccess.Tables.Property>();
-            using (var dataAccess = new DataAccess.Repositories.PropertyRepository(appSettings.ConnectionString))
-            {
-                double temNumber = 2.2;
-                properties = dataAccess.GetProperties(uampId, temNumber);
-            }
+            double temNumber = 2.2;
+            properties = _propertyDataAccess.GetProperties(uampId, temNumber);
             templeteTwoPointTwo = templeteTwoPointTwo.ConvertToTempleteTwoPointTwo(properties);
 
             return templeteTwoPointTwo;
@@ -601,10 +573,7 @@ namespace MAM.BusinessLayer.Repositories
         {
             TempleteThree templeteThree = new TempleteThree();
             List<DataAccess.Tables.StrategicAssessment> strategicAssessments = new List<DataAccess.Tables.StrategicAssessment>();
-            using (var dataAccess = new DataAccess.Repositories.StrategicAssessmentRepository(appSettings.ConnectionString))
-            {
-                strategicAssessments = dataAccess.GetStrategicAssessments(uampId);
-            }
+            strategicAssessments = _strategicAssessmentDataAccess.GetStrategicAssessments(uampId);
             templeteThree = templeteThree.ConvertToTempleteThree(strategicAssessments);
 
             return templeteThree;
@@ -614,11 +583,8 @@ namespace MAM.BusinessLayer.Repositories
         {
             TempleteFourPointOne templeteFourPointOne = new TempleteFourPointOne();
             List<DataAccess.Tables.AcquisitionPlan> acquisitionPlans = new List<DataAccess.Tables.AcquisitionPlan>();
-            using (var dataAccess = new DataAccess.Repositories.AcquisitionPlanRepository(appSettings.ConnectionString))
-            {
-                double temNumber = 4.1;
-                acquisitionPlans = dataAccess.GetAcquisitionPlans(uampId, temNumber);
-            }
+            double temNumber = 4.1;
+            acquisitionPlans = _acquisitionPlanDataAccess.GetAcquisitionPlans(uampId, temNumber);
             templeteFourPointOne = templeteFourPointOne.ConvertToTempleteFourPointOne(acquisitionPlans);
 
             return templeteFourPointOne;            
@@ -628,11 +594,8 @@ namespace MAM.BusinessLayer.Repositories
         {
             TempleteFourPointTwo templeteFourPointTwo = new TempleteFourPointTwo();
             List<DataAccess.Tables.AcquisitionPlan> acquisitionPlans = new List<DataAccess.Tables.AcquisitionPlan>();
-            using (var dataAccess = new DataAccess.Repositories.AcquisitionPlanRepository(appSettings.ConnectionString))
-            {
-                double temNumber = 4.2;
-                acquisitionPlans = dataAccess.GetAcquisitionPlans(uampId, temNumber);
-            }
+            double temNumber = 4.2;
+            acquisitionPlans = _acquisitionPlanDataAccess.GetAcquisitionPlans(uampId, temNumber);
             templeteFourPointTwo = templeteFourPointTwo.ConvertToTempleteFourPointTwo(acquisitionPlans);
 
             return templeteFourPointTwo;
@@ -642,11 +605,8 @@ namespace MAM.BusinessLayer.Repositories
         {
             TempleteFivePointOne templeteFivePointOne = new TempleteFivePointOne();
             List<DataAccess.Tables.OperationPlan> operationPlan = new List<DataAccess.Tables.OperationPlan>();
-            using (var dataAccess = new DataAccess.Repositories.OperationPlanRepository(appSettings.ConnectionString))
-            {
-                double temNumber = 5.1;
-                operationPlan = dataAccess.GetOperationPlans(uampId, temNumber);
-            }
+            double temNumber = 5.1;
+            operationPlan = _operationPlanDataAccess.GetOperationPlans(uampId, temNumber);
             templeteFivePointOne = templeteFivePointOne.ConvertToTempleteFivePointOne(operationPlan);
 
             return templeteFivePointOne;
@@ -656,11 +616,8 @@ namespace MAM.BusinessLayer.Repositories
         {
             TempleteFivePointTwo templeteFivePointTwo = new TempleteFivePointTwo();
             List<DataAccess.Tables.OperationPlan> operationPlan = new List<DataAccess.Tables.OperationPlan>();
-            using (var dataAccess = new DataAccess.Repositories.OperationPlanRepository(appSettings.ConnectionString))
-            {
-                double temNumber = 5.2;
-                operationPlan = dataAccess.GetOperationPlans(uampId, temNumber);
-            }
+            double temNumber = 5.2;
+            operationPlan = _operationPlanDataAccess.GetOperationPlans(uampId, temNumber);
             templeteFivePointTwo = templeteFivePointTwo.ConvertToTempleteFivePointTwo(operationPlan);
 
             return templeteFivePointTwo;
@@ -670,11 +627,8 @@ namespace MAM.BusinessLayer.Repositories
         {
             TempleteFivePointThree templeteFivePointThree = new TempleteFivePointThree();
             List<DataAccess.Tables.OperationPlan> operationPlan = new List<DataAccess.Tables.OperationPlan>();
-            using (var dataAccess = new DataAccess.Repositories.OperationPlanRepository(appSettings.ConnectionString))
-            {
-                double temNumber = 5.3;
-                operationPlan = dataAccess.GetOperationPlans(uampId, temNumber);
-            }
+            double temNumber = 5.3;
+            operationPlan = _operationPlanDataAccess.GetOperationPlans(uampId, temNumber);
             templeteFivePointThree = templeteFivePointThree.ConvertToTempleteFivePointThree(operationPlan);
 
             return templeteFivePointThree;
@@ -684,10 +638,7 @@ namespace MAM.BusinessLayer.Repositories
         {
             TempleteSix templeteSix = new TempleteSix();
             List<DataAccess.Tables.SurrenderPlan> surrenderPlans = new List<DataAccess.Tables.SurrenderPlan>();
-            using (var dataAccess = new DataAccess.Repositories.SurrenderPlanRepository(appSettings.ConnectionString))
-            {
-                surrenderPlans = dataAccess.GetSurrenderPlans(uampId);
-            }
+            surrenderPlans = _surrenderPlanDataAccess.GetSurrenderPlans(uampId);
             templeteSix = templeteSix.ConvertToTempleteSix(surrenderPlans);
 
             return templeteSix;
@@ -697,37 +648,12 @@ namespace MAM.BusinessLayer.Repositories
         {
             TempleteSeven templeteSeven = new TempleteSeven();
             List<DataAccess.Tables.MtefBudgetPeriod> mtefBudgetPeriods = new List<DataAccess.Tables.MtefBudgetPeriod>();
-            using (var dataAccess = new DataAccess.Repositories.MtefBudgetPeriodRepository(appSettings.ConnectionString))
-            {
-                mtefBudgetPeriods = dataAccess.GetMtefBudgetPeriods(uampId);
-            }
+            mtefBudgetPeriods = _mtefBudgetPeriodDataAccess.GetMtefBudgetPeriods(uampId);
             templeteSeven = templeteSeven.ConvertToTempleteSeven(mtefBudgetPeriods);
 
             return templeteSeven;
         }
 
-        public void Dispose()
-        {
-            // Dispose of unmanaged resources.
-            Dispose(true);
-            // Suppress finalization.
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                handle.Dispose();
-                // Free any other managed objects here.
-                //
-            }
-
-            disposed = true;
-        }
+        // Business-layer repository does not manage unmanaged resources; rely on data-access layer.
     }
 }

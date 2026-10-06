@@ -1,38 +1,44 @@
 <div class="stepsdemo-content asset-step-page">
-    <mat-card class="asset-step-card">
-        <mat-card-header>
-            <mat-card-title>Seat Information</mat-card-title>
-            <mat-card-subtitle>Choose your seat</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content class="seat-information-form asset-step-grid">
-            <mat-form-field appearance="outline">
-                <mat-label>Class</mat-label>
-                <mat-select id="class" [(ngModel)]="seatInformation.class"
-                    (selectionChange)="setVagons({ value: $event.value })">
-                    <mat-option *ngFor="let item of classes" [value]="item">{{ item.name }}</mat-option>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Wagon</mat-label>
-                <mat-select id="wagon" [(ngModel)]="seatInformation.wagon"
-                    (selectionChange)="setSeats({ value: $event.value })">
-                    <mat-option *ngFor="let item of vagons" [value]="item">{{ item.wagon }}</mat-option>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Seat</mat-label>
-                <mat-select id="seat" [(ngModel)]="seatInformation.seat">
-                    <mat-option *ngFor="let item of seats" [value]="item">{{ item.seat }}</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </mat-card-content>
-        <mat-card-actions class="asset-step-actions" align="end">
-            <button mat-button type="button" (click)="prevPage()">
-                <mat-icon>arrow_back</mat-icon><span>Back</span>
-            </button>
-            <button mat-raised-button color="primary" type="button" (click)="nextPage()">
-                <span>Next</span><mat-icon>arrow_forward</mat-icon>
-            </button>
-        </mat-card-actions>
-    </mat-card>
+  <mat-card class="asset-step-card">
+    <mat-card-header>
+      <mat-card-title>Seat Information</mat-card-title>
+      <mat-card-subtitle>Choose your seat</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content class="seat-information-form asset-step-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Class</mat-label>
+        <mat-select id="class" [(ngModel)]="seatInformation.class"
+          (selectionChange)="setVagons({ value: $event.value })">
+          @for (item of classes; track item) {
+            <mat-option [value]="item">{{ item.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Wagon</mat-label>
+        <mat-select id="wagon" [(ngModel)]="seatInformation.wagon"
+          (selectionChange)="setSeats({ value: $event.value })">
+          @for (item of vagons; track item) {
+            <mat-option [value]="item">{{ item.wagon }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Seat</mat-label>
+        <mat-select id="seat" [(ngModel)]="seatInformation.seat">
+          @for (item of seats; track item) {
+            <mat-option [value]="item">{{ item.seat }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions class="asset-step-actions" align="end">
+      <button mat-button type="button" (click)="prevPage()">
+        <mat-icon>arrow_back</mat-icon><span>Back</span>
+      </button>
+      <button mat-raised-button color="primary" type="button" (click)="nextPage()">
+        <span>Next</span><mat-icon>arrow_forward</mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card>
 </div>

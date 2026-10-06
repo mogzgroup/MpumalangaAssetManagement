@@ -1,16 +1,13 @@
-import { Directive, HostListener, Input } from '@angular/core';
+import { Directive, HostListener, Input, inject } from '@angular/core';
 import { ToastService } from '../../services/toast.service';
 
-@Directive({
-  standalone: false,
-  selector: 'button[ngxPrint]'
-})
+@Directive({ selector: 'button[ngxPrint]' })
 export class PrintSectionDirective {
+  private toastService = inject(ToastService);
+
   @Input() printSectionId = '';
   @Input() printTitle = '';
   @Input() useExistingCss = false;
-
-  constructor(private toastService: ToastService) { }
 
   @HostListener('click')
   printSection(): void {

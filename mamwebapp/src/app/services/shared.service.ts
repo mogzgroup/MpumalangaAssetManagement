@@ -20,9 +20,6 @@ export class SharedService {
         code = 'EDT';
         break;
       case 'Co-operative governance & traditional affairs':
-        code = 'EDT';
-        break;
-      case 'Co-operative governance & traditional affairs':
         code = 'CGTA';
         break;
       case 'Community safety, security & liason':
@@ -462,6 +459,10 @@ export class SharedService {
             element = this.calculateShortfallCapitalCosts(uamp.templeteSeven.mtefBudgetPeriods, element);
             const indexs = uamp.templeteSeven.mtefBudgetPeriods.findIndex(b => b.title == element.title);
             uamp.templeteSeven.mtefBudgetPeriods[indexs] = element;
+          } else if (element.group == 'Current Expenditure') {
+            element = this.calculateShortfallCurrentExpenditure(uamp.templeteSeven.mtefBudgetPeriods, element);
+            const indexs = uamp.templeteSeven.mtefBudgetPeriods.findIndex(b => b.title == element.title);
+            uamp.templeteSeven.mtefBudgetPeriods[indexs] = element;
           }
           break;
         case 'Existing Leases T2.2':
@@ -550,13 +551,6 @@ export class SharedService {
             uamp.templeteSeven.mtefBudgetPeriods[indexTCC] = element;
           }
           break;
-        case '% Shortfall':
-          if (element.group == 'Current Expenditure') {
-            element = this.calculateShortfallCurrentExpenditure(uamp.templeteSeven.mtefBudgetPeriods, element);
-            const indexs = uamp.templeteSeven.mtefBudgetPeriods.findIndex(b => b.title == element.title);
-            uamp.templeteSeven.mtefBudgetPeriods[indexs] = element;
-          }
-          break;
       }
     });
 
@@ -577,7 +571,7 @@ export class SharedService {
     const year5Allocation = (6 / 100 * year4RequiredBudget) + year4RequiredBudget;
     const year5RequiredBudget = (4 / 100 * year4Allocation) + year4Allocation;
 
-    let _mtefBudgetPeriod: MtefBudgetPeriod = {
+    const _mtefBudgetPeriod: MtefBudgetPeriod = {
       id: mtefBudgetPeriod.id,
       userImmovableAssetManagementPlanId: mtefBudgetPeriod.userImmovableAssetManagementPlanId,
       order: mtefBudgetPeriod.order,
@@ -608,7 +602,7 @@ export class SharedService {
     const _mtefBudgetPeriods = mtefBudgetPeriods.filter(m => m.group == 'Capital Projects'
       && !m.title.includes('Total')
       && !m.title.includes('Shortfall'));
-    let _mtefBudgetPeriod: MtefBudgetPeriod = {
+    const _mtefBudgetPeriod: MtefBudgetPeriod = {
       id: mtefBudgetPeriod.id,
       userImmovableAssetManagementPlanId: mtefBudgetPeriod.userImmovableAssetManagementPlanId,
       order: mtefBudgetPeriod.order,
@@ -639,7 +633,7 @@ export class SharedService {
     const _mtefBudgetPeriods = mtefBudgetPeriods.filter(m => m.group == 'Current Expenditure'
       && !m.title.includes('Total')
       && !m.title.includes('Shortfall'));
-    let _mtefBudgetPeriod: MtefBudgetPeriod = {
+    const _mtefBudgetPeriod: MtefBudgetPeriod = {
       id: mtefBudgetPeriod.id,
       userImmovableAssetManagementPlanId: mtefBudgetPeriod.userImmovableAssetManagementPlanId,
       order: mtefBudgetPeriod.order,
@@ -669,7 +663,7 @@ export class SharedService {
   calculateCapitalWorksRecurrentCosts(mtefBudgetPeriods: MtefBudgetPeriod[], mtefBudgetPeriod: MtefBudgetPeriod): MtefBudgetPeriod {
     const _mtefBudgetPeriods = mtefBudgetPeriods.filter(m => !m.title.includes('Total')
       && !m.title.includes('Shortfall'));
-    let _mtefBudgetPeriod: MtefBudgetPeriod = {
+    const _mtefBudgetPeriod: MtefBudgetPeriod = {
       id: mtefBudgetPeriod.id,
       userImmovableAssetManagementPlanId: mtefBudgetPeriod.userImmovableAssetManagementPlanId,
       order: mtefBudgetPeriod.order,
@@ -699,7 +693,7 @@ export class SharedService {
   calculateShortfallCapitalCosts(mtefBudgetPeriods: MtefBudgetPeriod[], mtefBudgetPeriod: MtefBudgetPeriod): MtefBudgetPeriod {
     const _totalMtefBudgetPeriod = mtefBudgetPeriods.filter(m => m.group == 'Capital Projects'
       && m.title.includes('Shortfall'))[0];
-    let _mtefBudgetPeriod: MtefBudgetPeriod = {
+    const _mtefBudgetPeriod: MtefBudgetPeriod = {
       id: mtefBudgetPeriod.id,
       userImmovableAssetManagementPlanId: mtefBudgetPeriod.userImmovableAssetManagementPlanId,
       order: mtefBudgetPeriod.order,
@@ -729,7 +723,7 @@ export class SharedService {
   calculateShortfallCurrentExpenditure(mtefBudgetPeriods: MtefBudgetPeriod[], mtefBudgetPeriod: MtefBudgetPeriod): MtefBudgetPeriod {
     const _totalMtefBudgetPeriod = mtefBudgetPeriods.filter(m => m.group == 'Capital Projects'
       && m.title.includes('Shortfall'))[0];
-    let _mtefBudgetPeriod: MtefBudgetPeriod = {
+    const _mtefBudgetPeriod: MtefBudgetPeriod = {
       id: mtefBudgetPeriod.id,
       userImmovableAssetManagementPlanId: mtefBudgetPeriod.userImmovableAssetManagementPlanId,
       order: mtefBudgetPeriod.order,
@@ -813,4 +807,3 @@ export class SharedService {
     ];
   }
 }
-

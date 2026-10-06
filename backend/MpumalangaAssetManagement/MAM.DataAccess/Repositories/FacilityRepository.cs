@@ -1,21 +1,17 @@
 ﻿using MAM.DataAccess.Interfaces;
 using MAM.DataAccess.Tables;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MAM.DataAccess.Repositories
 {
     public class FacilityRepository : IFacility, IDisposable
     {
-        // Flag: Has Dispose already been called?
-        bool disposed = false;
-        // Instantiate a SafeHandle instance.
-        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+        // No unmanaged resources; provide no-op Dispose to allow 'using' in callers.
+        public void Dispose() { }
 
         private string _connectionString { get; set; }
 
@@ -160,10 +156,15 @@ namespace MAM.DataAccess.Repositories
                   .Include(f => f.Finance.Valuation)
                    .Include(f => f.Finance.SecondaryInformationNote)
                    .ToList();
-                foreach (var facility in list)
+                if (list.Count > 0)
                 {
-                    facility.Status = "In UAMP";
-                    UpdateFacility(facility);
+                    foreach (var facility in list)
+                    {
+                        facility.Status = "In UAMP";
+                        // attach and update in the same context to reduce connection churn
+                        db.Facilities.Update(facility);
+                    }
+                    db.SaveChanges();
                 }
                 return list;
             }
@@ -185,28 +186,6 @@ namespace MAM.DataAccess.Repositories
             }
         }
 
-        public void Dispose()
-        {
-            // Dispose of unmanaged resources.
-            Dispose(true);
-            // Suppress finalization.
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                handle.Dispose();
-                // Free any other managed objects here.
-                //
-            }
-
-            disposed = true;
-        }
+        // Dispose implemented as no-op above to support callers that use 'using'.
     }
 }

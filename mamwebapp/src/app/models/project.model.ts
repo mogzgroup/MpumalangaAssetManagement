@@ -1,5 +1,4 @@
 import { ProjectSupplier } from "./project-supplier";
-import { Supplier } from "./supplier";
 
 export class Project {
     id: number;
@@ -25,7 +24,7 @@ export class Project {
     businessRegNumber: string;
     createdDate: Date;
     modifiedDate?: Date;
-    projectSuppliers: Array<ProjectSupplier>;
+    projectSuppliers: ProjectSupplier[];
     status: string;
     isDeleted: boolean;
 }

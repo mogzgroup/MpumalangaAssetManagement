@@ -11,3 +11,4 @@ C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\Mpumalan
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Debug\net10.0\refint\MAM.DataAccess.dll
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Debug\net10.0\MAM.DataAccess.pdb
 C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Debug\net10.0\ref\MAM.DataAccess.dll
+C:\Projects\MpumalangaAssetManagement\MpumalangaAssetManagement\backend\MpumalangaAssetManagement\MAM.DataAccess\obj\Debug\net10.0\MAM.Data.8C910FCF.Up2Date

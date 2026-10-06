@@ -1,30 +1,53 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, Output, AfterViewInit, EventEmitter, Input, NgZone, ChangeDetectionStrategy, TemplateRef } from '@angular/core';
-import { PageEvent } from '@angular/material/paginator';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { Component, OnInit, ViewChild, NgZone, ChangeDetectionStrategy, TemplateRef, inject } from '@angular/core';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
+import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger, MatOption, MatAutocomplete } from '@angular/material/autocomplete';
 import { first } from 'rxjs/operators';
 import { User } from '../../models/user.model';
 import { HiringRegisterService } from '../../services/hiring-register/hiring-register.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FormControl } from '@angular/forms';
 import { SharedService } from 'src/app/services/shared.service';
 import { HiredProperty } from 'src/app/models/hired-property';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { ToastService } from 'src/app/services/toast.service';
 import { OpenStreetMapGeocodingService, GeocodingResult } from 'src/app/services/openstreetmap-geocoding.service';
 import { mapConfig } from 'src/app/shared/map/map-config';
 import { MapMarkerData, validCoordinates } from 'src/app/shared/map/map-marker.model';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MapLibreMapComponent } from '../../shared/map/maplibre-map.component';
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCardActions } from '@angular/material/card';
+import { MatFormField, MatLabel, MatPrefix, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { MatSelect } from '@angular/material/select';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 
 @Component({
-  standalone: false,
-  selector: 'app-hiring',
-  templateUrl: './hiring.component.html',
-  styleUrls: ['./hiring.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-hiring',
+    templateUrl: './hiring.component.html',
+    styleUrls: ['./hiring.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [MatButton, MatIcon, MapLibreMapComponent, MatCard, MatCardContent, MatFormField, MatLabel, MatPrefix, MatInput, NgFor, NgIf, MatIconButton, MatMenuTrigger, MatProgressBar, MatPaginator, MatMenu, MatMenuItem, MatDialogTitle, CdkScrollable, MatDialogContent, MatDialogActions, MatProgressSpinner, MatCardHeader, MatCardTitle, MatTabGroup, MatTab, FormsModule, ReactiveFormsModule, MatError, MatSelect, MatOption, MatAutocompleteTrigger, MatSuffix, MatAutocomplete, MatDatepickerInput, MatDatepickerToggle, MatDatepicker, MatCardActions]
 })
 
 export class HiringComponent implements OnInit {
+  private hiringRegisterService = inject(HiringRegisterService);
+  private formBuilder = inject(FormBuilder);
+  private authenticationService = inject(AuthenticationService);
+  private datePipe = inject(DatePipe);
+  private toastService = inject(ToastService);
+  private geocodingService = inject(OpenStreetMapGeocodingService);
+  private dialog = inject(MatDialog);
+  private sharedService = inject(SharedService);
+  zone = inject(NgZone);
+
   address: any = {};
   formattedAddress: string;
   formattedEstablishmentAddress: string;
@@ -46,12 +69,12 @@ export class HiringComponent implements OnInit {
   hiredProperty: HiredProperty;
   currentUser: User;
   hiredProperties: HiredProperty[] = [];
-  isView: boolean = false;
+  isView = false;
   files: any[] = [];
   center: [number, number] = mapConfig.defaultCenter;
   markers: MapMarkerData[] = [];
   zoom = mapConfig.defaultZoom;
-  showResetPasswordComfirmation: boolean = false;
+  showResetPasswordComfirmation = false;
   clonedHiredProperties: HiredProperty[] = [];
   cols: any[];
   pagedHiredProperties: HiredProperty[] = [];
@@ -62,33 +85,23 @@ export class HiringComponent implements OnInit {
   sortField = '';
   sortAscending = true;
   submitted = false;
-  emailExsist: boolean = false;
+  emailExsist = false;
   selectedHiredProperty: HiredProperty;
 
 
   index: any;
-  showConfirmResetPassword: boolean = false;
+  showConfirmResetPassword = false;
   msgs: any[] = [];
-  newUserError: string = '';
+  newUserError = '';
   departments: any[] = [];
-  selectedRole: Number = 0;
-  header: string = 'Add Candidate';
+  selectedRole = 0;
+  header = 'Add Candidate';
   dialogHeader = '';
   @ViewChild('propertyDialog') propertyDialog: TemplateRef<unknown>;
   @ViewChild('deletePropertyDialog') deletePropertyDialog: TemplateRef<unknown>;
   private propertyDialogRef: MatDialogRef<unknown> | null = null;
   private deleteDialogRef: MatDialogRef<unknown> | null = null;
   @ViewChild(MatAutocompleteTrigger) private addressAutocompleteTrigger: MatAutocompleteTrigger;
-
-  constructor(private hiringRegisterService: HiringRegisterService,
-    private formBuilder: FormBuilder,
-    private authenticationService: AuthenticationService,
-    private datePipe: DatePipe,
-    private toastService: ToastService,
-    private geocodingService: OpenStreetMapGeocodingService,
-    private dialog: MatDialog,
-    private sharedService: SharedService,
-    public zone: NgZone) { }
   roles: any[];
 
   ngOnInit() {
@@ -216,7 +229,7 @@ export class HiringComponent implements OnInit {
   }
 
   monthDiff(d1: Date, d2: Date) {
-    var months;
+    let months;
     months = (d2.getFullYear() - d1.getFullYear()) * 12;
     months -= d1.getMonth();
     months += d2.getMonth();
@@ -248,8 +261,8 @@ export class HiringComponent implements OnInit {
 
   saveAsExcelFile(buffer: any): void {
     import('file-saver').then(FileSaver => {
-      let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-      let EXCEL_EXTENSION = '.xlsx';
+      const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+      const EXCEL_EXTENSION = '.xlsx';
       const data: Blob = new Blob([buffer], {
         type: EXCEL_TYPE
       });
@@ -592,7 +605,7 @@ export class HiringComponent implements OnInit {
   }
 
   validProperty(propertyCode: string, id: number) {
-    var _propertyCode = propertyCode == undefined ? this.f.email.value : propertyCode;
+    const _propertyCode = propertyCode == undefined ? this.f.email.value : propertyCode;
     if (id != undefined) {//for edit
       if (propertyCode === undefined || propertyCode === '')
         return false

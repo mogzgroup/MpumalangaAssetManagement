@@ -1,5 +1,6 @@
 import { FormBuilder } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { User } from '../../../models/user.model';
@@ -39,14 +40,17 @@ describe('AddUserComponent', () => {
     ]);
     toastService.getApiErrorMessage.and.returnValue('The request could not be completed. Please try again.');
     data = { users: [existingUser] };
-    component = new AddUserComponent(
-      new FormBuilder(),
-      userService,
-      { currentUserValue: { id: 3 } } as AuthenticationService,
-      toastService,
-      dialogRef,
-      data
-    );
+    TestBed.configureTestingModule({
+      providers: [
+        FormBuilder,
+        { provide: UserService, useValue: userService },
+        { provide: AuthenticationService, useValue: { currentUserValue: { id: 3 } } },
+        { provide: ToastService, useValue: toastService },
+        { provide: MatDialogRef, useValue: dialogRef },
+        { provide: MAT_DIALOG_DATA, useFactory: () => data }
+      ]
+    });
+    component = TestBed.runInInjectionContext(() => new AddUserComponent());
     component.ngOnInit();
   });
 
@@ -57,14 +61,7 @@ describe('AddUserComponent', () => {
 
   it('prepopulates an edit form and updates the selected user', () => {
     data.user = existingUser;
-    component = new AddUserComponent(
-      new FormBuilder(),
-      userService,
-      { currentUserValue: { id: 3 } } as AuthenticationService,
-      toastService,
-      dialogRef,
-      data
-    );
+    component = TestBed.runInInjectionContext(() => new AddUserComponent());
     component.ngOnInit();
     userService.updateUser.and.returnValue(of(true));
 

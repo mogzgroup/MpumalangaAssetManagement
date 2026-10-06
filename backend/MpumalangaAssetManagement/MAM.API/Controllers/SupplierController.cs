@@ -30,32 +30,16 @@ namespace MAM.API.Controllers
         [Route("addsuppliers")]
         public IActionResult AddSuppliers([FromBody]List<Supplier> suppliers)
         {
-            try
-            {
-                suppliers = _supplierService.AddSuppliers(suppliers);
-                return Ok(suppliers);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            suppliers = _supplierService.AddSuppliers(suppliers);
+            return Ok(suppliers);
         }
 
         [HttpGet]
         [Route("getsuppliers")]
         public IActionResult GetSuppliers()
         {
-            try
-            {
-                List<Supplier> suppliers = _supplierService.GetSuppliers();
-                return Ok(suppliers);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                throw;
-            }
+            List<Supplier> suppliers = _supplierService.GetSuppliers();
+            return Ok(suppliers);
         }
     }
 }

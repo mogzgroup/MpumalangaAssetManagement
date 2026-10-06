@@ -1,4 +1,5 @@
 import { HttpHandler, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthenticationService } from '../services/authentication.service';
@@ -9,7 +10,10 @@ describe('JwtInterceptor', () => {
     const authenticationService = {
       currentUserValue: { token: 'signed-token' }
     } as AuthenticationService;
-    const interceptor = new JwtInterceptor(authenticationService);
+    TestBed.configureTestingModule({
+      providers: [{ provide: AuthenticationService, useValue: authenticationService }]
+    });
+    const interceptor = TestBed.runInInjectionContext(() => new JwtInterceptor());
     let interceptedRequest: HttpRequest<unknown> | undefined;
     const handler: HttpHandler = {
       handle: request => {
@@ -30,7 +34,10 @@ describe('JwtInterceptor', () => {
     const authenticationService = {
       currentUserValue: { token: 'signed-token' }
     } as AuthenticationService;
-    const interceptor = new JwtInterceptor(authenticationService);
+    TestBed.configureTestingModule({
+      providers: [{ provide: AuthenticationService, useValue: authenticationService }]
+    });
+    const interceptor = TestBed.runInInjectionContext(() => new JwtInterceptor());
     let interceptedRequest: HttpRequest<unknown> | undefined;
     const handler: HttpHandler = {
       handle: request => {

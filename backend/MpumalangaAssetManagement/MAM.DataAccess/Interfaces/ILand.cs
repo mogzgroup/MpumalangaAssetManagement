@@ -1,7 +1,6 @@
 ﻿using MAM.DataAccess.Tables;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MAM.DataAccess.Interfaces
 {
@@ -11,6 +10,7 @@ namespace MAM.DataAccess.Interfaces
         void UpdateLand(Land land);
         List<Land> GetLands();
         Land GetLandById(int id);
+        Land GetLeasedPropertyOnLandById(int id);
 
         //Lease Status
         int AddLeaseStatus(LeaseStatus leaseStatus);

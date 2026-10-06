@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { FacilityType } from '../../models/facility-type.model';
@@ -12,8 +12,8 @@ import { cachedGet } from '../../helpers/http-cache';
   providedIn: 'root'
 })
 export class FacilityService {
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) { }
   
   getFacilityZonings(): Observable<FacilityType[]> {
     return cachedGet<FacilityType[]>(this.http, `${environment.apiUrl}/api/facility/getfacilityzonings`);
@@ -24,15 +24,15 @@ export class FacilityService {
   }
 
   getMapCoordinates() {
-    return cachedGet<Array<MapCoordinate>>(this.http, `${environment.apiUrl}/api/facility/getmapcoordinates`);
+    return cachedGet<MapCoordinate[]>(this.http, `${environment.apiUrl}/api/facility/getmapcoordinates`);
   } 
 
   getAllFacilities() {
-    return cachedGet<Array<Facility>>(this.http, `${environment.apiUrl}/api/facility/getallfacilities`);
+    return cachedGet<Facility[]>(this.http, `${environment.apiUrl}/api/facility/getallfacilities`);
   }
 
   getAssetRegisterfacilities() {
-    return cachedGet<Array<Facility>>(this.http, `${environment.apiUrl}/api/facility/getassetregisterfacilities`);
+    return cachedGet<Facility[]>(this.http, `${environment.apiUrl}/api/facility/getassetregisterfacilities`);
   }
 
   getFacilityById(id: number, facilityType) {
@@ -57,7 +57,7 @@ export class FacilityService {
       formData.append('file', file, file.name);
     });
     
-    let header = new HttpHeaders({
+    const header = new HttpHeaders({
         'enctype': 'multipart/form-data',
         'Accept': 'application/json'
       });

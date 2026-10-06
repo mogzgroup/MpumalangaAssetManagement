@@ -1,5 +1,3 @@
-import { LandComponent } from '../components/assetregister/addassetregister/land/land.component';
-import { MapCoordinate } from './map-oordinate.model';
 
 export class Facility {
     id: number;

@@ -1,133 +1,149 @@
 <mat-card class="stepsdemo-content mt-5 uamp-property-card state-owned-properties">
-    <mat-card-subtitle class="property-section-title">State-owned assets occupied by or allocated to users</mat-card-subtitle>
-    <mat-card-content>
-        <div class="table-container">
-            <table class="property-table">
-                <thead>
-                    <tr>
-                        <th>File Reference No.</th>
-                        <th>Districts</th>
-                        <th>Town</th>
-                        <th>Local Municipality</th>
-                        <th>Old Street Address</th>
-                        <th>Current Street Address</th>
-                        <th>Property Description</th>
-                        <th>Asset Type</th>
-                        <th>No. of Parking Bays</th>
-                        <th>Usable/ Allocated Space <small>(M²) 0000.00</small></th>
-                        <th>Extent of Land (HA) <small>(M²) 0000.00</small></th>
-                        <th>Municipal/ Utility Services</th>
-                        <th>Property Rates &amp; Taxes</th>
-                        <th>Operational Costs</th>
-                        <th>Required Performance Standard</th>
-                        <th>Accessibility</th>
-                        <th>Condition Rating</th>
-                        <th>Suitability Index</th>
-                        <th>Operating Performance Index</th>
-                        <th>Functional Performance Index</th>
-                        <th>Comments</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ng-container *ngFor="let property of pagedProperties; let rowIndex = index">
-                        <tr class="group-row" *ngIf="isGroupStart(property, rowIndex)">
-                            <td colspan="21">{{ property.assetDescription }}</td>
+  <mat-card-subtitle class="property-section-title">State-owned assets occupied by or allocated to users</mat-card-subtitle>
+  <mat-card-content>
+    <div class="table-container">
+      <table class="property-table">
+        <thead>
+          <tr>
+            <th>File Reference No.</th>
+            <th>Districts</th>
+            <th>Town</th>
+            <th>Local Municipality</th>
+            <th>Old Street Address</th>
+            <th>Current Street Address</th>
+            <th>Property Description</th>
+            <th>Asset Type</th>
+            <th>No. of Parking Bays</th>
+            <th>Usable/ Allocated Space <small>(M²) 0000.00</small></th>
+            <th>Extent of Land (HA) <small>(M²) 0000.00</small></th>
+            <th>Municipal/ Utility Services</th>
+            <th>Property Rates &amp; Taxes</th>
+            <th>Operational Costs</th>
+            <th>Required Performance Standard</th>
+            <th>Accessibility</th>
+            <th>Condition Rating</th>
+            <th>Suitability Index</th>
+            <th>Operating Performance Index</th>
+            <th>Functional Performance Index</th>
+            <th>Comments</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (property of pagedProperties; track property; let rowIndex = $index) {
+            @if (isGroupStart(property, rowIndex)) {
+              <tr class="group-row">
+                <td colspan="21">{{ property.assetDescription }}</td>
+              </tr>
+            }
+            <tr>
+              <td>{{ property.fileReferenceNo }}</td>
+              <td>{{ property.districtRegion }}</td>
+              <td>{{ property.town }}</td>
+              <td>{{ property.localAuthority }}</td>
+              <td>{{ property.currentStreetAddress }}</td>
+              <td>{{ property.districtMunicipality }}</td>
+              <td>{{ property.propertyDescription }}</td>
+              <td>{{ property.assetType }}</td>
+              <td>
+                <input matInput type="number" min="0" [(ngModel)]="property.noofParkingBays"
+                  [ngModelOptions]="{standalone: true}" aria-label="Number of parking bays">
+                </td>
+                <td>
+                  <input matInput type="number" min="0" step="0.01" [(ngModel)]="property.usableAllocatedSpace"
+                    [ngModelOptions]="{standalone: true}" aria-label="Usable or allocated space">
+                  </td>
+                  <td>{{ property.extentofLand }}</td>
+                  <td>
+                    <input matInput type="number" min="0" step="0.01" [(ngModel)]="property.municipalUtilityServiceTotal"
+                      [ngModelOptions]="{standalone: true}" (click)="show(property)"
+                      aria-label="Municipal utility service total">
+                    </td>
+                    <td>
+                      <input matInput type="number" min="0" step="0.01" [(ngModel)]="property.propertyRatesTaxes"
+                        [ngModelOptions]="{standalone: true}" aria-label="Property rates and taxes">
+                      </td>
+                      <td>
+                        <input matInput type="number" min="0" step="0.01" [(ngModel)]="property.operationalCosts"
+                          [ngModelOptions]="{standalone: true}" aria-label="Operational costs">
+                        </td>
+                        <td>
+                          <mat-select [(ngModel)]="property.requiredPerformanceStandardObj"
+                            [ngModelOptions]="{standalone: true}" placeholder="Please select"
+                            (selectionChange)="onRequiredPerformanceStandardChange(property, $event)"
+                            aria-label="Required performance standard">
+                            @for (option of requiredPerformanceStandards; track option) {
+                              <mat-option [value]="option">{{ option.name }}</mat-option>
+                            }
+                          </mat-select>
+                        </td>
+                        <td>
+                          <mat-select [(ngModel)]="property.accessibilityObj" [ngModelOptions]="{standalone: true}"
+                            placeholder="Please select" (selectionChange)="onAccessibilityChange(property, $event)"
+                            aria-label="Accessibility">
+                            @for (option of accessibilities; track option) {
+                              <mat-option [value]="option">{{ option.name }}</mat-option>
+                            }
+                          </mat-select>
+                        </td>
+                        <td>
+                          <mat-select [(ngModel)]="property.conditionRatingObj" [ngModelOptions]="{standalone: true}"
+                            placeholder="Please select" (selectionChange)="conditionRatingCahnged(property, $event)"
+                            aria-label="Condition rating">
+                            @for (option of conditionRatings; track option) {
+                              <mat-option [value]="option">{{ option.name }}</mat-option>
+                            }
+                          </mat-select>
+                        </td>
+                        <td>
+                          <mat-select [(ngModel)]="property.suitabilityIndexObj" [ngModelOptions]="{standalone: true}"
+                            placeholder="Please select" (selectionChange)="onSuitabilityIndexChange(property, $event)"
+                            aria-label="Suitability index">
+                            @for (option of suitabilityIndexs; track option) {
+                              <mat-option [value]="option">{{ option.name }}</mat-option>
+                            }
+                          </mat-select>
+                        </td>
+                        <td>
+                          <mat-select [(ngModel)]="property.operatingPerformanceIndexObj" [ngModelOptions]="{standalone: true}"
+                            placeholder="Please select" (selectionChange)="onOperatingPerformanceIndexChange(property, $event)"
+                            aria-label="Operating performance index">
+                            @for (option of operatingPerformanceIndexs; track option) {
+                              <mat-option [value]="option">{{ option.name }}</mat-option>
+                            }
+                          </mat-select>
+                        </td>
+                        <td>
+                          <mat-select [(ngModel)]="property.functionalPerformanceIndexObj" [ngModelOptions]="{standalone: true}"
+                            placeholder="Please select" (selectionChange)="onFunctionalPerformanceChange(property, $event)"
+                            aria-label="Functional performance index">
+                            @for (option of functionalPerformanceIndexs; track option) {
+                              <mat-option [value]="option">{{ option.name }}</mat-option>
+                            }
+                          </mat-select>
+                        </td>
+                        <td>
+                          <input matInput type="text" [(ngModel)]="property.comment"
+                            [ngModelOptions]="{standalone: true}" aria-label="Comments">
+                          </td>
                         </tr>
+                      }
+                      @if (pagedProperties.length === 0) {
                         <tr>
-                            <td>{{ property.fileReferenceNo }}</td>
-                            <td>{{ property.districtRegion }}</td>
-                            <td>{{ property.town }}</td>
-                            <td>{{ property.localAuthority }}</td>
-                            <td>{{ property.currentStreetAddress }}</td>
-                            <td>{{ property.districtMunicipality }}</td>
-                            <td>{{ property.propertyDescription }}</td>
-                            <td>{{ property.assetType }}</td>
-                            <td>
-                                <input matInput type="number" min="0" [(ngModel)]="property.noofParkingBays"
-                                    [ngModelOptions]="{standalone: true}" aria-label="Number of parking bays">
-                            </td>
-                            <td>
-                                <input matInput type="number" min="0" step="0.01" [(ngModel)]="property.usableAllocatedSpace"
-                                    [ngModelOptions]="{standalone: true}" aria-label="Usable or allocated space">
-                            </td>
-                            <td>{{ property.extentofLand }}</td>
-                            <td>
-                                <input matInput type="number" min="0" step="0.01" [(ngModel)]="property.municipalUtilityServiceTotal"
-                                    [ngModelOptions]="{standalone: true}" (click)="show(property)"
-                                    aria-label="Municipal utility service total">
-                            </td>
-                            <td>
-                                <input matInput type="number" min="0" step="0.01" [(ngModel)]="property.propertyRatesTaxes"
-                                    [ngModelOptions]="{standalone: true}" aria-label="Property rates and taxes">
-                            </td>
-                            <td>
-                                <input matInput type="number" min="0" step="0.01" [(ngModel)]="property.operationalCosts"
-                                    [ngModelOptions]="{standalone: true}" aria-label="Operational costs">
-                            </td>
-                            <td>
-                                <mat-select [(ngModel)]="property.requiredPerformanceStandardObj"
-                                    [ngModelOptions]="{standalone: true}" placeholder="Please select"
-                                    (selectionChange)="onRequiredPerformanceStandardChange(property, $event)"
-                                    aria-label="Required performance standard">
-                                    <mat-option *ngFor="let option of requiredPerformanceStandards" [value]="option">{{ option.name }}</mat-option>
-                                </mat-select>
-                            </td>
-                            <td>
-                                <mat-select [(ngModel)]="property.accessibilityObj" [ngModelOptions]="{standalone: true}"
-                                    placeholder="Please select" (selectionChange)="onAccessibilityChange(property, $event)"
-                                    aria-label="Accessibility">
-                                    <mat-option *ngFor="let option of accessibilities" [value]="option">{{ option.name }}</mat-option>
-                                </mat-select>
-                            </td>
-                            <td>
-                                <mat-select [(ngModel)]="property.conditionRatingObj" [ngModelOptions]="{standalone: true}"
-                                    placeholder="Please select" (selectionChange)="conditionRatingCahnged(property, $event)"
-                                    aria-label="Condition rating">
-                                    <mat-option *ngFor="let option of conditionRatings" [value]="option">{{ option.name }}</mat-option>
-                                </mat-select>
-                            </td>
-                            <td>
-                                <mat-select [(ngModel)]="property.suitabilityIndexObj" [ngModelOptions]="{standalone: true}"
-                                    placeholder="Please select" (selectionChange)="onSuitabilityIndexChange(property, $event)"
-                                    aria-label="Suitability index">
-                                    <mat-option *ngFor="let option of suitabilityIndexs" [value]="option">{{ option.name }}</mat-option>
-                                </mat-select>
-                            </td>
-                            <td>
-                                <mat-select [(ngModel)]="property.operatingPerformanceIndexObj" [ngModelOptions]="{standalone: true}"
-                                    placeholder="Please select" (selectionChange)="onOperatingPerformanceIndexChange(property, $event)"
-                                    aria-label="Operating performance index">
-                                    <mat-option *ngFor="let option of operatingPerformanceIndexs" [value]="option">{{ option.name }}</mat-option>
-                                </mat-select>
-                            </td>
-                            <td>
-                                <mat-select [(ngModel)]="property.functionalPerformanceIndexObj" [ngModelOptions]="{standalone: true}"
-                                    placeholder="Please select" (selectionChange)="onFunctionalPerformanceChange(property, $event)"
-                                    aria-label="Functional performance index">
-                                    <mat-option *ngFor="let option of functionalPerformanceIndexs" [value]="option">{{ option.name }}</mat-option>
-                                </mat-select>
-                            </td>
-                            <td>
-                                <input matInput type="text" [(ngModel)]="property.comment"
-                                    [ngModelOptions]="{standalone: true}" aria-label="Comments">
-                            </td>
+                          <td colspan="21" class="property-empty-state">No data found</td>
                         </tr>
-                    </ng-container>
-                    <tr *ngIf="pagedProperties.length === 0">
-                        <td colspan="21" class="property-empty-state">No data found</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <mat-paginator [length]="properties.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 15]"
-            (page)="pageChanged($event)" showFirstLastButtons></mat-paginator>
-    </mat-card-content>
-</mat-card>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+                <mat-paginator [length]="properties.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 15]"
+                (page)="pageChanged($event)" showFirstLastButtons></mat-paginator>
+              </mat-card-content>
+            </mat-card>
 
-<div class="uamp-footer">
-    <button mat-button (click)="back()"><mat-icon>chevron_left</mat-icon>Back</button>
-    <div>
-        <button mat-button (click)="save()" class="ml-1">Save</button>
-        <button mat-raised-button color="primary" (click)="nextPage()">Next</button>
-    </div>
-</div>
+            <div class="uamp-footer">
+              <button mat-button (click)="back()"><mat-icon>chevron_left</mat-icon>Back</button>
+              <div>
+                <button mat-button (click)="save()" class="ml-1">Save</button>
+                <button mat-raised-button color="primary" (click)="nextPage()">Next</button>
+              </div>
+            </div>

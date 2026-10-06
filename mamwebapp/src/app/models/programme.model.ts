@@ -1,9 +1,9 @@
 export class Programme {
-    id: Number;
-    userImmovableAssetManagementPlanId: Number;
-    corporateObjective: String;
-    outcomes: String;
-    optimalSupportingAccommodationSolution: String;
-    rationaleChosenSolution: String;
+    id: number;
+    userImmovableAssetManagementPlanId: number;
+    corporateObjective: string;
+    outcomes: string;
+    optimalSupportingAccommodationSolution: string;
+    rationaleChosenSolution: string;
 }
 

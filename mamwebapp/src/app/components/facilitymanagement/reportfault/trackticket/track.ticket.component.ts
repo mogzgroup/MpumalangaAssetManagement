@@ -1,16 +1,24 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FaultService } from 'src/app/services/facility-management/fault.service';
 import { ToastService } from 'src/app/services/toast.service';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+
+import { MatButton } from '@angular/material/button';
 
 @Component({
-  standalone: false,
-  selector: 'app-track-ticket',
-  templateUrl: './track.ticket.component.html',
-  styleUrls: ['./track.ticket.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager
+    selector: 'app-track-ticket',
+    templateUrl: './track.ticket.component.html',
+    styleUrls: ['./track.ticket.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, MatButton]
 })
 export class TrackTicketComponent implements OnInit {
+  private faultService = inject(FaultService);
+  private formBuilder = inject(FormBuilder);
+  private toastService = inject(ToastService);
+
 
   public attachments: [];
   public submitted = false;
@@ -25,15 +33,6 @@ export class TrackTicketComponent implements OnInit {
     { code: 'contactName', name: 'Farm - Sarel Cilliers Street, Badplaas, Badplaas, Mpumalanga' },
     { code: 'contactNumber', name: 'Lynnville Township - Louws Creek Street 6, Aerorand, Middelburg, Mpumalanga' }
   ];
-
-  constructor(
-    private faultService: FaultService,
-    private formBuilder: FormBuilder,
-    private toastService: ToastService
-  )
-  {
-  
-  }
 
   ngOnInit() {
     this.buildForm();

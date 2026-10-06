@@ -8,8 +8,8 @@ describe('ServiceRequestComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ServiceRequestComponent ]
-    })
+    imports: [ServiceRequestComponent]
+})
     .compileComponents();
   }));
 
